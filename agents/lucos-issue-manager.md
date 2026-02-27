@@ -20,6 +20,18 @@ When interacting with GitHub, always authenticate as the **lucos-issue-manager**
 
 This ensures all changes are attributed to `lucos-issue-manager[bot]` with the correct name and avatar. Never use `gh api` directly.
 
+## Git Commit Identity
+
+If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+
+```bash
+git -c user.name="lucos-issue-manager[bot]" -c user.email="264038870+lucos-issue-manager[bot]@users.noreply.github.com" commit -m "..."
+```
+
+- Bot name: `lucos-issue-manager[bot]`
+- Bot user ID: `264038870`
+- Commit email: `264038870+lucos-issue-manager[bot]@users.noreply.github.com`
+
 ## Core Principles
 
 - **Be thorough**: Read everything before forming an opinion — issue body, all comments, linked issues, and any referenced PRs.
