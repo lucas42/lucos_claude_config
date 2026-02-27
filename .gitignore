@@ -9,6 +9,9 @@
 !CLAUDE.md
 !python-testing.md
 
+# Claude Code settings (non-sensitive configuration only)
+!settings.json
+
 # Agent persona definitions
 !agents/
 !agents/**
