@@ -308,6 +308,25 @@ Standard file, no project-specific changes needed.
 
 ---
 
+## Maintaining This Environment
+
+### Version-controlled `~/.claude` changes
+
+`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes are made to files under `~/.claude` that are part of this repo (e.g. `CLAUDE.md` itself, persona instruction files), those changes must be committed and pushed:
+
+```bash
+cd /home/lucas.linux/.claude
+git add <changed files>
+git commit -m "Description of change"
+git push
+```
+
+### VM environment changes
+
+`lucos_agent_coding_sandbox` (at `~/sandboxes/lucos_agent_coding_sandbox`) is responsible for provisioning the VM this environment runs in. Whenever changes are made to the broader VM environment — e.g. SSH config, installed packages, system-level configuration — those changes must also be reflected in `lucos_agent_coding_sandbox` so the VM can be reproduced from scratch. Update the relevant files (e.g. `lima.yaml`, `setup-repos.sh`, `ssh/`) and commit and push the changes to that repo.
+
+---
+
 ## The `/_info` Endpoint
 
 Every lucos HTTP service must expose a `/_info` endpoint with no authentication. It is used by monitoring and a homepage app.
