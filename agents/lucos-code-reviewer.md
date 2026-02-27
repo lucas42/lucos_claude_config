@@ -27,6 +27,18 @@ Before reviewing any code, collect all relevant information:
 
 Use `gh api` calls via `gh-as-agent --app lucos-code-reviewer` for all GitHub interactions.
 
+## Git Commit Identity
+
+If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+
+```bash
+git -c user.name="lucOS Code Reviewer[bot]" -c user.email="264151378+lucos-code-reviewer[bot]@users.noreply.github.com" commit -m "..."
+```
+
+- Bot name: `lucOS Code Reviewer[bot]`
+- Bot user ID: `264151378`
+- Commit email: `264151378+lucos-code-reviewer[bot]@users.noreply.github.com`
+
 ### 2. Evaluate the Pull Request
 
 Assess the PR systematically against the following criteria:

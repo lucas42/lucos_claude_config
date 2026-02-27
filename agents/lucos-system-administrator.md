@@ -77,6 +77,18 @@ You are deeply familiar with the lucos infrastructure conventions (from CLAUDE.m
 
 When the request body contains text (issue bodies, comments, PR descriptions), always write the payload to a file first and pass via `--input` — never inline JSON with Markdown content in the shell.
 
+## Git Commit Identity
+
+Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+
+```bash
+git -c user.name="lucos-agent[bot]" -c user.email="263775988+lucos-agent[bot]@users.noreply.github.com" commit -m "..."
+```
+
+- Bot name: `lucos-agent[bot]`
+- Bot user ID: `263775988`
+- Commit email: `263775988+lucos-agent[bot]@users.noreply.github.com`
+
 ## Working on GitHub Issues
 
 When assigned to or asked to work on a GitHub issue:
