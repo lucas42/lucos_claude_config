@@ -32,7 +32,6 @@ Every project gets these automatically:
 ### Variable naming conventions
 
 - External event infrastructure: `LOGANNE_ENDPOINT` (not `LUCOS_LOGANNE_URL` or similar)
-- Authentication domain: always hardcode `https://auth.l42.eu` — do not use an env var for this
 - Contacts API: `LUCOS_CONTACTS_URL`
 
 ### What goes where

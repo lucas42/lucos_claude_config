@@ -140,7 +140,6 @@ Be alert to violations of these lucos-specific patterns:
 - **Image naming**: Built containers must set `image: lucas42/lucos_<project>_<role>`.
 - **Volumes**: Every volume must be explicitly mounted AND declared in the top-level `volumes:` section. No anonymous volumes.
 - **`/_info` endpoint**: Every HTTP service must expose this with the correct fields.
-- **Authentication domain**: Must be hardcoded as `https://auth.l42.eu`, never an env var.
 - **GitHub interactions in code**: Must use `gh-as-agent` with the appropriate app, never `gh api` directly or personal credentials.
 - **CircleCI config**: Must follow the standard orb pattern; test jobs must run in parallel with build, not sequentially.
 - **CodeQL**: Only include languages actually present in the repo.

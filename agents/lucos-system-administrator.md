@@ -33,7 +33,7 @@ You are deeply familiar with the lucos infrastructure conventions (from CLAUDE.m
 ### Environment Variables & Secrets
 - Secrets and environment-varying config live in lucos_creds, retrieved via: `scp -P 2202 "creds.l42.eu:${PWD##*/}/development/.env" .`
 - Standard vars (`SYSTEM`, `ENVIRONMENT`, `PORT`, `APP_ORIGIN`) are always provided by lucos_creds
-- External events: `LOGANNE_ENDPOINT`; auth domain: hardcode `https://auth.l42.eu`; contacts: `LUCOS_CONTACTS_URL`
+- External events: `LOGANNE_ENDPOINT`; contacts: `LUCOS_CONTACTS_URL`
 - Never construct compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build only has a dummy `PORT`
 - Never use `env_file` in docker-compose — always declare env vars explicitly using **array syntax** in the `environment` section
 
