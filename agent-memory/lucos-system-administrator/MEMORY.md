@@ -23,3 +23,25 @@ Always use `git -c user.name="..." -c user.email="..."` on the commit command it
 Current VM git config is correct (fixed 2026-02-27). `lima.yaml` in `lucos_agent_coding_sandbox` updated to match.
 
 See: `/home/lucas.linux/sandboxes/lucos_agent/CLAUDE.md` for full app details.
+
+## Claude Code permissions: correct settings.json format
+
+The correct key for bypassing permission prompts is `permissions.defaultMode`, NOT the top-level `dangerouslySkipPermissions`. The latter is silently ignored.
+
+```json
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  }
+}
+```
+
+`bypassPermissions` is appropriate for this VM (isolated Lima sandbox, no host mounts, trivial recovery). Config lives in `~/.claude/settings.json`, tracked in `lucos_claude_config`. The `setup-repos.sh` in `lucos_agent_coding_sandbox` clones that repo into `~/.claude` so any fresh VM gets the correct setting automatically.
+
+Wildcard allow rules (useful reference if ever dropping back to `default` mode):
+- `Bash(git *)` — all git commands
+- `Bash(gh *)` — all gh commands
+- `Bash(docker *)` — all docker commands
+- `Bash` — all bash (no parens = matches everything, equivalent to bypassPermissions for Bash only)
+
+The `settings.local.json` at `/home/lucas.linux/sandboxes/.claude/settings.local.json` accumulated ~55 hyper-specific entries because the bypass setting was broken. Cleared to empty allow array (2026-02-28).
