@@ -327,7 +327,7 @@ git push
 
 ### Requesting missing tools
 
-If you discover that a tool needed to complete a task is not installed in this environment (e.g. a language runtime, build tool, or CLI), raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` requesting it be added. Use the `lucos-issue-manager` agent or `gh-as-agent` directly. Include:
+If you discover that a tool needed to complete a task is not installed in this environment (e.g. a language runtime, build tool, or CLI), raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` requesting it be added. Include:
 - What tool is missing and what version (if relevant)
 - Which task or project revealed the gap
 - Why having it locally matters (e.g. faster feedback than waiting for CI)
