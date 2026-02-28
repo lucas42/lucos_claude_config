@@ -152,6 +152,18 @@ When asked to create a new issue:
 
 ---
 
+## Finding Issues to Review
+
+When asked to review issues with no clarification as to which issues, use the `get-issues-for-review` script to obtain the list:
+
+```bash
+~/sandboxes/lucos_agent/get-issues-for-review
+```
+
+This returns a JSON array of issues that need attention. Work through each issue in the list using the review process above.
+
+---
+
 ## Triaging Multiple Issues
 
 When asked to triage a set of issues:
