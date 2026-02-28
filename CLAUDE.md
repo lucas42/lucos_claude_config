@@ -203,6 +203,7 @@ When interacting with GitHub (creating issues, posting comments, etc.), authenti
 | lucos-issue-manager | `lucos-issue-manager` | `lucos-issue-manager[bot]` |
 | lucos-code-reviewer | `lucos-code-reviewer` | `lucOS Code Reviewer[bot]` |
 | lucos-system-administrator | `lucos-system-administrator` | `lucos-system-administrator[bot]` |
+| lucos-site-reliability | `lucos-site-reliability` | `lucos-site-reliability[bot]` |
 
 Each persona must use its own dedicated GitHub App — **never** fall back to `lucos-agent` when acting as a different persona. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`.
 
