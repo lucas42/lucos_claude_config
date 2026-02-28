@@ -11,6 +11,7 @@ Format: `{USER_ID}+{app-name}[bot]@users.noreply.github.com`
 | lucos-agent | `lucos-agent[bot]` | 263775988 | `263775988+lucos-agent[bot]@users.noreply.github.com` |
 | lucos-issue-manager | `lucos-issue-manager[bot]` | 264038870 | `264038870+lucos-issue-manager[bot]@users.noreply.github.com` |
 | lucos-code-reviewer | `lucOS Code Reviewer[bot]` | 264151378 | `264151378+lucos-code-reviewer[bot]@users.noreply.github.com` |
+| lucos-system-administrator | `lucos-system-administrator[bot]` | 264392982 | `264392982+lucos-system-administrator[bot]@users.noreply.github.com` |
 
 Note: the lucos-code-reviewer commit email uses the login `lucos-code-reviewer[bot]` (lowercase) even though the display name is `lucOS Code Reviewer[bot]` (mixed case).
 
