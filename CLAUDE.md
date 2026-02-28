@@ -202,6 +202,9 @@ When interacting with GitHub (creating issues, posting comments, etc.), authenti
 | General / default | `lucos-agent` | `lucos-agent[bot]` |
 | lucos-issue-manager | `lucos-issue-manager` | `lucos-issue-manager[bot]` |
 | lucos-code-reviewer | `lucos-code-reviewer` | `lucOS Code Reviewer[bot]` |
+| lucos-system-administrator | `lucos-system-administrator` | `lucos-system-administrator[bot]` |
+
+Each persona must use its own dedicated GitHub App — **never** fall back to `lucos-agent` when acting as a different persona. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`.
 
 ### Setup
 
@@ -234,6 +237,11 @@ When the request body contains text (e.g. issue bodies, comments), write the pay
 
 # lucos-code-reviewer persona
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer repos/lucas42/{repo}/pulls/{pr}/reviews \
+    --method POST \
+    --input /tmp/gh-payload.json
+
+# lucos-system-administrator persona
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator repos/lucas42/{repo}/issues \
     --method POST \
     --input /tmp/gh-payload.json
 ```
