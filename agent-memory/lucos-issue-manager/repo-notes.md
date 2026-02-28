@@ -23,6 +23,15 @@
 - **Related repos**: lucos_media_seinn (client), lucos_media_metadata_api (metadata backend)
 - **Known context**: CollectionList fetches from media_metadata_api at startup; NPE and retry issues filed (Feb 2026, #140 and #141)
 
+## Archived repos (read-only, cannot modify issues)
+
+- lucos_contacts_googlesync
+- lucos_core_legacy
+- lucos_lanscan
+- lucos_services
+- lucos_speak
+- lucos_systems
+
 ## lucos_deploy_orb
 
 - **Purpose**: CircleCI orb for building and deploying lucos services
