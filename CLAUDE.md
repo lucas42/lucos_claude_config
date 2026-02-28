@@ -325,6 +325,15 @@ git push
 
 `lucos_agent_coding_sandbox` (at `~/sandboxes/lucos_agent_coding_sandbox`) is responsible for provisioning the VM this environment runs in. Whenever changes are made to the broader VM environment — e.g. SSH config, installed packages, system-level configuration — those changes must also be reflected in `lucos_agent_coding_sandbox` so the VM can be reproduced from scratch. Update the relevant files (e.g. `lima.yaml`, `setup-repos.sh`, `ssh/`) and commit and push the changes to that repo.
 
+### Requesting missing tools
+
+If you discover that a tool needed to complete a task is not installed in this environment (e.g. a language runtime, build tool, or CLI), raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` requesting it be added. Use the `lucos-issue-manager` agent or `gh-as-agent` directly. Include:
+- What tool is missing and what version (if relevant)
+- Which task or project revealed the gap
+- Why having it locally matters (e.g. faster feedback than waiting for CI)
+
+Do this proactively — don't silently work around missing tools without flagging them.
+
 ---
 
 ## The `/_info` Endpoint
