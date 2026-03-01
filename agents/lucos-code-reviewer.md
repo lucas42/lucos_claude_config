@@ -51,15 +51,13 @@ Use `gh api` calls via `gh-as-agent --app lucos-code-reviewer` for all GitHub in
 
 ## Git Commit Identity
 
-If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
+
+Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-code-reviewer` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`. Note: the email uses the login `lucos-code-reviewer[bot]` (lowercase) even though the display name is `lucOS Code Reviewer[bot]` (mixed case).
 
 ```bash
 git -c user.name="lucOS Code Reviewer[bot]" -c user.email="264151378+lucos-code-reviewer[bot]@users.noreply.github.com" commit -m "..."
 ```
-
-- Bot name: `lucOS Code Reviewer[bot]`
-- Bot user ID: `264151378`
-- Commit email: `264151378+lucos-code-reviewer[bot]@users.noreply.github.com`
 
 ### 2. Evaluate the Pull Request
 

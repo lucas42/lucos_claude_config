@@ -21,3 +21,18 @@
 
 - `lucos/build-amd64` CI orb builds and pushes Docker images; large images (>1GB) significantly impact build/deploy times
 - `depends_on` in compose does not wait for service readiness, only container start. Projects with Postgres should have startup retry logic.
+
+## Claude Code setup review (Mar 2026)
+
+Reviewed all 3 repos: `lucos_claude_config` (~/.claude), `lucos_agent`, `lucos_agent_coding_sandbox`.
+
+Key issues filed:
+- lucas42/lucos_agent#8: Persona identity scattered across 5+ locations in 3 repos. Root cause of "adding a persona is cumbersome". Recommended: single personas.json registry.
+- lucas42/lucos_agent#9: get-token has no caching; generates fresh token per API call. Latency and rate-limit concern.
+- lucas42/lucos_claude_config#3: Three persona files have wrong memory paths (/Users/lucas/ instead of /home/lucas.linux/)
+- lucas42/lucos_claude_config#4: No mechanism to auto-commit agent memory changes
+- lucas42/lucos_claude_config#5: CLAUDE.md too large, mixes reference docs with agent instructions. Recommend factoring out.
+- lucas42/lucos_agent_coding_sandbox#4: Global git identity creates silent fallback when persona forgets -c flags
+- lucas42/lucos_agent_coding_sandbox#5: README has wrong bot user ID (uses App ID)
+
+Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Main weakness is identity data sprawl and lack of automation for config repo maintenance.
