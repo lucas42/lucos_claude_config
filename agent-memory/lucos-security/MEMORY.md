@@ -26,6 +26,8 @@ GitHub Security Advisories (under repo Security tab) are the correct home for:
 
 A consistent Security Advisory practice across lucos repos is tracked in lucas42/lucos#25.
 
+**CRITICAL PROCESS NOTE — LESSON LEARNED:** When conducting a security audit, apply the public/private routing decision to EACH FINDING BEFORE WRITING ANYTHING. Do not write the full audit to a public issue comment and sort routing afterwards. The issue being raised by a third party does NOT change this requirement — if anything it demands more caution. Sensitive findings go to Security Advisories first; public comments should only reference GHSA IDs, not describe the vulnerabilities. The public comment on lucos_monitoring#23 was a process failure that accidentally disclosed unpatched vulnerabilities.
+
 ## Risk Pattern: Prompt Injection via External Data Sources
 
 AI agents that consume external text (CI build logs, issue bodies, PR descriptions, log files) are vulnerable to prompt injection. This is a recurring risk class across lucos because:
