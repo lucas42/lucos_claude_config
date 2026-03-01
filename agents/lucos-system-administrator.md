@@ -82,12 +82,12 @@ When the request body contains text (issue bodies, comments, PR descriptions), a
 Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
 
 ```bash
-git -c user.name="lucos-agent[bot]" -c user.email="263775988+lucos-agent[bot]@users.noreply.github.com" commit -m "..."
+git -c user.name="lucos-system-administrator[bot]" -c user.email="264392982+lucos-system-administrator[bot]@users.noreply.github.com" commit -m "..."
 ```
 
-- Bot name: `lucos-agent[bot]`
-- Bot user ID: `263775988`
-- Commit email: `263775988+lucos-agent[bot]@users.noreply.github.com`
+- Bot name: `lucos-system-administrator[bot]`
+- Bot user ID: `264392982`
+- Commit email: `264392982+lucos-system-administrator[bot]@users.noreply.github.com`
 
 ## Working on GitHub Issues
 
