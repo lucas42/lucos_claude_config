@@ -51,10 +51,9 @@ The `settings.local.json` at `/home/lucas.linux/sandboxes/.claude/settings.local
 
 ## GitHub App permissions: lucos-system-administrator
 
-The `lucos-system-administrator` app has `pull_requests: read` (NOT write). This means it CANNOT:
+The `lucos-system-administrator` app has `pull_requests: write` (upgraded 2026-03-01, tracked in lucos_claude_config#1). It CAN:
+- Post comments on PR threads (`POST /issues/{id}/comments` when issue is a PR)
 - Post PR reviews (`POST /pulls/{id}/reviews`)
-- Post comments on PR threads (`POST /issues/{id}/comments` when issue is a PR — needs `pull_requests: write` even though it has `issues: write`)
+- Post to regular issue comment threads
 
-It CAN post to regular issue comment threads (non-PR issues).
-
-Tracked in lucos_claude_config#1. Until fixed, post obstacle comments to the related non-PR issue and explain the permission gap.
+Previously `pull_requests: read` only, which silently blocked PR thread comments despite having `issues: write`. Verified working after the permission upgrade.
