@@ -2,7 +2,7 @@
 
 ## lucos_photos
 
-- Reviewed Feb 2026 (commit c3be2c0). Summary issue: lucas42/lucos_photos#27
+- Reviewed Feb 2026 (commit c3be2c0). Original summary was filed as issue #27 (now closed -- wrong artefact type)
 - Architecture: FastAPI API + Python worker + Postgres + Redis, 4 containers (Qdrant removed per ADR-0001)
 - ADR-0001: Use pgvector instead of Qdrant for face embeddings (decided #23, implementation #29)
 - ADRs live in `docs/adr/` with format `NNNN-short-description.md`
@@ -11,6 +11,16 @@
 - database.py has module-level engine creation -- fragile pattern (#25)
 - No docker-compose healthchecks on any container -- reliability gap noted in #27
 - PhotoPerson join table alongside Face table could create data consistency issues
+
+## Architectural review convention (proposed, pending agreement -- lucas42/lucos#24)
+
+- Reviews should be committed as Markdown files in `docs/reviews/` in each repo
+- Filename: `YYYY-MM-DD-review.md`
+- Separate from ADRs (`docs/adr/`) -- reviews are snapshots, ADRs are decisions
+- Do NOT file summary issues for reviews. File individual actionable issues only.
+- Submit review file via PR; the PR is the reviewable artefact
+- CLAUDE.md should include a pointer to `docs/reviews/` so agents know where to look
+- Once agreed, retroactively create `docs/reviews/2026-02-28-review.md` in lucos_photos
 
 ## Cross-project patterns
 
