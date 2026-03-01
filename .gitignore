@@ -23,3 +23,5 @@
 # Infrastructure scripts
 !scripts/
 !scripts/**
+# ...but not log files generated at runtime
+scripts/*.log
