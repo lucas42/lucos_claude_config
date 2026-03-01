@@ -19,3 +19,7 @@
 # Agent persistent memory
 !agent-memory/
 !agent-memory/**
+
+# Infrastructure scripts
+!scripts/
+!scripts/**
