@@ -196,14 +196,7 @@ See [`python-testing.md`](python-testing.md) for FastAPI + SQLAlchemy testing pa
 
 When interacting with GitHub (creating issues, posting comments, etc.), authenticate as the appropriate GitHub App rather than using personal credentials.
 
-| Persona | GitHub App | Bot name |
-|---|---|---|
-| General / default | `lucos-agent` | `lucos-agent[bot]` |
-| lucos-issue-manager | `lucos-issue-manager` | `lucos-issue-manager[bot]` |
-| lucos-code-reviewer | `lucos-code-reviewer` | `lucOS Code Reviewer[bot]` |
-| lucos-system-administrator | `lucos-system-administrator` | `lucos-system-administrator[bot]` |
-| lucos-site-reliability | `lucos-site-reliability` | `lucos-site-reliability[bot]` |
-| lucos-architect | `lucos-architect` | `lucOS Architect[bot]` |
+Canonical identity data for all personas (App ID, Installation ID, bot user ID, bot name, display name, PEM variable) is stored in `~/sandboxes/lucos_agent/personas.json`. This is the single source of truth — refer to it rather than duplicating values in documentation or code.
 
 Each persona must use its own dedicated GitHub App — **never** fall back to `lucos-agent` when acting as a different persona. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`.
 
