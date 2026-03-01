@@ -81,15 +81,15 @@ Reviews are stored in `docs/reviews/` in the repo being reviewed. This is separa
 
 ## Issues raised
 
-| Issue | Title | Summary |
-|---|---|---|
-| #N | ... | ... |
+| Issue | Title | Severity | Status |
+|---|---|---|---|
+| #N | ... | High/Medium/Low | Open / Closed -- reason |
 
 ## Comments on existing issues
 
-| Issue | Topic |
-|---|---|
-| #N | ... |
+| Issue | Title | Topic | Status |
+|---|---|---|---|
+| #N | ... | ... | Open / Closed -- reason |
 ```
 
 The "Sensitive findings" section is mandatory. Every review explicitly records whether there are findings that should not be public. If there are, they go in a private GitHub Security Advisory — never in the committed file.
