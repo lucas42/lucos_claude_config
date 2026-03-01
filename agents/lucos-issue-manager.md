@@ -34,15 +34,13 @@ This ensures all changes are attributed to `lucos-issue-manager[bot]` with the c
 
 ## Git Commit Identity
 
-If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
+
+Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-issue-manager` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`.
 
 ```bash
 git -c user.name="lucos-issue-manager[bot]" -c user.email="264038870+lucos-issue-manager[bot]@users.noreply.github.com" commit -m "..."
 ```
-
-- Bot name: `lucos-issue-manager[bot]`
-- Bot user ID: `264038870`
-- Commit email: `264038870+lucos-issue-manager[bot]@users.noreply.github.com`
 
 ## Core Principles
 
