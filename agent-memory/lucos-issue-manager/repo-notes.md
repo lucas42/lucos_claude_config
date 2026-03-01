@@ -47,3 +47,34 @@
 - **Default labels present**: bug, dependencies, docker, duplicate, enhancement, github_actions, help wanted, invalid, javascript, question, security, wontfix
 - **Related repos**: lucos_media_manager (backend)
 - **Known context**: `/_info` endpoint calls `v3/poll` (a long-poll endpoint) on media_manager; timeout fix needed (#171)
+
+## lucos_claude_config
+
+- **Purpose**: Git-tracked `~/.claude` directory; persona files, CLAUDE.md, agent memory
+- **Labels created**: `agent-approved`, `needs-refining` (created 2026-03-01)
+- **Known context**: CLAUDE.md refactoring planned (#5, approved by lucas42); rename `infrastructure-conventions.md` to `lucos-conventions.md` per lucas42 preference
+
+## lucos_photos
+
+- **Language**: Python (FastAPI + SQLAlchemy)
+- **Purpose**: Personal photo library with upload, face detection, and people management
+- **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
+- **Architecture**: API + worker + Postgres + Redis (Qdrant being replaced by pgvector per #29)
+- **Known context**: Early stage, no photos processed yet; ADR-0001 decided pgvector over Qdrant; several architectural issues awaiting lucas42 decisions (#24, #25, #26)
+
+## lucos_configy
+
+- **Purpose**: Configuration management service for lucos systems (systems, volumes, hosts)
+- **Labels created**: `agent-approved`, `needs-refining` (colour fixed 2026-03-01)
+- **Known context**: `needs-refining` label had wrong colour (ededed instead of d93f0b), fixed 2026-03-01
+
+## lucos_agent
+
+- **Purpose**: Agent workflow scripts (get-token, gh-as-agent, get-issues-for-review, personas.json)
+- **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
+
+## lucos_agent_coding_sandbox
+
+- **Purpose**: VM provisioning repo for the agent coding environment (lima.yaml, setup scripts)
+- **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
+- **Known context**: Global git identity removal agreed (Option A, #4); need separate ticket for general-purpose dev persona
