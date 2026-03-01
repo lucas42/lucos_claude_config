@@ -22,8 +22,10 @@
 - CLAUDE.md should include a pointer to `docs/reviews/` so agents know where to look
 - Template includes mandatory "Sensitive findings" section (link to Security Advisory or "None")
 - Codified in lucos-architect persona instructions (lucos_claude_config commit 02983b9)
-- Retroactive lucos_photos review: PR #32
-- Still TODO: add `docs/reviews/` pointer to lucos_photos CLAUDE.md after PR #32 merges
+- Retroactive lucos_photos review: PR #32 (merged)
+- lucos_photos CLAUDE.md now has pointer to `docs/reviews/` (included in PR #32)
+- lucas42/lucos#24 is now closed (all work complete)
+- Follow-up: lucas42/lucos#25 tracks GitHub Security Advisory practice for sensitive findings
 
 ## Cross-project patterns
 
