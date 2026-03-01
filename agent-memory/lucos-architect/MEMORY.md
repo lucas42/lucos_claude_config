@@ -12,15 +12,18 @@
 - No docker-compose healthchecks on any container -- reliability gap noted in #27
 - PhotoPerson join table alongside Face table could create data consistency issues
 
-## Architectural review convention (proposed, pending agreement -- lucas42/lucos#24)
+## Architectural review convention (agreed -- lucas42/lucos#24)
 
-- Reviews should be committed as Markdown files in `docs/reviews/` in each repo
+- Reviews are committed Markdown files in `docs/reviews/` in each repo
 - Filename: `YYYY-MM-DD-review.md`
 - Separate from ADRs (`docs/adr/`) -- reviews are snapshots, ADRs are decisions
 - Do NOT file summary issues for reviews. File individual actionable issues only.
 - Submit review file via PR; the PR is the reviewable artefact
 - CLAUDE.md should include a pointer to `docs/reviews/` so agents know where to look
-- Once agreed, retroactively create `docs/reviews/2026-02-28-review.md` in lucos_photos
+- Template includes mandatory "Sensitive findings" section (link to Security Advisory or "None")
+- Codified in lucos-architect persona instructions (lucos_claude_config commit 02983b9)
+- Retroactive lucos_photos review: PR #32
+- Still TODO: add `docs/reviews/` pointer to lucos_photos CLAUDE.md after PR #32 merges
 
 ## Cross-project patterns
 
