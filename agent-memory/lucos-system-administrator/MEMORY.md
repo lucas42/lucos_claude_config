@@ -46,3 +46,9 @@ The `lucos-system-administrator` app has `pull_requests: write` (upgraded 2026-0
 - Post to regular issue comment threads
 
 Previously `pull_requests: read` only, which silently blocked PR thread comments despite having `issues: write`. Verified working after the permission upgrade.
+
+## VM SSH key for git operations
+
+SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
+
+The auto-commit cron script at `~/.claude/scripts/commit-agent-memory.sh` also sets `GIT_SSH_COMMAND` explicitly to guarantee the correct key is used regardless of environment.
