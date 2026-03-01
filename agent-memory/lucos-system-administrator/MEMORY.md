@@ -52,5 +52,3 @@ Previously `pull_requests: read` only, which silently blocked PR thread comments
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
 
 The auto-commit cron script at `~/.claude/scripts/commit-agent-memory.sh` also sets `GIT_SSH_COMMAND` explicitly to guarantee the correct key is used regardless of environment.
-
-<\!-- test modification for end-to-end cron verification -->
