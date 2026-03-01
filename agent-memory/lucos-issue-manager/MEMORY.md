@@ -13,3 +13,6 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 
 - `agent-approved` and `needs-refining` are created by this agent when they don't already exist in a repo
 - Always check for existing labels before creating them to avoid duplicates
+- Always set a meaningful colour when creating labels -- see [label-colours.md](label-colours.md) for the canonical colour scheme
+- `agent-approved` = `0e8a16` (green), `needs-refining` = `d93f0b` (orange)
+- User `lucas42` has explicitly requested consistent label colours across all repos
