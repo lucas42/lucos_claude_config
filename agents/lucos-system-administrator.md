@@ -79,15 +79,13 @@ When the request body contains text (issue bodies, comments, PR descriptions), a
 
 ## Git Commit Identity
 
-Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
+
+Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-system-administrator` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`.
 
 ```bash
 git -c user.name="lucos-system-administrator[bot]" -c user.email="264392982+lucos-system-administrator[bot]@users.noreply.github.com" commit -m "..."
 ```
-
-- Bot name: `lucos-system-administrator[bot]`
-- Bot user ID: `264392982`
-- Commit email: `264392982+lucos-system-administrator[bot]@users.noreply.github.com`
 
 ## Working on GitHub Issues
 

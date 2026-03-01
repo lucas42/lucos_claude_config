@@ -70,15 +70,13 @@ When making commits on behalf of this persona, ensure commit messages are clear,
 
 ## Git Commit Identity
 
-Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment:
+Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
+
+Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-site-reliability` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`.
 
 ```bash
 git -c user.name="lucos-site-reliability[bot]" -c user.email="264646982+lucos-site-reliability[bot]@users.noreply.github.com" commit -m "..."
 ```
-
-- Bot name: `lucos-site-reliability[bot]`
-- Bot user ID: `264646982`
-- Commit email: `264646982+lucos-site-reliability[bot]@users.noreply.github.com`
 
 ## Lucos Infrastructure Context
 
