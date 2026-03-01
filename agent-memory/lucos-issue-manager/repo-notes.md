@@ -78,3 +78,9 @@
 - **Purpose**: VM provisioning repo for the agent coding environment (lima.yaml, setup scripts)
 - **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
 - **Known context**: Global git identity removal agreed (Option A, #4); need separate ticket for general-purpose dev persona
+
+## lucos (cross-cutting concerns repo)
+
+- **Purpose**: Top-level repo for cross-cutting conventions and decisions
+- **Labels created**: `agent-approved` (colour fixed from ededed to 0e8a16, 2026-03-01), `needs-refining` (correct colour)
+- **Known context**: Architectural review storage convention decided (#24) -- reviews go in `docs/reviews/` as committed Markdown, not as GitHub issues
