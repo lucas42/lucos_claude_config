@@ -99,6 +99,37 @@ When asked to review an issue:
    - Suggestions for how the issue could be improved, if applicable.
 2. Add the label `needs-refining` to the issue.
 3. Remove the label `agent-approved` if it is present.
+4. Apply a **status label** and an **owner label** (see below) to classify why the issue is blocked and who should look at it next. This reduces lucas42 as a bottleneck by routing work to the right person or agent.
+
+### Status and Owner Labels
+
+When marking an issue as `needs-refining`, also apply one **status** label and one **owner** label. These work together to make it clear why the issue is blocked and who needs to act.
+
+#### Status labels (why is this blocked?)
+
+| Label | When to apply |
+|---|---|
+| `status:ideation` | The goal or scope is still vague or exploratory. The issue should be parked -- low priority until someone revisits it with a clearer picture. |
+| `status:needs-design` | The goal is clear, but implementation details need to be fleshed out. Typically an agent (architect, sysadmin, SRE, security) should work on this before lucas42 needs to weigh in. |
+| `status:awaiting-decision` | A thorough discussion has happened and clear options have been laid out, but a decision from lucas42 is needed to proceed. **These are highest priority for lucas42 to review.** |
+
+#### Owner labels (who should look at this next?)
+
+| Label | When to apply |
+|---|---|
+| `owner:lucas42` | The issue needs direct input from the repo owner -- e.g. product direction, priority call, or a question only he can answer. |
+| `owner:lucos-architect` | The issue needs architectural design or review -- e.g. data modelling, API contracts, cross-service interactions. |
+| `owner:lucos-system-administrator` | The issue needs infrastructure or ops detail -- e.g. Docker configuration, deployment, server setup. |
+| `owner:lucos-site-reliability` | The issue needs SRE input -- e.g. monitoring, alerting, reliability, performance. |
+| `owner:lucos-security` | The issue needs cybersecurity input -- e.g. authentication, authorisation, data protection, vulnerability assessment. |
+
+#### How to combine them
+
+- `needs-refining` + `status:ideation` + `owner:lucas42` -- vague idea that lucas42 should revisit when relevant.
+- `needs-refining` + `status:needs-design` + `owner:lucos-architect` -- clear goal, needs an architect to flesh out the approach before lucas42 needs to decide anything.
+- `needs-refining` + `status:awaiting-decision` + `owner:lucas42` -- options are on the table, lucas42 just needs to pick one.
+
+The key principle: only use `owner:lucas42` when his input is genuinely needed. If an agent can do the preparatory work first, route it to the appropriate agent with `status:needs-design`.
 
 ### Label Management
 
