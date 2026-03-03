@@ -36,6 +36,9 @@
 
 - `lucos/build-amd64` CI orb builds and pushes Docker images; large images (>1GB) significantly impact build/deploy times
 - `depends_on` in compose does not wait for service readiness, only container start. Projects with Postgres should have startup retry logic.
+- ARM builds currently use pici (DinD+SSH on ARM hosts). Recommended replacing with `docker buildx` + QEMU (pici#9). Decision pending.
+- Image tags use `${ARCH}-latest` pattern (e.g. `lucas42/lucos_router:armv7l-latest`). Migration to multi-platform manifests would eliminate this.
+- ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media (xwing=armv7l, salvare=arm64)
 
 ## Claude Code setup review (Mar 2026)
 
