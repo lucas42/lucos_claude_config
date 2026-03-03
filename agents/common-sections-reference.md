@@ -51,13 +51,13 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 ---
 
-## Section: Working on Issues (Discovery)
+## Section: Reviewing Issues (Discovery)
 
-This section defines how a persona discovers and works through its assigned issues when asked generically (e.g. "work on your issues"). The canonical structure has two steps. Some personas insert additional persona-specific steps between them (e.g. lucos-security reviews dependabot alerts between steps 1 and 2) — these additions are NOT drift.
+This section defines how a persona discovers and reviews its assigned issues when asked to review (e.g. "review your issues"). The canonical structure has two steps. Some personas insert additional persona-specific steps between them (e.g. lucos-security reviews dependabot alerts between steps 1 and 2) — these additions are NOT drift.
 
 ### Step 1: Review Closed Issues You Raised
 
-Before working on new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
+Before looking at new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app {persona-name} \
@@ -71,13 +71,13 @@ For each closed issue returned:
 
 Skip any issues you've already reviewed (check your memory for previously processed issue URLs).
 
-### Step 2: Work Through Assigned Issues
+### Step 2: Review Assigned Issues
 
 ```bash
-~/sandboxes/lucos_agent/get-issues-for-persona {persona-name}
+~/sandboxes/lucos_agent/get-issues-for-persona --review {persona-name}
 ```
 
-This returns all open issues across lucos repositories that carry the `owner:{persona-name}` label. Work through each one in turn. If the script returns nothing, report that there are no currently assigned issues.
+This returns `needs-refining` issues assigned to you. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
 
 ---
 
