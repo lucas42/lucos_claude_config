@@ -29,6 +29,6 @@ Three `status:` labels classify *why* an issue with `needs-refining` is blocked:
 - `status:needs-design` -- goal clear but needs implementation detail from an agent
 - `status:awaiting-decision` -- options discussed, waiting for lucas42 to pick one (highest priority for lucas42)
 
-`owner:` labels indicate who should look next: `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`. These exist across 9 repos as of 2026-03-02.
+`owner:` labels indicate who should look next: `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`. These exist across 11 repos as of 2026-03-02 (added lucos_deploy_orb and lucos_media_metadata_manager).
 
 See [label-colours.md](label-colours.md) for full colour scheme.
