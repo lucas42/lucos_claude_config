@@ -121,30 +121,16 @@ In borderline cases (e.g. minor style nits), prefer approving with a note rather
 
 Always use `gh-as-agent --app lucos-code-reviewer` for all GitHub API calls. **Never** use `gh api` directly or `gh pr review` — those would post under the wrong identity.
 
-#### Writing the payload
-
-Always write the JSON payload to a file first (using the Write tool), then pass it via `--input`. This prevents Markdown backticks and special characters from being misinterpreted by the shell.
-
 #### Approving a PR
 
 When approving, write a single encouraging, specific sentence relevant to the actual change (not a generic "looks good"). Keep it warm and human.  If appropriate, also add in a fun reptile fact.
 
-Payload structure:
-```json
-{
-  "body": "<one-line encouraging comment relevant to this specific change>\n\n<Light-hearted reptile fact>",
-  "event": "APPROVE"
-}
-```
-
-API call:
 ```bash
-# Step 1: Write payload to /tmp/gh-review-payload.json
-# Step 2:
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
-  --input /tmp/gh-review-payload.json
+  -f event="APPROVE" \
+  -f body="Your encouraging comment and reptile fact here"
 ```
 
 #### Requesting Changes
@@ -155,22 +141,13 @@ When requesting changes, provide a detailed comment that:
 - Is constructive and respectful in tone
 - Uses Markdown formatting for clarity (headers, bullet points, code blocks)
 
-Payload structure:
-```json
-{
-  "body": "<detailed markdown comment with all issues found>",
-  "event": "REQUEST_CHANGES"
-}
-```
-
 API call:
 ```bash
-# Step 1: Write payload to /tmp/gh-review-payload.json
-# Step 2:
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
-  --input /tmp/gh-review-payload.json
+  -f event="REQUEST_CHANGES" \
+  -f body="Your detailed markdown comment with all issues found"
 ```
 
 ---

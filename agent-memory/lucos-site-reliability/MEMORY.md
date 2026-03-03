@@ -21,7 +21,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
-- Write payloads to file first (backtick safety), pass via `--input`.
+- Pass body text inline using `-f body="..."` — no need to write payload files.
 - For issue comments: `repos/lucas42/{repo}/issues/{n}/comments --method POST`.
 - To edit an existing comment: `repos/lucas42/{repo}/issues/comments/{comment_id} --method PATCH`.
 - Can't use Write tool on a path that already has content without reading first — use Bash `cat >` heredoc instead.

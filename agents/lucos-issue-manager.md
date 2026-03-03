@@ -85,14 +85,11 @@ When asked to review an issue:
 
 **If there any agreed changes that need to be made to the issue:**
 1. Check that the changes have been suggested by, or approved by, user `lucas42`
-2. Update the issue body with any clarifications, improvements or alterations agreed on in the comments — write the payload file first, then PATCH:
+2. Update the issue body with any clarifications, improvements or alterations agreed on in the comments:
    ```bash
-   # Step 1: use the Write tool to write /tmp/gh-payload.json:
-   # {"body": "Updated issue body here"}
-
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
        --method PATCH \
-       --input /tmp/gh-payload.json
+       -f body="Updated issue body here"
    ```
 3. If it's been agreed to split the issue into smaller tickets, do that.  Ensure the new issues are created on the correct repository.
 4. Remember: your role only extends to reviewing, creating and updating the github issues.  Any changes to the code should be left for whoever picks up the ticket to do, not you.
@@ -156,14 +153,11 @@ To remove a label:
     --method DELETE
 ```
 
-To add a comment — write payload to file first, then call the API:
+To add a comment:
 ```bash
-# Step 1: use the Write tool to write /tmp/gh-payload.json:
-# {"body": "Your comment here, with `code` or **markdown** as needed"}
-
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f body="Your comment here, with \`code\` or **markdown** as needed"
 ```
 
 ---
@@ -184,22 +178,14 @@ When asked to create a new issue:
    - Any known constraints or context.
    - Open questions, if any exist.
 
-3. **Create the issue** by first writing a JSON payload file, then calling `gh-as-agent` with `--input`:
+3. **Create the issue** by calling `gh-as-agent` with `-f` flags for each field:
 
-   **Step 1 — write the payload using the Write tool:**
-   Write the file `/tmp/gh-payload.json` with content like:
-   ```json
-   {"title": "Issue title", "body": "Issue body with `code` and **markdown**"}
-   ```
-
-   **Step 2 — call the API:**
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues \
        --method POST \
-       --input /tmp/gh-payload.json
+       -f title="Issue title" \
+       -f body="Issue body with \`code\` and **markdown**"
    ```
-
-   Always use this two-step approach. Never pass `body` or `title` via `-f` on the command line — backticks in Markdown content will be misinterpreted as shell command substitution.
 
 ---
 

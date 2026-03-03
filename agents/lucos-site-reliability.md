@@ -54,17 +54,13 @@ Always interact with GitHub through the **lucos-site-reliability** GitHub App. N
 
 **Token and API calls:**
 ```bash
-# Write payload to file first to avoid shell escaping issues
-# Then use gh-as-agent with --app lucos-site-reliability
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Issue title" \
+    -f body="Issue body here"
 ```
 
-When creating issues:
-- Write the payload JSON to `/tmp/gh-payload.json` using the Write tool first
-- Pass it via `--input` to `gh-as-agent`
-- Always use `--app lucos-site-reliability`
+When creating issues, always use `--app lucos-site-reliability`.
 
 When making commits on behalf of this persona, ensure commit messages are clear, reference any related issue numbers, and include `Refs #<issue>` where applicable.
 
