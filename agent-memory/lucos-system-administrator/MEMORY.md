@@ -14,6 +14,8 @@ Get user ID via: `curl -s 'https://api.github.com/users/lucos-agent%5Bbot%5D' | 
 
 Always use `git -c user.name="..." -c user.email="..."` on the commit command itself — never `git config` which would affect all subsequent commits.
 
+**The `-c` flags must appear on EVERY commit-writing git operation**, including `--amend`. When amending, git preserves the original author but sets a new committer using the current identity — which without `-c` flags falls back to the global config (`lucos-agent[bot]`). This produces a mismatched author/committer. Confirmed bug in commit `b207d1e` on `lucos_agent` (2026-03-02).
+
 Current VM git config is correct (fixed 2026-02-27). `lima.yaml` in `lucos_agent_coding_sandbox` updated to match.
 
 ## Claude Code permissions: correct settings.json format
