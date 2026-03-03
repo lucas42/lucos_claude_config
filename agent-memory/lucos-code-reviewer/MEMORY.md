@@ -6,3 +6,4 @@
 - Komodo dragon (mentioned 2026-03-03)
 - Chameleon (mentioned 2026-03-03)
 - Thorny devil (mentioned 2026-03-03)
+- Green basilisk lizard (mentioned 2026-03-03)
