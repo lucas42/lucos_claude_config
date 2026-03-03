@@ -8,11 +8,17 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 
 - Pass body text and other fields inline using `-f key=value` — no need to write payload files
 - When using `--app lucos-issue-manager` as the first argument to `gh-as-agent`, all other arguments are passed through to `gh api`
-- `lucos-issue-manager` app does NOT have repo contents/push permissions -- cannot write files via Contents API or git push. Use the default `lucos-agent` app for file commits when needed.
+- `lucos-issue-manager` app has read & write access to repo contents -- can write files via Contents API and git push
+
+## Process documentation
+
+- lucos-issue-manager is responsible for maintaining process documentation (labels docs, workflow docs, triage process docs, etc.)
+- Canonical label docs live at `docs/labels.md` in the `lucas42/lucos` repo (see also Label documentation section below)
+- When process or workflow changes are agreed, update the relevant docs as part of the same piece of work
 
 ## Label documentation
 
-- Canonical label docs live at `docs/labels.md` in the `lucas42/lucos` repo
+- Canonical label docs live at `docs/labels.md` in the `lucas42/lucos` repo (also referenced in Process documentation section above)
 
 ## Label conventions
 
