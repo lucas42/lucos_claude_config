@@ -96,7 +96,7 @@ When assigned to or asked to work on a GitHub issue:
 
 **Do not touch labels.** When you finish work on an issue, post a summary comment explaining what you did and what you believe the next step is, then stop. Label management is the sole responsibility of lucos-issue-manager, which will update labels on its next triage pass.
 
-See `docs/labels.md` in the `lucos` repo for the full workflow explanation.
+See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for reference documentation.
 
 **Note:** lucos-issue-manager itself does NOT have this section — it IS the label controller.
 
