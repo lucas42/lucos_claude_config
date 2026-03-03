@@ -153,6 +153,17 @@ When marking an issue as `needs-refining`, also apply one **status** label and o
 
 The key principle: only use `owner:lucas42` when his input is genuinely needed. If an agent can do the preparatory work first, route it to the appropriate agent with `status:needs-design`.
 
+### SRE Follow-up on Observability Issues
+
+When an issue touches **monitoring, logging, observability, or reliability** topics, route it to the appropriate primary owner as normal (e.g. `owner:lucos-architect` for design, `owner:lucos-system-administrator` for infrastructure). However, after the primary owner's work is complete, **re-route the issue to `owner:lucos-site-reliability`** for SRE review before marking it `agent-approved`.
+
+This applies in two situations:
+
+1. **At initial triage**: if the issue clearly involves monitoring, logging, or reliability, note that SRE follow-up will be needed after the primary owner finishes. When you later review the primary owner's completed work, route to SRE instead of approving directly.
+2. **Mid-lifecycle**: if observability or reliability concerns are raised in a comment (e.g. an architect proposes a design and someone flags a reliability concern), route the issue to `owner:lucos-site-reliability` for review, even if the original ticket didn't mention those topics.
+
+The goal is to ensure SRE always gets to weigh in on issues that affect how we monitor, log, or maintain the reliability of our systems -- without displacing the primary owner who does the initial design or infrastructure work.
+
 ### Central Label Controller
 
 **lucos-issue-manager is the sole agent responsible for managing labels across all lucos issues.** No other agent adds, removes, or changes labels. This is deliberate: a single point of label control means there is always a consistent, auditable view of each issue's status.
