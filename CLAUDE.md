@@ -387,13 +387,38 @@ Example:
 
 ## Dispatching All Agents
 
-When the user says **"all agents, work on your issues"**, launch all six agents in parallel using the Task tool. Do not ask for clarification -- immediately create six parallel Task tool calls, one for each agent, with the prompt `work on your issues`:
+When the user says **"all agents, work on your issues"**, dispatch agents in three sequential phases using the Task tool. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
 
-1. `lucos-issue-manager` -- "work on your issues"
-2. `lucos-code-reviewer` -- "work on your issues"
-3. `lucos-architect` -- "work on your issues"
-4. `lucos-system-administrator` -- "work on your issues"
-5. `lucos-security` -- "work on your issues"
-6. `lucos-site-reliability` -- "work on your issues"
+### Phase 1 (parallel — run immediately)
 
-All six must be launched concurrently (in the same response), not sequentially. Each agent knows how to discover its own backlog.
+Launch these two agents concurrently in the same response:
+
+1. `lucos-issue-manager` — "work on your issues"
+2. `lucos-code-reviewer` — "work on your issues"
+
+**Wait for both to complete before proceeding.**
+
+Rationale: the issue manager runs first to assign `owner:` labels to unowned issues so that Phase 2 agents pick up fresh work. The code reviewer is independent of the issue pipeline and can run in parallel.
+
+### Phase 2 (parallel — after Phase 1 completes)
+
+Once Phase 1 is done, launch these four agents concurrently in the same response:
+
+3. `lucos-architect` — "work on your issues"
+4. `lucos-system-administrator` — "work on your issues"
+5. `lucos-security` — "work on your issues"
+6. `lucos-site-reliability` — "work on your issues"
+
+**Wait for all four to complete before proceeding.**
+
+Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions.
+
+### Phase 3 (sequential — after Phase 2 completes)
+
+Once Phase 2 is done, launch one final agent:
+
+7. `lucos-issue-manager` — "work on your issues"
+
+Rationale: the issue manager reviews any issues that Phase 2 agents touched, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
+
+Each agent knows how to discover its own backlog via its assigned labels.
