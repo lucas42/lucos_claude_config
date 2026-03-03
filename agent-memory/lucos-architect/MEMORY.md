@@ -76,6 +76,7 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Java codebase with long-polling mechanism (`LongPollControllerV3.java`)
 - Polling loop uses `Thread.sleep(1)` busy-wait with nanoTime timeout check
 - Flaky `pollTimeout` test (#79): race condition -- 500ms slack between poll timeout and Mockito verify timeout. Fix: increase Mockito timeout from 2000ms to 3000ms.
+- Device list (#112): in-memory HashMap, never cleaned up. Proposed lazy filtering via `lastSeen` timestamp + 5min threshold. Keep entries in map but exclude from poll response. Awaiting approval.
 
 ## lucos_media_metadata_manager
 
@@ -104,3 +105,33 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Uses `network_mode: host`, single container, service-list baked at Docker build from lucos_configy
 - Email notifications on state changes via gen_smtp_client; suppression window for deploys (10 min)
 - Proposed: `/api/status` JSON endpoint for LLM agent read-only access (#26). Recommended against MCP and against separate process -- existing per-request isolation in server is sufficient.
+
+## lucos_media_seinn
+
+- Node.js music player client (Express server + webpack client + service worker)
+- Service worker handles long-polling to media_manager, caches poll data
+- Device switching: `track-status-update.js` sends position every 30s + on device_notcurrent/device_changing events
+- Playback sync gap (#14): up to 30s stale position when non-initiating device is switched away. Proposed: reduce interval to 5s, optional brief delay on new device before resuming.
+
+## pici
+
+- Docker-in-Docker CI for ARM builds (armv7l on xwing, arm64 on salvare)
+- Stale images (#3): Docker volume accumulates old layers. Proposed: `docker system prune -f --filter "until=48h"` in `quickbuild.sh` after push.
+
+## lucos_repos
+
+- Node.js service, currently minimal (/_info + deprecated webhook)
+- Auto-configure repos (#3): proposed extending as API-driven service with periodic reconciliation. Three sub-items: auto-merge, branch protection rulesets, versioning webhook. Need test job naming convention and versioning webhook clarification.
+- Config reporting (#12): proposed /_info-style JSON endpoint showing per-repo check results. Should be implemented before #3 (read before write).
+
+## lucos_creds
+
+- Go server, SQLite storage, AES-GCM encrypted values
+- Two credential types: simple (key-value) and linked (inter-system API keys)
+- SSH key issue (#61): multiline values break .env format. Proposed fixing .env quoting for multiline values rather than adding a new credential type. Dedicated key lifecycle management (generation, rotation) deferred as unnecessary at current scale (2-3 keys).
+
+## Cross-cutting: User-Agent convention (lucos#19)
+
+- Proposed: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests
+- lucas42 already doing this on some systems, wants convention formalised as ADR + audit
+- Offered to draft ADR in lucas42/lucos repo. Awaiting response.
