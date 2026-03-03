@@ -74,6 +74,9 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Bulk edit is coupled to search: PATCHes same API URL as GET search
 - Recommended client-side Typesense integration via lucos_arachne for better search (#51)
 - Keep existing API search for bulk edit and advanced/null-field search
+- Agreed with lucas42: add dedicated `tracks` collection to arachne (alongside general `items`). Separate arachne issue needed.
+- RDF export has ~20 predicates per track; `items` collection only captures 5 fields. Dedicated collection unlocks faceted search by artist/album/genre/language/year/rating.
+- Note: artist/album/genre values in RDF are encoded as search URLs, need URL-decoding in ingestor.
 
 ## lucos_arachne
 
@@ -82,3 +85,11 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Ingestor consumes RDF from multiple lucos systems, converts to Typesense docs
 - Search endpoint: `/search` proxied to Typesense `/collections/items/documents/search`
 - CORS enabled, supports read-only client keys for browser-side search
+
+## lucos_monitoring
+
+- Erlang OTP application: server (gen_tcp HTTP), fetcher (polls /_info per host every 60s), monitoring_state_server (gen_server with SystemMap + SuppressionMap)
+- State: `Host => {SystemName, SystemChecks, SystemMetrics}` in-memory only, no persistence
+- Uses `network_mode: host`, single container, service-list baked at Docker build from lucos_configy
+- Email notifications on state changes via gen_smtp_client; suppression window for deploys (10 min)
+- Proposed: `/api/status` JSON endpoint for LLM agent read-only access (#26). Recommended against MCP and against separate process -- existing per-request isolation in server is sufficient.

@@ -25,3 +25,4 @@ See topic files for details. Key patterns confirmed in operation:
 - For issue comments: `repos/lucas42/{repo}/issues/{n}/comments --method POST`.
 - To edit an existing comment: `repos/lucas42/{repo}/issues/comments/{comment_id} --method PATCH`.
 - Can't use Write tool on a path that already has content without reading first — use Bash `cat >` heredoc instead.
+- IMPORTANT: When using `-f body="..."` with backtick code spans, the shell will try to execute the backtick content as a subcommand. Always use a heredoc via `BODY=$(cat <<'ENDBODY' ... ENDBODY)` and pass as `--field body="$BODY"` to safely include backtick-formatted code in issue/comment bodies.
