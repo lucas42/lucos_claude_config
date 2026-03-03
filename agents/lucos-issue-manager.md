@@ -195,6 +195,7 @@ The goal is to ensure the security agent always gets to weigh in on issues that 
 
 When marking an issue `agent-approved`, also assign an `owner:*` label to indicate who will implement it. The default is `owner:lucos-developer`. Exceptions:
 
+- **Architecture Decision Records (ADRs) and architectural documentation**: `owner:lucos-architect`. This includes any issue whose primary deliverable is writing an ADR, documenting an architectural convention, or similar documentation-focused work.
 - **Purely infrastructure changes** (Docker config, deployment, server setup with no application code): `owner:lucos-system-administrator`.
 - **Purely monitoring/logging/pipeline work** (deployment pipelines, alerting, observability with no application code): `owner:lucos-site-reliability`.
 - **Purely security work** (authentication setup, vulnerability remediation with no application code): `owner:lucos-security`.
