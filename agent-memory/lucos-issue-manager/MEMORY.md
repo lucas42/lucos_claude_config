@@ -39,6 +39,16 @@ Three `status:` labels classify *why* an issue with `needs-refining` is blocked:
 
 See [label-colours.md](label-colours.md) for full colour scheme.
 
+## Specialist follow-up routing (introduced 2026-03-03)
+
+Two domains get specialist follow-up after the primary owner finishes, before `agent-approved`:
+
+- **SRE**: Issues touching monitoring, logging, observability, or reliability get re-routed to `owner:lucos-site-reliability`
+- **Security**: Issues touching authentication, authorisation, data protection, secret management, or other security topics get re-routed to `owner:lucos-security`
+
+Both also apply mid-lifecycle if concerns are raised in comments after initial triage.
+Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (monitoring endpoint, primary owner architect)
+
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
