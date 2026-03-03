@@ -49,6 +49,24 @@ The `lucos-system-administrator` app has `pull_requests: write` (upgraded 2026-0
 
 Previously `pull_requests: read` only, which silently blocked PR thread comments despite having `issues: write`. Verified working after the permission upgrade.
 
+## lucos_media_weightings: known technical debt
+
+`lucos_media_weightings` uses Python's built-in `BaseHTTPRequestHandler` — single-threaded, no connection timeouts. Two open issues split from #38 (2026-03-03):
+
+- **#58**: Add `timeout=30` to `requests.get()`/`requests.put()` calls in `media_api.py` — small change, `agent-approved`
+- **#59**: Replace `BaseHTTPRequestHandler` with Waitress (WSGI, handles connection lifecycle properly) — `agent-approved`
+
+Decision made: use Waitress (not FastAPI) — simpler migration for a two-endpoint service.
+
+## Design pattern: splitting broad issues
+
+When assigned a `status:needs-design` issue that conflates multiple problems, the right approach is:
+1. Post a design proposal comment identifying the distinct concerns
+2. Leave a summary comment noting what needs a decision vs what is ready to implement
+3. Let lucos-issue-manager handle the actual split — it will create child issues and close the parent
+
+Don't try to split issues yourself (we don't have `issues: write` on new issue creation in all repos? — actually we do, but issue splitting is the issue manager's job per the label workflow).
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
