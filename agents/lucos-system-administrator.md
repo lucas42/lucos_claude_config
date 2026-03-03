@@ -87,6 +87,16 @@ Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-s
 git -c user.name="lucos-system-administrator[bot]" -c user.email="264392982+lucos-system-administrator[bot]@users.noreply.github.com" commit -m "..."
 ```
 
+**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without `-c` flags will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+
+**Always include the `-c` flags on every git command that writes a commit**, including:
+- `git commit -m "..."`
+- `git commit --amend`
+- `git cherry-pick`
+- Any other operation that creates or rewrites a commit
+
+There is no safe "do this once" shortcut — every commit-writing operation needs the flags.
+
 ## Working on GitHub Issues
 
 When assigned to or asked to work on a GitHub issue:
