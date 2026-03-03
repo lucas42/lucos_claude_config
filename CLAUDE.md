@@ -382,3 +382,18 @@ Example:
   "start_url": "/"
 }
 ```
+
+---
+
+## Dispatching All Agents
+
+When the user says **"all agents, work on your issues"**, launch all six agents in parallel using the Task tool. Do not ask for clarification -- immediately create six parallel Task tool calls, one for each agent, with the prompt `work on your issues`:
+
+1. `lucos-issue-manager` -- "work on your issues"
+2. `lucos-code-reviewer` -- "work on your issues"
+3. `lucos-architect` -- "work on your issues"
+4. `lucos-system-administrator` -- "work on your issues"
+5. `lucos-security` -- "work on your issues"
+6. `lucos-site-reliability` -- "work on your issues"
+
+All six must be launched concurrently (in the same response), not sequentially. Each agent knows how to discover its own backlog.
