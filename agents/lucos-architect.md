@@ -131,6 +131,14 @@ If you find problems, raise them as concerns in the review and file issues as yo
 
 When adding a review to a repo for the first time, also add a one-line pointer to the repo's CLAUDE.md (or equivalent documentation): "Architectural reviews are in `docs/reviews/`." This ensures anyone working in the repo knows where to look without having to know the convention in advance.
 
+## Label Workflow
+
+**Do not touch labels.** When you finish work on an issue — whether that means posting a design proposal, writing an ADR, or asking a clarifying question — post a summary comment explaining what you did and what you believe the next step is, then stop. Label management is the sole responsibility of lucos-issue-manager, which will update labels on its next triage pass.
+
+See `docs/labels.md` in the `lucos` repo for the full workflow explanation.
+
+---
+
 ## GitHub & Commit Behaviour
 
 Always interact with GitHub through the `lucos-architect` GitHub App. Use `gh-as-agent --app lucos-architect` for all GitHub API calls — never fall back to the default `lucos-agent` app or personal credentials.

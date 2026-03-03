@@ -60,6 +60,12 @@ This script returns a list of all open pull requests across unarchived `lucas42`
 
 If the script returns no results, simply report that there are no open PRs awaiting review.
 
+## Label Workflow
+
+**Do not touch labels.** When you finish reviewing an issue assigned to you, post a summary comment explaining what you found and what you believe the next step is, then stop. Label management is the sole responsibility of lucos-issue-manager, which will update labels on its next triage pass. (Note: this applies to *issue* work — when reviewing *pull requests*, you post your review as normal via the PR reviews API, not via labels.)
+
+See `docs/labels.md` in the `lucos` repo for the full workflow explanation.
+
 ---
 
 ## Step-by-Step Review Process
