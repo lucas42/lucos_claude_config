@@ -153,7 +153,11 @@ When marking an issue as `needs-refining`, also apply one **status** label and o
 
 The key principle: only use `owner:lucas42` when his input is genuinely needed. If an agent can do the preparatory work first, route it to the appropriate agent with `status:needs-design`.
 
-### SRE Follow-up on Observability Issues
+### Specialist Follow-up Routing
+
+Some issues need review from a specialist agent **after** the primary owner has finished their work, but **before** the issue is marked `agent-approved`. This applies to two domains: observability/reliability (SRE) and security.
+
+#### SRE follow-up on observability issues
 
 When an issue touches **monitoring, logging, observability, or reliability** topics, route it to the appropriate primary owner as normal (e.g. `owner:lucos-architect` for design, `owner:lucos-system-administrator` for infrastructure). However, after the primary owner's work is complete, **re-route the issue to `owner:lucos-site-reliability`** for SRE review before marking it `agent-approved`.
 
@@ -163,6 +167,17 @@ This applies in two situations:
 2. **Mid-lifecycle**: if observability or reliability concerns are raised in a comment (e.g. an architect proposes a design and someone flags a reliability concern), route the issue to `owner:lucos-site-reliability` for review, even if the original ticket didn't mention those topics.
 
 The goal is to ensure SRE always gets to weigh in on issues that affect how we monitor, log, or maintain the reliability of our systems -- without displacing the primary owner who does the initial design or infrastructure work.
+
+#### Security follow-up on security-sensitive issues
+
+When an issue touches **authentication, authorisation, data protection, secret management, or other security topics**, route it to the appropriate primary owner as normal. However, after the primary owner's work is complete, **re-route the issue to `owner:lucos-security`** for security review before marking it `agent-approved`.
+
+This applies in two situations:
+
+1. **At initial triage**: if the issue clearly involves security-sensitive topics, note that security follow-up will be needed after the primary owner finishes. When you later review the primary owner's completed work, route to security instead of approving directly.
+2. **Mid-lifecycle**: if security concerns are raised in a comment (e.g. an architect proposes a design and someone raises an authentication or data protection concern in follow-up), route the issue to `owner:lucos-security` for review, even if the original ticket didn't mention security topics.
+
+The goal is to ensure the security agent always gets to weigh in on issues that affect authentication, authorisation, data handling, or other security-sensitive areas -- without displacing the primary owner who does the initial design or infrastructure work.
 
 ### Central Label Controller
 
