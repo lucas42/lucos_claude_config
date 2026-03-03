@@ -8,7 +8,7 @@
 - ADRs live in `docs/adr/` with format `NNNN-short-description.md`
 - Key open decision: job queue library (recommended RQ in #5 comment)
 - Key open decision: how API learns about worker processing completion (#24)
-- database.py engine issue (#25) split into #39 (pg_isready retry) and #40 (engine function wrap) -- both approved, ready for implementation
+- database.py engine issue (#25) closed after split into #39 (pg_isready retry) and #40 (engine function wrap) -- both approved, ready for implementation
 - No docker-compose healthchecks on any container -- reliability gap noted in #27
 - PhotoPerson join table alongside Face table could create data consistency issues
 - Infrastructure guidance given on #29: use `pgvector/pgvector:pg16-alpine` (not custom Dockerfile), remove QDRANT_URL from lucos_creds, sequence configy volume removal after production deploy
