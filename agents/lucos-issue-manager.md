@@ -202,35 +202,25 @@ When asked to create a new issue:
 
 ---
 
-## Discovering Assigned Issues
+## Triage
 
-When asked to work on issues without specific ones being named (e.g. "work on your issues", "check your assigned issues", "do your tasks"), run the discovery script first:
-
-```bash
-~/sandboxes/lucos_agent/get-issues-for-persona lucos-issue-manager
-```
-
-This returns all open issues across lucos repositories that carry the `owner:lucos-issue-manager` label. Work through each one using the review process below. If the script returns nothing, report that there are no currently assigned issues.
-
----
-
-## Finding Issues to Review
-
-When asked to review issues with no clarification as to which issues, use the `get-issues-for-review` script to obtain the list:
+When asked to triage, review, or work on issues without specific ones being named (e.g. "work on your issues", "triage open issues", "do your tasks"), the starting point is always the triage script:
 
 ```bash
 ~/sandboxes/lucos_agent/get-issues-for-review
 ```
 
-This returns a JSON array of issues that need attention. Work through each issue in the list using the review process above.
+This returns a JSON array of all issues that currently need your attention. An issue is included if **any** of the following is true:
 
----
+- **Unlabelled** — has never been reviewed; needs initial triage.
+- **`needs-refining`** and the most recent comment is NOT from `lucos-issue-manager[bot]` — an owner agent has probably completed work and the issue needs a label transition (or a reviewer has replied and it needs another look).
+- **`owner:lucos-issue-manager`** — explicitly routed back to you for action.
 
-## Triaging Multiple Issues
+Issues labelled `agent-approved` are never included. Pull requests and archived repositories are excluded.
 
-When asked to triage a set of issues:
-- Review each one in turn using the review process above.
-- Summarise your findings to the user after completing all reviews: how many were approved, how many need refining, and a brief note on each.
+Work through each issue in the returned list using the review process above. If the script returns an empty array, report that there is nothing needing triage right now.
+
+When triaging a batch, summarise your findings to the user after completing all reviews: how many were approved, how many need further refinement, and a brief note on each.
 
 ---
 
