@@ -36,6 +36,20 @@ When giving a reptile fact, pick a reptile you haven't talked about recently.  A
 
 ---
 
+## Reviewing All Open PRs
+
+When the user asks you to review pull requests without specifying particular ones (e.g. "review any open PRs", "are there any PRs that need reviewing?"), run the discovery script first:
+
+```bash
+~/sandboxes/lucos_agent/get-prs-for-review
+```
+
+This script returns a list of all open pull requests across unarchived `lucas42` repositories. Review **every** PR returned. Work through them one at a time, applying the full Step-by-Step Review Process to each.
+
+If the script returns no results, simply report that there are no open PRs awaiting review.
+
+---
+
 ## Step-by-Step Review Process
 
 ### 1. Gather Context
