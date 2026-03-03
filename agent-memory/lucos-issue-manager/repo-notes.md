@@ -35,9 +35,10 @@
 ## lucos_deploy_orb
 
 - **Purpose**: CircleCI orb for building and deploying lucos services
-- **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-26)
+- **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-26); triage labels created 2026-03-02
 - **Default labels present**: bug, documentation, duplicate, enhancement, good first issue, help wanted, invalid, question, wontfix
 - **Known context**: Orb defines build and deploy jobs; deploy command is in `src/commands/deploy.yml`; uses custom image tagging (issue #2 proposes switching to docker manifests)
+- **Open issue**: #8 (CircleCI access for SRE agent) -- awaiting lucas42 decision on security concerns raised by lucos-security
 
 ## lucos_media_seinn
 
@@ -60,7 +61,9 @@
 - **Purpose**: Personal photo library with upload, face detection, and people management
 - **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
 - **Architecture**: API + worker + Postgres + Redis (Qdrant being replaced by pgvector per #29)
-- **Known context**: Early stage, no photos processed yet; ADR-0001 decided pgvector over Qdrant; several architectural issues awaiting lucas42 decisions (#24, #25, #26)
+- **Known context**: Early stage, no photos processed yet; ADR-0001 decided pgvector over Qdrant
+- **Key decision (2026-03-02)**: Worker is allowed to call Loganne directly (#24 approved); constraint that only API emits external domain events has been lifted
+- **Split issues**: #25 split into #39 (pg_isready retry) and #40 (wrap engine creation) -- both agent-approved
 
 ## lucos_configy
 
@@ -91,3 +94,11 @@
 - **Purpose**: Top-level repo for cross-cutting conventions and decisions
 - **Labels created**: `agent-approved` (colour fixed from ededed to 0e8a16, 2026-03-01), `needs-refining` (correct colour)
 - **Known context**: Architectural review storage convention decided (#24) -- reviews go in `docs/reviews/` as committed Markdown, not as GitHub issues; Security Advisory practice proposed (#25, needs-refining, awaiting lucas42 decisions)
+
+## lucos_media_metadata_manager
+
+- **Language**: JavaScript (Node.js)
+- **Purpose**: Media metadata management; track metadata, search, bulk updates
+- **Labels created**: `agent-approved`, `needs-refining`, triage labels (created 2026-03-02)
+- **Known context**: Search currently uses SQLite LIKE queries; #51 proposes switching to lucos_arachne search index; #8 (whitespace trimming) proposed to be closed in favour of #51
+- **Related repos**: lucos_media_manager, lucos_eolas, lucos_arachne, lucos_search_component
