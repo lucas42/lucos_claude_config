@@ -51,3 +51,34 @@ Key issues filed:
 - lucas42/lucos_agent_coding_sandbox#5: README has wrong bot user ID (uses App ID)
 
 Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Main weakness is identity data sprawl and lack of automation for config repo maintenance.
+
+## lucos_contacts
+
+- Django app with calendar ICS endpoint (`app/agents/calendar.py`)
+- Calendar uses `nextOccurence()` which only returns future dates -- no historical events
+- 265 starred contacts, 131 calendar events in production (as of Mar 2026)
+- Recommended 1-month rolling lookback for calendar history (#523)
+- `lucos_contacts_gphotos_import`: standalone HTML-scraping import tool pattern (view-source, paste, run script)
+- Recommended same standalone-repo pattern for Facebook import (#7), scoped to names+birthdays
+
+## lucos_media_manager
+
+- Java codebase with long-polling mechanism (`LongPollControllerV3.java`)
+- Polling loop uses `Thread.sleep(1)` busy-wait with nanoTime timeout check
+- Flaky `pollTimeout` test (#79): race condition -- 500ms slack between poll timeout and Mockito verify timeout. Fix: increase Mockito timeout from 2000ms to 3000ms.
+
+## lucos_media_metadata_manager
+
+- PHP front-end for media metadata API
+- Search currently delegates to API (`LIKE "%query%"` in SQLite)
+- Bulk edit is coupled to search: PATCHes same API URL as GET search
+- Recommended client-side Typesense integration via lucos_arachne for better search (#51)
+- Keep existing API search for bulk edit and advanced/null-field search
+
+## lucos_arachne
+
+- Architecture: nginx web proxy + Typesense search + Apache Jena Fuseki triplestore + Python ingestor + explore UI
+- Typesense `items` collection: `type`, `category` (facets), `pref_label`, `labels`, `description`, `lyrics`, `lang_family`
+- Ingestor consumes RDF from multiple lucos systems, converts to Typesense docs
+- Search endpoint: `/search` proxied to Typesense `/collections/items/documents/search`
+- CORS enabled, supports read-only client keys for browser-side search
