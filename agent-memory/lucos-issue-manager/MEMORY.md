@@ -38,3 +38,12 @@ Three `status:` labels classify *why* an issue with `needs-refining` is blocked:
 `owner:` labels indicate who should look next: `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`. These exist across 11 repos as of 2026-03-02 (added lucos_deploy_orb and lucos_media_metadata_manager).
 
 See [label-colours.md](label-colours.md) for full colour scheme.
+
+## Issue closure policy
+
+- lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
+- Examples: issue superseded by other issues, split into sub-tickets, agreed in discussion to be obsolete
+- Use `state_reason="completed"` when the goal was achieved (e.g. via sub-tickets), `"not_planned"` when discarding
+- Always leave a brief comment explaining why before closing
+- Remove `needs-refining`, `status:*`, and `owner:*` labels before closing
+- Granted by lucas42 on 2026-03-03
