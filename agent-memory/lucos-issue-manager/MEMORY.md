@@ -28,16 +28,32 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 - `agent-approved` = `0e8a16` (green), `needs-refining` = `d93f0b` (orange)
 - User `lucas42` has explicitly requested consistent label colours across all repos
 
-## Triage labels (introduced 2026-03-02)
+## Triage labels
 
-Three `status:` labels classify *why* an issue with `needs-refining` is blocked:
-- `status:ideation` -- goal/scope still vague; park until relevant
-- `status:needs-design` -- goal clear but needs implementation detail from an agent
-- `status:awaiting-decision` -- options discussed, waiting for lucas42 to pick one (highest priority for lucas42)
+### Status labels
+- `status:ideation` -- goal/scope still vague; park until relevant (used with `needs-refining`)
+- `status:needs-design` -- goal clear but needs implementation detail from an agent (used with `needs-refining`)
+- `status:awaiting-decision` -- options discussed, waiting for lucas42 to pick one (used with `needs-refining`)
+- `status:blocked` -- well-defined but blocked by another issue (used with `agent-approved`)
 
-`owner:` labels indicate who should look next: `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`. These exist across 11 repos as of 2026-03-02 (added lucos_deploy_orb and lucos_media_metadata_manager).
+### Owner labels
+`owner:` labels indicate who should look next. Used with both `needs-refining` (review) and `agent-approved` (implementation).
+- `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`, `owner:lucos-developer`
 
-See [label-colours.md](label-colours.md) for full colour scheme.
+### Priority labels
+- `priority:high` (red), `priority:medium` (yellow), `priority:low` (light blue)
+- No priority label = not yet prioritised (distinct from medium)
+- Set during triage when marking agent-approved
+
+### Implementation assignment (introduced 2026-03-03)
+When marking `agent-approved`, also assign an `owner:*` label for implementation:
+- Default: `owner:lucos-developer`
+- Purely infra: `owner:lucos-system-administrator`
+- Purely monitoring/logging/pipelines: `owner:lucos-site-reliability`
+- Purely security: `owner:lucos-security`
+- Mixed work: `owner:lucos-developer` (ensure specialist reviewed first)
+
+All labels exist across 16 repos. See [label-colours.md](label-colours.md) for full colour scheme.
 
 ## Specialist follow-up routing (introduced 2026-03-03)
 

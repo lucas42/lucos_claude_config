@@ -16,6 +16,7 @@ All labels created or managed by lucos-issue-manager should use consistent colou
 | `status:ideation` | `c5def5` | Light blue | Goal/scope still being explored; low priority, park until relevant |
 | `status:needs-design` | `fbca04` | Yellow | Goal clear but implementation details need fleshing out by an agent |
 | `status:awaiting-decision` | `b60205` | Red | Options discussed; waiting for lucas42 to make a final call |
+| `status:blocked` | `1d76db` | Blue | Well-defined but blocked by another issue |
 
 ## Owner labels (who should look at this next)
 
@@ -26,6 +27,15 @@ All labels created or managed by lucos-issue-manager should use consistent colou
 | `owner:lucos-system-administrator` | `bfdadc` | Light teal | Needs infrastructure/ops review |
 | `owner:lucos-site-reliability` | `fef2c0` | Cream | Needs SRE review |
 | `owner:lucos-security` | `f9d0c4` | Light pink | Needs cybersecurity input |
+| `owner:lucos-developer` | `c2e0c6` | Light green | Implementation work assigned to developer |
+
+## Priority labels (relative importance)
+
+| Label | Colour (hex) | Visual | Rationale |
+|---|---|---|---|
+| `priority:high` | `b60205` | Red | High impact; pick up soon |
+| `priority:medium` | `fbca04` | Yellow | Standard priority; normal queue order |
+| `priority:low` | `c5def5` | Light blue | Nice to have; pick up when queue is clear |
 
 ## Notes
 

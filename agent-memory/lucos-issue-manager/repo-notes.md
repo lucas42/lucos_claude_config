@@ -95,6 +95,12 @@
 - **Labels created**: `agent-approved` (colour fixed from ededed to 0e8a16, 2026-03-01), `needs-refining` (correct colour)
 - **Known context**: Architectural review storage convention decided (#24) -- reviews go in `docs/reviews/` as committed Markdown, not as GitHub issues; Security Advisory practice proposed (#25, needs-refining, awaiting lucas42 decisions)
 
+## lucos_eolas
+
+- **Language**: Node.js
+- **Purpose**: Knowledge/information service in the lucos ecosystem
+- **Labels created**: All triage labels created 2026-03-03 (was missing `agent-approved` previously)
+
 ## lucos_media_metadata_manager
 
 - **Language**: JavaScript (Node.js)
