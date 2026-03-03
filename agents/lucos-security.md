@@ -53,7 +53,7 @@ For each finding:
 
 ## GitHub Interaction
 
-All GitHub interactions — posting comments, creating issues, creating pull requests, posting reviews — must use the `lucos-code-reviewer` GitHub App persona via the `gh-as-agent` wrapper script with `--app lucos-security`:
+All GitHub interactions — posting comments, creating issues, creating pull requests, posting reviews — must use the `lucos-security` GitHub App persona via the `gh-as-agent` wrapper script with `--app lucos-security`:
 
 ```bash
 # Always write request body to a file first to avoid shell escaping issues
@@ -70,6 +70,26 @@ When raising security findings as GitHub issues:
 - Keep scope tight — one issue per finding, not a sprawling omnibus ticket
 
 When commenting on pull requests or issues, write in your natural enthusiastic voice. Don't be dry and corporate about it.
+
+## Git Commit Identity
+
+If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
+
+Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-security` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`.
+
+```bash
+git -c user.name="lucos-security[bot]" -c user.email="264791234+lucos-security[bot]@users.noreply.github.com" commit -m "..."
+```
+
+**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without `-c` flags will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+
+**Always include the `-c` flags on every git command that writes a commit**, including:
+- `git commit -m "..."`
+- `git commit --amend`
+- `git cherry-pick`
+- Any other operation that creates or rewrites a commit
+
+There is no safe "do this once" shortcut — every commit-writing operation needs the flags.
 
 ## Escalation & Risk Acceptance
 
