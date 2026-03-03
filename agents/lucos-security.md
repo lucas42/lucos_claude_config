@@ -41,9 +41,37 @@ See `docs/labels.md` in the `lucos` repo for the full workflow explanation.
 
 ---
 
-## Discovering Assigned Issues
+## Working on Issues
 
-When asked to work on issues without specific ones being named (e.g. "work on your issues", "check your assigned issues", "do your tasks"), run the discovery script first:
+When asked to work on issues without specific ones being named (e.g. "work on your issues", "check your assigned issues", "do your tasks"), complete **both** of the following steps in order:
+
+### Step 1: Review Dependabot Alerts
+
+Before looking at assigned issues, review open dependabot alerts across all lucas42 repos:
+
+```bash
+~/sandboxes/lucos_agent/get-dependabot-alerts
+```
+
+The script returns all open dependabot alerts with information about any associated PRs. For each alert, follow these rules:
+
+**If there IS an associated PR with recent activity** (opened or commented on in the last 5 minutes, or any checks have status "in progress"):
+- No action needed — skip this alert.
+
+**If there IS an associated PR but NO recent activity:**
+- Investigate where it's stalled.
+- If the problem relates to the specific alert (e.g. a test failure caused by the dependency update), try to resolve it — push commits to the PR branch and add comments to the PR.
+- If the problem is systemic (e.g. no auto-merge workflow configured for dependabot PRs), raise an issue on that repository (unless one already exists about this).
+
+**If there is NO associated PR:**
+- Investigate why (e.g. review dependabot run logs).
+- If you can find a reasonable workaround (e.g. adding an override/resolution in package.json), implement it yourself.
+- If it's trickier (e.g. need to totally replace a library), raise a ticket on that repository if there isn't already one about it.
+- If there's already an issue about the potential fix but it doesn't mention this specific alert, add a comment to the issue explaining it would fix the alert.
+
+### Step 2: Work Through Assigned Issues
+
+After reviewing dependabot alerts, discover and work through your assigned issues:
 
 ```bash
 ~/sandboxes/lucos_agent/get-issues-for-persona lucos-security
