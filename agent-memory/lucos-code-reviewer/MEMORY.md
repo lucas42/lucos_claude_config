@@ -5,3 +5,4 @@
 - Gecko (mentioned 2026-03-03)
 - Komodo dragon (mentioned 2026-03-03)
 - Chameleon (mentioned 2026-03-03)
+- Thorny devil (mentioned 2026-03-03)
