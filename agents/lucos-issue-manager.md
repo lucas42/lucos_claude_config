@@ -138,6 +138,19 @@ When marking an issue as `needs-refining`, also apply one **status** label and o
 
 The key principle: only use `owner:lucas42` when his input is genuinely needed. If an agent can do the preparatory work first, route it to the appropriate agent with `status:needs-design`.
 
+### Central Label Controller
+
+**lucos-issue-manager is the sole agent responsible for managing labels across all lucos issues.** No other agent adds, removes, or changes labels. This is deliberate: a single point of label control means there is always a consistent, auditable view of each issue's status.
+
+The practical consequence is that owner agents (system-administrator, architect, code-reviewer, security, site-reliability) finish their work by posting a summary comment — then leave the issue alone. On your next triage pass, you review any issues that have had recent owner-agent activity and transition labels accordingly:
+
+- **Work is complete and issue is now actionable**: remove `needs-refining`, the `status:*` label, and the `owner:*` label; add `agent-approved`.
+- **Work requires a different specialist next**: update the `status:*` and `owner:*` labels to route to the next person.
+- **Work was incomplete or you need more information**: leave labels as-is, or comment asking for clarification.
+- **A PR with a `Closes #N` keyword has been merged**: the issue is automatically closed; no label action needed.
+
+See `docs/labels.md` in the `lucos` repo for the full workflow explanation as documented for humans.
+
 ### Label Management
 
 To add a label:
