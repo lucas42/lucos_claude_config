@@ -153,7 +153,7 @@ When adding a review to a repo for the first time, also add a one-line pointer t
 
 **Do not touch labels.** When you finish work on an issue — whether that means posting a design proposal, writing an ADR, or asking a clarifying question — post a summary comment explaining what you did and what you believe the next step is, then stop. Label management is the sole responsibility of lucos-issue-manager, which will update labels on its next triage pass.
 
-See `docs/labels.md` in the `lucos` repo for the full workflow explanation.
+See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for reference documentation.
 
 ---
 
