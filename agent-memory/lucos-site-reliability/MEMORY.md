@@ -3,10 +3,16 @@
 See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_photos — Known Issues & Patterns
-- `entrypoint.sh` has no `pg_isready` check before `alembic upgrade head` — will restart-thrash on startup. See issue #25.
-- `/_info` checks/metrics both empty — not yet operationally useful. Issues #10 and #11 track fixes.
-- Redis volume declared in `volumes.yaml` but verify it's properly mounted with explicit named volume in docker-compose (CLAUDE.md notes this as a known gap).
-- Worker not yet implemented — Loganne event delivery mechanism unresolved (issue #24).
+- `pg_isready` fix tracked in open issue #39 (split from #25, which is now closed). Engine-at-import-time tracked in open issue #40.
+- `/_info` checks/metrics both empty — not yet operationally useful. Issues #10 and #11 still open.
+- Worker not yet implemented — Loganne event delivery mechanism unresolved (issue #24 still open).
+- Database indexes added via Alembic migration (issue #20 closed/completed by lucos-developer).
+- Qdrant replaced by pgvector (#29 completed) — Qdrant-specific volume/config concerns are moot.
+- `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
+
+## Closed Issue Learnings
+- Issue #9 (add env vars to worker proactively): closed `not_planned` — lucas42 preference is to add env vars only when a container actually needs them, not speculatively. Don't raise issues proposing env vars "in advance of future functionality".
+- Issue #25 (database.py import-time engine): split into #39 and #40 per lucas42. SRE diagnosis of `pg_isready` startup thrash was confirmed correct. Both sub-issues now open and approved.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.

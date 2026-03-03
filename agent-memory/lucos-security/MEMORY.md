@@ -66,6 +66,22 @@ Erlang's `os:cmd/1` is equivalent to a shell `system()` call — any unsanitised
 
 `lucos_monitoring/src/server.erl` renders `techDetail` and `debug` fields from remote `/_info` endpoints directly into HTML without encoding. No Erlang HTML-escaping library is currently used. Any lucos service doing manual string concatenation into HTML should be checked for this. Fix: escape `<`, `>`, `&`, `"` before interpolation; run URL-linkification regex on already-escaped content.
 
+## Policy: lucos-security PRs Are NOT Auto-Merged (Decision: 2026-03-03)
+
+**lucas42 explicitly rejected auto-merging lucos-security[bot] PRs** (see lucas42/lucos#26, closed as "not planned").
+
+Rationale: Dependabot PRs are deterministic; LLM-generated PRs are non-deterministic and need human/reviewer approval before merging.
+
+The intended path is: lucos-security raises PR -> lucos-code-reviewer approves it -> auto-merge triggers. This is tracked in lucas42/lucos_photos#42.
+
+**Do not raise issues or PRs asking for lucos-security[bot] to be added to auto-merge conditions.**
+
+## Accepted Risk: ReDoS in vue 2 (vue-leaflet-antimeridian)
+
+vue-leaflet-antimeridian uses Vue 2 (via vue2-leaflet peerDep). Vue 2 is EOL and contains an unfixed ReDoS in `parseHTML`. **lucas42 has consciously accepted this risk** (see lucas42/vue-leaflet-antimeridian#4, 2026-03-03). No fix available without a full Vue 3 migration.
+
+Do not raise this alert again. If the alert resurfaces, reference the accepted risk decision in #4.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.

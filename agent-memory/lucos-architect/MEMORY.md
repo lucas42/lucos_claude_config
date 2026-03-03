@@ -4,13 +4,14 @@
 
 - Reviewed Feb 2026 (commit c3be2c0). Original summary was filed as issue #27 (now closed -- wrong artefact type)
 - Architecture: FastAPI API + Python worker + Postgres + Redis, 4 containers (Qdrant removed per ADR-0001)
-- ADR-0001: Use pgvector instead of Qdrant for face embeddings (decided #23, implementation #29)
+- ADR-0001: Use pgvector instead of Qdrant for face embeddings (decided #23, implemented #29, both closed)
 - ADRs live in `docs/adr/` with format `NNNN-short-description.md`
 - Key open decision: job queue library (recommended RQ in #5 comment)
 - Key open decision: how API learns about worker processing completion (#24)
-- database.py has module-level engine creation -- fragile pattern (#25)
+- database.py engine issue (#25) split into #39 (pg_isready retry) and #40 (engine function wrap) -- both approved, ready for implementation
 - No docker-compose healthchecks on any container -- reliability gap noted in #27
 - PhotoPerson join table alongside Face table could create data consistency issues
+- Infrastructure guidance given on #29: use `pgvector/pgvector:pg16-alpine` (not custom Dockerfile), remove QDRANT_URL from lucos_creds, sequence configy volume removal after production deploy
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -31,6 +32,9 @@
 
 - Module-level side effects in shared packages (database connections, env var reads) are a recurring fragility pattern. Watch for this in other projects.
 - The lucos convention of hardcoding auth domain as `https://auth.l42.eu` is sometimes expressed as a compose env var (`LUCOS_AUTHENTICATION_URL`), which is confusing. Better to hardcode in application code.
+- When recommending infrastructure changes that span multiple repos/systems, always specify sequencing dependencies explicitly (e.g. deploy before removing configy entries, not the other way round). This was validated on the Qdrant removal work.
+- Summary/tracking issues are the wrong artefact for architectural reviews. Confirmed by #27 closure. Reviews go in `docs/reviews/`, individual actionable issues are the work items.
+- lucas42 prefers splitting multi-concern issues into separate tickets for easier implementation (validated on #25 split into #39/#40). Offer the split proactively when filing issues with distinct scopes.
 
 ## Infrastructure notes
 
@@ -44,16 +48,19 @@
 
 Reviewed all 3 repos: `lucos_claude_config` (~/.claude), `lucos_agent`, `lucos_agent_coding_sandbox`.
 
-Key issues filed:
-- lucas42/lucos_agent#8: Persona identity scattered across 5+ locations in 3 repos. Root cause of "adding a persona is cumbersome". Recommended: single personas.json registry.
+Key issues filed (closed):
+- lucas42/lucos_agent#8: DONE. `personas.json` created as single source of truth in `lucos_agent`. Decision: keep local (not configy) for zero-network-dependency at token generation time. Follow-up: lucos_configy#33 for optional HTTP API later.
+- lucas42/lucos_claude_config#4: DONE. Cron job (*/15) auto-commits `agent-memory/` only, using lucos-system-administrator[bot] identity. Script at `~/.claude/scripts/commit-agent-memory.sh`.
+- lucas42/lucos_agent_coding_sandbox#3: DONE (fixed by lucos-system-administrator as part of other work).
+
+Key issues filed (open):
 - lucas42/lucos_agent#9: get-token has no caching; generates fresh token per API call. Latency and rate-limit concern.
 - lucas42/lucos_claude_config#3: Three persona files have wrong memory paths (/Users/lucas/ instead of /home/lucas.linux/)
-- lucas42/lucos_claude_config#4: No mechanism to auto-commit agent memory changes
 - lucas42/lucos_claude_config#5: CLAUDE.md too large, mixes reference docs with agent instructions. Recommend factoring out.
 - lucas42/lucos_agent_coding_sandbox#4: Global git identity creates silent fallback when persona forgets -c flags
 - lucas42/lucos_agent_coding_sandbox#5: README has wrong bot user ID (uses App ID)
 
-Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Main weakness is identity data sprawl and lack of automation for config repo maintenance.
+Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Identity sprawl partially addressed (personas.json exists), auto-commit for memory now in place. Remaining: token caching, memory path fix, CLAUDE.md restructure, git identity fallback risk, README correction.
 
 ## lucos_contacts
 
