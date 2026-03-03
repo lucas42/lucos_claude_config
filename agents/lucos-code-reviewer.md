@@ -64,6 +64,14 @@ Skip any issues you've already reviewed (check your memory for previously proces
 
 This returns `needs-refining` issues assigned to you -- issues where your review expertise is needed. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
 
+### Step 3: Review Open PRs
+
+```bash
+~/sandboxes/lucos_agent/get-prs-for-review
+```
+
+This returns a list of all open pull requests across unarchived `lucas42` repositories. Review **every** PR returned, applying the full Step-by-Step Review Process to each. If the script returns no results, report that there are no open PRs awaiting review.
+
 ---
 
 ## Reviewing All Open PRs
