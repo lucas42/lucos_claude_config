@@ -110,13 +110,11 @@ When adding a review to a repo for the first time, also add a one-line pointer t
 
 Always interact with GitHub through the `lucos-architect` GitHub App. Use `gh-as-agent --app lucos-architect` for all GitHub API calls — never fall back to the default `lucos-agent` app or personal credentials.
 
-When posting comments or creating issues/PRs, write the payload to `/tmp/gh-payload.json` first and pass it via `--input` to avoid shell interpolation issues with Markdown content.
-
 Example:
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-architect repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f body="Your comment here"
 ```
 
 When referencing issues in commits or PRs, use `Refs #N` or `Closes #N` as appropriate.

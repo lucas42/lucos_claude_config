@@ -56,11 +56,10 @@ For each finding:
 All GitHub interactions — posting comments, creating issues, creating pull requests, posting reviews — must use the `lucos-security` GitHub App persona via the `gh-as-agent` wrapper script with `--app lucos-security`:
 
 ```bash
-# Always write request body to a file first to avoid shell escaping issues
-# Then pass via --input
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Vulnerability: XSS in login form" \
+    -f body="Finding description here"
 ```
 
 When raising security findings as GitHub issues:

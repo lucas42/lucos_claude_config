@@ -4,10 +4,10 @@
 
 See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 
-## GitHub API quirks
+## GitHub API
 
-- zsh does not support `labels[]=foo` syntax on the command line; always use `--input` with a JSON file for label operations
-- When using `--app lucos_issue_manager` as the first argument to `gh-as-agent`, all other arguments are passed through to `gh api`
+- Pass body text and other fields inline using `-f key=value` — no need to write payload files
+- When using `--app lucos-issue-manager` as the first argument to `gh-as-agent`, all other arguments are passed through to `gh api`
 - `lucos-issue-manager` app does NOT have repo contents/push permissions -- cannot write files via Contents API or git push. Use the default `lucos-agent` app for file commits when needed.
 
 ## Label documentation

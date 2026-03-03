@@ -72,10 +72,9 @@ You are deeply familiar with the lucos infrastructure conventions (from CLAUDE.m
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Issue title" \
+    -f body="Issue body here"
 ```
-
-When the request body contains text (issue bodies, comments, PR descriptions), always write the payload to a file first and pass via `--input` — never inline JSON with Markdown content in the shell.
 
 ## Git Commit Identity
 

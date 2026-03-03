@@ -212,32 +212,30 @@ scp -P 2202 "creds.l42.eu:lucos_agent/development/.env" ~/sandboxes/lucos_agent/
 
 Use the `gh-as-agent` wrapper script instead of calling `gh api` directly. It handles token generation internally:
 
-When the request body contains text (e.g. issue bodies, comments), write the payload to a file first and pass it via `--input`. This avoids backticks in Markdown content being misinterpreted as shell command substitution:
-
 ```bash
-# Step 1: use the Write tool to create /tmp/gh-payload.json, e.g.:
-# {"title": "Issue title", "body": "Body with `code` and **markdown**"}
-
-# Step 2: call gh-as-agent with --input
 # Default: authenticates as lucos-agent
 ~/sandboxes/lucos_agent/gh-as-agent repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Issue title" \
+    -f body="Body with \`code\` and **markdown**"
 
 # lucos-issue-manager persona: use --app as the first argument
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Issue title" \
+    -f body="Body text here"
 
 # lucos-code-reviewer persona
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer repos/lucas42/{repo}/pulls/{pr}/reviews \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f body="Review comment" \
+    -f event="APPROVE"
 
 # lucos-system-administrator persona
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator repos/lucas42/{repo}/issues \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Issue title" \
+    -f body="Body text here"
 ```
 
 All `gh api` flags and arguments are passed through directly. There is no need to generate or manage tokens manually.
@@ -256,16 +254,15 @@ Before beginning any code changes, post a comment on the issue using `gh-as-agen
 
 ### 2. Create pull requests using gh-as-agent
 
-Pull requests must be created using `gh-as-agent`, exactly like issue comments and any other GitHub API calls — **never** using `gh pr create` directly (which uses personal credentials instead of the correct bot identity). Write the PR body to a file and pass it via `--input`:
+Pull requests must be created using `gh-as-agent`, exactly like issue comments and any other GitHub API calls — **never** using `gh pr create` directly (which uses personal credentials instead of the correct bot identity):
 
 ```bash
-# Step 1: use the Write tool to create /tmp/gh-payload.json, e.g.:
-# {"title": "Fix the thing", "head": "my-branch", "base": "main", "body": "Closes #42\n\n..."}
-
-# Step 2: call gh-as-agent
 ~/sandboxes/lucos_agent/gh-as-agent repos/lucas42/{repo}/pulls \
     --method POST \
-    --input /tmp/gh-payload.json
+    -f title="Fix the thing" \
+    -f head="my-branch" \
+    -f base="main" \
+    -f body="Closes #42\n\n..."
 ```
 
 ### 3. Tag commits and pull requests with the issue
