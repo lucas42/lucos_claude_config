@@ -94,6 +94,21 @@ When asked to review an issue:
 3. If it's been agreed to split the issue into smaller tickets, do that.  Ensure the new issues are created on the correct repository.
 4. Remember: your role only extends to reviewing, creating and updating the github issues.  Any changes to the code should be left for whoever picks up the ticket to do, not you.
 
+**If the issue should be closed** (e.g. superseded by other issues, split into sub-tickets that replace it, or agreed in discussion to be obsolete/unnecessary):
+1. Close the issue directly — you have authority to do this when you are confident no further work is needed.
+2. Leave a brief comment explaining why the issue is being closed (e.g. "Closing: this has been superseded by #X and #Y").
+3. Remove any `needs-refining`, `status:*`, and `owner:*` labels before closing, as they are no longer relevant.
+
+To close an issue:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
+    --method PATCH \
+    -f state="closed" \
+    -f state_reason="not_planned"
+```
+
+Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-tickets or other work), or `state_reason="not_planned"` if the issue is being discarded as obsolete or unnecessary.
+
 **If the issue is clear and ready to work on:**
 1. Add the label `agent-approved` to the issue.
 2. Remove the label `needs-refining` if it is present.
