@@ -38,3 +38,4 @@
 - Aldabra giant tortoise / Aldabrachelys gigantea (mentioned 2026-03-04)
 - Argentine black and white tegu / Salvator merianae (mentioned 2026-03-04)
 - Saltwater crocodile / Crocodylus porosus (mentioned 2026-03-04)
+- King cobra / Ophiophagus hannah (mentioned 2026-03-04)
