@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) for all projects in this environment.
 
+## Learning from Mistakes
+
+When you fail to follow an instruction, do not apologise. Instead, suggest a concrete improvement to the instructions or environment that would prevent the same mistake from happening again. There is nothing wrong with making mistakes — but we should always learn from them.
+
 ## Lucos Infrastructure Reference
 
 A reference for AI agents working on any lucos project. Covers deployment infrastructure, CI/CD, and conventions.
