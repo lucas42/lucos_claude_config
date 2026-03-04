@@ -130,6 +130,29 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Two credential types: simple (key-value) and linked (inter-system API keys)
 - SSH key issue (#61): multiline values break .env format. Proposed fixing .env quoting for multiline values rather than adding a new credential type. Dedicated key lifecycle management (generation, rotation) deferred as unnecessary at current scale (2-3 keys).
 
+## lucos_time
+
+- Node.js service: raw `http.createServer`, single `server.js` (~105 lines), no framework
+- Currently serves clock UI with video backgrounds, `/now` (JSON timestamp), `/_info`
+- No CLAUDE.md, no tests
+- docker-compose: single container, `network_mode: host`, env vars `MEDIAURL` and `PORT`
+- Issue #70 (needs-refining): add `/current-items` endpoint returning temporal objects from lucos_eolas
+  - Design posted: fetch eolas `/metadata/all/data/` RDF dump, cache in memory, refresh hourly
+  - Phase 1: Gregorian + DayOfWeek only, skip non-Gregorian calendars
+  - Festivals treated as "current" if their month matches current Gregorian month (no duration data in model)
+  - Seasons excluded (no date fields in eolas model)
+  - Response: `{ items: [{uri, name, type}], evaluated_calendars, timezone, as_of }`
+  - Awaiting lucas42 confirmation on approach, especially festival duration granularity
+
+## lucos_eolas
+
+- Django app, personal metadata/ontology manager, Postgres + nginx
+- Auth: `Authorization: Key <apikey>` header via `@api_auth` decorator
+- API endpoints: `/metadata/<type>/<pk>/data/` (individual RDF), `/metadata/all/data/` (full dump), `/ontology` (no auth)
+- Temporal models: DayOfWeek (order field), Calendar, Month (FK calendar, order_in_calendar), Festival (nullable day_of_month, nullable FK month), Season (no date fields)
+- 5 calendars: Chinese, Gregorian, Hebrew, Hijri, Hindu
+- Festival model only records start day, not duration -- architectural gap for temporal matching
+
 ## Cross-cutting: User-Agent convention (lucos#19)
 
 - Proposed: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests
