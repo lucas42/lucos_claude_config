@@ -24,3 +24,4 @@
 - African dwarf chameleon (mentioned 2026-03-04)
 - Leatherback sea turtle (mentioned 2026-03-04)
 - Paradise flying snake / Chrysopelea paradisi (mentioned 2026-03-04)
+- Galapagos tortoise (mentioned 2026-03-04)
