@@ -11,3 +11,4 @@
 - Jackson's chameleon (mentioned 2026-03-04)
 - Nile crocodile (mentioned 2026-03-04)
 - Gila monster (mentioned 2026-03-04)
+- African pancake tortoise (mentioned 2026-03-04)
