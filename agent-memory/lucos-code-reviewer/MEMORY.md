@@ -1,7 +1,7 @@
 # Persistent Memory — lucOS Code Reviewer
 
 ## Recently mentioned reptiles (avoid repeating soon)
-- Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03, again 2026-03-04)
+- Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03, again 2026-03-04, again 2026-03-04)
 - Gecko (mentioned 2026-03-03)
 - Komodo dragon (mentioned 2026-03-03)
 - Chameleon (mentioned 2026-03-03)
@@ -29,3 +29,4 @@
 - Corn snake (mentioned 2026-03-04)
 - Black mamba (mentioned 2026-03-04)
 - Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04)
+- Matamata turtle / Chelus fimbriata (mentioned 2026-03-04)
