@@ -6,27 +6,25 @@ All lucos repos on github.com/lucas42 are **public**. This is critical context f
 - Documentation committed to repos (including `docs/reviews/`, ADRs, CLAUDE.md) is publicly readable
 - GitHub issue trackers, including closed issues, are publicly readable
 - Git history (including PR commit history) is permanent and publicly searchable
-- Sensitive security findings must go to GitHub Security Advisories (private by default), NOT public issues or committed files
 
-## Architecture Pattern: Sensitive Findings in Public Repos
+## Policy: Security Advisory Decision Rule (Agreed 2026-03-04)
 
-For architectural reviews stored in `docs/reviews/` (agreed convention per lucas42/lucos#24):
-- Structural/design observations: fine to commit publicly
-- Incomplete/broken security controls, ambiguous auth, unprotected endpoints: should go to private GitHub Security Advisory instead
-- The review template should include an explicit "Sensitive findings" section linking to any advisory (or "None")
-- Git history is permanent -- sensitive content accidentally drafted must be purged with a history rewrite, editing-and-committing is not sufficient
+**Default path:** Security findings go as normal public GitHub issues. This keeps them in the normal triage/routing/implementation pipeline.
 
-## Process: GitHub Security Advisories
+**Advisory path (narrow exception):** A finding goes to a private GitHub Security Advisory ONLY if BOTH of these are true:
+1. An attacker with network access could exploit it **immediately**, without needing any other pre-existing access or insider knowledge
+2. The finding is not yet fixed
 
-GitHub Security Advisories (under repo Security tab) are the correct home for:
-- Findings about currently exploitable vulnerabilities
-- Details of auth mechanisms that are incomplete or ambiguous
-- Internal endpoint details, especially unauthenticated ones
-- Any finding that describes a known gap not yet fixed
+Everything else — conditional exploitability, defence-in-depth gaps, theoretical attack chains, things requiring existing access to exploit further — goes as a normal public issue.
 
-A consistent Security Advisory practice across lucos repos is tracked in lucas42/lucos#25.
+**Do not over-classify.** Examples of things that do NOT need advisories:
+- Credentials that might appear in internal logs under specific error conditions
+- Attack chains that require existing privileged access to trigger
+- Things behind network controls (even imperfect ones)
 
-**CRITICAL PROCESS NOTE — LESSON LEARNED:** When conducting a security audit, apply the public/private routing decision to EACH FINDING BEFORE WRITING ANYTHING. Do not write the full audit to a public issue comment and sort routing afterwards. The issue being raised by a third party does NOT change this requirement — if anything it demands more caution. Sensitive findings go to Security Advisories first; public comments should only reference GHSA IDs, not describe the vulnerabilities. The public comment on lucos_monitoring#23 was a process failure that accidentally disclosed unpatched vulnerabilities.
+See lucas42/lucos#25 for the full discussion. The original (too-cautious) advisory criteria from the initial proposal were revised after feedback from lucas42 and lucos-issue-manager.
+
+**PROCESS NOTE:** When conducting a security audit, apply the routing decision to EACH FINDING BEFORE WRITING ANYTHING in public. Do not write findings to public comments and sort routing afterwards.
 
 ## Risk Pattern: Prompt Injection via External Data Sources
 
