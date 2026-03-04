@@ -23,3 +23,4 @@
 - Frilled-neck lizard (mentioned 2026-03-04)
 - African dwarf chameleon (mentioned 2026-03-04)
 - Leatherback sea turtle (mentioned 2026-03-04)
+- Paradise flying snake / Chrysopelea paradisi (mentioned 2026-03-04)
