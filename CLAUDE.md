@@ -407,6 +407,71 @@ Example:
 
 ---
 
+## Monitoring Status API
+
+The lucos monitoring system exposes a machine-readable status endpoint for agents to check the health of all lucos services:
+
+```
+GET https://monitoring.l42.eu/api/status
+```
+
+No authentication required. Returns JSON.
+
+### Response structure
+
+```json
+{
+  "systems": {
+    "example.l42.eu": {
+      "name": "lucos_example",
+      "healthy": true,
+      "checks": {
+        "fetch-info": {
+          "ok": true,
+          "techDetail": "Fetches /_info"
+        }
+      },
+      "metrics": {}
+    }
+  },
+  "summary": {
+    "total_systems": 1,
+    "healthy": 1,
+    "erroring": 0,
+    "unknown": 0
+  }
+}
+```
+
+### Field reference
+
+**Top level:**
+
+| Field | Type | Description |
+|---|---|---|
+| `systems` | object | Per-system status, keyed by hostname |
+| `summary` | object | Aggregate counts across all systems |
+
+**Each system (keyed by hostname):**
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | string | The system name (e.g. `lucos_photos`). `"unknown"` if the system's `/_info` could not be fetched |
+| `healthy` | bool | `true` if all checks pass, `false` if any check is failing. Neither true nor false if status is unknown |
+| `checks` | object | Health checks for this system, keyed by check name. Each check has `ok` (bool or the string `"unknown"`), `techDetail` (string), and optionally `debug` (string with error details when `ok` is false) |
+| `metrics` | object | Metrics for this system, as reported by its `/_info` endpoint |
+
+**Summary:**
+
+| Field | Type | Description |
+|---|---|---|
+| `total_systems` | number | Total number of monitored systems |
+| `healthy` | number | Count of systems where all checks pass |
+| `erroring` | number | Count of systems with at least one failing check |
+| `unknown` | number | Count of systems whose status could not be determined |
+
+---
+
 ## Dispatching All Agents
 
 When the user says **"all agents, review your issues"**, dispatch agents in three sequential phases using the Task tool. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
