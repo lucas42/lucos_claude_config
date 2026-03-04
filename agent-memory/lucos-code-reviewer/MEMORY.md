@@ -25,3 +25,7 @@
 - Leatherback sea turtle (mentioned 2026-03-04)
 - Paradise flying snake / Chrysopelea paradisi (mentioned 2026-03-04)
 - Galapagos tortoise (mentioned 2026-03-04)
+- Bearded dragon (mentioned 2026-03-04)
+- Corn snake (mentioned 2026-03-04)
+- Black mamba (mentioned 2026-03-04)
+- Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04)
