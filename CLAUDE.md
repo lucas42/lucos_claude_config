@@ -485,10 +485,34 @@ Wait for the persona to complete.
 
 After the agent finishes, check its output to determine whether a pull request was created. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) or explicit statements that a PR was opened.
 
-### Step 4: Launch code review if a PR was created
+### Step 4: Review loop (if a PR was created)
 
-If a PR was created, immediately launch `lucos-code-reviewer` with a prompt to review that specific PR. For example:
+If no PR was created (e.g. the agent hit a blocker before opening a PR), skip this step.
+
+If a PR was created, enter a review loop. Track the **iteration count** starting at 1.
+
+**4a. Launch code review.**
+
+Launch `lucos-code-reviewer` with a prompt to review the PR:
 
 > "review PR https://github.com/lucas42/{repo}/pull/{number}"
 
-If no PR was created (e.g. the agent hit a blocker before opening a PR), do not launch the code reviewer.
+Wait for it to complete.
+
+**4b. Check the review outcome.**
+
+If the code reviewer **approved** the PR, the loop is done — report success to the user and stop.
+
+If the code reviewer **requested changes** and the iteration count is **less than 5**, continue to step 4c.
+
+If the code reviewer **requested changes** and this is iteration **5**, stop the loop and tell the user:
+
+> The PR at {url} has gone through 5 review iterations without approval. This likely indicates a mismatch in expectations that needs human judgement — please take a look.
+
+**4c. Send the PR back to the implementation persona.**
+
+Launch the **same persona** from Step 2 (the one that opened the PR) with a prompt to address the review feedback. For example:
+
+> "address the code review feedback on PR https://github.com/lucas42/{repo}/pull/{number}"
+
+Wait for it to complete, increment the iteration count, and go back to step 4a.
