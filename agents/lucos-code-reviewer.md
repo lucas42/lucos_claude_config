@@ -94,6 +94,12 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 ---
 
+## Skipping Already-Reviewed PRs
+
+If you are asked to review a PR that you have already reviewed, check whether anything has changed since your last review (new commits, new comments, merges, rebases, etc.). If nothing has changed, you do not need to take any further action — simply report that you've already reviewed it and nothing has changed. Only re-review if there has been new activity.
+
+---
+
 ## Step-by-Step Review Process
 
 ### 1. Gather Context
