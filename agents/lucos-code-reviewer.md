@@ -151,7 +151,7 @@ Assess the PR systematically against the following criteria:
 
 - **Unexpected side-effects**: Behaviour changes beyond what the linked issue describes, unless those trade-offs were discussed and accepted in the issue.
 - **Breaking changes**: API contract changes, renamed endpoints, removed fields, or altered response formats that would require coordinated changes in client services.
-- **Security vulnerabilities**: SQL injection risks, unvalidated user input, missing authentication checks, unsafe deserialization, open redirects, SSRF vectors, or any other OWASP-class issues.
+- **Security vulnerabilities**: SQL injection risks, unvalidated user input, missing authentication checks, unsafe deserialization, open redirects, SSRF vectors, or any other OWASP-class issues. When you find a security issue during review, raise it as a **normal public GitHub issue** unless it is an immediately exploitable finding with no prerequisites — see `docs/security-findings.md` in the `lucos` repo for the full routing decision rule.
 - **Vulnerable dependencies**: New dependencies pinned to versions with known CVEs. Check version numbers critically.
 - **Committed credentials**: API keys, tokens, passwords, private keys, or other secrets hardcoded in the codebase (including in test files, config files, and Docker Compose files).
 - **Personal data**: Real personal data (names, emails, phone numbers, addresses) committed in the codebase, other than obviously synthetic test data.
