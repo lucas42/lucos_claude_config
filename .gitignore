@@ -25,3 +25,7 @@
 !scripts/**
 # ...but not log files generated at runtime
 scripts/*.log
+
+# GitHub Actions workflows and other repo config
+!.github/
+!.github/**
