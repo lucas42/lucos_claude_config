@@ -153,8 +153,9 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - 5 calendars: Chinese, Gregorian, Hebrew, Hijri, Hindu
 - Festival model only records start day, not duration -- architectural gap for temporal matching
 
-## Cross-cutting: User-Agent convention (lucos#19)
+## Cross-cutting: User-Agent convention (lucos#19, now closed)
 
-- Proposed: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests
-- lucas42 already doing this on some systems, wants convention formalised as ADR + audit
-- Offered to draft ADR in lucas42/lucos repo. Awaiting response.
+- ADR-0001 written in lucas42/lucos repo: `docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`
+- PR #29 submitted (closes #27). Convention: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
+- #19 closed after split into #27 (ADR, done) and #28 (audit, separate work)
+- First ADR in the lucos repo; also added Documentation section to README pointing to `docs/adr/` and `docs/`

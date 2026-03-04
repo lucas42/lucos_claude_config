@@ -101,6 +101,13 @@
 - **Purpose**: Knowledge/information service in the lucos ecosystem
 - **Labels created**: All triage labels created 2026-03-03 (was missing `agent-approved` previously)
 
+## lucos_time
+
+- **Language**: JavaScript (Node.js)
+- **Purpose**: Time-related service; currently serves `/now` endpoint
+- **Labels created**: `needs-refining` (existed); `status:awaiting-decision`, `owner:lucas42` created 2026-03-04 (colours fixed from default grey)
+- **Known context**: Very thin service (~105 lines, raw http.createServer); issue #70 proposes adding temporal objects endpoint integrating with lucos_eolas
+
 ## lucos_media_metadata_manager
 
 - **Language**: JavaScript (Node.js)
