@@ -108,6 +108,19 @@
 - **Labels created**: `needs-refining` (existed); `status:awaiting-decision`, `owner:lucas42` created 2026-03-04 (colours fixed from default grey)
 - **Known context**: Very thin service (~105 lines, raw http.createServer); issue #70 proposes adding temporal objects endpoint integrating with lucos_eolas
 
+## lucos_locations
+
+- **Purpose**: Location tracking service using MQTT (mosquitto)
+- **Labels created**: `agent-approved`, `needs-refining`, `owner:lucos-system-administrator`, `owner:lucas42`, `status:ideation`, `priority:medium`, `priority:low`, `owner:lucos-developer` (colours fixed 2026-03-04)
+- **Known context**: mosquitto currently runs as root; issue #7 to switch to non-root user in certreaders group (low priority, lucos_locations not actively worked on)
+
+## lucos_photos_android
+
+- **Language**: Java (Android)
+- **Purpose**: Android app for lucos_photos
+- **Labels created**: `agent-approved`, `needs-refining`, `owner:lucos-developer`, `owner:lucas42`, `owner:lucos-system-administrator`, `status:ideation`, `priority:high` (created 2026-03-04)
+- **Known context**: Needs human-facing installation documentation (README.md); #14 is high priority per lucas42
+
 ## lucos_media_metadata_manager
 
 - **Language**: JavaScript (Node.js)
