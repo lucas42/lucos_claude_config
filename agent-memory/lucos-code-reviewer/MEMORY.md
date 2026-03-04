@@ -16,3 +16,6 @@
 - Reticulated python (mentioned 2026-03-04)
 - Green tree python (mentioned 2026-03-04)
 - Satanic leaf-tailed gecko (mentioned 2026-03-04)
+- Tuatara (mentioned 2026-03-04)
+- Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
+- Armadillo girdled lizard (mentioned 2026-03-04)
