@@ -448,3 +448,25 @@ Once Phase 2 is done, launch one final agent:
 Rationale: the issue manager reviews any issues that Phase 2 agents touched, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
 Each agent knows how to discover its own backlog via its assigned labels.
+
+---
+
+## Dispatching "Implement Your Next Issue"
+
+When the user says **"{persona}, implement your next issue"** (e.g. "lucos-developer, implement your next issue" or "lucos-architect, implement your next issue"), dispatch the named persona and then follow up with a code review if a PR was created.
+
+### Step 1: Launch the implementation agent
+
+Launch the named persona with "implement your next issue". Wait for it to complete.
+
+### Step 2: Check for a new PR
+
+After the agent finishes, check its output to determine whether a pull request was created. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) or explicit statements that a PR was opened.
+
+### Step 3: Launch code review if a PR was created
+
+If a PR was created, immediately launch `lucos-code-reviewer` with a prompt to review that specific PR. For example:
+
+> "review PR https://github.com/lucas42/{repo}/pull/{number}"
+
+If no PR was created (e.g. the agent reported no issues in its queue, or hit a blocker before opening a PR), do not launch the code reviewer.
