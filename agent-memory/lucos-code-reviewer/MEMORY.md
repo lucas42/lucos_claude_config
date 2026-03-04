@@ -33,3 +33,5 @@
 - Galapagos pink land iguana / Conolophus marthae (mentioned 2026-03-04)
 - Red-eared slider / Trachemys scripta elegans (mentioned 2026-03-04)
 - Gharial / Gavialis gangeticus (mentioned 2026-03-04)
+- Sidewinder rattlesnake / Crotalus cerastes (mentioned 2026-03-04)
+- Emerald tree monitor / Varanus prasinus (mentioned 2026-03-04)
