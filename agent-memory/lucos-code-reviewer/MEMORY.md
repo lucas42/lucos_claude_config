@@ -19,3 +19,5 @@
 - Tuatara (mentioned 2026-03-04)
 - Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
 - Armadillo girdled lizard (mentioned 2026-03-04)
+- Marine iguana (mentioned 2026-03-04)
+- Frilled-neck lizard (mentioned 2026-03-04)
