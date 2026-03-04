@@ -13,6 +13,7 @@
 - PhotoPerson join table alongside Face table could create data consistency issues
 - Infrastructure guidance given on #29: use `pgvector/pgvector:pg16-alpine` (not custom Dockerfile), remove QDRANT_URL from lucos_creds, sequence configy volume removal after production deploy
 - Android backup client (#3): recommended separate repo `lucos_photos_android` (different platform/toolchain/lifecycle). WorkManager for background sync, sideloaded APK for distribution. No Android SDK in coding sandbox -- tooling gap if agents need to implement.
+- Video upload support (#60): needs-refining. Reviewed 2026-03-04. Key design decisions pending: table rename (photo->media_item vs discriminator column), video size limits, transcoding scope, face detection deferral. Recommended 6-step incremental delivery. Streaming upload is prerequisite (current endpoint reads entire file into memory). Range request support needed for video serving. Residual Qdrant check still in /_info endpoint code.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
