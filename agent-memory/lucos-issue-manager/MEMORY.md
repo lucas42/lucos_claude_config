@@ -65,6 +65,10 @@ Two domains get specialist follow-up after the primary owner finishes, before `a
 Both also apply mid-lifecycle if concerns are raised in comments after initial triage.
 Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (monitoring endpoint, primary owner architect)
 
+## Common pitfalls
+
+- When creating multiple sub-tickets that reference each other, the issue numbers are not known until each issue is created. Write bodies with placeholder references, then update them after all issues exist. Alternatively, create all issues first, note the actual numbers, then patch the bodies.
+
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
