@@ -30,3 +30,4 @@
 - Black mamba (mentioned 2026-03-04)
 - Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04)
 - Matamata turtle / Chelus fimbriata (mentioned 2026-03-04)
+- Galapagos pink land iguana / Conolophus marthae (mentioned 2026-03-04)
