@@ -90,6 +90,10 @@ When assigned to or asked to work on a GitHub issue:
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
 
+This section is also the workflow for the "implement issue {url}" prompt. The "Review and Implementation" intro tells the agent to follow this workflow then stop after opening one PR. There is no separate "Implementing Issues" section — the PR/commit workflow here covers both review-triggered work and dispatcher-triggered implementation.
+
+Some personas add persona-specific guidance below the 5-step list (e.g. lucos-architect notes that its implementation work is typically ADRs). These additions are NOT drift.
+
 ---
 
 ## Section: Label Workflow
