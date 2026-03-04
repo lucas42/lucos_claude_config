@@ -1,7 +1,7 @@
 # Persistent Memory — lucOS Code Reviewer
 
 ## Recently mentioned reptiles (avoid repeating soon)
-- Blue-tongued skink (mentioned 2026-03-01)
+- Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03)
 - Gecko (mentioned 2026-03-03)
 - Komodo dragon (mentioned 2026-03-03)
 - Chameleon (mentioned 2026-03-03)
