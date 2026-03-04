@@ -451,22 +451,44 @@ Each agent knows how to discover its own backlog via its assigned labels.
 
 ---
 
-## Dispatching "Implement Your Next Issue"
+## Dispatching "Implement the Next Issue"
 
-When the user says **"{persona}, implement your next issue"** (e.g. "lucos-developer, implement your next issue" or "lucos-architect, implement your next issue"), dispatch the named persona and then follow up with a code review if a PR was created.
+When the user says **"implement the next issue"** (or similar phrasing about picking up the next implementation task), follow this process. Do not ask for clarification — immediately begin Step 1.
 
-### Step 1: Launch the implementation agent
+### Step 1: Find the next issue
 
-Launch the named persona with "implement your next issue". Wait for it to complete.
+Run the global prioritisation script:
 
-### Step 2: Check for a new PR
+```bash
+~/sandboxes/lucos_agent/get-next-implementation-issue
+```
+
+This searches across **all** repositories and **all** personas for the single highest-priority `agent-approved`, non-blocked issue. It prints three lines:
+
+1. The owner label (e.g. `owner:lucos-developer`)
+2. The issue number and title (e.g. `#42 Fix the thing`)
+3. The issue URL
+
+If the script reports no implementable issues, tell the user there is nothing ready to implement right now and stop.
+
+### Step 2: Dispatch the correct persona
+
+Extract the persona name from the owner label (strip the `owner:` prefix) and launch that persona via the Task tool. Pass the **specific issue URL** so the persona knows exactly what to work on. For example:
+
+> "implement issue https://github.com/lucas42/lucos_photos/issues/42"
+
+Wait for the persona to complete.
+
+**Why the dispatcher picks the issue:** All implementation agents run in the same sandbox, so dispatching multiple personas to different repos simultaneously would risk filesystem conflicts. The dispatcher controls sequencing by picking one issue at a time.
+
+### Step 3: Check for a new PR
 
 After the agent finishes, check its output to determine whether a pull request was created. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) or explicit statements that a PR was opened.
 
-### Step 3: Launch code review if a PR was created
+### Step 4: Launch code review if a PR was created
 
 If a PR was created, immediately launch `lucos-code-reviewer` with a prompt to review that specific PR. For example:
 
 > "review PR https://github.com/lucas42/{repo}/pull/{number}"
 
-If no PR was created (e.g. the agent reported no issues in its queue, or hit a blocker before opening a PR), do not launch the code reviewer.
+If no PR was created (e.g. the agent hit a blocker before opening a PR), do not launch the code reviewer.
