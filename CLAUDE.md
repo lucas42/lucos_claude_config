@@ -275,6 +275,8 @@ Closes #42
 
 The full list of supported keywords is: `close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`, `resolved` — followed by the issue reference (e.g. `Fixes #42` or `Resolves lucas42/lucos_example#42`).
 
+**Note:** GitHub does not process closing keywords when a bot merges a PR. Repos with the code reviewer auto-merge workflow handle this automatically (see "Code reviewer auto-merge" under GitHub Config). For repos without that workflow, closing keywords still serve as documentation of intent — a human merging the PR will trigger the auto-close.
+
 ### 3. Comment on unexpected obstacles
 
 If you hit a significant unexpected obstacle during the work — especially one that risks not being able to finish without further input — post a follow-up comment on the issue explaining what you've encountered. Don't silently get stuck or work around something without flagging it.
@@ -304,6 +306,30 @@ Remove any `ignore` rules that were specific to the source project's framework (
 ### Dependabot auto-merge (`.github/workflows/auto-merge.yml`)
 
 Standard file, no project-specific changes needed.
+
+### Code reviewer auto-merge (`.github/workflows/code-reviewer-auto-merge.yml`)
+
+This workflow enables auto-merge on PRs approved by `lucos-code-reviewer[bot]`. Currently deployed to `lucos_photos` only; will be rolled out to other repos over time.
+
+**How it works:**
+
+1. **`auto-merge` job** — triggers on `pull_request_review: submitted`. If the review is an approval from `lucos-code-reviewer[bot]` (verified by both login and numeric user ID to prevent impersonation), it runs `gh pr merge --auto --merge`.
+2. **`close-linked-issues` job** — triggers on `pull_request: closed`. If the PR was merged by `lucos-code-reviewer[bot]`, it queries GitHub's GraphQL `closingIssuesReferences` field and closes each linked open issue via the API.
+
+The `close-linked-issues` job is necessary because **GitHub does not process closing keywords (e.g. `Closes #N`) when any bot merges a PR** — this is a platform limitation, not specific to `GITHUB_TOKEN` or GitHub Actions. The workaround uses `closingIssuesReferences`, which GitHub parses from the PR body regardless of who merges.
+
+**Prerequisites for each repository:**
+
+1. **Repository secrets** — two secrets must be set:
+   - `CODE_REVIEWER_APP_ID` — the lucos-code-reviewer App ID (see `personas.json`)
+   - `CODE_REVIEWER_PRIVATE_KEY` — the lucos-code-reviewer RSA private key (from lucos_creds, with newlines restored from the space-flattened format)
+2. **GitHub App permissions** — `lucos-code-reviewer` must have these permissions on its installation:
+   - `Contents: Read & write` (required to merge PRs)
+   - `Pull requests: Read & write` (required to enable auto-merge)
+   - `Issues: Read & write` (required to close linked issues)
+3. **Repository setting** — "Allow auto-merge" must be enabled in the repo's settings
+
+**Reference implementation:** `lucos_photos/.github/workflows/code-reviewer-auto-merge.yml`
 
 ---
 
