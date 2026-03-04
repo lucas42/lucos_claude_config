@@ -128,7 +128,9 @@ Reviews are stored in `docs/reviews/` in the repo being reviewed. This is separa
 | #N | ... | ... | Open / Closed -- reason |
 ```
 
-The "Sensitive findings" section is mandatory. Every review explicitly records whether there are findings that should not be public. If there are, they go in a private GitHub Security Advisory — never in the committed file.
+The "Sensitive findings" section is mandatory. Every review explicitly records whether there are findings that should not be public.
+
+Whether a finding warrants a private advisory rather than a public issue depends on two criteria: (1) an attacker with network access could exploit it immediately without any prior access, and (2) it is not yet fixed. If both are true, it goes in a private GitHub Security Advisory — never in the committed review file. Everything else — conditional exploitability, defence-in-depth gaps, theoretical chains — goes as a normal public issue. See `docs/security-findings.md` in the `lucos` repo for the full decision rule.
 
 ### Workflow
 
