@@ -13,3 +13,4 @@
 - Gila monster (mentioned 2026-03-04)
 - African pancake tortoise (mentioned 2026-03-04)
 - Common snapping turtle (mentioned 2026-03-04)
+- Reticulated python (mentioned 2026-03-04)
