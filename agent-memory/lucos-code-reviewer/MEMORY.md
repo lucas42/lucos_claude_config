@@ -1,11 +1,11 @@
 # Persistent Memory — lucOS Code Reviewer
 
 ## Recently mentioned reptiles (avoid repeating soon)
-- Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03, again 2026-03-04, again 2026-03-04)
+- Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03, again 2026-03-04, again 2026-03-04, again 2026-03-04)
 - Gecko (mentioned 2026-03-03)
 - Komodo dragon (mentioned 2026-03-03)
 - Chameleon (mentioned 2026-03-03)
-- Thorny devil (mentioned 2026-03-03)
+- Thorny devil / Moloch horridus (mentioned 2026-03-03, again 2026-03-04)
 - Green basilisk lizard (mentioned 2026-03-03)
 - Slow worm (mentioned 2026-03-04)
 - Jackson's chameleon (mentioned 2026-03-04)
@@ -35,3 +35,4 @@
 - Gharial / Gavialis gangeticus (mentioned 2026-03-04)
 - Sidewinder rattlesnake / Crotalus cerastes (mentioned 2026-03-04)
 - Emerald tree monitor / Varanus prasinus (mentioned 2026-03-04)
+- Aldabra giant tortoise / Aldabrachelys gigantea (mentioned 2026-03-04)
