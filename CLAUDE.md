@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) for all projects in this environment.
 
+## Commit Messages
+
+Do not add `Co-Authored-By` trailers to git commits. The bot identity on each commit already makes authorship clear.
+
 ## Learning from Mistakes
 
 When you fail to follow an instruction, do not apologise. Instead, suggest a concrete improvement to the instructions or environment that would prevent the same mistake from happening again. There is nothing wrong with making mistakes — but we should always learn from them.
@@ -337,7 +341,7 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
 
 ### Version-controlled `~/.claude` changes
 
-`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes are made to files under `~/.claude` that are part of this repo (e.g. `CLAUDE.md` itself, persona instruction files), those changes must be committed and pushed. As with all git operations, this must be done via a persona (e.g. `lucos-developer`) using the Task tool — the dispatcher cannot commit directly.
+`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes are made to files under `~/.claude` that are part of this repo (e.g. `CLAUDE.md` itself, persona instruction files), those changes must be committed and pushed. As with all git operations, this must be done via a persona (e.g. `lucos-system-administrator`) using the Task tool — the dispatcher cannot commit directly.
 
 ### VM environment changes
 
