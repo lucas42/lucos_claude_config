@@ -198,7 +198,9 @@ When interacting with GitHub (creating issues, posting comments, etc.), authenti
 
 Canonical identity data for all personas (App ID, Installation ID, bot user ID, bot name, display name, PEM variable) is stored in `~/sandboxes/lucos_agent/personas.json`. This is the single source of truth — refer to it rather than duplicating values in documentation or code.
 
-Each persona must use its own dedicated GitHub App — **never** fall back to `lucos-agent` when acting as a different persona. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`.
+Each persona must use its own dedicated GitHub App. The `--app` flag is **required** — there is no default. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`. Omitting `--app` will result in an error.
+
+**Important:** Git and GitHub API calls must be made within a persona context. The dispatcher itself cannot make git commits or GitHub API calls — any task requiring these must be handed off to the appropriate persona via the Task tool.
 
 ### Setup
 
@@ -210,16 +212,10 @@ scp -P 2202 "creds.l42.eu:lucos_agent/development/.env" ~/sandboxes/lucos_agent/
 
 ### Making GitHub API calls
 
-Use the `gh-as-agent` wrapper script instead of calling `gh api` directly. It handles token generation internally:
+Use the `gh-as-agent` wrapper script instead of calling `gh api` directly. It handles token generation internally. `--app` must be the first argument:
 
 ```bash
-# Default: authenticates as lucos-agent
-~/sandboxes/lucos_agent/gh-as-agent repos/lucas42/{repo}/issues \
-    --method POST \
-    -f title="Issue title" \
-    -f body="Body with \`code\` and **markdown**"
-
-# lucos-issue-manager persona: use --app as the first argument
+# lucos-issue-manager persona
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues \
     --method POST \
     -f title="Issue title" \
