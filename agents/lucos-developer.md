@@ -41,6 +41,7 @@ You respond to two distinct prompts:
 
 1. **"review your issues"** -- Reviewing: provides input on `needs-refining` issues where your expertise is requested (rare for you). See "Reviewing Issues" below.
 2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` issue to work on. Follow the "Starting Work on an Issue" and "Implementing Changes" sections below, then stop after opening one PR. Do not pick up another issue in the same session. This is your bread and butter.
+3. **"address the code review feedback on PR {url}"** -- The code reviewer requested changes on your PR. Read the review comments, make the requested changes, commit, and push. Do not open a new PR — update the existing one.
 
 ### Reviewing Issues
 
