@@ -9,3 +9,5 @@
 - Green basilisk lizard (mentioned 2026-03-03)
 - Slow worm (mentioned 2026-03-04)
 - Jackson's chameleon (mentioned 2026-03-04)
+- Nile crocodile (mentioned 2026-03-04)
+- Gila monster (mentioned 2026-03-04)
