@@ -19,3 +19,23 @@
 - **Worker tests patch `lucos_photos_common.jobs.SessionLocal`** directly to inject SQLite sessions.
 - **CI**: Two test jobs — `test-api` and `test-worker` — run in parallel with `lucos/build-amd64`.
 - `python3` is the binary (not `python`) in the local shell environment.
+- **Upload auth**: `Authorization: key <API_KEY>` header; `CLIENT_KEYS` env var is semicolon-separated `name=value` pairs.
+- **Deduplication**: Server uses SHA256 — returns 200 if duplicate, 201 if new.
+
+## lucos_photos_android
+
+- **Repo**: `https://github.com/lucas42/lucos_photos_android` (created 2026-03-04)
+- **Language**: Kotlin, minSdk 26, targetSdk 35
+- **Build**: Gradle 8.10.2 wrapper, AGP 8.7.3. CI uses `cimg/android:2025.01`.
+- **Key files**: `app/src/main/kotlin/eu/l42/lucos_photos_android/`
+  - `PhotoSyncWorker.kt` — WorkManager CoroutineWorker, MediaStore query, incremental timestamp sync
+  - `PhotoUploader.kt` — OkHttp multipart upload, retryable/non-retryable failure classification
+  - `SyncPreferences.kt` — SharedPreferences wrapper for lastSyncTimestampMs
+  - `Config.kt` — hardcoded SERVER_URL and API_KEY (placeholder in v1)
+- **Tests**: Robolectric for worker tests, plain JUnit + mockk for uploader tests
+- **Android SDK not on this VM**: `lima.yaml` changes pending provisioning. Builds verified by CI only.
+
+## GitHub Repo Creation
+
+- Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
+- When creating a new repo for a PR workflow, push an empty initial commit to `main` first, then create the feature branch from it and open PR. (Orphan branches for main cause "no history in common" errors.)
