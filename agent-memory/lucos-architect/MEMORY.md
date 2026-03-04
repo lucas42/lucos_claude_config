@@ -12,6 +12,7 @@
 - No docker-compose healthchecks on any container -- reliability gap noted in #27
 - PhotoPerson join table alongside Face table could create data consistency issues
 - Infrastructure guidance given on #29: use `pgvector/pgvector:pg16-alpine` (not custom Dockerfile), remove QDRANT_URL from lucos_creds, sequence configy volume removal after production deploy
+- Android backup client (#3): recommended separate repo `lucos_photos_android` (different platform/toolchain/lifecycle). WorkManager for background sync, sideloaded APK for distribution. No Android SDK in coding sandbox -- tooling gap if agents need to implement.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -35,6 +36,7 @@
 - When recommending infrastructure changes that span multiple repos/systems, always specify sequencing dependencies explicitly (e.g. deploy before removing configy entries, not the other way round). This was validated on the Qdrant removal work.
 - Summary/tracking issues are the wrong artefact for architectural reviews. Confirmed by #27 closure. Reviews go in `docs/reviews/`, individual actionable issues are the work items.
 - lucas42 prefers splitting multi-concern issues into separate tickets for easier implementation (validated on #25 split into #39/#40). Offer the split proactively when filing issues with distinct scopes.
+- Strong one-service-per-repo convention across lucos. Different platforms (e.g. Android vs Docker) always get separate repos. Naming: `lucos_{subsystem}_{qualifier}` (e.g. `lucos_contacts_fb_import`, `lucos_photos_android`).
 
 ## Infrastructure notes
 
@@ -136,13 +138,16 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Currently serves clock UI with video backgrounds, `/now` (JSON timestamp), `/_info`
 - No CLAUDE.md, no tests
 - docker-compose: single container, `network_mode: host`, env vars `MEDIAURL` and `PORT`
-- Issue #70 (needs-refining): add `/current-items` endpoint returning temporal objects from lucos_eolas
-  - Design posted: fetch eolas `/metadata/all/data/` RDF dump, cache in memory, refresh hourly
+- Issue #70: `/current-items` endpoint -- DESIGN AGREED, ready for implementation
+  - Fetch eolas `/metadata/all/data/` RDF dump, cache in memory, refresh hourly
   - Phase 1: Gregorian + DayOfWeek only, skip non-Gregorian calendars
-  - Festivals treated as "current" if their month matches current Gregorian month (no duration data in model)
+  - DayOfWeek order: 1=Monday to 7=Sunday. JS getDay() 0=Sunday needs mapping.
+  - Gregorian months: order 1=January to 12=December
+  - Festivals: current for 1 day if day_of_month set, entire month if null
   - Seasons excluded (no date fields in eolas model)
   - Response: `{ items: [{uri, name, type}], evaluated_calendars, timezone, as_of }`
-  - Awaiting lucas42 confirmation on approach, especially festival duration granularity
+  - Endpoint path: `GET /current-items`
+  - Follow-up tickets filed: lucos_time#74 (non-Gregorian), lucos_eolas#67 (JSON list endpoint), lucos_eolas#68 (festival duration model)
 
 ## lucos_eolas
 
