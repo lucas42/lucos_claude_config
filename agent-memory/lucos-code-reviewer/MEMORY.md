@@ -42,3 +42,4 @@
 - Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
 - Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05)
 - Angolan python / Python anchietae (mentioned 2026-03-05)
+- Banded sea krait / Laticauda colubrina (mentioned 2026-03-05)
