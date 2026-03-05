@@ -30,3 +30,8 @@ lucos_scenes: 2026-03-05
 lucos_schedule_tracker: 2026-03-05
 lucos_arachne_ingestor: 2026-03-05
 notes: 2026-03-05
+lucos_repos: 2026-03-05
+lucos_contacts_app: 2026-03-05
+lucos_arachne_web: 2026-03-05
+media_metadata_api: 2026-03-05
+seinn: 2026-03-05
