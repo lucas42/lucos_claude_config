@@ -335,6 +335,16 @@ Issues should be closed automatically via the closing keyword in the merged PR. 
 
 ---
 
+## After a PR is Created
+
+**Every time any persona creates a pull request, the dispatcher MUST run the PR review loop.** No exceptions — this applies whether the PR came from `/next`, an ad-hoc task, an ops check fix, or any other workflow.
+
+The full procedure is documented in [`pr-review-loop.md`](pr-review-loop.md). In short: launch `lucos-code-reviewer` to review the PR, then iterate between the code reviewer and the implementation persona until the PR is approved (up to 5 iterations).
+
+Do not consider an implementation task complete until the review loop has finished.
+
+---
+
 ## GitHub Config
 
 ### CodeQL (`.github/workflows/codeql-analysis.yml`)
