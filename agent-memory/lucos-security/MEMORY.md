@@ -88,6 +88,10 @@ Action when a patched version appears: add an `overrides` entry in `explore/pack
 
 When Dependabot alert #15 resurfaces: check if a fixed npm release is now available before deciding action.
 
+## Ops Checks Schedule
+
+See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.
