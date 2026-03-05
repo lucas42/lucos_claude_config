@@ -4,7 +4,7 @@ description: All agents review their issues and run ops checks
 disable-model-invocation: true
 ---
 
-Dispatch agents in four sequential phases using the Task tool. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
+Dispatch agents in sequential phases using the Task tool. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
 
 ## Phase 1: Triage (sequential — run immediately)
 
@@ -14,53 +14,69 @@ Launch one agent:
 
 **Wait for it to complete before proceeding.**
 
-Rationale: the issue manager runs first to assign `owner:` labels to unowned issues so that Phase 2 agents pick up fresh work.
+Rationale: the issue manager runs first to assign `owner:` labels to unowned issues so that later phases pick up fresh work.
 
 ## Phase 1.5: Propagation delay (after Phase 1, before Phase 2)
 
 After Phase 1 completes, **wait 15 seconds** before starting Phase 2. Run `sleep 15` in a Bash tool call.
 
-Rationale: Phase 1 applies `owner:` labels that Phase 2 agents use to discover their work via the GitHub Issues API `?labels=` filter. GitHub's label-based API filtering can lag a few seconds behind label changes, so queries issued immediately after labelling may miss newly-labelled issues. This delay was added after lucos_agent#11 was missed by the architect in Phase 2 because the `owner:lucos-architect` label had not yet propagated.
+Rationale: Phase 1 applies `owner:` labels that later agents use to discover their work via the GitHub Issues API `?labels=` filter. GitHub's label-based API filtering can lag a few seconds behind label changes, so queries issued immediately after labelling may miss newly-labelled issues. This delay was added after lucos_agent#11 was missed by the architect in Phase 2 because the `owner:lucos-architect` label had not yet propagated.
 
-## Phase 2: Issue Review (parallel — after propagation delay)
+## Phase 2: Ops Checks (parallel — after propagation delay)
 
-Once the 15-second delay has elapsed, launch these six agents concurrently in the same response:
+Once the 15-second delay has elapsed, launch agents that have ops checks concurrently in the same response:
 
-2. `lucos-architect` — "review your issues"
-3. `lucos-system-administrator` — "review your issues"
-4. `lucos-security` — "review your issues"
-5. `lucos-site-reliability` — "review your issues"
-6. `lucos-issue-manager` — "review your issues"
-7. `lucos-developer` — "review your issues"
-
-**Wait for all six to complete before proceeding.**
-
-Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its Phase 1/4 triage role). The developer reviews issues where implementation input is needed during the design phase.
-
-## Phase 3: Ops Checks (parallel — after Phase 2 completes)
-
-Once Phase 2 is done, launch agents that have ops checks concurrently in the same response:
-
-8. `lucos-code-reviewer` — "review your issues"
-9. `lucos-security` — "run your ops checks"
-10. `lucos-system-administrator` — "run your ops checks"
-11. `lucos-site-reliability` — "run your ops checks"
+2. `lucos-code-reviewer` — "review your issues"
+3. `lucos-security` — "run your ops checks"
+4. `lucos-system-administrator` — "run your ops checks"
+5. `lucos-site-reliability` — "run your ops checks"
 
 **Wait for all to complete before proceeding.**
 
-Rationale: ops checks are standing operational tasks that aren't tied to GitHub issues. Code review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability. They run after issue review so that any issues raised during ops checks can be triaged in Phase 4.
+Rationale: ops checks run early so that any issues they raise can be triaged and reviewed in the same routine run, rather than waiting until the next run. Code review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
 
-## Phase 4: Final Triage (sequential — after Phase 3 completes)
+## Phase 3: Mid-routine Triage (sequential — after Phase 2 completes)
 
-Once Phase 3 is done, launch one final agent:
+Once Phase 2 is done, launch one agent:
 
-12. `lucos-issue-manager` — "triage your issues"
+6. `lucos-issue-manager` — "triage your issues"
 
-Rationale: the issue manager triages any issues that Phase 2 and Phase 3 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
+**Wait for it to complete before proceeding.**
+
+Rationale: the issue manager triages any issues raised during ops checks, assigns `owner:` labels, and ensures they are ready for the issue review phase that follows.
+
+## Phase 3.5: Propagation delay (after Phase 3, before Phase 4)
+
+After Phase 3 completes, **wait 15 seconds** before starting Phase 4. Run `sleep 15` in a Bash tool call.
+
+Rationale: same as Phase 1.5 — newly applied `owner:` labels need time to propagate in GitHub's API before Phase 4 agents query for their assigned issues.
+
+## Phase 4: Issue Review (parallel — after propagation delay)
+
+Once the 15-second delay has elapsed, launch these six agents concurrently in the same response:
+
+7. `lucos-architect` — "review your issues"
+8. `lucos-system-administrator` — "review your issues"
+9. `lucos-security` — "review your issues"
+10. `lucos-site-reliability` — "review your issues"
+11. `lucos-issue-manager` — "review your issues"
+12. `lucos-developer` — "review your issues"
+
+**Wait for all six to complete before proceeding.**
+
+Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its triage role). The developer reviews issues where implementation input is needed during the design phase.
+
+## Phase 5: Final Triage (sequential — after Phase 4 completes)
+
+Once Phase 4 is done, launch one final agent:
+
+13. `lucos-issue-manager` — "triage your issues"
+
+Rationale: the issue manager triages any issues that Phase 4 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
 Each agent knows how to discover its own backlog via its assigned labels.
 
-## Phase 5: Summary for the user (after Phase 4 completes)
+## Phase 6: Summary for the user (after Phase 5 completes)
 
 Once all phases are done, compile a prioritised list of issues that need the user's attention. This means any open issue with `owner:lucas42` — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
 
