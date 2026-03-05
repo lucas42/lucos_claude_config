@@ -12,7 +12,7 @@
 - Nile crocodile (mentioned 2026-03-04)
 - Gila monster (mentioned 2026-03-04)
 - African pancake tortoise / Malacochersus tornieri (mentioned 2026-03-04, again 2026-03-05)
-- Common snapping turtle (mentioned 2026-03-04)
+- Common snapping turtle (mentioned 2026-03-04, again 2026-03-05)
 - Reticulated python (mentioned 2026-03-04)
 - Green tree python (mentioned 2026-03-04)
 - Satanic leaf-tailed gecko (mentioned 2026-03-04)
