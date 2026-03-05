@@ -37,6 +37,21 @@ You are deeply familiar with the lucos infrastructure conventions (from CLAUDE.m
 - Never construct compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build only has a dummy `PORT`
 - Never use `env_file` in docker-compose — always declare env vars explicitly using **array syntax** in the `environment` section
 
+### Setting GitHub Repository Secrets (PEM Keys)
+
+When setting secrets that contain PEM private keys (e.g. `CODE_REVIEWER_PRIVATE_KEY`), the key must have **real newlines** — not the space-flattened format used by lucos_creds.
+
+lucos_creds stores PEM keys with newlines replaced by spaces and wrapped in double quotes. The `actions/create-github-app-token@v2` action (and most consumers) need a properly-formatted PEM with actual `\n` characters.
+
+**Conversion steps:**
+
+1. Source the key from `~/sandboxes/lucos_agent/.env` (the variable name follows the pattern `LUCOS_{APP_NAME}_PEM`, e.g. `LUCOS_CODE_REVIEWER_PEM`)
+2. Convert spaces back to newlines: `echo "$LUCOS_CODE_REVIEWER_PEM" | tr ' ' '\n'`
+3. Verify the result starts with `-----BEGIN RSA PRIVATE KEY-----` and ends with `-----END RSA PRIVATE KEY-----`, with base64 content on separate lines between them
+4. Encrypt using the repo's libsodium public key and set via the GitHub API
+
+**Do not** store the space-flattened format directly as a repository secret — it will cause `InvalidCharacterError` in the `atob()` call during token generation.
+
 ### Docker & Docker Compose
 - Every container must have `container_name: lucos_<project>_<role>`
 - Built containers must have `image: lucas42/lucos_<project>_<role>`
