@@ -16,9 +16,15 @@ Launch one agent:
 
 Rationale: the issue manager runs first to assign `owner:` labels to unowned issues so that Phase 2 agents pick up fresh work.
 
-## Phase 2: Issue Review (parallel — after Phase 1 completes)
+## Phase 1.5: Propagation delay (after Phase 1, before Phase 2)
 
-Once Phase 1 is done, launch these six agents concurrently in the same response:
+After Phase 1 completes, **wait 15 seconds** before starting Phase 2. Run `sleep 15` in a Bash tool call.
+
+Rationale: Phase 1 applies `owner:` labels that Phase 2 agents use to discover their work via the GitHub Issues API `?labels=` filter. GitHub's label-based API filtering can lag a few seconds behind label changes, so queries issued immediately after labelling may miss newly-labelled issues. This delay was added after lucos_agent#11 was missed by the architect in Phase 2 because the `owner:lucos-architect` label had not yet propagated.
+
+## Phase 2: Issue Review (parallel — after propagation delay)
+
+Once the 15-second delay has elapsed, launch these six agents concurrently in the same response:
 
 2. `lucos-architect` — "review your issues"
 3. `lucos-system-administrator` — "review your issues"
