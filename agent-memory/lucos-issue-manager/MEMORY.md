@@ -43,7 +43,10 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 ### Priority labels
 - `priority:high` (red), `priority:medium` (yellow), `priority:low` (light blue)
 - No priority label = not yet prioritised (distinct from medium)
-- Set during triage when marking agent-approved
+- Set during triage for ALL issues (including `needs-refining`), not just `agent-approved`
+- Re-assess priority after lucas42 gives input (scope/urgency may have changed)
+- lucas42's explicit priority calls override strategic priorities (final say)
+- Other agents' priority calls are input, not overrides -- assess within strategic priorities context
 
 ### Implementation assignment (introduced 2026-03-03)
 When marking `agent-approved`, also assign an `owner:*` label for implementation:

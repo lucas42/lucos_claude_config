@@ -135,6 +135,7 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 2. Add the label `needs-refining` to the issue.
 3. Remove the label `agent-approved` if it is present.
 4. Apply a **status label** and an **owner label** (see below) to classify why the issue is blocked and who should look at it next. This reduces lucas42 as a bottleneck by routing work to the right person or agent.
+5. Assign a **priority** label (see "Priority Labels" below) so that refinement work is also prioritised.
 
 ### Status and Owner Labels
 
@@ -219,7 +220,9 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 
 ### Priority Labels
 
-When marking an issue `agent-approved`, also assign a priority label. Consult the **strategic priorities file** at `~/sandboxes/lucos/docs/priorities.md` to determine the correct priority level. That file defines the current priority ordering across repositories, including which areas are highest priority and which repositories have work paused.
+Assign a `priority:*` label to **every issue during triage** -- not just `agent-approved` issues. This includes `needs-refining` issues routed to `owner:lucas42` or any agent. Early prioritisation helps lucas42 and agents understand which refinement work is most urgent.
+
+Consult the **strategic priorities file** at `~/sandboxes/lucos/docs/priorities.md` to determine the correct priority level. That file defines the current priority ordering across repositories, including which areas are highest priority and which repositories have work paused.
 
 | Label | When to apply |
 |---|---|
@@ -232,6 +235,15 @@ The strategic priorities file provides specific guidance on how to map these lab
 Issues without a priority label have **not yet been prioritised** -- this is distinct from `priority:medium`. An unprioritised issue should be prioritised before being picked up for implementation.
 
 When picking up work, agents process issues in priority order: `priority:high` first, then `priority:medium`, then `priority:low`. Within the same priority level, oldest issues first.
+
+#### Re-assessing priority after lucas42 input
+
+When lucas42 gives input on an issue (e.g. via a comment, a decision on an `status:awaiting-decision` issue, or a reaction), **re-assess the priority**. The scope or urgency may have changed based on lucas42's feedback, or lucas42 may have explicitly stated a priority. Update the `priority:*` label accordingly.
+
+#### Priority override rules
+
+- **lucas42's priority calls override strategic priorities.** lucas42 is the repo owner and has final say. If lucas42 explicitly states a priority level for an issue (e.g. "this is high priority" or "don't worry about this one"), apply that priority regardless of what the strategic priorities file says.
+- **Priority calls from others** (including other agents) should be considered, but within the context of the larger strategic priorities defined in `priorities.md`. They do not automatically override the strategic framework -- use them as input alongside the priorities file when making your assessment.
 
 ### Using Strategic Priorities for Summaries
 
