@@ -39,3 +39,4 @@
 - Argentine black and white tegu / Salvator merianae (mentioned 2026-03-04)
 - Saltwater crocodile / Crocodylus porosus (mentioned 2026-03-04)
 - King cobra / Ophiophagus hannah (mentioned 2026-03-04)
+- Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
