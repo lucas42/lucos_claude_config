@@ -24,6 +24,10 @@
 !agent-memory/
 !agent-memory/**
 
+# Dispatcher auto-memory (project-scoped persistent memory)
+!projects/
+!projects/**
+
 # Infrastructure scripts
 !scripts/
 !scripts/**

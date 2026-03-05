@@ -1,10 +1,11 @@
 #!/bin/bash
 # commit-agent-memory.sh
 #
-# Automatically commits and pushes uncommitted changes in ~/.claude/agent-memory/.
+# Automatically commits and pushes uncommitted changes in ~/.claude/agent-memory/
+# and ~/.claude/projects/ (dispatcher auto-memory).
 #
-# Scope: ONLY agent-memory/ — not agents/, CLAUDE.md, settings.json, or any
-# other config files. Those warrant deliberate review before going upstream.
+# Scope: ONLY agent-memory/ and projects/ — not agents/, CLAUDE.md, settings.json,
+# or any other config files. Those warrant deliberate review before going upstream.
 #
 # Designed to run via cron in a minimal environment:
 # - Uses the full path to HOME (not relying on shell initialisation)
@@ -29,19 +30,19 @@ export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent -o 
 
 cd "$CLAUDE_DIR"
 
-# Check whether there are any uncommitted changes in agent-memory/ specifically.
-# We check both staged and unstaged changes, plus untracked files in that dir.
-if git diff --quiet HEAD -- agent-memory/ && \
-   git diff --quiet --cached -- agent-memory/ && \
-   [ -z "$(git ls-files --others --exclude-standard -- agent-memory/)" ]; then
-    echo "$(date -Iseconds) No uncommitted changes in agent-memory/ — nothing to do."
+# Check whether there are any uncommitted changes in agent-memory/ or projects/.
+# We check both staged and unstaged changes, plus untracked files in those dirs.
+if git diff --quiet HEAD -- agent-memory/ projects/ && \
+   git diff --quiet --cached -- agent-memory/ projects/ && \
+   [ -z "$(git ls-files --others --exclude-standard -- agent-memory/ projects/)" ]; then
+    echo "$(date -Iseconds) No uncommitted changes in agent-memory/ or projects/ — nothing to do."
     exit 0
 fi
 
-echo "$(date -Iseconds) Uncommitted changes detected in agent-memory/ — committing."
+echo "$(date -Iseconds) Uncommitted changes detected in agent-memory/ or projects/ — committing."
 
-# Stage only agent-memory/ — nothing else
-git add agent-memory/
+# Stage only agent-memory/ and projects/ — nothing else
+git add agent-memory/ projects/
 
 # Commit with the bot identity
 git \
