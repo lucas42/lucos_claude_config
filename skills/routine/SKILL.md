@@ -53,3 +53,28 @@ Once Phase 3 is done, launch one final agent:
 Rationale: the issue manager triages any issues that Phase 2 and Phase 3 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
 Each agent knows how to discover its own backlog via its assigned labels.
+
+## Phase 5: Summary for the user (after Phase 4 completes)
+
+Once all phases are done, compile a prioritised list of issues that need the user's attention. This means any open issue with `owner:lucas42` — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
+
+To find them:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
+  "search/issues?q=label:owner:lucas42+org:lucas42+is:issue+is:open+sort:created-asc&per_page=50"
+```
+
+Present the list grouped and ordered by priority, consulting `~/sandboxes/lucos/docs/priorities.md` for the priority framework:
+
+1. **Priority: high** — issues first, oldest first within the group
+2. **Priority: medium** — next
+3. **Priority: low** — last
+4. **Unprioritised** — at the end (no `priority:*` label)
+
+For each issue, show:
+- The full clickable GitHub URL (e.g. `https://github.com/lucas42/lucos_photos/issues/5`)
+- The issue title
+- A one-line summary of what decision or input is needed (based on the status label and recent comments)
+
+If there are no `owner:lucas42` issues, say so — that means there is nothing blocking on the user right now.
