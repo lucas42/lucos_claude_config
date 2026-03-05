@@ -80,7 +80,10 @@ Before writing any code, post a comment on the issue explaining your approach. W
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    -f body="I'm going to tackle this by adding a new endpoint to handle the upload flow, with input validation up front. I'll also add tests for the happy path and the main error cases."
+    --field body="$(cat <<'ENDBODY'
+I'm going to tackle this by adding a new endpoint to handle the upload flow, with input validation up front. I'll also add tests for the happy path and the main error cases.
+ENDBODY
+)"
 ```
 
 ### Implementing Changes
@@ -99,7 +102,14 @@ Before writing any code, post a comment on the issue explaining your approach. W
     -f title="Add photo upload validation" \
     -f head="add-photo-upload-validation" \
     -f base="main" \
-    -f body="Closes #42\n\nAdds input validation to the upload endpoint. Rejects files over 50MB and non-image MIME types before they hit the storage layer.\n\nTests added for both rejection cases and the happy path."
+    --field body="$(cat <<'ENDBODY'
+Closes #42
+
+Adds input validation to the upload endpoint. Rejects files over 50MB and non-image MIME types before they hit the storage layer.
+
+Tests added for both rejection cases and the happy path.
+ENDBODY
+)"
 ```
 
 ### Code Quality Standards
@@ -119,8 +129,13 @@ If you encounter something unexpected that might block completion — a dependen
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    -f body="Hit a snag: the Redis container isn't exposing its port on the Docker network, so the health check is failing in tests. Going to investigate the compose config — might need input from lucos-site-reliability if it's an infra issue."
+    --field body="$(cat <<'ENDBODY'
+Hit a snag: the Redis container isn't exposing its port on the Docker network, so the health check is failing in tests. Going to investigate the compose config — might need input from lucos-site-reliability if it's an infra issue.
+ENDBODY
+)"
 ```
+
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
 
 ### GitHub Identity
 

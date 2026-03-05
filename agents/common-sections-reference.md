@@ -22,8 +22,15 @@ All GitHub interactions — posting comments, creating issues, creating pull req
 ~/sandboxes/lucos_agent/gh-as-agent --app {persona-name} repos/lucas42/{repo}/issues \
     --method POST \
     -f title="Issue title" \
-    -f body="Issue body here"
+    --field body="$(cat <<'ENDBODY'
+Issue body here with `code` and **markdown**.
+
+Multi-line content, backticks, and special characters are all safe inside a heredoc.
+ENDBODY
+)"
 ```
+
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands). The heredoc pattern avoids both problems.
 
 **Never** use `gh api` directly or `gh pr create` — those would post under the wrong identity. Never fall back to `lucos-agent` when acting as a different persona.
 
