@@ -104,8 +104,11 @@ Remote-mounted NAS volumes (lucos_private_medlib, lucos_static_media_public, luc
 ## Known issues (as of 2026-03-05)
 
 - **#34**: `getBackups()` times out on xwing — 1,373 files, `find ... -exec du -sh {} \;` runs du once per file, too slow for 10s timeout
-- **#35**: `lucos_photos_qdrant_data` not registered in volumes.yaml → triggers volume-config health check failure
 - **#4**: Backup/prune scripts still fail hard when a host is down (tracking is more resilient, but scripts are not)
+
+## Historical context
+
+- `lucos_photos_qdrant_data` was an orphaned volume that appeared after the Qdrant-to-pgvector migration (lucos_photos#36 removed the service from docker-compose, lucos_configy#34 removed it from volumes.yaml). The orphan volume remained on avalon until lucos_photos#76 cleaned it up. It should NOT have been raised as a backups issue — the correct fix was removing the orphan, not registering it. When encountering unknown volumes in volume-config failures, first check whether they are migration orphans before raising issues about registering them.
 
 ## What lucos_backups is NOT responsible for
 

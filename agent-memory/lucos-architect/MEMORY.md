@@ -65,6 +65,12 @@ Key issues filed (open):
 
 Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Identity sprawl partially addressed (personas.json exists), auto-commit for memory now in place. Remaining: token caching, memory path fix, CLAUDE.md restructure, git identity fallback risk, README correction.
 
+Script consolidation (#11): reviewed 2026-03-05, recommended keeping current split:
+- `lucos_agent` = GitHub API auth tooling (get-token, gh-as-agent, get-issues-*, get-prs-*, get-*-alerts, personas.json)
+- `lucos_claude_config/scripts` = cron-driven self-maintenance (commit-agent-memory.sh)
+- `lucos_agent_coding_sandbox` = one-time VM provisioning (setup-repos.sh)
+Split is principled: GitHub API concern vs environment self-maintenance vs bootstrapping. Awaiting lucas42 decision.
+
 ## lucos_contacts
 
 - Django app with calendar ICS endpoint (`app/agents/calendar.py`)
@@ -108,13 +114,32 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Uses `network_mode: host`, single container, service-list baked at Docker build from lucos_configy
 - Email notifications on state changes via gen_smtp_client; suppression window for deploys (10 min)
 - Proposed: `/api/status` JSON endpoint for LLM agent read-only access (#26). Recommended against MCP and against separate process -- existing per-request isolation in server is sufficient.
+- /_info consumer: `parseInfo` reads `system` (required, crashes if missing), `checks` (defaults {}), `metrics` (defaults {}), `ci.circle` (defaults null). Ignores title/icon/show_on_homepage/start_url/network_only.
+
+## lucos_root
+
+- Static site served by Apache, built at Docker build time
+- Build-time `fetch-service-info.sh` consumes /_info from all services via lucos_configy system list
+- /_info consumer: filters by `show_on_homepage==true`, uses `icon`, `title`, `start_url` (defaults "/"), `network_only`. Does NOT read system/checks/metrics/ci.
+- /_info schema proposal posted on lucos#35 (2026-03-05): 3-tier schema (required/recommended/optional). Awaiting lucas42 approval.
 
 ## lucos_media_seinn
 
 - Node.js music player client (Express server + webpack client + service worker)
 - Service worker handles long-polling to media_manager, caches poll data
 - Device switching: `track-status-update.js` sends position every 30s + on device_notcurrent/device_changing events
-- Playback sync gap (#14): up to 30s stale position when non-initiating device is switched away. Proposed: reduce interval to 5s, optional brief delay on new device before resuming.
+- Playback sync gap (#14): revised design posted 2026-03-05 covering both seinn and linuxplayer
+  - lucos_media_linuxplayer is the bigger problem: only sends current-time on pause, no periodic updates, no device_notcurrent handler
+  - Proposed: add 10s periodic updates + device_notcurrent position push to linuxplayer (essential), reduce seinn interval from 30s to 10s (lower priority)
+  - Awaiting lucas42 approval to split into implementation tickets
+
+## lucos_media_linuxplayer
+
+- Node.js + mplayer (headless), deployed on ARM hosts (xwing, salvare, virgon-express)
+- Architecture: long-poll to media_manager, mplayer subprocess controlled via stdin commands
+- Device UUIDs hardcoded per HOSTDOMAIN in local-device-updates.js
+- Only sends playback position to server on pause -- no periodic updates, no device_notcurrent handler
+- This is the primary cause of stale playback position on device switch (#14)
 
 ## pici
 
@@ -130,9 +155,15 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
   - Raises GitHub issues on non-compliant repos (one per finding)
   - HTML dashboard (server-rendered) + JSON API for compliance matrix
   - Repo list from GitHub API (all lucas42 repos), not hardcoded
-  - Auth: PAT initially, GitHub App later if needed
-  - Implementation chunks: scaffold -> convention framework -> audit sweep -> JSON API -> issue raising -> HTML dashboard -> add conventions
-  - Awaiting lucas42 feedback on direction before filing implementation tickets
+  - Auth: GitHub App (not PAT -- lucas42 wants clear attribution)
+  - Implementation tickets filed: #23-#30
+- Audit issue lifecycle (#30): design posted 2026-03-05
+  - Audit result is source of truth, not issue state
+  - New issues instead of reopening (cleaner timeline, avoids confusion)
+  - `audit-finding` label on all audit-raised issues
+  - Auto-close from PRs: let it happen, self-heals on next sweep if fix was incomplete
+  - Accepted risk: `audit-suppressed` label on closed issues prevents re-creation
+  - Awaiting lucas42 approval
 
 ## lucos_creds
 

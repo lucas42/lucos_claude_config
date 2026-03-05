@@ -18,6 +18,10 @@ Format: `container_name: YYYY-MM-DD`
 
 lucos_photos_api: 2026-03-05
 lucos_photos_worker: 2026-03-05
-lucos_photos_qdrant: 2026-03-05
 lucos_comhra_agent: 2026-03-05
 loganne: 2026-03-05
+lucos_configy: 2026-03-05
+monitoring: 2026-03-05
+lucos_backups: 2026-03-05
+authentication: 2026-03-05
+media_metadata_api: 2026-03-05
