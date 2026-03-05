@@ -264,7 +264,7 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for human-
 
 Two dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
 
-- **`/review`** (`~/.claude/skills/review/SKILL.md`) — triggers a three-phase dispatch of all agent personas to triage/review their issues. lucos-issue-manager runs in Phase 1 (triage), Phase 2 (review of issues assigned to it), and Phase 3 (triage again to handle anything Phase 2 agents touched).
+- **`/routine`** (`~/.claude/skills/routine/SKILL.md`) — triggers a four-phase dispatch of all agent personas to triage issues, review them, run ops checks, and triage again. lucos-issue-manager runs in Phase 1 (triage), Phase 2 (review of issues assigned to it), and Phase 4 (triage again to handle anything Phase 2/3 agents touched).
 - **`/next`** (`~/.claude/skills/next/SKILL.md`) — finds the highest-priority `agent-approved` issue across all repos and dispatches the correct implementation persona, followed by a code review loop.
 
 These skills are maintained as part of the `lucos_claude_config` repo (which tracks `~/.claude`). If the underlying workflow changes, the skill files should be updated alongside any persona instruction changes.
