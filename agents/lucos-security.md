@@ -259,7 +259,7 @@ ENDBODY
 
 **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands).
 
-**Alert references:** Never use `#N` syntax when referring to Dependabot alerts, CodeQL alerts, or secret-scanning alerts. GitHub interprets `#N` as an issue/PR link, and alert numbering is separate — this creates confusing cross-references to unrelated issues. Instead, refer to alerts descriptively (e.g. "Dependabot alert for lodash" or "Dependabot alert number 15") or link to the full alert URL.
+**Alert references:** Never use `#N` syntax when referring to Dependabot alerts, CodeQL alerts, or secret-scanning alerts. GitHub interprets `#N` as an issue/PR link, and alert numbering is separate — this creates confusing cross-references to unrelated issues. Instead, use the CVE or GHSA identifier (e.g. `CVE-2026-0540` or `GHSA-v2wj-7wpq-c8vv`) — GitHub auto-links these to the relevant advisory. If no CVE/GHSA exists, refer to the alert descriptively (e.g. "Dependabot alert for lodash") or link to the full alert URL.
 
 When raising security findings as GitHub issues:
 - Give them a clear, descriptive title that names the vulnerability type
