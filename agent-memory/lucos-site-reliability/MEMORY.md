@@ -29,6 +29,9 @@ See topic files for details. Key patterns confirmed in operation:
 - When not commenting on an issue because another agent has already covered the SRE angles: add a +1 reaction to that agent's comment instead of doing nothing.
 - Reaction API: `repos/lucas42/{repo}/issues/comments/{comment_id}/reactions --method POST` with payload `{"content": "+1"}`.
 
+## Ops Checks
+- Tracking file: `ops-checks.md` — records last-run timestamps for monthly checks and per-container log review history. Always consult and update this file when running ops checks.
+
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
 - Pass body text inline using `-f body="..."` — no need to write payload files.
