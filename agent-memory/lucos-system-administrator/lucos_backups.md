@@ -101,6 +101,10 @@ Volume names in the yaml must match Docker's name exactly (which is `<compose_pr
 
 Remote-mounted NAS volumes (lucos_private_medlib, lucos_static_media_public, lucos_media_import_media) have `recreate_effort: remote` and `skip_backup: true`.
 
+## Prune script behaviour
+
+`prune-backups.py` SSHes into ALL configured hosts (avalon, salvare, xwing) and prunes `/srv/backups/` on each. It does NOT only prune the host where `lucos_backups` is deployed. Evidence: prune logs show `Host: salvare.s.l42.eu` and `Host: xwing.s.l42.eu` being visited.
+
 ## Known issues (as of 2026-03-05)
 
 - **#34**: `getBackups()` times out on xwing — 1,373 files, `find ... -exec du -sh {} \;` runs du once per file, too slow for 10s timeout
