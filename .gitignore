@@ -16,6 +16,10 @@
 !agents/
 !agents/**
 
+# Custom slash command skills
+!skills/
+!skills/**
+
 # Agent persistent memory
 !agent-memory/
 !agent-memory/**
