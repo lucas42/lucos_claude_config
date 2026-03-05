@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-05 (second run)
+container_status: 2026-03-05 (third run)
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05

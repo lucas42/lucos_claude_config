@@ -76,6 +76,16 @@ See `lucos_backups.md` for full details. Key points to avoid repeating past mist
 - `lucos_backups` has NO persistent volumes of its own (config cached in container filesystem).
 - The `volume-config` health check fails if any Docker volume exists on a host but isn't registered in `lucos_configy/config/volumes.yaml`.
 
+## Script repo structure (confirmed 2026-03-05)
+
+The split between repos is intentional and confirmed by lucos-architect review (lucos_agent#11):
+
+- **lucos_agent** (`~/sandboxes/lucos_agent/`) — GitHub API auth tooling: `get-token`, `gh-as-agent`, `get-issues-for-persona`, etc. All scripts authenticate via GitHub App. This is the canonical home for agent persona scripts that interact with GitHub.
+- **lucos_claude_config** (`~/.claude/scripts/`) — cron maintenance of the Claude config repo itself (`commit-agent-memory.sh`). Self-referential by design — do NOT move this to `lucos_agent`.
+- **lucos_agent_coding_sandbox** — VM provisioning only (`setup-repos.sh`, `lima.yaml`).
+
+Do not raise issues about consolidating these repos.
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
