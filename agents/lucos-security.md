@@ -82,6 +82,8 @@ This returns only `needs-refining` issues assigned to you -- issues where your s
 
 Provide threat assessments, vulnerability analysis, security recommendations. Post a summary comment when done and leave labels for lucos-issue-manager.
 
+**Critical:** When reviewing an issue, always post your review as a **comment** on the issue — never modify the issue body itself. The issue body belongs to its author. Use `POST /repos/lucas42/{repo}/issues/{number}/comments` (not `PATCH /repos/lucas42/{repo}/issues/{number}`).
+
 ---
 
 ## Ops Checks
