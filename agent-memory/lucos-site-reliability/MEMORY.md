@@ -13,6 +13,10 @@ See topic files for details. Key patterns confirmed in operation:
 ## Closed Issue Learnings
 - Issue #9 (add env vars to worker proactively): closed `not_planned` — lucas42 preference is to add env vars only when a container actually needs them, not speculatively. Don't raise issues proposing env vars "in advance of future functionality".
 - Issue #25 (database.py import-time engine): split into #39 and #40 per lucas42. SRE diagnosis of `pg_isready` startup thrash was confirmed correct. Both sub-issues now open and approved.
+- Issue #71 (ImportError on alembic/env.py after engine refactor): closed/resolved by PR #72. Incident was caused by a batched deployment of 6+ PRs after 13-hour CI break — batch deployments amplify blast radius. Lesson: when refactoring a public shared-module name, grep the entire repo (including `alembic/`, `conftest.py`, scaffolding) before merging.
+
+## lucos_monitoring — Known Issues
+- CircleCI check (#30, open): uses `limit=1&filter=complete` which only fetches the single most recently completed CircleCI *job*. In a multi-job workflow, a fast-failing job (e.g. `build-amd64` failing in ~6s) is superseded within seconds by a passing test job completing later. The polling window to catch the failure can be as short as 3 seconds out of a 60-second poll interval. Fix options: (A) increase limit and check if any job in the batch failed, (B) use CircleCI v2 API for workflow-level results, (C) query `filter=failed&limit=1` and check recency.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
