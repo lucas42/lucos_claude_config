@@ -41,3 +41,4 @@
 - King cobra / Ophiophagus hannah (mentioned 2026-03-04)
 - Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
 - Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05)
+- Angolan python / Python anchietae (mentioned 2026-03-05)

@@ -171,12 +171,18 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 
 - Go + SQLite, schema-agnostic key-value tags per track (UNIQUE constraint on trackid+predicateid)
 - Multi-value fields (#34): currently comma-separated in single tag value. lucas42 wants native support.
-  - Recommended: v3 endpoints (all tag values as arrays), predicate_schema table with multi_value flag
+  - Recommended: v3 endpoints with mixed types (strings for single-value, arrays for multi-value predicates)
+  - lucas42 rejected: predicate_schema DB table (prefers schema in code, not DB), all-arrays approach (dislikes `track.artist[0]` pattern)
+  - Revised: `multiValuePredicates` as Go constant map in codebase (composer, producer, language, offence, about, mentions)
   - Data migration: drop UNIQUE constraint, split comma-separated values into separate rows
   - Internal refactor needed: map[string]string -> []Tag before schema change
   - Search actually gets simpler with normalised rows (existing JOIN pattern works unchanged)
-  - Consumers to audit: lucos_media_metadata_manager (PHP), lucos_media_manager (Java), lucos_arachne ingestor (Python), lucos_media_import
-  - 8-step implementation plan proposed. Awaiting feedback.
+  - rdfgen already has `splitCSV` for multi-value predicates -- can be removed after migration
+  - Consumers: lucos_media_metadata_manager (PHP), lucos_media_manager (Java), lucos_arachne ingestor (Python), lucos_media_import, lucos_media_weightings
+  - GET/PUT/PATCH must use same shape (no asymmetry). PUT/PATCH replaces all values for multi-value predicates.
+  - `DecodeTrack` needs custom JSON unmarshaller for v3 (tags become `map[string]interface{}`)
+  - 8-step implementation plan: audit -> internal refactor -> define multiValuePredicates -> DB migration -> v3 endpoints -> update rdfgen -> migrate consumers -> deprecate v2
+  - Revised design posted. Awaiting lucas42 confirmation before filing implementation tickets.
 
 ## Cross-cutting: User-Agent convention (lucos#19, now closed)
 
