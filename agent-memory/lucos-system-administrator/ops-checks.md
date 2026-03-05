@@ -72,7 +72,7 @@ sandbox_drift: 2026-03-05
 
 **Note**: xwing router container is named `router`, not `lucos_router_nginx`.
 
-### 2026-03-05 (FIFTH RUN — container status only, all other checks current)
+### 2026-03-05 (SIXTH RUN — container status only, all other checks current)
 
 **Closed issues reviewed** (learnings absorbed):
 - lucos_backups#32 (xwing/salvare no backups): CLOSED as not_planned — single `lucos_backups` on avalon SSHes into ALL hosts to back up volumes. See `lucos_backups.md`.
@@ -90,6 +90,15 @@ sandbox_drift: 2026-03-05
 - xwing: `lucos_media_import_test` Exited (0), 11 days old — one-shot test container, not a concern
 
 **Xwing cert check**: All 4 certs expire 2026-04-06 (31 days). `update-domains.sh` cron runs daily at 22:16 — auto-renewal expected. No issue raised.
+
+### 2026-03-05 (SIXTH RUN — container status only, all other checks current)
+
+**Container status**:
+- avalon: clean
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), still 11 days old — one-shot test container, still not a concern
+
+**Xwing cert check** (spot check): Still same cert, expires 2026-04-06. Not yet within 30-day renewal window. Auto-renewal cron running daily — no action needed.
 
 ---
 
