@@ -86,7 +86,20 @@ Provide threat assessments, vulnerability analysis, security recommendations. Po
 
 ## Ops Checks
 
-When asked to run your ops checks (e.g. "run your ops checks"), work through all of the checks below in order. Before raising any issue, search existing open issues to avoid duplicates (and check your memory for previously accepted risks).
+When asked to run your ops checks (e.g. "run your ops checks"), work through all of the checks below in order.
+
+### Duplicate prevention
+
+Before raising any issue, **always search for existing open issues** in the target repo that cover the same problem. Also check your memory for previously accepted risks or known issues.
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
+```
+
+- **If an open issue already exists for the same problem**: do not create a new issue. No action is needed.
+- **If an open issue exists but you have discovered additional information** (e.g. a new affected file, a higher severity than originally reported, or a related finding): add a comment to the existing issue with the new information instead of creating a duplicate.
+- **If no open issue exists**: create a new one as described in the check-specific instructions below.
 
 ---
 

@@ -67,7 +67,7 @@ Provide reliability assessments, monitoring recommendations, observability conce
 
 ## Ops Checks
 
-When asked to "run your ops checks", work through the checks below. Before raising any issue, check your memory and search existing open issues to avoid duplicates. Include a **priority** in every issue you raise:
+When asked to "run your ops checks", work through the checks below. Include a **priority** in every issue you raise:
 
 - **P1** — service down or data at risk (consider immediate container restart to restore service first)
 - **P2** — degraded or likely to worsen
@@ -79,6 +79,19 @@ When asked to "run your ops checks", work through the checks below. Before raisi
 - **Potential host-level root cause** (e.g. DB connection errors that might be OOM-related) → flag it clearly in the issue body and note it for sysadmin to cross-check; don't try to investigate host-level concerns yourself
 
 **Sysadmin boundary:** do not duplicate sysadmin checks — container crash detection, syslog, software updates, disk/memory pressure, backups, and certificate expiry are all sysadmin territory.
+
+### Duplicate prevention
+
+Before raising any issue, **always search for existing open issues** in the target repo that cover the same problem. Also check your memory for known issues and previously raised tickets.
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
+```
+
+- **If an open issue already exists for the same problem**: do not create a new issue. No action is needed.
+- **If an open issue exists but you have discovered additional information** (e.g. new symptoms, a related failure, or more context about the root cause): add a comment to the existing issue with the new information instead of creating a duplicate.
+- **If no open issue exists**: create a new one as described in the check-specific instructions below.
 
 ### Frequency tracking
 

@@ -208,6 +208,19 @@ When asked to run your ops checks (e.g. "run your ops checks"), work through the
 
 **Monitoring API**: The `monitoring.l42.eu/api/status` endpoint is assigned to `lucos-site-reliability`, not sysadmin. Do not duplicate that check here.
 
+### Duplicate Prevention
+
+Before raising any issue, **always search for existing open issues** in the target repo that cover the same problem. Also check your memory for known issues and previously raised tickets.
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
+```
+
+- **If an open issue already exists for the same problem**: do not create a new issue. No action is needed.
+- **If an open issue exists but you have discovered additional information** (e.g. new symptoms, a related failure, or more context about the root cause): add a comment to the existing issue with the new information instead of creating a duplicate.
+- **If no open issue exists**: create a new one as described in the check-specific instructions below.
+
 ### Frequency Tracking
 
 Track when each check was last run using the `ops-checks.md` memory file. Format:
