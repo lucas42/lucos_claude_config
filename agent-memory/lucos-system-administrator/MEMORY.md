@@ -86,6 +86,10 @@ The split between repos is intentional and confirmed by lucos-architect review (
 
 Do not raise issues about consolidating these repos.
 
+## xwing TLS certificate renewal
+
+Certificates on xwing are managed by certbot inside the `router` container (not `lucos_router_nginx` — xwing's router container is named `router`). Auto-renewal is via a daily cron at 22:16 running `/usr/bin/update-domains.sh`. Let's Encrypt typically renews at 30 days out. Certificates as of 2026-03-05 expire 2026-04-06 — expected to auto-renew. No action needed unless they fail to renew past the 30-day mark.
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
