@@ -60,7 +60,7 @@ Key issues filed (open):
 - lucas42/lucos_agent#9: get-token has no caching; generates fresh token per API call. Latency and rate-limit concern.
 - lucas42/lucos_claude_config#3: Three persona files have wrong memory paths (/Users/lucas/ instead of /home/lucas.linux/)
 - lucas42/lucos_claude_config#5: CLAUDE.md too large, mixes reference docs with agent instructions. Recommend factoring out.
-- lucas42/lucos_agent_coding_sandbox#4: Global git identity creates silent fallback when persona forgets -c flags
+- lucas42/lucos_agent_coding_sandbox#4: DONE. Global git identity removed; bare `git commit` now fails loudly.
 - lucas42/lucos_agent_coding_sandbox#5: README has wrong bot user ID (uses App ID)
 
 Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Identity sprawl partially addressed (personas.json exists), auto-commit for memory now in place. Remaining: token caching, memory path fix, CLAUDE.md restructure, git identity fallback risk, README correction.
@@ -123,9 +123,16 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 
 ## lucos_repos
 
-- Node.js service, currently minimal (/_info + deprecated webhook)
-- Auto-configure repos (#3): proposed extending as API-driven service with periodic reconciliation. Three sub-items: auto-merge, branch protection rulesets, versioning webhook. Need test job naming convention and versioning webhook clarification.
-- Config reporting (#12): proposed /_info-style JSON endpoint showing per-repo check results. Should be implemented before #3 (read before write).
+- Currently a shell: Node.js /_info + deprecated webhook. lucas42 wants greenfield reimagining (#22).
+- Proposed architecture (#22): Go + SQLite, single container, deterministic convention auditing
+  - Scheduled sweep every 6 hours (not webhook-driven)
+  - Convention checks defined in code (Go functions), not config
+  - Raises GitHub issues on non-compliant repos (one per finding)
+  - HTML dashboard (server-rendered) + JSON API for compliance matrix
+  - Repo list from GitHub API (all lucas42 repos), not hardcoded
+  - Auth: PAT initially, GitHub App later if needed
+  - Implementation chunks: scaffold -> convention framework -> audit sweep -> JSON API -> issue raising -> HTML dashboard -> add conventions
+  - Awaiting lucas42 feedback on direction before filing implementation tickets
 
 ## lucos_creds
 
@@ -158,6 +165,18 @@ Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedi
 - Temporal models: DayOfWeek (order field), Calendar, Month (FK calendar, order_in_calendar), Festival (nullable day_of_month, nullable FK month), Season (no date fields)
 - 5 calendars: Chinese, Gregorian, Hebrew, Hijri, Hindu
 - Festival model only records start day, not duration -- architectural gap for temporal matching
+- #68 festival duration: Options A/B rejected by lucas42. Proposed Option C (separate FestivalPeriod model with FK to Festival, label, start_day, start_month, duration_days). Awaiting decision. lucos_time#76 filed as follow-up (blocked on #68).
+
+## lucos_media_metadata_api
+
+- Go + SQLite, schema-agnostic key-value tags per track (UNIQUE constraint on trackid+predicateid)
+- Multi-value fields (#34): currently comma-separated in single tag value. lucas42 wants native support.
+  - Recommended: v3 endpoints (all tag values as arrays), predicate_schema table with multi_value flag
+  - Data migration: drop UNIQUE constraint, split comma-separated values into separate rows
+  - Internal refactor needed: map[string]string -> []Tag before schema change
+  - Search actually gets simpler with normalised rows (existing JOIN pattern works unchanged)
+  - Consumers to audit: lucos_media_metadata_manager (PHP), lucos_media_manager (Java), lucos_arachne ingestor (Python), lucos_media_import
+  - 8-step implementation plan proposed. Awaiting feedback.
 
 ## Cross-cutting: User-Agent convention (lucos#19, now closed)
 
