@@ -80,13 +80,9 @@ vue-leaflet-antimeridian uses Vue 2 (via vue2-leaflet peerDep). Vue 2 is EOL and
 
 Do not raise this alert again. If the alert resurfaces, reference the accepted risk decision in #4.
 
-## Pending: DOMPurify XSS in lucos_arachne (No Patch Available)
+## Fixed: DOMPurify XSS in lucos_arachne (PR Awaiting Review)
 
-DOMPurify 3.3.0 (transitive via `@zazuko/yasgui`) in `explore/package-lock.json` is vulnerable to XSS via rawtext elements in `SAFE_FOR_XML` mode (CVE-2026-0540, GHSA-v2wj-7wpq-c8vv). The fix commit (729097f) exists but **no patched npm release exists** as of 2026-03-05 — 3.3.1 is latest and still vulnerable.
-
-Action when a patched version appears: add an `overrides` entry in `explore/package.json` and regenerate `package-lock.json`. Tracked in lucas42/lucos_arachne#50.
-
-When Dependabot alert #15 resurfaces: check if a fixed npm release is now available before deciding action.
+DOMPurify 3.3.2 released 2026-03-05 fixes raw-text/jsdom parsing bypass (GHSA-v2wj-7wpq-c8vv). Added `dompurify >= 3.3.2` override to `explore/package.json` and regenerated `explore/package-lock.json`. PR: lucas42/lucos_arachne#52. Closes issue lucas42/lucos_arachne#50. Dependabot alert #15 should clear once PR is merged.
 
 ## Ops Checks Schedule
 

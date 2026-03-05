@@ -50,6 +50,7 @@ When marking `agent-approved`, also assign an `owner:*` label for implementation
 - Default: `owner:lucos-developer`
 - Purely infra: `owner:lucos-system-administrator`
 - Purely monitoring/logging/pipelines: `owner:lucos-site-reliability`
+- Incident management (response, reporting, post-mortems, tracking): `owner:lucos-site-reliability`
 - Purely security: `owner:lucos-security`
 - Workflow/process docs: `owner:lucos-issue-manager`
 - Mixed work: `owner:lucos-developer` (ensure specialist reviewed first)
@@ -68,7 +69,7 @@ All labels exist across 16 repos. See [label-colours.md](label-colours.md) for f
 
 Two domains get specialist follow-up after the primary owner finishes, before `agent-approved`:
 
-- **SRE**: Issues touching monitoring, logging, observability, or reliability get re-routed to `owner:lucos-site-reliability`
+- **SRE**: Issues touching monitoring, logging, observability, reliability, or incident management (response, reporting, post-mortems, tracking) get re-routed to `owner:lucos-site-reliability`
 - **Security**: Issues touching authentication, authorisation, data protection, secret management, or other security topics get re-routed to `owner:lucos-security`
 
 Both also apply mid-lifecycle if concerns are raised in comments after initial triage.

@@ -10,5 +10,5 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| codeql-coverage | never |
-| github-actions-audit | never |
+| codeql-coverage | 2026-03-05 |
+| github-actions-audit | 2026-03-05 |
