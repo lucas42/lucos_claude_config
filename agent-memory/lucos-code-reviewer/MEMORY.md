@@ -44,3 +44,4 @@
 - Angolan python / Python anchietae (mentioned 2026-03-05)
 - Banded sea krait / Laticauda colubrina (mentioned 2026-03-05)
 - Nile monitor / Varanus niloticus (mentioned 2026-03-05)
+- Mexican mole lizard / Bipes biporus (mentioned 2026-03-05)
