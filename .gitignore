@@ -7,6 +7,7 @@
 # Explicitly track these safe files:
 !.gitignore
 !CLAUDE.md
+!pr-review-loop.md
 !python-testing.md
 
 # Claude Code settings (non-sensitive configuration only)
@@ -24,9 +25,14 @@
 !agent-memory/
 !agent-memory/**
 
-# Dispatcher auto-memory (project-scoped persistent memory)
+# Dispatcher auto-memory (project-scoped persistent memory).
+# Track only the memory/ subdirectory — NOT session history, tool results, or
+# subagent logs, which live alongside it and must not go into a public repo.
 !projects/
-!projects/**
+!projects/*/
+!projects/*/CLAUDE.md
+!projects/*/memory/
+!projects/*/memory/**
 
 # Infrastructure scripts
 !scripts/
