@@ -67,6 +67,15 @@ When assigned a `status:needs-design` issue that conflates multiple problems, th
 
 Don't try to split issues yourself (we don't have `issues: write` on new issue creation in all repos? — actually we do, but issue splitting is the issue manager's job per the label workflow).
 
+## lucos_backups architecture
+
+See `lucos_backups.md` for full details. Key points to avoid repeating past mistakes:
+
+- **Single container on avalon** handles ALL hosts. Do NOT raise issues about xwing/salvare lacking lucos_backups.
+- Prune script SSHes into all hosts (avalon, salvare, xwing) — it IS pruning salvare's backup files.
+- `lucos_backups` has NO persistent volumes of its own (config cached in container filesystem).
+- The `volume-config` health check fails if any Docker volume exists on a host but isn't registered in `lucos_configy/config/volumes.yaml`.
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
