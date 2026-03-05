@@ -40,3 +40,4 @@
 - Saltwater crocodile / Crocodylus porosus (mentioned 2026-03-04)
 - King cobra / Ophiophagus hannah (mentioned 2026-03-04)
 - Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
+- Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05)
