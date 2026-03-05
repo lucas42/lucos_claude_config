@@ -14,3 +14,4 @@ Last reviewed: 2026-03-05
 - https://github.com/lucas42/lucos_agent_coding_sandbox/issues/7 (Android tooling - completed)
 - https://github.com/lucas42/lucos_photos/issues/60 (video upload - split into sub-tickets #62-#67, closed as completed)
 - https://github.com/lucas42/lucos_photos/issues/40 (wrap engine creation - completed via PR)
+- https://github.com/lucas42/lucos_repos/issues/30 (audit-raised issue lifecycle design - ADR written, closed as completed)
