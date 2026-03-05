@@ -49,3 +49,5 @@
 - Veiled chameleon / Chamaeleo calyptratus (mentioned 2026-03-05)
 - Spiny-tailed monitor / Varanus acanthurus (mentioned 2026-03-05)
 - Texas horned lizard / Phrynosoma cornutum (mentioned 2026-03-05)
+- Sand boa / Eryx spp. (mentioned 2026-03-05)
+- Rhinoceros iguana / Cyclura cornuta (mentioned 2026-03-05)

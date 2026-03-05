@@ -90,6 +90,23 @@ Do not raise issues about consolidating these repos.
 
 Certificates on xwing are managed by certbot inside the `router` container (not `lucos_router_nginx` — xwing's router container is named `router`). Auto-renewal is via a daily cron at 22:16 running `/usr/bin/update-domains.sh`. Let's Encrypt typically renews at 30 days out. Certificates as of 2026-03-05 expire 2026-04-06 — expected to auto-renew. No action needed unless they fail to renew past the 30-day mark.
 
+## code-reviewer-auto-merge: PEM key formatting gotcha
+
+When setting `CODE_REVIEWER_PRIVATE_KEY` as a GitHub Actions secret, the key from `~/sandboxes/lucos_agent/.env` is in lucos_creds space-flattened format (newlines replaced with spaces, wrapped in double quotes). The `actions/create-github-app-token@v2` action calls `atob()` which requires valid PEM with actual newlines — spaces cause `DOMException [InvalidCharacterError]: Invalid character`.
+
+**Always convert before setting the secret.** Python conversion pattern:
+```python
+val = val.replace('-----BEGIN RSA PRIVATE KEY----- ', '-----BEGIN RSA PRIVATE KEY-----\n')
+val = val.replace(' -----END RSA PRIVATE KEY-----', '\n-----END RSA PRIVATE KEY-----')
+parts = val.split('\n')
+body = parts[1].replace(' ', '\n')
+pem = parts[0] + '\n' + body + '\n' + parts[2]
+```
+
+Then encrypt with PyNaCl using the repo's public key (`repos/{owner}/{repo}/actions/secrets/public-key`) and PUT to `repos/{owner}/{repo}/actions/secrets/CODE_REVIEWER_PRIVATE_KEY`.
+
+This has caught out lucos_photos and lucos_repos (2026-03-04 and 2026-03-05).
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
