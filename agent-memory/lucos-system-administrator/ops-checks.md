@@ -72,6 +72,25 @@ sandbox_drift: 2026-03-05
 
 **Note**: xwing router container is named `router`, not `lucos_router_nginx`.
 
+### 2026-03-05 (FIFTH RUN — container status only, all other checks current)
+
+**Closed issues reviewed** (learnings absorbed):
+- lucos_backups#32 (xwing/salvare no backups): CLOSED as not_planned — single `lucos_backups` on avalon SSHes into ALL hosts to back up volumes. See `lucos_backups.md`.
+- lucos_backups#33 (salvare prune not running): CLOSED as not_planned — prune script iterates all hosts via SSH. Note: xwing prune times out (1,373 files, `du -sh` per file) — separate issue warranted if backlog grows.
+- lucos_agent_coding_sandbox#15 (salvare security patches): CLOSED — lucas42 ran upgrade manually. All security patches cleared. Unattended-upgrades tracked in #21.
+- lucos_agent_coding_sandbox#18 (xwing cert): CLOSED as not_planned — `update-domains.sh` cron in `router` container runs daily at 22:16. At 31 days, cert is within auto-renewal window.
+- lucos_backups#35 (qdrant volume not in configy): CLOSED — resolved.
+- lucos_backups#36 (/_info missing start_url): CLOSED — resolved.
+- lucos_deploy_orb#10 (docker image prune on deploy): CLOSED — implemented. Deploy orb now prunes dangling images after each deploy.
+- lucos_agent#11 (scripts split between repos): CLOSED — intentional: `lucos_agent` = GitHub API auth; `lucos_claude_config/scripts/` = self-referential Claude env maintenance.
+
+**Container status**:
+- avalon: clean
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 11 days old — one-shot test container, not a concern
+
+**Xwing cert check**: All 4 certs expire 2026-04-06 (31 days). `update-domains.sh` cron runs daily at 22:16 — auto-renewal expected. No issue raised.
+
 ---
 
 **Issues raised**:

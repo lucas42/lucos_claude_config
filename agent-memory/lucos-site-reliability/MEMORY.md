@@ -23,12 +23,15 @@ See topic files for details. Key patterns confirmed in operation:
 - lucos_monitoring/issues/25 (CircleCI v2 migration): closed as completed — superseded by #30/#32 which implemented the workflow-level v2 API check.
 
 ## lucos_monitoring — Known Issues
-- CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. The false alarm race condition (failed job masked by passing retry) should be resolved — monitor for recurrence.
+- CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. Race condition confirmed still present (2026-03-05): `checkWorkflowStatuses` reports failed if ANY workflow in pipeline is failed, even when a later successful retry exists. Issue raised as #34 (P3).
 - lucos_arachne ingestor: unhandled webhook types from loganne causing 404 responses — events silently dropped. Issue raised as lucos_arachne#53.
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
 
 ## lucos_media_seinn — Known Issues
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
+
+## lucos_deploy_orb — Known Issues
+- "Prune dangling Docker images" step in deploy-avalon job times out on avalon, causing spurious deploy failures. Affects lucos_repos, lucos_arachne, lucos_photos (confirmed 2026-03-05). Issue raised as #12 (P2). Deploy itself succeeds; only prune step hangs.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.

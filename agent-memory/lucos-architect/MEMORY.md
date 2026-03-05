@@ -13,7 +13,7 @@
 - PhotoPerson join table alongside Face table could create data consistency issues
 - Infrastructure guidance given on #29: use `pgvector/pgvector:pg16-alpine` (not custom Dockerfile), remove QDRANT_URL from lucos_creds, sequence configy volume removal after production deploy
 - Android backup client (#3): recommended separate repo `lucos_photos_android` (different platform/toolchain/lifecycle). WorkManager for background sync, sideloaded APK for distribution. No Android SDK in coding sandbox -- tooling gap if agents need to implement.
-- Video upload support (#60): needs-refining. Reviewed 2026-03-04. Key design decisions pending: table rename (photo->media_item vs discriminator column), video size limits, transcoding scope, face detection deferral. Recommended 6-step incremental delivery. Streaming upload is prerequisite (current endpoint reads entire file into memory). Range request support needed for video serving. Residual Qdrant check still in /_info endpoint code.
+- Video upload (#60): needs-refining. 6-step incremental delivery proposed. See `project-details.md`.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -106,6 +106,8 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 - Search endpoint: `/search` proxied to Typesense `/collections/items/documents/search`
 - CORS enabled, supports read-only client keys for browser-side search
 - Dedicated `tracks` collection planned (#47) with ~15 faceted fields from media RDF export
+- MCP server (#15): recommended against for now. Direct HTTP access (SPARQL + Typesense) via wrapper script is simpler. Revisit MCP when multiple agents need access or query patterns become complex. Fuseki requires basic auth (Shiro); need read-only credential for agent env.
+- lucos_configy#33 (persona data via configy API): recommended closing as not planned. No consumer, personas.json already solves the source-of-truth problem. Configy's data model is a poor fit for identity/auth data.
 
 ## lucos_monitoring
 
@@ -121,7 +123,10 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 - Static site served by Apache, built at Docker build time
 - Build-time `fetch-service-info.sh` consumes /_info from all services via lucos_configy system list
 - /_info consumer: filters by `show_on_homepage==true`, uses `icon`, `title`, `start_url` (defaults "/"), `network_only`. Does NOT read system/checks/metrics/ci.
-- /_info schema proposal posted on lucos#35 (2026-03-05): 3-tier schema (required/recommended/optional). Awaiting lucas42 approval.
+- /_info schema proposal posted on lucos#35 (2026-03-05): revised 3-tier schema accepted by lucas42.
+  - Tier 1 (required): system, checks, metrics. Tier 2 (recommended): ci, title. Tier 3 (frontend only): icon, show_on_homepage, network_only, start_url.
+  - lucas42 feedback: frontend-specific fields should not be recommended for APIs. Also wants lucos_monitoring to start using `title` field.
+  - Next: formal spec doc, monitoring ticket for title support, per-service compliance tickets, CLAUDE.md update.
 
 ## lucos_media_seinn
 
@@ -148,28 +153,13 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 
 ## lucos_repos
 
-- Currently a shell: Node.js /_info + deprecated webhook. lucas42 wants greenfield reimagining (#22).
-- Proposed architecture (#22): Go + SQLite, single container, deterministic convention auditing
-  - Scheduled sweep every 6 hours (not webhook-driven)
-  - Convention checks defined in code (Go functions), not config
-  - Raises GitHub issues on non-compliant repos (one per finding)
-  - HTML dashboard (server-rendered) + JSON API for compliance matrix
-  - Repo list from GitHub API (all lucas42 repos), not hardcoded
-  - Auth: GitHub App (not PAT -- lucas42 wants clear attribution)
-  - Implementation tickets filed: #23-#30
-- Audit issue lifecycle (#30): design posted 2026-03-05
-  - Audit result is source of truth, not issue state
-  - New issues instead of reopening (cleaner timeline, avoids confusion)
-  - `audit-finding` label on all audit-raised issues
-  - Auto-close from PRs: let it happen, self-heals on next sweep if fix was incomplete
-  - Accepted risk: `audit-suppressed` label on closed issues prevents re-creation
-  - Awaiting lucas42 approval
+- Greenfield redesign (#22): Go + SQLite, convention auditing. Implementation tickets #23-#30.
+- Audit lifecycle (#30): design posted, awaiting approval. See `project-details.md` for full design.
 
 ## lucos_creds
 
-- Go server, SQLite storage, AES-GCM encrypted values
-- Two credential types: simple (key-value) and linked (inter-system API keys)
-- SSH key issue (#61): multiline values break .env format. Proposed fixing .env quoting for multiline values rather than adding a new credential type. Dedicated key lifecycle management (generation, rotation) deferred as unnecessary at current scale (2-3 keys).
+- Go server, SQLite storage, AES-GCM encrypted values. Two credential types: simple (key-value) and linked (inter-system API keys).
+- SSH key issue (#61): proposed fixing .env quoting for multiline values. See `project-details.md`.
 
 ## lucos_time
 
@@ -193,31 +183,14 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 - Django app, personal metadata/ontology manager, Postgres + nginx
 - Auth: `Authorization: Key <apikey>` header via `@api_auth` decorator
 - API endpoints: `/metadata/<type>/<pk>/data/` (individual RDF), `/metadata/all/data/` (full dump), `/ontology` (no auth)
-- Temporal models: DayOfWeek (order field), Calendar, Month (FK calendar, order_in_calendar), Festival (nullable day_of_month, nullable FK month), Season (no date fields)
 - 5 calendars: Chinese, Gregorian, Hebrew, Hijri, Hindu
-- Festival model only records start day, not duration -- architectural gap for temporal matching
-- #68 festival duration: Options A/B rejected by lucas42. Proposed Option C (separate FestivalPeriod model with FK to Festival, label, start_day, start_month, duration_days). Awaiting decision. lucos_time#76 filed as follow-up (blocked on #68).
+- Festival duration (#68): Option C proposed, awaiting decision. See `project-details.md`.
 
 ## lucos_media_metadata_api
 
-- Go + SQLite, schema-agnostic key-value tags per track (UNIQUE constraint on trackid+predicateid)
-- Multi-value fields (#34): currently comma-separated in single tag value. lucas42 wants native support.
-  - Recommended: v3 endpoints with mixed types (strings for single-value, arrays for multi-value predicates)
-  - lucas42 rejected: predicate_schema DB table (prefers schema in code, not DB), all-arrays approach (dislikes `track.artist[0]` pattern)
-  - Revised: `multiValuePredicates` as Go constant map in codebase (composer, producer, language, offence, about, mentions)
-  - Data migration: drop UNIQUE constraint, split comma-separated values into separate rows
-  - Internal refactor needed: map[string]string -> []Tag before schema change
-  - Search actually gets simpler with normalised rows (existing JOIN pattern works unchanged)
-  - rdfgen already has `splitCSV` for multi-value predicates -- can be removed after migration
-  - Consumers: lucos_media_metadata_manager (PHP), lucos_media_manager (Java), lucos_arachne ingestor (Python), lucos_media_import, lucos_media_weightings
-  - GET/PUT/PATCH must use same shape (no asymmetry). PUT/PATCH replaces all values for multi-value predicates.
-  - `DecodeTrack` needs custom JSON unmarshaller for v3 (tags become `map[string]interface{}`)
-  - 8-step implementation plan: audit -> internal refactor -> define multiValuePredicates -> DB migration -> v3 endpoints -> update rdfgen -> migrate consumers -> deprecate v2
-  - Revised design posted. Awaiting lucas42 confirmation before filing implementation tickets.
+- Go + SQLite, multi-value fields (#34): revised design posted, awaiting lucas42 confirmation. See `project-details.md`.
 
-## Cross-cutting: User-Agent convention (lucos#19, now closed)
+## Cross-cutting: User-Agent convention (lucos#19, closed)
 
-- ADR-0001 written in lucas42/lucos repo: `docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`
-- PR #29 submitted (closes #27). Convention: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
-- #19 closed after split into #27 (ADR, done) and #28 (audit, separate work)
-- First ADR in the lucos repo; also added Documentation section to README pointing to `docs/adr/` and `docs/`
+- ADR-0001 in lucas42/lucos: `docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`
+- Convention: set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
