@@ -48,3 +48,4 @@
 - Parson's chameleon / Calumma parsonii (mentioned 2026-03-05)
 - Veiled chameleon / Chamaeleo calyptratus (mentioned 2026-03-05)
 - Spiny-tailed monitor / Varanus acanthurus (mentioned 2026-03-05)
+- Texas horned lizard / Phrynosoma cornutum (mentioned 2026-03-05)

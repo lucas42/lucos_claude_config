@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-05 (third run)
+container_status: 2026-03-05 (fourth run)
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -57,6 +57,22 @@ sandbox_drift: 2026-03-05
 - xwing (4 domains: nas.l42.eu, private.l42.eu, staticmedia.l42.eu, xwing.s.l42.eu): all expire 2026-04-06 (32 days — warning). Issue raised: lucos_agent_coding_sandbox#18
 
 **Sandbox drift**: 2 local commits unpushed, 2 remote commits undeployed. Issue raised: lucos_agent_coding_sandbox#19
+
+### 2026-03-05 (FOURTH RUN — container status only, all other checks current)
+
+**Container status**:
+- avalon: clean
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), now 11 days old — still a one-shot test container, not a concern
+
+**Closed issues noted**:
+- lucos_agent_coding_sandbox#14 (salvare disk): CLOSED — salvare disk now 73% (16G free, was 95%). Significant space freed.
+- lucos_agent_coding_sandbox#18 (xwing cert): CLOSED — cert still expires 2026-04-06 (32 days). Issue closed as acknowledged, not yet renewed. Worth re-checking next week.
+- lucos_agent_coding_sandbox#19 (sandbox drift): CLOSED — drift resolved.
+
+**Note**: xwing router container is named `router`, not `lucos_router_nginx`.
+
+---
 
 **Issues raised**:
 - lucos_agent_coding_sandbox#14: salvare disk at 95%
