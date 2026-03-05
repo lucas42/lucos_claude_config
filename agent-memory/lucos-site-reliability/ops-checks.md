@@ -1,20 +1,19 @@
 # Ops Checks Tracking
 
-Tracks when each ops check was last run, and per-container log review history.
+Tracks when each periodic ops check was last run, and per-container log review history.
 
 ## Periodic Checks
 
-| Check | Last Run | Notes |
-|---|---|---|
-| CI status (monthly) | never | |
-| `/_info` quality (monthly) | never | |
+Format: `check_name: YYYY-MM-DD`
+
+ci-status: never
+info-quality: never
+external-deps: never
 
 ## Container Log Review
 
-Tracks the last-reviewed timestamp for each container. Use `--since <timestamp>` when SSHing to review logs.
+Tracks the last-reviewed date for each container. Use `--since <date>` when SSHing to review logs.
 
-Timestamps are ISO 8601 / RFC 3339 format (e.g. `2026-03-05T12:00:00Z`).
+Format: `container_name: YYYY-MM-DD`
 
-| Container | Last Reviewed | Notes |
-|---|---|---|
-| (none yet) | | |
+(none yet)

@@ -80,6 +80,15 @@ When asked to "run your ops checks", work through the checks below. Before raisi
 
 **Sysadmin boundary:** do not duplicate sysadmin checks — container crash detection, syslog, software updates, disk/memory pressure, backups, and certificate expiry are all sysadmin territory.
 
+### Frequency tracking
+
+Periodic checks (monthly or otherwise) use `last_run` timestamps recorded in your ops-checks memory file (`ops-checks.md`).
+
+- Format: `check_name: YYYY-MM-DD`
+- A check is **due** if there is no `last_run` entry or if the elapsed time since the last run is greater than or equal to the check's frequency
+- Update `last_run` in `ops-checks.md` after completing a check
+- If a check is skipped because it is not yet due, note this in your output (e.g. "CI status: last run 2026-02-20, not yet due — skipping")
+
 ---
 
 ### Check 1: Monitoring API (every run)
@@ -92,9 +101,19 @@ Fetch `https://monitoring.l42.eu/api/status` and inspect the response.
 
 ---
 
-### Check 2: Container log review (rotating — a couple of containers per run)
+### Check 2: Container log review (rotating — 3-5 containers per run)
 
 SSH into production hosts and review logs for a rotating selection of containers. Track in your ops-checks memory file (`ops-checks.md`) when each container was last reviewed so you cover them all over time.
+
+**Before selecting containers:**
+1. List all running containers on the production host
+2. Compare against tracking data in `ops-checks.md`
+3. Prioritise containers with the oldest `last_reviewed` date
+4. Any container not reviewed in 60+ days: flag explicitly in your output as **overdue**
+5. Any container not reviewed in 30+ days: prioritise in this run's selection
+6. New containers (not yet in tracking data): review on their first or second rotation
+
+Aim to review **3-5 containers per run**.
 
 Lookback window: review logs since the last time you reviewed that container (check `ops-checks.md`).
 
@@ -109,7 +128,7 @@ Focus on:
 
 This is complementary to sysadmin crash detection — you're looking at logs in *running* containers, not just crash reports.
 
-After reviewing, update `ops-checks.md` with the current timestamp for each container you checked.
+After reviewing, update `ops-checks.md` with the date for each container you checked, using format `container_name: YYYY-MM-DD`.
 
 ---
 
@@ -137,6 +156,30 @@ Check your ops-checks memory file for when this was last run; skip if it was les
 Services to check are listed in the monitoring API response (`monitoring.l42.eu/api/status`). For each system hostname, fetch `https://<hostname>/_info` and verify the JSON structure matches the expected schema.
 
 Raise a P3 issue for any service with a malformed or missing `/_info` response.
+
+---
+
+### Check 5: External dependency health (monthly)
+
+Verify reachability of external services that lucos depends on but does not control. These are not monitored in real time — this is a periodic sanity check to catch genuine degradation or API changes early.
+
+Check your ops-checks memory file for when this was last run; skip if it was less than a month ago.
+
+```bash
+# Let's Encrypt — expect 200
+curl -s -o /dev/null -w "%{http_code}" https://acme-v02.api.letsencrypt.org/directory
+
+# Docker Hub — expect 401 (unauthenticated but reachable)
+curl -s -o /dev/null -w "%{http_code}" https://registry.hub.docker.com/v2/
+
+# CircleCI — expect 401 (reachable)
+curl -s -o /dev/null -w "%{http_code}" https://circleci.com/api/v2/me
+
+# GitHub API — expect 200
+curl -s -o /dev/null -w "%{http_code}" https://api.github.com/zen
+```
+
+Only raise a P3 issue if a dependency appears genuinely degraded or its API has changed in a way that could affect lucos operations. A transient non-200 on a single run is not worth escalating.
 
 ---
 
