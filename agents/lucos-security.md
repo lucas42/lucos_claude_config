@@ -137,7 +137,7 @@ The script returns a JSON object with two arrays: `code_scanning` (CodeQL findin
 
 ### Check 3: Missing CodeQL coverage (monthly)
 
-Check your ops-checks memory file (`ops-checks.md`) for when this was last run; skip if it was less than a month ago.
+Check your ops-checks memory file (`ops-checks.md`) for the `codeql-coverage` last_run date; skip if it was less than a month ago.
 
 Identify repos with supported languages (Python, JavaScript/TypeScript, Java) but no CodeQL workflow. A repo with no SAST coverage is a blind spot — you won't get alerts even if vulnerable code is committed.
 
@@ -148,7 +148,39 @@ Identify repos with supported languages (Python, JavaScript/TypeScript, Java) bu
 
 For each active repo, check whether `.github/workflows/codeql-analysis.yml` (or equivalent) exists. Also check the primary language via the repo metadata (`language` field). Raise an issue on any repo that has Python, JavaScript, TypeScript, or Java as a primary language but lacks a CodeQL workflow — unless an issue already exists requesting it.
 
-After completing this check, update `ops-checks.md` with today's date.
+After completing this check, update the `codeql-coverage` last_run entry in `ops-checks.md` with today's date.
+
+---
+
+### Check 4: GitHub Actions workflow audit (monthly)
+
+Check your ops-checks memory file (`ops-checks.md`) for the `github-actions-audit` last_run date; skip if it was less than a month ago.
+
+For each active lucas42 repo, fetch `.github/workflows/*.yml` and check for:
+
+1. **Unpinned third-party actions** — any `uses:` reference to a non-GitHub-owned action (i.e. not `actions/*`, `github/*`) that uses a mutable tag (e.g. `v1`, `main`, `latest`) rather than a full commit SHA. Mutable tags are a supply chain risk: the tag can be silently repointed to malicious code.
+2. **Overly broad permissions** — workflows that omit the top-level `permissions` key entirely (GitHub defaults to broad read-write for the `GITHUB_TOKEN`) or grant more than the job actually needs.
+3. **Secrets passed to untrusted contexts** — workflows that pass repository secrets (via `secrets.*`, `env:`, or `-e` flags) to steps running third-party actions or user-supplied code (e.g. PR branch code, `run:` steps that consume untrusted input).
+
+**Severity:**
+- Default: **P3** (supply chain hygiene, defence in depth)
+- **P2** if a repository secret is being passed to an unpinned third-party action — that's an actual credential-exfiltration path
+
+**Issue format:** raise **one issue per repo** (not per finding), listing all findings found in that repo. Do not raise an issue for a repo that has no findings.
+
+After completing this check, update the `github-actions-audit` last_run entry in `ops-checks.md` with today's date.
+
+---
+
+### Frequency tracking
+
+Periodic checks (Checks 3 and 4) use `last_run` timestamps recorded in `ops-checks.md` in your agent memory directory. Format:
+
+```
+check_name: YYYY-MM-DD
+```
+
+A check is **due** if there is no last_run entry for it, or if the elapsed time since last_run is greater than or equal to the check's frequency. Update the entry after completing a check. If a check is skipped because it is not yet due, note this in your output so it is clear the check was considered.
 
 ---
 

@@ -2,8 +2,13 @@
 
 Track when each periodic ops check was last run. Update this file after completing each check.
 
+Format: `check_name: YYYY-MM-DD`
+
+A check is due if there is no entry for it, or if elapsed time since last_run >= the check's frequency.
+
 ## Monthly checks
 
 | Check | Last run |
 |---|---|
-| Missing CodeQL coverage | never |
+| codeql-coverage | never |
+| github-actions-audit | never |
