@@ -38,16 +38,17 @@ Once Phase 2 is done, launch agents that have ops checks concurrently in the sam
 8. `lucos-code-reviewer` — "review your issues"
 9. `lucos-security` — "run your ops checks"
 10. `lucos-system-administrator` — "run your ops checks"
+11. `lucos-site-reliability` — "run your ops checks"
 
 **Wait for all to complete before proceeding.**
 
-Rationale: ops checks are standing operational tasks that aren't tied to GitHub issues. Code review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. They run after issue review so that any issues raised during ops checks can be triaged in Phase 4.
+Rationale: ops checks are standing operational tasks that aren't tied to GitHub issues. Code review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability. They run after issue review so that any issues raised during ops checks can be triaged in Phase 4.
 
 ## Phase 4: Final Triage (sequential — after Phase 3 completes)
 
 Once Phase 3 is done, launch one final agent:
 
-11. `lucos-issue-manager` — "triage your issues"
+12. `lucos-issue-manager` — "triage your issues"
 
 Rationale: the issue manager triages any issues that Phase 2 and Phase 3 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
