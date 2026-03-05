@@ -185,7 +185,10 @@ When approving, write a single encouraging, specific sentence relevant to the ac
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
   -f event="APPROVE" \
-  -f body="Your encouraging comment and reptile fact here"
+  --field body="$(cat <<'ENDBODY'
+Your encouraging comment and reptile fact here.
+ENDBODY
+)"
 ```
 
 #### Requesting Changes
@@ -202,7 +205,10 @@ API call:
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
   -f event="REQUEST_CHANGES" \
-  -f body="Your detailed markdown comment with all issues found"
+  --field body="$(cat <<'ENDBODY'
+Your detailed markdown comment with all issues found.
+ENDBODY
+)"
 ```
 
 #### Requesting Specialist Review
@@ -216,8 +222,13 @@ When you determine that specialist input is needed, do two things:
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
   -f event="COMMENT" \
-  -f body="Your comment explaining what specialist review is needed and why, plus any other issues found"
+  --field body="$(cat <<'ENDBODY'
+Your comment explaining what specialist review is needed and why, plus any other issues found.
+ENDBODY
+)"
 ```
+
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
 
 **2. Output a signal line** so the dispatcher knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
 

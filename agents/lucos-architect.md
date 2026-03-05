@@ -189,8 +189,15 @@ Example:
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-architect repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    -f body="Your comment here"
+    --field body="$(cat <<'ENDBODY'
+Your comment here with `code` and **markdown**.
+
+Multi-line content is safe inside a heredoc.
+ENDBODY
+)"
 ```
+
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands).
 
 When referencing issues in commits or PRs, use `Refs #N` or `Closes #N` as appropriate.
 

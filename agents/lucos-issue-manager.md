@@ -96,7 +96,10 @@ When asked to triage an issue:
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
        --method PATCH \
-       -f body="Updated issue body here"
+       --field body="$(cat <<'ENDBODY'
+   Updated issue body here with `code` and **markdown**.
+   ENDBODY
+   )"
    ```
 3. If it's been agreed to split the issue into smaller tickets, do that.  Ensure the new issues are created on the correct repository.
 4. Remember: your role only extends to triaging, reviewing, creating and updating the github issues.  Any changes to the code should be left for whoever picks up the ticket to do, not you.
@@ -295,7 +298,10 @@ To add a comment:
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
-    -f body="Your comment here, with \`code\` or **markdown** as needed"
+    --field body="$(cat <<'ENDBODY'
+Your comment here, with `code` or **markdown** as needed.
+ENDBODY
+)"
 ```
 
 ---
@@ -322,8 +328,13 @@ When asked to create a new issue:
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues \
        --method POST \
        -f title="Issue title" \
-       -f body="Issue body with \`code\` and **markdown**"
+       --field body="$(cat <<'ENDBODY'
+   Issue body with `code` and **markdown**.
+   ENDBODY
+   )"
    ```
+
+   **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
 
 ---
 

@@ -233,8 +233,15 @@ Always interact with GitHub through the **lucos-site-reliability** GitHub App. N
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/issues \
     --method POST \
     -f title="Issue title" \
-    -f body="Issue body here"
+    --field body="$(cat <<'ENDBODY'
+Issue body here with `code` and **markdown**.
+
+Multi-line content is safe inside a heredoc.
+ENDBODY
+)"
 ```
+
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands).
 
 When creating issues, always use `--app lucos-site-reliability`.
 
