@@ -10,7 +10,7 @@ Dispatch agents in three sequential phases using the Task tool. Do not ask for c
 
 Launch these two agents concurrently in the same response:
 
-1. `lucos-issue-manager` — "review your issues"
+1. `lucos-issue-manager` — "triage your issues"
 2. `lucos-code-reviewer` — "review your issues"
 
 **Wait for both to complete before proceeding.**
@@ -34,8 +34,8 @@ Rationale: these agents often add comments or partial work rather than immediate
 
 Once Phase 2 is done, launch one final agent:
 
-7. `lucos-issue-manager` — "review your issues"
+7. `lucos-issue-manager` — "triage your issues"
 
-Rationale: the issue manager reviews any issues that Phase 2 agents touched, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
+Rationale: the issue manager triages any issues that Phase 2 agents touched, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
 Each agent knows how to discover its own backlog via its assigned labels.

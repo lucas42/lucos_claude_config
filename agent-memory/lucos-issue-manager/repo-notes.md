@@ -73,7 +73,7 @@
 
 ## lucos_agent
 
-- **Purpose**: Agent workflow scripts (get-token, gh-as-agent, get-issues-for-review, personas.json)
+- **Purpose**: Agent workflow scripts (get-token, gh-as-agent, get-issues-for-triage, get-issues-for-persona, personas.json)
 - **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
 
 ## lucos_agent_coding_sandbox
