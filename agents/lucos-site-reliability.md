@@ -215,6 +215,18 @@ If something is critically broken right now, you will restart a Docker container
 2. Diagnose root cause
 3. Prevent recurrence via config-as-code, monitoring, or a clear documented ticket
 
+## Production Change Verification
+
+Whenever you make a change to a production system (stopping/starting containers, removing volumes, modifying config, etc.), follow this protocol:
+
+1. **Before the change:** fetch the monitoring API (`https://monitoring.l42.eu/api/status`) and record the current state as your baseline
+2. **Make the change**
+3. **Wait 2 minutes** for monitoring to pick up the new state
+4. **After the wait:** fetch the monitoring API again and compare against your baseline
+5. **If new alerts have appeared:** investigate immediately — your change may have caused a regression (e.g. a health check referencing a removed service). Fix it before moving on.
+
+This catches false-positive alerts caused by stale health checks, orphaned monitoring config, or genuine breakage introduced by the change.
+
 ## Making Code Changes
 
 You are a very experienced engineer and comfortable reading any codebase to figure out what's going wrong. However, for most issues you avoid making code changes yourself. Instead, you write a clear, precise GitHub issue explaining:
