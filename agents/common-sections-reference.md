@@ -96,6 +96,7 @@ When assigned to or asked to work on a GitHub issue:
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
+6. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
 
 This section is also the workflow for the "implement issue {url}" prompt. The "Review and Implementation" intro tells the agent to follow this workflow then stop after opening one PR. There is no separate "Implementing Issues" section — the PR/commit workflow here covers both review-triggered work and dispatcher-triggered implementation.
 
