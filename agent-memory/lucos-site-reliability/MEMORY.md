@@ -7,7 +7,7 @@ See topic files for details. Key patterns confirmed in operation:
 - `/_info` checks/metrics both empty — not yet operationally useful. Issues #10 and #11 still open.
 - Worker not yet implemented — Loganne event delivery mechanism unresolved (issue #24 still open).
 - Database indexes added via Alembic migration (issue #20 closed/completed by lucos-developer).
-- Qdrant replaced by pgvector (#29 completed) BUT orphaned `lucos_photos_qdrant` container and `lucos_photos_qdrant_data` volume still exist on avalon. Tracked in open issue #76. Until cleaned up, backups monitoring will remain erroring.
+- Qdrant replaced by pgvector (#29 completed). Orphaned container and volume manually removed from avalon on 2026-03-05 (issue #76 closed). Backups monitoring alert should have cleared. Note: `docker compose up` does NOT stop containers for services removed from the compose file — they must be stopped/removed manually.
 - PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. P3 issue raised as #77.
 - `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
 

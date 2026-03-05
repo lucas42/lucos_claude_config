@@ -77,6 +77,7 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 
 ## Common pitfalls
 
+- **Issue body formatting**: When creating/updating issue bodies that contain backticks or double quotes, always use the heredoc pattern (`--field body="$(cat <<'ENDBODY' ... ENDBODY)"`) with a single-quoted delimiter. Using `-f body="..."` with shell interpolation escapes backticks and quotes, producing `\`` and `\"` in the rendered markdown.
 - When creating multiple sub-tickets that reference each other, the issue numbers are not known until each issue is created. Write bodies with placeholder references, then update them after all issues exist. Alternatively, create all issues first, note the actual numbers, then patch the bodies.
 - When adding labels via POST to a repo that doesn't have them yet, GitHub auto-creates labels with default grey (`ededed`) colour. Always fix colours immediately after by PATCHing each new label.
 - CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
