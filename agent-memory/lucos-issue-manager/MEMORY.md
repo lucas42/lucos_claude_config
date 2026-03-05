@@ -51,7 +51,16 @@ When marking `agent-approved`, also assign an `owner:*` label for implementation
 - Purely infra: `owner:lucos-system-administrator`
 - Purely monitoring/logging/pipelines: `owner:lucos-site-reliability`
 - Purely security: `owner:lucos-security`
+- Workflow/process docs: `owner:lucos-issue-manager`
 - Mixed work: `owner:lucos-developer` (ensure specialist reviewed first)
+
+## Review capability (introduced 2026-03-05)
+
+- lucos-issue-manager responds to both "triage your issues" and "review your issues"
+- Review covers `needs-refining` issues assigned via `owner:lucos-issue-manager` -- typically workflow, process docs, issue conventions
+- Uses `get-issues-for-persona --review lucos-issue-manager` for discovery
+- Participates in Phase 2 of /review skill (alongside specialist agents)
+- lucos-developer also participates in Phase 2 review for design-phase input
 
 All labels exist across 16 repos. See [label-colours.md](label-colours.md) for full colour scheme.
 
