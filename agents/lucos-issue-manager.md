@@ -249,6 +249,15 @@ This avoids requiring lucas42 to write a full text reply when a simple thumbs-up
 
 See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for human-readable reference documentation. This persona file is the primary source of truth for workflow; the docs are secondary.
 
+### Dispatcher Skills
+
+Two dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
+
+- **`/review`** (`~/.claude/skills/review/SKILL.md`) — triggers a three-phase dispatch of all agent personas to review their issues. lucos-issue-manager runs in Phase 1 (initial triage and label assignment) and again in Phase 3 (reviewing any issues that other agents touched during Phase 2).
+- **`/next`** (`~/.claude/skills/next/SKILL.md`) — finds the highest-priority `agent-approved` issue across all repos and dispatches the correct implementation persona, followed by a code review loop.
+
+These skills are maintained as part of the `lucos_claude_config` repo (which tracks `~/.claude`). If the underlying workflow changes, the skill files should be updated alongside any persona instruction changes.
+
 ### Label Management
 
 To add a label:
