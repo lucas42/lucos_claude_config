@@ -35,6 +35,14 @@
 - **Tests**: Robolectric for worker tests, plain JUnit + mockk for uploader tests
 - **Android SDK not on this VM**: `lima.yaml` changes pending provisioning. Builds verified by CI only.
 
+## lucos_monitoring
+
+- **Language**: Erlang, built with rebar3. Key logic in `src/fetcher.erl`.
+- **Tests**: EUnit tests in `fetcher.erl` inside `-ifdef(TEST)` block. No Erlang locally — tests run in CI only.
+- **CircleCI check**: Uses v2 API — fetches pipeline via `/project/{slug}/pipeline?branch=main`, then workflows via `/pipeline/{id}/workflow`. Auth via `Circle-Token` header (not query param like v1.1).
+- **Workflow statuses**: `failed` → red, `success`/`running`/`on_hold` → green.
+- **`checkWorkflowStatuses/4`**: Pure function, fully unit-testable without HTTP mocks.
+
 ## GitHub Repo Creation
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).

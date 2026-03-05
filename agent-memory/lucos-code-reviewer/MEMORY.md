@@ -16,7 +16,7 @@
 - Reticulated python (mentioned 2026-03-04)
 - Green tree python (mentioned 2026-03-04)
 - Satanic leaf-tailed gecko (mentioned 2026-03-04)
-- Tuatara (mentioned 2026-03-04)
+- Tuatara (mentioned 2026-03-04, again 2026-03-05)
 - Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
 - Armadillo girdled lizard (mentioned 2026-03-04)
 - Marine iguana (mentioned 2026-03-04)
@@ -43,3 +43,4 @@
 - Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05)
 - Angolan python / Python anchietae (mentioned 2026-03-05)
 - Banded sea krait / Laticauda colubrina (mentioned 2026-03-05)
+- Nile monitor / Varanus niloticus (mentioned 2026-03-05)
