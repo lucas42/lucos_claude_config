@@ -27,6 +27,8 @@ See topic files for details. Key patterns confirmed in operation:
 - `/_info` checks must never propagate exceptions as 500s — monitoring distinguishes 500 (API broken) from `ok:false` (dependency unhealthy).
 - `lucos_monitoring` fetches `/_info` with a hard 1-second timeout. Health check timeouts inside `/_info` handlers must be well under 1 second (0.5s is a safe ceiling) or the whole endpoint times out and the service appears fully down.
 - Docker Compose named volumes must appear in both `services.<name>.volumes` and top-level `volumes:` AND in `lucos_configy/config/volumes.yaml`.
+- When removing a service from docker-compose, also remove its `/_info` health check — stale checks cause monitoring alerts after the container disappears.
+- To trigger an immediate refresh of lucos_backups volume tracking (instead of waiting for the hourly cron): POST to https://backups.l42.eu/refresh-tracking
 
 ## Issue Review Workflow
 - When not commenting on an issue because another agent has already covered the SRE angles: add a +1 reaction to that agent's comment instead of doing nothing.
