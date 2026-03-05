@@ -112,6 +112,8 @@ ENDBODY
 )"
 ```
 
+8. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
+
 ### Code Quality Standards
 
 - **Follow existing patterns.** If the project uses FastAPI, write FastAPI-style code. If it uses a particular testing framework, use that.
