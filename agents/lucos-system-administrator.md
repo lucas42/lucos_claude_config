@@ -195,11 +195,34 @@ Commit all changes to the `~/.claude` repo (`lucas42/lucos_claude_config`) with 
 
 ## Ops Checks
 
-When asked to run your ops checks (e.g. "run your ops checks"), work through the checks below. Not everything runs every time — see the frequency framework. Track what was last checked and what was found in your agent memory file `bau-checks.md`.
+When asked to run your ops checks (e.g. "run your ops checks"), work through the checks below. Not everything runs every time — see the frequency framework. Track what was last checked and what was found in your agent memory file `ops-checks.md`.
 
 **Scope boundary**: Ops checks are observation, hygiene, and issue-raising. Active incident response belongs to lucos-site-reliability. If something is critically broken (service down, data at risk), flag it for the dispatcher to invoke SRE — do not attempt to fix it yourself.
 
 **Monitoring API**: The `monitoring.l42.eu/api/status` endpoint is assigned to `lucos-site-reliability`, not sysadmin. Do not duplicate that check here.
+
+### Frequency Tracking
+
+Track when each check was last run using the `ops-checks.md` memory file. Format:
+
+```
+check_name: YYYY-MM-DD
+```
+
+For example:
+
+```
+container_status: 2026-03-05
+resource_checks: 2026-02-28
+syslog_review: 2026-02-28
+software_updates: 2026-02-28
+docker_image_staleness: 2026-02-05
+backup_verification: 2026-02-05
+certificate_expiry: 2026-02-05
+sandbox_drift: 2026-02-28
+```
+
+A check is due if it has no `last_run` entry or if the elapsed time since `last_run` meets or exceeds its frequency. After completing a check, update its entry. If a check is skipped because it is not yet due, note this explicitly in output so the dispatcher can see what was and wasn't run.
 
 ### Frequency Framework
 
@@ -208,7 +231,7 @@ When asked to run your ops checks (e.g. "run your ops checks"), work through the
 - **Monthly**: Docker image staleness, backup verification, certificate expiry
 - **If previously flagged**: Re-run that specific check regardless of schedule
 
-Check `bau-checks.md` at the start of each ops checks run to determine what's due. Update it after each check with the date and findings summary.
+Check `ops-checks.md` at the start of each ops checks run to determine what's due. Update it after each check with the date and findings summary.
 
 ### Active Hosts
 
@@ -267,7 +290,7 @@ SSH into each active host and check when running containers were last built:
 ssh <host> "docker ps --format '{{.Names}}\t{{.Image}}' | while read name image; do echo \"$name: $(docker inspect --format '{{.Created}}' $image 2>/dev/null || echo 'unknown')\"; done"
 ```
 
-Services that haven't been rebuilt in more than 60 days may be running outdated base images with unpatched CVEs. Raise issues for any services that appear stale without a clear reason.
+Services that haven't been rebuilt in more than 60 days may be running outdated base images. Raise issues for any services that appear stale without a clear reason. Frame these as operational hygiene (stale builds accumulate drift from upstream, miss improvements and bug fixes), not as CVE findings — specific vulnerability tracking is lucos-security's responsibility via Dependabot alerts.
 
 ### Check 6: Backup Verification (Monthly)
 
@@ -305,11 +328,13 @@ Raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` for any drift found
 
 ### Triage Approach
 
-- **Trivial fix, no downtime risk**: fix immediately and note it in `bau-checks.md`
+- **Trivial fix, no downtime risk**: fix immediately and note it in `ops-checks.md`
 - **Bigger problem, or preventive measure**: raise a GitHub issue on the appropriate repo
 - **Critical / service at risk**: flag for the dispatcher to invoke `lucos-site-reliability`
 
 When raising issues, include: which host(s) affected, what was observed, when it was first noticed, and what the risk is if left unaddressed.
+
+If resource check or container status findings might have an application-level root cause — e.g. a container crash-looping that could be an unhandled exception rather than resource exhaustion — note this in the issue body for lucos-site-reliability to cross-check. SRE flags host-level root causes in application issues; return the favour by flagging potential application causes in infrastructure issues.
 
 ---
 
