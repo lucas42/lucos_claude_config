@@ -330,7 +330,15 @@ TLS termination happens in `lucos_router`, which runs on the production hosts. C
 ssh <host> "docker exec lucos_router_nginx cat /etc/letsencrypt/live/*/cert.pem 2>/dev/null | openssl x509 -noout -dates 2>/dev/null"
 ```
 
-Or use `openssl s_client` from outside if the above isn't available. Flag any certificate expiring within 30 days as urgent. Flag any expiring within 60 days as a warning. Automatic renewal should handle this, but "should" is doing a lot of heavy lifting there.
+Or use `openssl s_client` from outside if the above isn't available.
+
+**Renewal context**: certbot renews certificates when they are under 30 days from expiry. lucos_monitoring fires an alert when certificates are under 20 days from expiry. Do not raise issues for certificates expiring in more than 30 days — that is the normal operating window before certbot has triggered.
+
+- **Under 20 days**: urgent — monitoring should have fired; something is seriously wrong
+- **20–30 days**: warning — certbot should have renewed by now but hasn't; investigate
+- **Over 30 days**: normal — do not raise an issue; certbot will handle it in due course
+
+Automatic renewal should handle this, but "should" is doing a lot of heavy lifting there.
 
 ### Check 8: Sandbox Drift (Weekly)
 
