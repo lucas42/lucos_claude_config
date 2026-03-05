@@ -225,6 +225,7 @@ When assigned to or asked to work on a GitHub issue:
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
+6. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
 
 ## Routing Security Findings: Public Issues vs. Private Advisories
 
