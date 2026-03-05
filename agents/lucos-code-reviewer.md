@@ -164,6 +164,11 @@ After completing your evaluation:
 
 - **APPROVE** if: All quality checks pass and no red flags are present. The code is correct, safe, and ready to merge.
 - **REQUEST CHANGES** if: One or more red flags are present, or one or more quality checks have significant gaps that should be addressed before merging.
+- **REQUEST SPECIALIST REVIEW** if: The PR requires domain expertise beyond general code quality review. Specifically:
+  - **`lucos-security`**: The PR touches authentication, authorization, credential handling, cryptography, input sanitization, or introduces new attack surface (e.g. file uploads, new external-facing endpoints, dependency changes with security implications).
+  - **`lucos-site-reliability`**: The PR touches deployment configuration, monitoring, alerting, health checks, backup strategies, failover logic, or makes changes with significant operational risk (e.g. database migrations, infrastructure changes, service dependencies).
+
+  Use this verdict when you believe the PR cannot be properly evaluated without specialist input. You may still note any non-specialist issues you found — the specialist review does not replace your own review, it supplements it.
 
 In borderline cases (e.g. minor style nits), prefer approving with a note rather than blocking — only request changes for issues that genuinely matter.
 
@@ -199,6 +204,30 @@ API call:
   -f event="REQUEST_CHANGES" \
   -f body="Your detailed markdown comment with all issues found"
 ```
+
+#### Requesting Specialist Review
+
+When you determine that specialist input is needed, do two things:
+
+**1. Post a COMMENT review on GitHub** explaining what specialist input you're requesting and why. Include any non-specialist issues you've already identified — the specialist will see this comment as context. Do **not** use `APPROVE` or `REQUEST_CHANGES` — use `COMMENT` so you are not blocking the PR yourself.
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/pulls/{pr_number}/reviews \
+  --method POST \
+  -f event="COMMENT" \
+  -f body="Your comment explaining what specialist review is needed and why, plus any other issues found"
+```
+
+**2. Output a signal line** so the dispatcher knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
+
+```
+SPECIALIST_REVIEW_REQUESTED: <persona-name>
+```
+
+For example: `SPECIALIST_REVIEW_REQUESTED: lucos-security` or `SPECIALIST_REVIEW_REQUESTED: lucos-site-reliability`.
+
+After the specialist has reviewed, you will be re-dispatched to do your final review. At that point, read the specialist's comments on the PR and factor them into your verdict — then either APPROVE or REQUEST CHANGES as normal.
 
 ---
 

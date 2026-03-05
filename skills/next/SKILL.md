@@ -54,6 +54,8 @@ Wait for it to complete.
 
 If the code reviewer **approved** the PR, the loop is done — report success to the user and stop.
 
+If the code reviewer's output contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4d.
+
 If the code reviewer **requested changes** and the iteration count is **less than 5**, continue to step 4c.
 
 If the code reviewer **requested changes** and this is iteration **5**, stop the loop and tell the user:
@@ -67,3 +69,15 @@ Launch the **same persona** from Step 2 (the one that opened the PR) with a prom
 > "address the code review feedback on PR https://github.com/lucas42/{repo}/pull/{number}"
 
 Wait for it to complete, increment the iteration count, and go back to step 4a.
+
+**4d. Specialist review.**
+
+The code reviewer has requested input from a specialist persona (either `lucos-security` or `lucos-site-reliability`). Extract the persona name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line.
+
+Launch that specialist persona with a prompt to review the PR:
+
+> "review PR https://github.com/lucas42/{repo}/pull/{number} — the code reviewer has requested your input, see their comment on the PR for context"
+
+Wait for it to complete. The specialist may post comments on the PR, request changes, or indicate the PR is fine from their perspective.
+
+After the specialist finishes, go back to step 4a to re-launch the code reviewer. The code reviewer will see the specialist's feedback on the PR and factor it into its final verdict. This does **not** increment the iteration count — the specialist review is a side-trip, not a code-change iteration.
