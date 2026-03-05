@@ -31,7 +31,7 @@ See topic files for details. Key patterns confirmed in operation:
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
 ## lucos_deploy_orb — Known Issues
-- "Prune dangling Docker images" step in deploy-avalon job times out on avalon, causing spurious deploy failures. Affects lucos_repos, lucos_arachne, lucos_photos (confirmed 2026-03-05). Issue raised as #12 (P2). Deploy itself succeeds; only prune step hangs.
+- "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
@@ -53,6 +53,8 @@ See topic files for details. Key patterns confirmed in operation:
 - Many older services missing `title` field — widespread gap, tracked in lucos/issues/35. Services missing `checks` too: lucos_scenes, lucos_eolas, lucos_configy, lucos_private, lukeblaney.co.uk, semweb.lukeblaney.co.uk.
 - `lucos-site-reliability` app does NOT have org-level repo list access (`orgs/lucas42/repos` returns 404). Use locally-cloned sandboxes list or per-repo API calls instead.
 - CI status monthly check: use `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` — no auth needed for public repos.
+- CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
+- To retry a failed workflow: `curl -H "Circle-Token: $TOKEN" -H "Content-Type: application/json" -X POST "https://circleci.com/api/v2/workflow/{workflow_id}/rerun" -d '{"from_failed": true}'`
 
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
