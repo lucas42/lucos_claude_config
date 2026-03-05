@@ -40,44 +40,7 @@ After the agent finishes, check its output to determine whether a pull request w
 
 If no PR was created (e.g. the agent hit a blocker before opening a PR), skip this step.
 
-If a PR was created, enter a review loop. Track the **iteration count** starting at 1.
+If a PR was created, follow the **PR Review Loop** defined in [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md). The inputs are:
 
-**4a. Launch code review.**
-
-Launch `lucos-code-reviewer` with a prompt to review the PR:
-
-> "review PR https://github.com/lucas42/{repo}/pull/{number}"
-
-Wait for it to complete.
-
-**4b. Check the review outcome.**
-
-If the code reviewer **approved** the PR, the loop is done — report success to the user and stop.
-
-If the code reviewer's output contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4d.
-
-If the code reviewer **requested changes** and the iteration count is **less than 5**, continue to step 4c.
-
-If the code reviewer **requested changes** and this is iteration **5**, stop the loop and tell the user:
-
-> The PR at {url} has gone through 5 review iterations without approval. This likely indicates a mismatch in expectations that needs human judgement — please take a look.
-
-**4c. Send the PR back to the implementation persona.**
-
-Launch the **same persona** from Step 2 (the one that opened the PR) with a prompt to address the review feedback. For example:
-
-> "address the code review feedback on PR https://github.com/lucas42/{repo}/pull/{number}"
-
-Wait for it to complete, increment the iteration count, and go back to step 4a.
-
-**4d. Specialist review.**
-
-The code reviewer has requested input from a specialist persona (either `lucos-security` or `lucos-site-reliability`). Extract the persona name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line.
-
-Launch that specialist persona with a prompt to review the PR:
-
-> "review PR https://github.com/lucas42/{repo}/pull/{number} — the code reviewer has requested your input, see their comment on the PR for context"
-
-Wait for it to complete. The specialist may post comments on the PR, request changes, or indicate the PR is fine from their perspective.
-
-After the specialist finishes, go back to step 4a to re-launch the code reviewer. The code reviewer will see the specialist's feedback on the PR and factor it into its final verdict. This does **not** increment the iteration count — the specialist review is a side-trip, not a code-change iteration.
+- **PR URL**: the URL from the agent's output
+- **Implementation persona**: the persona dispatched in Step 2
