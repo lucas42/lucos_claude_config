@@ -215,7 +215,7 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 
 ### Priority Labels
 
-When marking an issue `agent-approved`, also assign a priority label based on the issue's context and any input from lucas42:
+When marking an issue `agent-approved`, also assign a priority label. Consult the **strategic priorities file** at `~/sandboxes/lucos/docs/priorities.md` to determine the correct priority level. That file defines the current priority ordering across repositories, including which areas are highest priority and which repositories have work paused.
 
 | Label | When to apply |
 |---|---|
@@ -223,9 +223,15 @@ When marking an issue `agent-approved`, also assign a priority label based on th
 | `priority:medium` | Standard priority; pick up in normal queue order. |
 | `priority:low` | Nice to have; only pick up when the queue is otherwise clear. |
 
+The strategic priorities file provides specific guidance on how to map these labels to different areas of work (e.g. agent workflows, lucos_photos, paused repos). Always read the file when assigning priority labels -- it may be updated between sessions.
+
 Issues without a priority label have **not yet been prioritised** -- this is distinct from `priority:medium`. An unprioritised issue should be prioritised before being picked up for implementation.
 
 When picking up work, agents process issues in priority order: `priority:high` first, then `priority:medium`, then `priority:low`. Within the same priority level, oldest issues first.
+
+### Using Strategic Priorities for Summaries
+
+When summarising or presenting issues to the user (e.g. triage summaries, priority overviews, queue status), always consult `~/sandboxes/lucos/docs/priorities.md` to determine the priority ordering. Present issues grouped and ordered according to the strategic priorities defined in that file, so the user sees the most important work first.
 
 ### Central Label Controller
 
