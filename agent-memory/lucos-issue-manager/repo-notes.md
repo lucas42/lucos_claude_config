@@ -60,10 +60,11 @@
 - **Language**: Python (FastAPI + SQLAlchemy)
 - **Purpose**: Personal photo library with upload, face detection, and people management
 - **Labels created**: `agent-approved`, `needs-refining` (created 2026-02-28)
-- **Architecture**: API + worker + Postgres + Redis (Qdrant being replaced by pgvector per #29)
+- **Architecture**: API + worker + Postgres + Redis (Qdrant replaced by pgvector per #29)
 - **Known context**: Early stage, no photos processed yet; ADR-0001 decided pgvector over Qdrant
 - **Key decision (2026-03-02)**: Worker is allowed to call Loganne directly (#24 approved); constraint that only API emits external domain events has been lifted
 - **Split issues**: #25 split into #39 (pg_isready retry) and #40 (wrap engine creation) -- both agent-approved
+- **Cleanup needed**: Orphaned Qdrant container and volume still running on production (#76); collation version mismatch in Postgres (#77)
 
 ## lucos_configy
 
@@ -120,6 +121,20 @@
 - **Purpose**: Android app for lucos_photos
 - **Labels created**: `agent-approved`, `needs-refining`, `owner:lucos-developer`, `owner:lucas42`, `owner:lucos-system-administrator`, `status:ideation`, `priority:high` (created 2026-03-04)
 - **Known context**: Needs human-facing installation documentation (README.md); #14 is high priority per lucas42
+
+## lucos_comhra
+
+- **Language**: Python
+- **Purpose**: Agent/chat service (new repo, first issue opened 2026-03-05)
+- **Labels created**: `agent-approved`, `owner:lucos-developer`, `priority:low` (created 2026-03-05, colours fixed same day)
+- **Known context**: Cookie injection vulnerability in `agent/auth.py` (#1)
+
+## lucos_contacts_fb_import
+
+- **Language**: Python
+- **Purpose**: Facebook contacts import tool
+- **Labels created**: `agent-approved`, `owner:lucos-developer`, `priority:low` (created 2026-03-05, colours fixed same day)
+- **Known context**: Clear-text logging of PII (#17)
 
 ## lucos_media_metadata_manager
 
