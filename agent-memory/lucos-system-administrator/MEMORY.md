@@ -88,7 +88,9 @@ Do not raise issues about consolidating these repos.
 
 ## xwing TLS certificate renewal
 
-Certificates on xwing are managed by certbot inside the `router` container (not `lucos_router_nginx` — xwing's router container is named `router`). Auto-renewal is via a daily cron at 22:16 running `/usr/bin/update-domains.sh`. Let's Encrypt typically renews at 30 days out. Certificates as of 2026-03-05 expire 2026-04-06 — expected to auto-renew. No action needed unless they fail to renew past the 30-day mark.
+Certificates on xwing are managed by certbot inside the `router` container (not `lucos_router_nginx` — xwing's router container is named `router`). Auto-renewal is via a daily cron at 22:16 running `/usr/bin/update-domains.sh`. Let's Encrypt typically renews at 30 days out. Certificates as of 2026-03-05 expire 2026-04-06 — expected to auto-renew.
+
+**Do NOT raise issues for certificates that have auto-renewal configured.** lucos_agent_coding_sandbox#18 (raised 2026-03-05, closed `not_planned`) confirmed this: the team does not want warning issues when auto-renewal is in place. Only raise an issue if a certificate actually fails to renew past the 30-day mark.
 
 ## code-reviewer-auto-merge: PEM key formatting gotcha
 

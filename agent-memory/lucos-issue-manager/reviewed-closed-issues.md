@@ -15,3 +15,7 @@ Last reviewed: 2026-03-05
 - https://github.com/lucas42/lucos_photos/issues/60 (video upload - split into sub-tickets #62-#67, closed as completed)
 - https://github.com/lucas42/lucos_photos/issues/40 (wrap engine creation - completed via PR)
 - https://github.com/lucas42/lucos_repos/issues/30 (audit-raised issue lifecycle design - ADR written, closed as completed)
+- https://github.com/lucas42/lucos_configy/issues/33 (expose persona data via configy - closed not planned, no concrete consumer)
+- https://github.com/lucas42/lucos_repos/issues/23 (scaffold Go project - completed via PR)
+- https://github.com/lucas42/lucos_repos/issues/34 (auto-merge for lucos_repos - completed via PR)
+- https://github.com/lucas42/lucos_repos/issues/31 (create lucos-repos GitHub App - completed by lucas42)
