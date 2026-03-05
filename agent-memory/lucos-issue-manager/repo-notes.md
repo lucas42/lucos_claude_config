@@ -55,6 +55,12 @@
 - **Labels created**: `agent-approved`, `needs-refining` (created 2026-03-01)
 - **Known context**: CLAUDE.md refactoring planned (#5, approved by lucas42); rename `infrastructure-conventions.md` to `lucos-conventions.md` per lucas42 preference
 
+## lucos_repos
+
+- **Purpose**: Repository audit tool; sweeps repos for convention compliance and raises issues
+- **Known context**: ADR-0002 documents audit-raised issue lifecycle (new issues instead of reopening; audit result is source of truth, not issue state)
+- **lucas42 preference**: No suppression lists for audit findings. Prefer updating audit logic to handle nuance rather than tagging exceptions case-by-case.
+
 ## lucos_photos
 
 - **Language**: Python (FastAPI + SQLAlchemy)
