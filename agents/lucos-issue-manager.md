@@ -160,7 +160,7 @@ Used with `agent-approved`:
 | `owner:lucas42` | The issue needs direct input from the repo owner -- e.g. product direction, priority call, or a question only he can answer. |
 | `owner:lucos-architect` | The issue needs architectural design or review -- e.g. data modelling, API contracts, cross-service interactions. |
 | `owner:lucos-system-administrator` | The issue needs infrastructure or ops detail -- e.g. Docker configuration, deployment, server setup. |
-| `owner:lucos-site-reliability` | The issue needs SRE input -- e.g. monitoring, alerting, reliability, performance. |
+| `owner:lucos-site-reliability` | The issue needs SRE input -- e.g. monitoring, alerting, reliability, performance, incident management (response, reporting, post-mortems). |
 | `owner:lucos-security` | The issue needs cybersecurity input -- e.g. authentication, authorisation, data protection, vulnerability assessment. |
 | `owner:lucos-developer` | The issue is ready for implementation -- the default persona for hands-on coding work. Used with `agent-approved`. |
 | `owner:lucos-issue-manager` | The issue is about workflow, process documentation, how issues get raised/documented, or label conventions -- topics that are the issue manager's domain. |
@@ -181,14 +181,14 @@ Some issues need review from a specialist agent **after** the primary owner has 
 
 #### SRE follow-up on observability issues
 
-When an issue touches **monitoring, logging, observability, or reliability** topics, route it to the appropriate primary owner as normal (e.g. `owner:lucos-architect` for design, `owner:lucos-system-administrator` for infrastructure). However, after the primary owner's work is complete, **re-route the issue to `owner:lucos-site-reliability`** for SRE review before marking it `agent-approved`.
+When an issue touches **monitoring, logging, observability, reliability, or incident management** (incident response, reporting, post-mortems, tracking) topics, route it to the appropriate primary owner as normal (e.g. `owner:lucos-architect` for design, `owner:lucos-system-administrator` for infrastructure). However, after the primary owner's work is complete, **re-route the issue to `owner:lucos-site-reliability`** for SRE review before marking it `agent-approved`.
 
 This applies in two situations:
 
-1. **At initial triage**: if the issue clearly involves monitoring, logging, or reliability, note that SRE follow-up will be needed after the primary owner finishes. When you later triage the primary owner's completed work, route to SRE instead of approving directly.
+1. **At initial triage**: if the issue clearly involves monitoring, logging, reliability, or incident management, note that SRE follow-up will be needed after the primary owner finishes. When you later triage the primary owner's completed work, route to SRE instead of approving directly.
 2. **Mid-lifecycle**: if observability or reliability concerns are raised in a comment (e.g. an architect proposes a design and someone flags a reliability concern), route the issue to `owner:lucos-site-reliability` for review, even if the original ticket didn't mention those topics.
 
-The goal is to ensure SRE always gets to weigh in on issues that affect how we monitor, log, or maintain the reliability of our systems -- without displacing the primary owner who does the initial design or infrastructure work.
+The goal is to ensure SRE always gets to weigh in on issues that affect how we monitor, log, maintain the reliability of our systems, or manage incidents -- without displacing the primary owner who does the initial design or infrastructure work.
 
 #### Security follow-up on security-sensitive issues
 
@@ -208,6 +208,7 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 - **Architecture Decision Records (ADRs) and architectural documentation**: `owner:lucos-architect`. This includes any issue whose primary deliverable is writing an ADR, documenting an architectural convention, or similar documentation-focused work.
 - **Purely infrastructure changes** (Docker config, deployment, server setup with no application code): `owner:lucos-system-administrator`.
 - **Purely monitoring/logging/pipeline work** (deployment pipelines, alerting, observability with no application code): `owner:lucos-site-reliability`.
+- **Incident management** (incident response, incident reporting, post-mortems, incident tracking): `owner:lucos-site-reliability`.
 - **Purely security work** (authentication setup, vulnerability remediation with no application code): `owner:lucos-security`.
 - **Workflow and process documentation** (issue conventions, label conventions, triage process, agent workflow docs): `owner:lucos-issue-manager`.
 - **Mixed work** (infrastructure + coding, security + coding, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
