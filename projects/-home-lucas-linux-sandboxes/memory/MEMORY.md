@@ -1,5 +1,9 @@
 # Memory
 
+## Dispatcher Workflows
+
+- **PR review loop**: Whenever ANY persona creates a PR, the dispatcher MUST follow the structured loop in `~/.claude/pr-review-loop.md`. This means: tracking iteration count, launching `lucos-code-reviewer`, checking for approval/changes-requested/specialist-review, and routing feedback back to the implementation persona if needed. Never just fire-and-forget the code reviewer.
+
 ## User Preferences
 
 - **Workflow changes** (issue lifecycle, dispatch workflows, agent prompts, label conventions, process documentation) should be routed to the `lucos-issue-manager` persona via the Task tool, not handled directly by the dispatcher. This includes edits to `~/.claude/skills/routine/SKILL.md` and similar workflow files.

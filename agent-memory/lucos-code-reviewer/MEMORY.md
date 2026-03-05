@@ -51,3 +51,4 @@
 - Texas horned lizard / Phrynosoma cornutum (mentioned 2026-03-05)
 - Sand boa / Eryx spp. (mentioned 2026-03-05)
 - Rhinoceros iguana / Cyclura cornuta (mentioned 2026-03-05)
+- Russell's viper / Daboia russelii (mentioned 2026-03-05)
