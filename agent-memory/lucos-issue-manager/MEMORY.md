@@ -78,6 +78,9 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 ## Common pitfalls
 
 - When creating multiple sub-tickets that reference each other, the issue numbers are not known until each issue is created. Write bodies with placeholder references, then update them after all issues exist. Alternatively, create all issues first, note the actual numbers, then patch the bodies.
+- When adding labels via POST to a repo that doesn't have them yet, GitHub auto-creates labels with default grey (`ededed`) colour. Always fix colours immediately after by PATCHing each new label.
+- CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
+- Issues from ops checks (`lucos-system-administrator[bot]`, `lucos-site-reliability[bot]`) are similarly well-specified and actionable.
 
 ## Issue closure policy
 
