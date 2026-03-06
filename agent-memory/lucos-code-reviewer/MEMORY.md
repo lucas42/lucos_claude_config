@@ -54,3 +54,4 @@
 - Russell's viper / Daboia russelii (mentioned 2026-03-05)
 - Spiny-tailed lizard / Uromastyx (mentioned 2026-03-06)
 - Plumed basilisk / Basiliscus plumifrons (mentioned 2026-03-06)
+- Red-sided garter snake / Thamnophis sirtalis parietalis (mentioned 2026-03-06)
