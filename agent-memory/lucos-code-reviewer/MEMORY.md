@@ -55,3 +55,4 @@
 - Spiny-tailed lizard / Uromastyx (mentioned 2026-03-06)
 - Plumed basilisk / Basiliscus plumifrons (mentioned 2026-03-06)
 - Red-sided garter snake / Thamnophis sirtalis parietalis (mentioned 2026-03-06)
+- Inland taipan / Oxyuranus microlepidotus (mentioned 2026-03-06)
