@@ -109,6 +109,20 @@ Then encrypt with PyNaCl using the repo's public key (`repos/{owner}/{repo}/acti
 
 This has caught out lucos_photos and lucos_repos (2026-03-04 and 2026-03-05).
 
+## Planned maintenance notifications
+
+When a planned reboot or maintenance window causes service disruption on avalon, notify via two channels:
+
+1. **GitHub comment** on the most relevant open issue (e.g. the issue that motivated the maintenance): post immediately, while GitHub is still reachable. Include: what triggered the reboot, approximate time, and a clear "this is planned, not an incident" statement.
+2. **Loganne event** (`POST https://loganne.l42.eu/events`, no auth required): post as soon as Loganne comes back up. Required fields: `source` (e.g. `lucos_agent`), `type` (e.g. `hostRebooted`), `humanReadable` (plain English description). Optional: `url` for a related issue or PR.
+
+Loganne POST format:
+```json
+{ "source": "lucos_agent", "type": "plannedMaintenance", "humanReadable": "avalon rebooted to clear swap after Fuseki memory limit fix deployed", "url": "https://github.com/lucas42/lucos_agent_coding_sandbox/issues/16" }
+```
+
+Loganne will be unreachable during the reboot window (avalon hosts it). Post the GitHub comment first, then Loganne when it recovers.
+
 ## VM SSH key for git operations
 
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
