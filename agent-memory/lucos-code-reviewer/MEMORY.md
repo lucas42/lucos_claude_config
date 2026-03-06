@@ -15,7 +15,7 @@
 - Common snapping turtle (mentioned 2026-03-04, again 2026-03-05)
 - Reticulated python (mentioned 2026-03-04)
 - Green tree python (mentioned 2026-03-04)
-- Satanic leaf-tailed gecko (mentioned 2026-03-04)
+- Satanic leaf-tailed gecko (mentioned 2026-03-04, again 2026-03-06)
 - Tuatara (mentioned 2026-03-04, again 2026-03-05)
 - Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
 - Armadillo girdled lizard (mentioned 2026-03-04)
