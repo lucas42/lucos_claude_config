@@ -43,6 +43,13 @@
 - **Workflow statuses**: `failed` → red, `success`/`running`/`on_hold` → green.
 - **`checkWorkflowStatuses/4`**: Pure function, fully unit-testable without HTTP mocks.
 
+## Docker Naming Convention (always check this)
+
+- `container_name` must be `lucos_<project>_<role>` — e.g. `lucos_repos_app`, `lucos_photos_api`
+- `image` must be `lucas42/lucos_<project>_<role>` — e.g. `lucas42/lucos_repos_app`
+- Single-container services typically use `_app` as the role
+- Missing the role suffix is a recurring review comment — check docker-compose.yml before opening any PR
+
 ## GitHub Repo Creation
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).

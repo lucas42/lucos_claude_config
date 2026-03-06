@@ -7,7 +7,7 @@ See topic files for details. Key patterns confirmed in operation:
 - `/_info` checks/metrics both empty — not yet operationally useful. Issues #10 and #11 still open.
 - Worker not yet implemented — Loganne event delivery mechanism unresolved (issue #24 still open).
 - Database indexes added via Alembic migration (issue #20 closed/completed by lucos-developer).
-- Qdrant replaced by pgvector (#29 completed). Orphaned container and volume manually removed from avalon on 2026-03-05 (issue #76 closed). Stale `qdrant-reachable` health check remains in `/_info` — issue #79 raised (P2). Note: `docker compose up` does NOT stop containers for services removed from the compose file — they must be stopped/removed manually.
+- Qdrant replaced by pgvector (#29 completed). Orphaned container and volume manually removed from avalon on 2026-03-05 (issue #76 closed). Stale `qdrant-reachable` health check removed — issue #79 closed/completed 2026-03-06. Note: `docker compose up` does NOT stop containers for services removed from the compose file — they must be stopped/removed manually.
 - PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. P3 issue raised as #77.
 - `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
 
@@ -75,7 +75,9 @@ See topic files for details. Key patterns confirmed in operation:
 - Claude Code caches persona files at conversation start — mid-session changes to persona files are NOT picked up in the same session. If the persona file is updated mid-session, the new instructions won't be visible until the next conversation.
 
 ## /_info Schema Compliance
-- Many older services missing `title` field — widespread gap, tracked in lucos/issues/35. Services missing `checks` too: lucos_scenes, lucos_eolas, lucos_configy, lucos_private, lukeblaney.co.uk, semweb.lukeblaney.co.uk.
+- lucos/issues/35 (/_info missing fields): closed/completed 2026-03-06. Resolution: lucos-architect wrote the formal spec doc in `docs/`. Per-service compliance tickets are follow-up work (filed separately). Do NOT re-raise #35.
+- Services still missing `checks` (known gap, per-service tickets pending): lucos_scenes, lucos_eolas, lucos_configy, lucos_private, lukeblaney.co.uk, semweb.lukeblaney.co.uk.
+- Many older services also missing `title` — follow-up tickets from lucos-architect.
 - `lucos-site-reliability` app does NOT have org-level repo list access (`orgs/lucas42/repos` returns 404). Use locally-cloned sandboxes list or per-repo API calls instead.
 - CI status monthly check: use `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` — no auth needed for public repos.
 - CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
