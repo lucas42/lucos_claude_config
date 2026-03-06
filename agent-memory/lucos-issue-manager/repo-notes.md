@@ -142,6 +142,18 @@
 - **Labels created**: `agent-approved`, `owner:lucos-developer`, `priority:low` (created 2026-03-05, colours fixed same day)
 - **Known context**: Clear-text logging of PII (#17)
 
+## lucos_arachne
+
+- **Purpose**: Search/knowledge graph service with Typesense (search), Fuseki (triplestore), ingestor, and nginx (web/explore) containers
+- **Labels created**: `agent-approved`, `owner:lucos-developer`, `priority:low` (created 2026-03-06, colours correct)
+- **Known context**: Incident 2026-03-06 -- search/triplestore/ingestor containers lacked `restart: always` and stayed down after host restart; `/_info` served by web container so monitoring didn't detect outage
+
+## lucos_search_component
+
+- **Purpose**: Frontend search UI component (used by lucos_arachne and possibly others)
+- **Labels created**: `agent-approved`, `owner:lucos-developer`, `priority:low` (created 2026-03-06, colours fixed from default grey)
+- **Known context**: Infinite spinner when backend returns errors; no timeout or error handling (#32)
+
 ## lucos_media_metadata_manager
 
 - **Language**: JavaScript (Node.js)

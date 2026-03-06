@@ -39,7 +39,8 @@ See topic files for details. Key patterns confirmed in operation:
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
 ## lucos_repos — Known Issues
-- Issue #39 (TLS x509 failure, P1): closed/resolved. Incident report written (lucos/pull/40). No currently open known issues.
+- Issue #39 (TLS x509 failure, P1): closed/resolved. Incident report written (lucos/pull/40).
+- Issue #46 (P2, 2026-03-06): Audit sweep failing — GitHub repos API returns 404. GitHub App auth works (token obtained) but the `GET /orgs/lucas42/repos` call returns 404. Likely a GitHub App installation permission/scope issue — the app may not have org-level repo list access. Check the App installation settings at `https://github.com/organizations/lucas42/settings/installations`.
 
 ## lucos_comhra — Known Issues
 - Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Service went down after avalon reboot; manually restarted. Will recur on next reboot until fixed.
