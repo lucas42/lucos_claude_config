@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-06  # third run same day — all hosts clean; xwing lucos_media_import_test still Exited(0) one-shot — not a concern
+container_status: 2026-03-06  # fourth run on 2026-03-06 — all clean; xwing lucos_media_import_test still Exited(0) one-shot — not a concern
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -130,6 +130,15 @@ sandbox_drift: 2026-03-05
 - xwing: `lucos_media_import_test` Exited (0), 11 days — one-shot test container, not a concern
 
 **Xwing cert spot-check**: notAfter=Apr 6 2026 (31 days from today). Still not within 30-day renewal window — tomorrow night's cron run (2026-03-07 at 22:16 UTC) should be at 29 days and trigger renewal. Re-check 2026-03-09 if still unrenewed.
+
+### 2026-03-06 (FOURTH RUN same day — container status + cert spot-check)
+
+**Container status**:
+- avalon: clean
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 11 days — one-shot test container, not a concern
+
+**Xwing cert spot-check**: notAfter=Apr 6 2026. Still 31 days out. Tonight's cron (22:16 UTC) is right on the 30-day boundary — may or may not trigger. Tomorrow's run at 29 days should definitely trigger. Re-check 2026-03-09 if still unrenewed.
 
 ---
 
