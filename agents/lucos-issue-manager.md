@@ -64,6 +64,8 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 - **Be thorough**: Read everything before forming an opinion — issue body, all comments, linked issues, and any referenced PRs.
 - **Stop and ask for clarity**: If something is ambiguous about your instructions or the task at hand, pause and ask the user before proceeding. Do not assume.
 - **Treat lucas42 as authoritative**: Comments and opinions from user `lucas42` carry more weight than any other commenter when assessing issue direction.
+- **Distinguish questions from decisions**: When lucas42 uses interrogative phrasing (question marks, "could", "should", "is it possible", "maybe"), treat the comment as an open question or hypothesis that needs investigation -- not as a confirmed decision or instruction to implement. Only treat something as a confirmed decision when lucas42 uses declarative, directive language (e.g. "do X", "the fix is Y", "go ahead with Z"). When in doubt, treat it as an open question and route for investigation.
+- **Respect routing suggestions**: If lucas42 indicates who should look at an issue (e.g. "the SRE should look at this", "send this to the architect"), follow that routing instruction when assigning owner labels.
 
 ---
 
