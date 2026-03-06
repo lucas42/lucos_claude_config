@@ -18,7 +18,7 @@
 - Satanic leaf-tailed gecko (mentioned 2026-03-04, again 2026-03-06)
 - Tuatara (mentioned 2026-03-04, again 2026-03-05)
 - Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
-- Armadillo girdled lizard (mentioned 2026-03-04)
+- Armadillo girdled lizard / Ouroborus cataphractus (mentioned 2026-03-04, again 2026-03-06)
 - Marine iguana (mentioned 2026-03-04)
 - Frilled-neck lizard (mentioned 2026-03-04)
 - African dwarf chameleon (mentioned 2026-03-04)

@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-06 (second run)
+container_status: 2026-03-06
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -100,14 +100,14 @@ sandbox_drift: 2026-03-05
 
 **Xwing cert check** (spot check): Still same cert, expires 2026-04-06. Not yet within 30-day renewal window. Auto-renewal cron running daily — no action needed.
 
-### 2026-03-06 (container status only, all other checks current)
+### 2026-03-06 (container status + xwing cert spot-check; all other checks not yet due)
 
 **Container status**:
-- avalon: CLEAN — lucos_repos crash-loop resolved (issue #38 closed earlier today)
+- avalon: CLEAN
 - salvare: clean
 - xwing: `lucos_media_import_test` Exited (0), 11 days old — one-shot test container, still not a concern
 
-**Xwing cert spot-check**: nas.l42.eu still notAfter=Apr 6. Today is exactly 31 days out; tonight's 22:16 cron is first run inside 30-day renewal window. Check again at next run — if still unrenewed by 2026-03-08, raise issue.
+**Xwing cert spot-check**: nas.l42.eu still notAfter=Apr 6. Cron ran 2026-03-05 at 22:16 — logged "Certificate not yet due for renewal" for all 4 domains (was 32 days out). Let's Encrypt renewal threshold is strictly <30 days. Tonight's run (2026-03-06 22:16) will be at 31 days — still unlikely to trigger. 2026-03-07 22:16 should be the first run at 30 days that actually triggers renewal. If cert still unrenewed by 2026-03-09, raise issue.
 
 ---
 

@@ -41,6 +41,12 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_repos — Known Issues
 - Issue #39 (TLS x509 failure, P1): closed/resolved. Service was down on 2026-03-06 due to stale CA bundle in Docker image. Fixed by rebuilding from up-to-date base image with `ca-certificates`. No currently open known issues.
 
+## lucos_backups — Known Issues
+- lucos_backups#43 (P2, 2026-03-06): prune job consistently timing out — `find + du -sh` per-file too slow. Monitoring check `lucos_backups_prune` red for 2+ consecutive runs. Suggested fix: `-exec du -sh {} +` batching.
+
+## lucos_time — Known Issues
+- lucos_time#78 (P3, 2026-03-06): `url.parse()` deprecation warning (DEP0169) on startup — replace with WHATWG `new URL()` API.
+
 ## lucos_deploy_orb — Known Issues
 - "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
 
