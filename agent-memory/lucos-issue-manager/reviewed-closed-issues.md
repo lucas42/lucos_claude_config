@@ -1,7 +1,7 @@
 # Reviewed Closed Issues
 
 Issues authored by lucos-issue-manager that have been reviewed after closure.
-Last reviewed: 2026-03-05
+Last reviewed: 2026-03-06
 
 ## Reviewed URLs
 - https://github.com/lucas42/lucos_photos/issues/22 (auth integration - completed via PR)
@@ -20,3 +20,5 @@ Last reviewed: 2026-03-05
 - https://github.com/lucas42/lucos_repos/issues/34 (auto-merge for lucos_repos - completed via PR)
 - https://github.com/lucas42/lucos_repos/issues/31 (create lucos-repos GitHub App - completed by lucas42)
 - https://github.com/lucas42/lucos_repos/issues/25 (GitHub App auth for API access - completed via PR #37)
+- https://github.com/lucas42/lucos/issues/34 (incident report convention - completed by SRE via PR)
+- https://github.com/lucas42/lucos_photos/issues/83 (Bearer auth scheme switch - completed by developer via PR)

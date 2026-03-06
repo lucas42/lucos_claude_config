@@ -26,8 +26,8 @@ lucos_backups: 2026-03-05
 authentication: 2026-03-06
 media_metadata_api: 2026-03-05
 lucos_comhra_llm: 2026-03-05
-lucos_scenes: 2026-03-05
-lucos_schedule_tracker: 2026-03-05
+lucos_scenes: 2026-03-06
+lucos_schedule_tracker: 2026-03-06
 lucos_arachne_ingestor: 2026-03-06
 notes: 2026-03-05
 lucos_repos: 2026-03-06
@@ -51,7 +51,7 @@ lucos_locations_otfrontend: 2026-03-05
 lucos_locations_otrecorder: 2026-03-05
 lucos_mail_docs: 2026-03-05
 lucos_mail_smtp: 2026-03-05
-lucos_media_weightings: 2026-03-05
+lucos_media_weightings: 2026-03-06
 lucos_photos_postgres: 2026-03-05
 lucos_photos_redis: 2026-03-05
 media_metadata_api_exporter: 2026-03-05
@@ -60,7 +60,8 @@ media_manager: 2026-03-06
 bind: 2026-03-05
 root: 2026-03-05
 router: 2026-03-05
-tfluke: 2026-03-05
+tfluke: 2026-03-06
+lukeblaney.co.uk: 2026-03-06
 time: 2026-03-05
 semweb: 2026-03-05
 seinn: 2026-03-06

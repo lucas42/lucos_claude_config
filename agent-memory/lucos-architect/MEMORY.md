@@ -184,7 +184,9 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 - Auth: `Authorization: Key <apikey>` header via `@api_auth` decorator
 - API endpoints: `/metadata/<type>/<pk>/data/` (individual RDF), `/metadata/all/data/` (full dump), `/ontology` (no auth)
 - 5 calendars: Chinese, Gregorian, Hebrew, Hijri, Hindu
-- Festival duration (#68): Option C proposed, awaiting decision. See `project-details.md`.
+- Festival duration (#68): Option C DECIDED. Separate FestivalPeriod model (extends EolasModel). Refined design posted 2026-03-06. Awaiting approval to file implementation tickets. lucos_time#76 blocked on this.
+  - Key: FestivalPeriod has festival FK (CASCADE), start_day, start_month FK, duration_days. Uses inherited `name` not separate label.
+  - Backward compat: Festivals with no periods use existing day_of_month/month fields (consumer-side logic in lucos_time).
 
 ## lucos_media_metadata_api
 

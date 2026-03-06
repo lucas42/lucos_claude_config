@@ -57,3 +57,5 @@
 - Red-sided garter snake / Thamnophis sirtalis parietalis (mentioned 2026-03-06)
 - Inland taipan / Oxyuranus microlepidotus (mentioned 2026-03-06)
 - Chinese crocodile lizard / Shinisaurus crocodiluris (mentioned 2026-03-06)
+- Pygmy chameleon / Rhampholeon spp. (mentioned 2026-03-06)
+- Yellow-bellied slider / Trachemys scripta scripta (mentioned 2026-03-06)
