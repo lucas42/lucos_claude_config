@@ -414,25 +414,29 @@ Do this proactively — don't silently work around missing tools without flaggin
 
 ## The `/_info` Endpoint
 
-Every lucos HTTP service must expose a `/_info` endpoint with no authentication. It is used by monitoring and a homepage app.
+Every lucos HTTP service must expose a `/_info` endpoint with no authentication. It is consumed by `lucos_monitoring` (health tracking) and `lucos_root` (homepage). The full specification is in [`docs/info-endpoint-spec.md`](https://github.com/lucas42/lucos/blob/main/docs/info-endpoint-spec.md) in the `lucos` repo.
 
-Response is JSON with the following fields:
+Fields are divided into three tiers:
 
-| Field | Type | Description |
-|---|---|---|
-| `system` | string | The system name — read from `SYSTEM` env var |
-| `checks` | object | Live health checks (evaluated at request time). Each key is a check name; value has `ok` (bool) and `techDetail` (string) |
-| `metrics` | object | Live metrics (evaluated at request time). Each key is a metric name; value has `value` (number) and `techDetail` (string) |
-| `ci` | object | CI info: `{"circle": "gh/lucas42/<repo_name>"}` |
-| `icon` | string | Path to the service's icon endpoint |
-| `network_only` | bool | `true` if the UI requires a network connection to render; `false` if it works offline (e.g. via service workers) |
-| `title` | string | Human-readable service name |
-| `show_on_homepage` | bool | Whether to show this service on the lucos homepage |
-| `start_url` | string | URL path to the UI entry point |
+- **Tier 1 (required):** `system`, `checks`, `metrics` -- must always be present. `checks` and `metrics` may be empty `{}` but must not be omitted.
+- **Tier 2 (recommended):** `ci`, `title` -- strongly encouraged; consumers handle their absence gracefully.
+- **Tier 3 (frontend only):** `icon`, `show_on_homepage`, `network_only`, `start_url` -- only relevant for services with a web UI. API-only services should omit these.
 
-`checks` and `metrics` can be empty objects if there is nothing meaningful to report yet.
+### Quick reference
 
-Example:
+| Field | Type | Tier | Description |
+|---|---|---|---|
+| `system` | string | 1 | System name from `SYSTEM` env var |
+| `checks` | object | 1 | Health checks: each value has `ok` (bool), `techDetail` (string), optional `debug` (string) |
+| `metrics` | object | 1 | Metrics: each value has `value` (number), `techDetail` (string) |
+| `ci` | object | 2 | CI metadata, e.g. `{"circle": "gh/lucas42/<repo_name>"}` |
+| `title` | string | 2 | Human-readable name (falls back to `system` if absent) |
+| `icon` | string | 3 | Path to the service icon |
+| `show_on_homepage` | bool | 3 | Whether to show on the homepage (default `false`) |
+| `network_only` | bool | 3 | Whether a network connection is required (default `true`) |
+| `start_url` | string | 3 | URL path to the UI entry point (default `"/"`) |
+
+### Example (frontend service)
 
 ```json
 {
@@ -452,10 +456,10 @@ Example:
   "ci": {
     "circle": "gh/lucas42/lucos_example"
   },
-  "icon": "/icon",
-  "network_only": true,
   "title": "Example",
+  "icon": "/icon",
   "show_on_homepage": true,
+  "network_only": true,
   "start_url": "/"
 }
 ```
