@@ -9,6 +9,7 @@
 - **Workflow changes** (issue lifecycle, dispatch workflows, agent prompts, label conventions, process documentation) should be routed to the `lucos-issue-manager` persona via the Task tool, not handled directly by the dispatcher. This includes edits to `~/.claude/skills/routine/SKILL.md` and similar workflow files.
 - **Repository secrets and settings** (e.g. setting GitHub secrets, enabling auto-merge) must be done via the `lucos-system-administrator` persona, as it's the only one with permissions for these changes.
 - **ADRs after system design**: Always create an ADR after completing a full system design or re-design. Route to `lucos-architect` persona.
+- **Don't paraphrase agent output in ad-hoc conversations.** When relaying what a persona said back to the user, show the agent's full response verbatim. Only summarise during pre-defined skills (e.g. `/routine`, `/next`). The user wants to see exactly what the persona said, in its own words.
 
 ## GitHub Comment Conventions
 
@@ -18,10 +19,6 @@
 
 - **Planned maintenance events**: When performing planned maintenance (reboots, migrations, etc.), post a custom Loganne event so other agents (especially lucos-site-reliability) can distinguish planned downtime from incidents. POST to `https://loganne.l42.eu/events` with `source`, `type` (e.g. `plannedMaintenance`), `humanReadable`, and optionally `url`. No auth required for writes. Note: Loganne is in-memory, so also leave a durable record (e.g. GitHub comment) for long-term reference.
 
-## Agent Persona File Caching
-
-- **Claude Code caches persona files at conversation start.** Changes to `~/.claude/agents/*.md` made mid-conversation are NOT picked up by new Task tool invocations — agents still receive the old version. A Claude restart is required to load updated persona files.
-- This was confirmed on 2026-03-06: sysadmin restructured SRE persona files mid-conversation, but the SRE agent's system prompt still contained the old inline checks on subsequent launches.
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 

@@ -63,7 +63,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Erlang OTP, in-memory state, email notifications. `/api/status` endpoint proposed (#26).
 
 ### lucos_root
-- Static site, Apache. /_info 3-tier schema accepted (lucos#35). Next: formal spec doc.
+- Static site, Apache. /_info 3-tier schema accepted (lucos#35). Spec doc: `docs/info-endpoint-spec.md` in lucos repo (PR #41). CLAUDE.md updated. Follow-up: monitoring title ticket, per-service compliance tickets.
 
 ### lucos_media_seinn
 - Node.js music player. Playback sync gap (#14): design posted, awaiting split into tickets.
