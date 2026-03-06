@@ -188,7 +188,12 @@ Split is principled: GitHub API concern vs environment self-maintenance vs boots
 
 ## lucos_media_metadata_api
 
-- Go + SQLite, multi-value fields (#34): revised design posted, awaiting lucas42 confirmation. See `project-details.md`.
+- Go + SQLite, multi-value fields (#34): design agreed, implementation tickets #35-#42 filed.
+- Predicate registry (#37): proposed `PredicateConfig` struct in `api/predicate_config.go` with `MultiValue bool` field. Extensible for future RDF mapping and form rendering fields. Awaiting lucas42 confirmation of predicate list and naming.
+- Multi-value predicates: composer, producer, language, offence, about, mentions (verified against formfields.php)
+- Key design decisions: schema in code not database (lucas42 preference), GET/PUT same shape, single-value predicates stay as strings (not arrays), mixed `string | []string` in v3 tags JSON.
+- 5 known consumers: lucos_media_metadata_manager (PHP), lucos_media_manager (Java), lucos_arachne ingestor (Python), lucos_media_import, lucos_media_weightings.
+- rdfgen `mapPredicate` already does splitCSV for the 6 multi-value predicates; will become redundant after DB migration.
 
 ## Cross-cutting: User-Agent convention (lucos#19, closed)
 
