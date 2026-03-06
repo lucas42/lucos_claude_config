@@ -19,3 +19,4 @@ Last reviewed: 2026-03-05
 - https://github.com/lucas42/lucos_repos/issues/23 (scaffold Go project - completed via PR)
 - https://github.com/lucas42/lucos_repos/issues/34 (auto-merge for lucos_repos - completed via PR)
 - https://github.com/lucas42/lucos_repos/issues/31 (create lucos-repos GitHub App - completed by lucas42)
+- https://github.com/lucas42/lucos_repos/issues/25 (GitHub App auth for API access - completed via PR #37)

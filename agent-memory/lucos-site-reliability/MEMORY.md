@@ -30,6 +30,9 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_media_seinn — Known Issues
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
+## lucos_repos — Known Issues
+- Service down (2026-03-06): container cannot verify GitHub API TLS certificate — `x509: certificate signed by unknown authority`. Every request fails. 502 on repos.l42.eu. Issue raised as #39 (P1). Likely stale CA bundle in Docker image. Fix: rebuild image from up-to-date base with `ca-certificates` installed.
+
 ## lucos_deploy_orb — Known Issues
 - "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
 

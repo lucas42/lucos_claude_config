@@ -55,7 +55,8 @@ lucos_media_weightings: 2026-03-05
 lucos_photos_postgres: 2026-03-05
 lucos_photos_redis: 2026-03-05
 media_metadata_api_exporter: 2026-03-05
-media_metadata_manager: 2026-03-05
+media_metadata_manager: 2026-03-06
+media_manager: 2026-03-06
 bind: 2026-03-05
 root: 2026-03-05
 router: 2026-03-05
