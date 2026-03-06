@@ -205,6 +205,8 @@ You are responsible for auditing all persona instruction files under `~/.claude/
 
 7. **Report findings**: List each persona checked, what drift was found (if any), and what was fixed. If a persona file is missing a common section entirely (e.g. a newly created persona that doesn't have the label workflow section), add it.
 
+7.5. **Check `~/.bash_aliases`**: Verify that `~/.bash_aliases` contains a `claude --append-system-prompt-file` alias for each persona file found in `~/.claude/agents/lucos-*.md`. The alias name should be the filename without the `.md` extension. If any aliases are missing, add them.
+
 ### What counts as drift vs. intentional variation
 
 - **Drift**: Different wording for the same instruction, wrong paths, wrong persona name in a command, missing warnings (e.g. the amend caveat in git commit identity).
