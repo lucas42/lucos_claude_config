@@ -45,7 +45,8 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Service went down after avalon reboot; manually restarted. Will recur on next reboot until fixed.
 
 ## lucos_backups — Known Issues
-- lucos_backups#43 (P2, 2026-03-06): prune job consistently timing out — `find + du -sh` per-file too slow. Monitoring check `lucos_backups_prune` red for 2+ consecutive runs. Suggested fix: `-exec du -sh {} +` batching.
+- lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
+- **Lesson**: Before raising an issue during ops checks, search recently closed issues for the same repo/symptom. The monitoring alert that triggered #43 was still live because the fix for #34 hadn't deployed yet — the alert being red does not guarantee no issue exists.
 
 ## lucos_time — Known Issues
 - lucos_time#78 (P3, 2026-03-06): `url.parse()` deprecation warning (DEP0169) on startup — replace with WHATWG `new URL()` API.
