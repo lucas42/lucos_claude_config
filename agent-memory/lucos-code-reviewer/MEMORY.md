@@ -40,7 +40,7 @@
 - Saltwater crocodile / Crocodylus porosus (mentioned 2026-03-04)
 - King cobra / Ophiophagus hannah (mentioned 2026-03-04)
 - Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
-- Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05, again 2026-03-06)
+- Spiny softshell turtle / Apalone spinifera (mentioned 2026-03-05, again 2026-03-06, again 2026-03-06)
 - Angolan python / Python anchietae (mentioned 2026-03-05)
 - Banded sea krait / Laticauda colubrina (mentioned 2026-03-05)
 - Nile monitor / Varanus niloticus (mentioned 2026-03-05)
