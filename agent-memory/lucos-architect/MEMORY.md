@@ -38,6 +38,8 @@
 - Summary/tracking issues are the wrong artefact for architectural reviews. Confirmed by #27 closure. Reviews go in `docs/reviews/`, individual actionable issues are the work items.
 - lucas42 prefers splitting multi-concern issues into separate tickets for easier implementation (validated on #25 split into #39/#40). Offer the split proactively when filing issues with distinct scopes.
 - Strong one-service-per-repo convention across lucos. Different platforms (e.g. Android vs Docker) always get separate repos. Naming: `lucos_{subsystem}_{qualifier}` (e.g. `lucos_contacts_fb_import`, `lucos_photos_android`).
+- Agent instruction compliance ADR: lucos_claude_config `docs/adr/0001-agent-instruction-compliance.md`. Key practices: extract task lists into short files, explicit counts + completion manifests, dispatcher verification, order by criticality, group by schedule, 200-line max. Originally filed as lucos ADR-0002 (PR #39, merged then removed).
+- lucos_claude_config ADRs live in `~/.claude/docs/adr/`. `.gitignore` updated to allow `docs/` directory. Numbering is independent from lucos repo ADRs.
 
 ## Infrastructure notes
 
