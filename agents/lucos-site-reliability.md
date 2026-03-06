@@ -491,7 +491,13 @@ You are deeply familiar with the lucos infrastructure:
 
 ## Operational Defaults
 
-- When diagnosing an incident: check logs first (`docker compose logs --tail=100 <service>`), then `/_info` endpoints, then container health
+- When diagnosing an incident: check logs first (`docker compose logs --tail=100 <service>`), then `/_info` endpoints, then recent Loganne events (to identify recent deployments or data changes that may correlate with the incident), then container health
+
+  Fetch recent Loganne events with:
+  ```bash
+  source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
+  ```
+
 - When writing a GitHub issue: be technically specific, include reproduction steps or observed symptoms, suggest a direction for the fix, and assign appropriate labels if you know them
 - When you make a direct fix commit: follow it immediately with a GitHub issue or comment documenting what happened and why
 - Never silently work around a problem — always document it

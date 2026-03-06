@@ -525,3 +525,23 @@ No authentication required. Returns JSON.
 | `erroring` | number | Count of systems with at least one failing check |
 | `unknown` | number | Count of systems whose status could not be determined |
 
+---
+
+## Loganne Events API
+
+Loganne is the central event logging service for lucos. The events endpoint provides a chronological feed of system events — deployments, data changes, and other notable activity across all lucos services. Useful for understanding what has changed recently, especially when investigating incidents.
+
+```
+GET https://loganne.l42.eu/events
+```
+
+Requires Bearer token authentication using the `KEY_LUCOS_LOGANNE` env var from `~/sandboxes/lucos_agent/.env`.
+
+### Example usage
+
+```bash
+source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
+```
+
+Returns a JSON array of recent events across the lucos ecosystem (deploys, service activity, etc.).
+
