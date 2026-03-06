@@ -33,6 +33,7 @@ All labels created or managed by lucos-issue-manager should use consistent colou
 
 | Label | Colour (hex) | Visual | Rationale |
 |---|---|---|---|
+| `priority:critical` | `e11d48` | Dark red | Full service outage; production down, users affected |
 | `priority:high` | `b60205` | Red | High impact; pick up soon |
 | `priority:medium` | `fbca04` | Yellow | Standard priority; normal queue order |
 | `priority:low` | `c5def5` | Light blue | Nice to have; pick up when queue is clear |

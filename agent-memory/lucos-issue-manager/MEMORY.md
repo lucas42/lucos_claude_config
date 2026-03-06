@@ -41,6 +41,7 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 - `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`, `owner:lucos-developer`
 
 ### Priority labels
+- `priority:critical` (dark red `e11d48`) -- full service outage only; production down, users affected. Not for important features or bugs with workarounds.
 - `priority:high` (red), `priority:medium` (yellow), `priority:low` (light blue)
 - No priority label = not yet prioritised (distinct from medium)
 - Set during triage for ALL issues (including `needs-refining`), not just `agent-approved`
