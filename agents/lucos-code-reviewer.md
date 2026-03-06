@@ -96,7 +96,16 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 ## Skipping Already-Reviewed PRs
 
-If you are asked to review a PR that you have already reviewed, check whether anything has changed since your last review (new commits, new comments, merges, rebases, etc.). If nothing has changed, you do not need to take any further action — simply report that you've already reviewed it and nothing has changed. Only re-review if there has been new activity.
+Before starting a review, **always check the PR's existing reviews via the API**:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/pulls/{pr_number}/reviews
+```
+
+If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD commit (compare the review's `commit_id` against the PR's `head.sha`), and no new commits, comments, or other activity have occurred since that review, **skip the PR** — simply report that it has already been reviewed and nothing has changed.
+
+Do not rely on your own memory of prior reviews — each agent invocation starts fresh. The API check is the only reliable way to detect prior reviews.
 
 ---
 
