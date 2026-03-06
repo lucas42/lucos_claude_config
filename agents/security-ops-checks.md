@@ -11,6 +11,13 @@ Check `ops-checks.md` in your agent memory at the start of each run to determine
   "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
 ```
 
+Also scan the 10 most recent open issues in the target repo to catch issues filed by other agents using different terminology:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+sort:created-desc&per_page=10"
+```
+If you find an existing issue that covers the same root cause, comment on that issue with any new information rather than filing a duplicate.
+
 **One issue per alert — never bundle**: File exactly one GitHub issue per security alert. Never combine multiple unrelated alerts into a single issue. Each alert has its own root cause, its own fix, and its own remediation timeline. The only exception is Check 4 (GitHub Actions audit), which files one issue per repo listing all findings within that repo.
 
 ---

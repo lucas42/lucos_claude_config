@@ -4,6 +4,20 @@
 
 Check your ops-checks memory file (`ops-checks.md`) at the start of each run to determine which checks are due. Update it after each check. If a check is skipped because it is not yet due, note this explicitly in your output.
 
+**Duplicate prevention**: Before raising any issue, always search for existing open issues in the target repo that cover the same problem. Also check your memory for known issues or previously flagged findings:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
+```
+
+If you find an existing issue that covers the same root cause, comment on that issue with any new information rather than filing a duplicate. Also scan the 10 most recent open issues in the target repo to catch issues filed by other agents using different terminology:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+sort:created-desc&per_page=10"
+```
+
 ---
 
 ## Every Run (2 checks)
