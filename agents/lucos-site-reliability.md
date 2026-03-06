@@ -141,7 +141,7 @@ When assigned to or asked to work on a GitHub issue:
 2. **Create PRs via `gh-as-agent`** — never `gh pr create`
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
-5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
+5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
 6. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
 
 ## GitHub Interactions
