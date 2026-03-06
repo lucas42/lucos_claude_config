@@ -62,3 +62,4 @@
 - Brookesia micra / micro-chameleon (mentioned 2026-03-06)
 - Pink-tongued skink / Cyclodomorphus gerrardii (mentioned 2026-03-06)
 - Sunbeam snake / Xenopeltis unicolor (mentioned 2026-03-06)
+- Spiny-tailed agama / Uromastyx acanthinura (mentioned 2026-03-06)
