@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-05 (fourth run)
+container_status: 2026-03-06
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -100,6 +100,15 @@ sandbox_drift: 2026-03-05
 
 **Xwing cert check** (spot check): Still same cert, expires 2026-04-06. Not yet within 30-day renewal window. Auto-renewal cron running daily — no action needed.
 
+### 2026-03-06 (container status + xwing cert spot-check)
+
+**Container status**:
+- avalon: `lucos_repos` CRASH-LOOPING (exit code 2, Restarting). Error: `x509: certificate signed by unknown authority` when contacting `api.github.com`. Host TLS is fine — problem is inside the container (stale CA bundle in base image). Issue raised: lucos_repos#38
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), now 12 days old — one-shot test container, still not a concern
+
+**Xwing cert spot-check** (at 30-day mark): nas.l42.eu cert still shows notAfter=Apr 6. Daily cron at 22:16 tonight will be first run within Let's Encrypt's 30-day renewal window. Check again next run — if still unrenewd by 2026-03-08, raise issue.
+
 ---
 
 **Issues raised**:
@@ -111,3 +120,4 @@ sandbox_drift: 2026-03-05
 - lucos_agent_coding_sandbox#19: sandbox drift (bidirectional)
 - lucos_agent_coding_sandbox#20: lucos_locations_otrecorder image stale (Aug 2025)
 - lucos_backups#32: no lucos_backups on xwing or salvare
+- lucos_repos#38: crash-loop due to x509 cert failure inside container (stale CA bundle)
