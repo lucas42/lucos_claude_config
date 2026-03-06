@@ -24,3 +24,4 @@ Last reviewed: 2026-03-06
 - https://github.com/lucas42/lucos_photos/issues/83 (Bearer auth scheme switch - completed by developer via PR)
 - https://github.com/lucas42/lucos_photos/issues/62 (Rename photo table to media_item - completed by developer via PR)
 - https://github.com/lucas42/lucos_photos/issues/31 (Configure dependabot for docker-compose images - completed by sysadmin via PR)
+- https://github.com/lucas42/lucos_photos_android/issues/18 (Switch to Bearer auth scheme - completed by developer via PR)

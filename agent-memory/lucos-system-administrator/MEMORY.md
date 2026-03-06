@@ -142,3 +142,7 @@ Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks
 ## lucos-architect MEMORY.md length issue
 
 As of 2026-03-06, lucos-architect's MEMORY.md is 203 lines — 3 over the 200-line truncation limit — causing the User-Agent ADR convention entry to be lost. This still needs fixing: move older notes to a topic file to bring the main file under 200 lines.
+
+## Missing `restart: always` — silent failure pattern
+
+Containers without `restart: always` will stay down after a host reboot or a `docker compose stop`. This looks like an unexplained outage but is just missing config. Confirmed by lucos_comhra#2 (closed superseded by #3). When investigating containers that stopped without an obvious crash, check for missing restart policy before raising an outage issue.

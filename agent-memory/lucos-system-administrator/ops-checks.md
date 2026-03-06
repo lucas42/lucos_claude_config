@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-06
+container_status: 2026-03-06  # updated same day — comhra containers down
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -103,11 +103,11 @@ sandbox_drift: 2026-03-05
 ### 2026-03-06 (container status + xwing cert spot-check; all other checks not yet due)
 
 **Container status**:
-- avalon: CLEAN
+- avalon: `lucos_comhra_agent` and `lucos_comhra_llm` both Exited (255) — stopped simultaneously at 12:24:24 UTC. Not OOM. No matching deploy. Issue raised: lucos_comhra#2
 - salvare: clean
-- xwing: `lucos_media_import_test` Exited (0), 11 days old — one-shot test container, still not a concern
+- xwing: `lucos_media_import_test` Exited (0), 11+ days old — one-shot test container, not a concern
 
-**Xwing cert spot-check**: nas.l42.eu still notAfter=Apr 6. Cron ran 2026-03-05 at 22:16 — logged "Certificate not yet due for renewal" for all 4 domains (was 32 days out). Let's Encrypt renewal threshold is strictly <30 days. Tonight's run (2026-03-06 22:16) will be at 31 days — still unlikely to trigger. 2026-03-07 22:16 should be the first run at 30 days that actually triggers renewal. If cert still unrenewed by 2026-03-09, raise issue.
+**Xwing cert spot-check**: nas.l42.eu still notAfter=Apr 6. At 31 days. Tonight's cron run (22:16) may or may not trigger (threshold is <30 days). 2026-03-07 should be first run at 29 days that triggers renewal. If cert still unrenewed by 2026-03-09, raise issue.
 
 ---
 
@@ -121,3 +121,4 @@ sandbox_drift: 2026-03-05
 - lucos_agent_coding_sandbox#20: lucos_locations_otrecorder image stale (Aug 2025)
 - lucos_backups#32: no lucos_backups on xwing or salvare
 - lucos_repos#38: crash-loop due to x509 cert failure inside container (stale CA bundle)
+- lucos_comhra#2: lucos_comhra_agent + lucos_comhra_llm down on avalon (simultaneous exit 255, 2026-03-06)

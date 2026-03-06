@@ -72,6 +72,11 @@ Key issues filed (open):
 - lucas42/lucos_claude_config#5: CLAUDE.md too large, recommend factoring out.
 - lucas42/lucos_agent_coding_sandbox#5: README has wrong bot user ID.
 
+Key changes (post-review):
+- `--app` flag now REQUIRED on `get-token` and `gh-as-agent` (no default). Errors with helpful message if omitted.
+- `lucos-developer` persona created for general implementation tasks (replaces old `lucos-agent` fallback).
+- Dispatcher cannot make git/GitHub calls directly -- must hand off to a persona.
+
 Overall assessment: well-designed isolation model (Lima VM, no host mounts, dedicated SSH key). Identity sprawl partially addressed (personas.json exists), auto-commit for memory now in place.
 
 Script consolidation (#11): reviewed 2026-03-05, recommended keeping current split:
