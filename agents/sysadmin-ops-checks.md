@@ -14,6 +14,13 @@ Check `ops-checks.md` in your agent memory at the start of each run to determine
   "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+{search_terms}"
 ```
 
+Also scan the 10 most recent open issues in the target repo to catch issues filed by other agents using different terminology:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
+  "search/issues?q=repo:lucas42/{repo}+is:issue+is:open+sort:created-desc&per_page=10"
+```
+If you find an existing issue that covers the same root cause, comment on that issue with any new information rather than filing a duplicate.
+
 **Triage approach**:
 - Trivial fix, no downtime risk: fix immediately and note it in `ops-checks.md`
 - Bigger problem, or preventive measure: raise a GitHub issue on the appropriate repo
