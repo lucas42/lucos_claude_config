@@ -103,6 +103,14 @@ Before raising any issue, **always search for existing open issues** in the targ
 - **If an open issue exists but you have discovered additional information** (e.g. a new affected file, a higher severity than originally reported, or a related finding): add a comment to the existing issue with the new information instead of creating a duplicate.
 - **If no open issue exists**: create a new one as described in the check-specific instructions below.
 
+### One issue per alert — never bundle
+
+**File exactly one GitHub issue per security alert. Never combine multiple unrelated alerts into a single issue.**
+
+Each alert has its own root cause, its own fix, and its own remediation timeline. Bundling them into an omnibus ticket creates a single thread where multiple unrelated conversations collide, makes it impossible to close the issue when only some alerts are resolved, and obscures severity and priority differences between findings.
+
+This rule applies to all check types: one issue per Dependabot alert, one issue per CodeQL finding, one issue per secret-scanning alert. The only exception is Check 4 (GitHub Actions audit), which explicitly files one issue per *repo* listing all findings within that repo — because those findings share the same workflow files and fix context.
+
 ---
 
 ### Check 1: Dependabot alerts (every run)
@@ -124,7 +132,7 @@ The script returns all open dependabot alerts with information about any associa
 **If there is NO associated PR:**
 - Investigate why (e.g. review dependabot run logs).
 - If you can find a reasonable workaround (e.g. adding an override/resolution in package.json), implement it yourself.
-- If it's trickier (e.g. need to totally replace a library), raise a ticket on that repository if there isn't already one about it.
+- If it's trickier (e.g. need to totally replace a library), raise a ticket on that repository if there isn't already one about it. **Raise one issue per alert — do not bundle multiple dependabot alerts together**, even if they affect the same repo. Each alert has a different vulnerable package, different fix, and different severity.
 - If there's already an issue about the potential fix but it doesn't mention this specific alert, add a comment to the issue explaining it would fix the alert.
 
 ---
@@ -140,12 +148,14 @@ The script returns a JSON object with two arrays: `code_scanning` (CodeQL findin
 **For each CodeQL alert (`code_scanning`):**
 - Check whether an issue already exists in that repo tracking this alert (search by rule ID or description).
 - If no issue exists, raise one. Include the rule ID, severity, affected file/line, and a plain-English explanation of what an attacker could do with it.
+- **Raise one issue per CodeQL alert.** Do not bundle multiple CodeQL findings into a single issue, even if they are in the same file or same repo. Each finding has a different rule, different fix, and should be tracked and closed independently.
 - Apply the advisory routing decision: most CodeQL findings are not immediately exploitable without other access, so they go as normal public issues. Only escalate to a private advisory if the finding meets the strict two-criteria threshold (immediately exploitable, not yet fixed).
 
 **For each secret-scanning alert (`secret_scanning`):**
 - These are always high priority. A `validity: active` token is an emergency — treat it as a potential incident and escalate immediately.
 - Check whether an issue already exists tracking this specific alert.
 - If not, raise one. Even `validity: inactive` or `validity: unknown` tokens should be rotated and the commit history noted.
+- **Raise one issue per secret-scanning alert.** Do not bundle multiple exposed secrets into one issue. Each secret has a different rotation path and may involve different third-party services; conflating them makes incident response harder.
 - Apply the advisory routing decision: an active secret that can be used immediately without any other access meets the threshold for a private advisory. Inactive or unknown-validity secrets go as normal public issues.
 
 ---
