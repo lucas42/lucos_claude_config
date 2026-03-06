@@ -59,3 +59,4 @@
 - Chinese crocodile lizard / Shinisaurus crocodiluris (mentioned 2026-03-06)
 - Pygmy chameleon / Rhampholeon spp. (mentioned 2026-03-06)
 - Yellow-bellied slider / Trachemys scripta scripta (mentioned 2026-03-06)
+- Brookesia micra / micro-chameleon (mentioned 2026-03-06)
