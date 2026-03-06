@@ -128,3 +128,17 @@ Loganne will be unreachable during the reboot window (avalon hosts it). Post the
 SSH key for GitHub is at `~/.ssh/id_ed25519_lucos_agent` (no passphrase). Explicitly configured in `~/.ssh/config` for `github.com` with `IdentitiesOnly yes`. Works in cron's minimal environment — no SSH agent needed.
 
 The auto-commit cron script at `~/.claude/scripts/commit-agent-memory.sh` also sets `GIT_SSH_COMMAND` explicitly to guarantee the correct key is used regardless of environment.
+
+## Claude Code persona file caching
+
+Claude Code caches persona files (`~/.claude/agents/*.md`) at conversation start. Changes made mid-conversation are NOT picked up by new Task tool invocations within the same conversation. A Claude restart is required for agents to receive updated persona files.
+
+Confirmed 2026-03-06: restructured the SRE persona file mid-conversation but the SRE agent still received the old version in subsequent Task invocations.
+
+## Persona ops-checks restructure (2026-03-06) — UNTESTED
+
+Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks.md` files in `~/.claude/agents/`. Changes committed to `lucos_claude_config` but could not be verified in the same session due to the caching issue above. **Needs verification after a Claude restart.**
+
+## lucos-architect MEMORY.md length issue
+
+As of 2026-03-06, lucos-architect's MEMORY.md is 203 lines — 3 over the 200-line truncation limit — causing the User-Agent ADR convention entry to be lost. This still needs fixing: move older notes to a topic file to bring the main file under 200 lines.
