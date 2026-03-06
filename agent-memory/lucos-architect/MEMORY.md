@@ -32,6 +32,10 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - lucos_claude_config ADRs live in `~/.claude/docs/adr/`. `.gitignore` updated to allow `docs/` directory. Numbering is independent from lucos repo ADRs.
 - User-Agent convention (lucos#19, closed): ADR-0001 in lucas42/lucos (`docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`). Set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
 
+## Auto-merge & security checks
+
+- lucos#42: CodeQL race condition with auto-merge. Recommended Option 1: make CodeQL a required status check. No workflow changes needed -- repo settings only. Check name on lucos_photos: `Analyze (python)`. Must be added to prerequisites checklist when rolling out auto-merge to new repos.
+
 ## Infrastructure notes
 
 - `lucos/build-amd64` CI orb builds and pushes Docker images; large images (>1GB) impact build/deploy times
