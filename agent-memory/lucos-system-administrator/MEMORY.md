@@ -156,3 +156,7 @@ Containers without `restart: always` will stay down after a host reboot or a `do
 ## Check for existing issues before raising new ones
 
 Before filing a new issue for an ongoing condition (crash-loops, service down, etc.), search open issues in the same repo first. Duplicate issues create noise and wasted triage work. Example: lucos_repos#38 was filed simultaneously with lucos_repos#39 by two different agents — issue-manager closed #38 as a duplicate.
+
+## Nginx upstream DNS resolution pattern (lucos_arachne#60)
+
+When nginx starts before upstream containers, it fails to resolve upstream hostnames at startup and crash-loops. Fix: use variable-based upstream hostnames in `proxy_pass` with `set $upstream_host "hostname";`. This defers DNS resolution to request time. Also requires `resolver 127.0.0.11 valid=30s;` (Docker's embedded DNS resolver). Apply to all upstream `location` blocks.

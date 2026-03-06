@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-06  # second run same day — arachne ingestor/triplestore/search exited (expected: restart:no, one-shot containers)
+container_status: 2026-03-06  # third run same day — all hosts clean; xwing lucos_media_import_test still Exited(0) one-shot — not a concern
 resource_checks: 2026-03-05
 syslog_review: 2026-03-05
 software_updates: 2026-03-05
@@ -121,6 +121,15 @@ sandbox_drift: 2026-03-05
 **Xwing cert spot-check**: notAfter=Apr 6 2026 (31 days from today). No renewal yet — expected, cron triggers at <30 days. Re-check 2026-03-09 if still unrenewed.
 
 **Key learning**: arachne ingestor, triplestore, and search are all `restart: no` one-shot containers. Do not raise issues for these appearing in `Exited` state.
+
+### 2026-03-06 (THIRD RUN same day — container status + cert spot-check)
+
+**Container status**:
+- avalon: clean (all services up)
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 11 days — one-shot test container, not a concern
+
+**Xwing cert spot-check**: notAfter=Apr 6 2026 (31 days from today). Still not within 30-day renewal window — tomorrow night's cron run (2026-03-07 at 22:16 UTC) should be at 29 days and trigger renewal. Re-check 2026-03-09 if still unrenewed.
 
 ---
 
