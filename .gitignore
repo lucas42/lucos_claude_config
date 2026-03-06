@@ -21,6 +21,10 @@
 !skills/
 !skills/**
 
+# Architecture Decision Records
+!docs/
+!docs/**
+
 # Agent persistent memory
 !agent-memory/
 !agent-memory/**
