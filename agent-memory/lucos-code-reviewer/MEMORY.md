@@ -47,7 +47,7 @@
 - Mexican mole lizard / Bipes biporus (mentioned 2026-03-05)
 - Parson's chameleon / Calumma parsonii (mentioned 2026-03-05)
 - Veiled chameleon / Chamaeleo calyptratus (mentioned 2026-03-05)
-- Spiny-tailed monitor / Varanus acanthurus (mentioned 2026-03-05)
+- Spiny-tailed monitor / Varanus acanthurus (mentioned 2026-03-05, again 2026-03-06)
 - Texas horned lizard / Phrynosoma cornutum (mentioned 2026-03-05)
 - Sand boa / Eryx spp. (mentioned 2026-03-05)
 - Rhinoceros iguana / Cyclura cornuta (mentioned 2026-03-05)
@@ -56,3 +56,4 @@
 - Plumed basilisk / Basiliscus plumifrons (mentioned 2026-03-06)
 - Red-sided garter snake / Thamnophis sirtalis parietalis (mentioned 2026-03-06)
 - Inland taipan / Oxyuranus microlepidotus (mentioned 2026-03-06)
+- Chinese crocodile lizard / Shinisaurus crocodiluris (mentioned 2026-03-06)
