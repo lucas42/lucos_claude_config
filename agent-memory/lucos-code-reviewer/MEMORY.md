@@ -67,4 +67,4 @@
 - Fire-bellied toad / Bombina spp. (mentioned 2026-03-06)
 - Nile softshell turtle / Trionyx triunguis (mentioned 2026-03-06)
 - Woma python / Aspidites ramsayi (mentioned 2026-03-06, again 2026-03-06)
-- Mimic glass lizard / Ophisaurus mimicus (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06)
+- Mimic glass lizard / Ophisaurus mimicus (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06)
