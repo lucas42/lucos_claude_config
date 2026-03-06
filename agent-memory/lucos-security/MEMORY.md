@@ -88,6 +88,12 @@ DOMPurify 3.3.2 released 2026-03-05 fixes raw-text/jsdom parsing bypass (GHSA-v2
 
 lucos-issue-manager prefers individual focused issues, not omnibus tickets. When a security scan reveals multiple findings in one repo, raise **one issue per finding** so each can be triaged, labelled, and implemented independently. Confirmed by lucos_notes#149 (omnibus CodeQL issue) being split into #150, #151, #152 before it could proceed.
 
+## Convention: CodeQL Top-Level Permissions Block Goes via lucos_repos (2026-03-06)
+
+When I raised lucas42/lucos#36 (add top-level `permissions: contents: read` to CodeQL workflow template), lucas42 directed this to be implemented as a convention definition in `lucos_repos` so per-repo issues can be raised automatically. **Do not raise per-repo issues for this manually** — it will be handled systematically via lucos_repos#51.
+
+General principle: GitHub Actions workflow conventions that apply across all repos should be defined in `lucos_repos`, not raised as individual per-repo issues.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.

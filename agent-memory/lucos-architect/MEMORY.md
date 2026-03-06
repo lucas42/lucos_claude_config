@@ -60,6 +60,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_metadata_manager
 - PHP front-end. Recommended client-side Typesense via arachne (#51). Dedicated `tracks` collection (arachne#47).
 
+### lucos_configy
+- Rust API serving YAML config. Single-host-for-domain constraint (#25): recommended Option A (validation test in existing test suite). dns_sync depends on `hosts[0]` -- silent misconfiguration if violated. Option B (schema split host/hosts) deferred.
+
 ### lucos_arachne
 - nginx + Typesense + Fuseki + Python ingestor. MCP (#15): not now. configy#33: recommended closing.
 
@@ -80,6 +83,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_repos
 - Greenfield redesign (#22): Go + SQLite, convention auditing. Tickets #23-#30. Audit lifecycle (#30) awaiting approval.
+- Convention quality guide (#50): design posted. Key proposal: add `Rationale` and `Guidance` fields to Convention struct so generated issues explain why + how to fix. Awaiting lucas42 decision on scope (docs only vs struct changes).
 
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.

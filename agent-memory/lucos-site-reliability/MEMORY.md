@@ -26,11 +26,16 @@ See topic files for details. Key patterns confirmed in operation:
 - lucos_deploy_orb/issues/12 (prune step timeout): closed/completed. Fix was to add a timeout wrapper or `|| true` so a stuck prune never marks a successful deploy as failed.
 - lucos_repos/issues/39 (TLS x509 failure): closed/completed. Fix was to rebuild Docker image from up-to-date base with `ca-certificates` — stale CA bundle in the container was the root cause.
 - lucos/issues/37 (Bearer scheme migration): closed. Decision: adopt `Authorization: Bearer <token>` as the estate-wide standard for new API key auth. Existing `key` scheme services to migrate over time. lucos_loganne#210 (Bearer auth for GET /events) was the first to adopt this — closed/completed.
+- lucos_creds/issues/82 (SSH connection uses unresolvable container name): closed/completed. Fix: add `hostname: lucos-creds` to the `lucos_creds` service in docker-compose and a `Host lucos_creds` + `HostName lucos-creds` block in `ui/ssh-config`. Root cause: Alpine's musl libc DNS resolver rejects hostnames with underscores (RFC non-compliant). Hyphenated alias resolves fine.
+- **Infrastructure pattern**: Docker service names with underscores may fail DNS resolution in Alpine containers (musl libc). Workaround: set `hostname:` with a hyphenated name in docker-compose and map it in SSH config / application config.
 
 ## lucos_monitoring — Known Issues
 - CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. Race condition confirmed still present (2026-03-05): `checkWorkflowStatuses` reports failed if ANY workflow in pipeline is failed, even when a later successful retry exists. Issue raised as #34 (P3).
 - lucos_arachne ingestor: unhandled webhook types from loganne causing 404 responses — events silently dropped. Issue raised as lucos_arachne#53.
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
+
+## lucos_locations — Known Issues
+- Issue #9 (P3, 2026-03-06): `lucos_locations_otfrontend` (192.168.176.2) makes continuous TLS MQTT connections to mosquitto on port 8883, failing with "protocol error" every ~60 seconds. Longstanding (confirmed from 2026-03-01). Likely wrong port/TLS config — `otrecorder` correctly uses plain 1883. Related to issue #4 (cert auto-renewal).
 
 ## tfluke — Known Issues
 - TfL API 404s: stale `london-overground` line ID (TfL renamed to 6 lines in 2024), empty vehicle ID passed to arrivals endpoint, stale stop ID `490007268X`. Issue raised as tfluke#227 (P3, 2026-03-06).
@@ -40,7 +45,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_repos — Known Issues
 - Issue #39 (TLS x509 failure, P1): closed/resolved. Incident report written (lucos/pull/40).
-- Issue #46 (P2, 2026-03-06): Audit sweep failing — GitHub repos API returns 404. GitHub App auth works (token obtained) but the `GET /orgs/lucas42/repos` call returns 404. Likely a GitHub App installation permission/scope issue — the app may not have org-level repo list access. Check the App installation settings at `https://github.com/organizations/lucas42/settings/installations`.
+- Issue #46 (P2, 2026-03-06): closed/completed. Root cause was calling `/orgs/lucas42/repos` — `lucas42` is a user account not an org. Fix: changed to `/users/lucas42/repos`. Note: the original diagnosis of "GitHub App permission scope issue" was wrong — it was a plain wrong API path.
 
 ## lucos_comhra — Known Issues
 - Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Closed/completed — lucos-developer added `restart: always` to both `llm` and `agent` services.
