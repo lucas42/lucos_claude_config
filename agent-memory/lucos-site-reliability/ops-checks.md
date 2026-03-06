@@ -33,4 +33,9 @@ lucos_contacts_web: 2026-03-06
 lucos_creds: 2026-03-06
 lucos_creds_configy_sync: 2026-03-06
 lucos_creds_ui: 2026-03-06
-- Next rotation should cover: lucos_dns_sync, lucos_eolas_app, lucos_eolas_db, lucos_eolas_web, lucos_locations_mosquitto
+lucos_dns_sync: 2026-03-06
+lucos_eolas_app: 2026-03-06
+lucos_eolas_db: 2026-03-06
+lucos_eolas_web: 2026-03-06
+lucos_locations_mosquitto: 2026-03-06
+- Next rotation should cover: lucos_locations_otfrontend, lucos_locations_otrecorder, lucos_mail_docs, lucos_mail_smtp, lucos_media_weightings (already done), lucos_photos_api
