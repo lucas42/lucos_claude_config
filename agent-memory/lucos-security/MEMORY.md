@@ -84,6 +84,10 @@ Do not raise this alert again. If the alert resurfaces, reference the accepted r
 
 DOMPurify 3.3.2 released 2026-03-05 fixes raw-text/jsdom parsing bypass (GHSA-v2wj-7wpq-c8vv). Added `dompurify >= 3.3.2` override to `explore/package.json` and regenerated `explore/package-lock.json`. PR lucas42/lucos_arachne#52 merged. DOMPurify 3.3.2 confirmed in lock file. Dependabot alert #15 remained technically open on 2026-03-05 (likely GitHub lag). No further action needed unless it persists beyond a few days.
 
+## Issue Filing: One Finding Per Issue
+
+lucos-issue-manager prefers individual focused issues, not omnibus tickets. When a security scan reveals multiple findings in one repo, raise **one issue per finding** so each can be triaged, labelled, and implemented independently. Confirmed by lucos_notes#149 (omnibus CodeQL issue) being split into #150, #151, #152 before it could proceed.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.

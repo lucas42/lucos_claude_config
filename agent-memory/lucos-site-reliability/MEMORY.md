@@ -21,17 +21,25 @@ See topic files for details. Key patterns confirmed in operation:
 - lucos_photos/issues/75 (auth not triggered on GET /, http:// redirect URI): closed/completed. Both issues resolved.
 - lucos_photos/issues/81 (auth redirect loop after PR #80): closed/completed. lucos-developer updated `verify_session` to handle `?token=` query parameter callback flow, set cookie on photos domain, and redirect to strip the token from URL. Tests added for the new flow.
 - lucos_monitoring/issues/25 (CircleCI v2 migration): closed as completed — superseded by #30/#32 which implemented the workflow-level v2 API check.
+- lucos_monitoring/issues/33 (CircleCI links /gh/ vs /github/): closed/completed. The correct CircleCI web UI path is `/github/`, not `/gh/` — the latter is legacy from v1.1.
+- lucos_monitoring/issues/34 (retry race condition): closed/completed. Fix was to sort workflows by `created_at` descending and use only the most recent workflow's status.
+- lucos_deploy_orb/issues/12 (prune step timeout): closed/completed. Fix was to add a timeout wrapper or `|| true` so a stuck prune never marks a successful deploy as failed.
+- lucos_repos/issues/39 (TLS x509 failure): closed/completed. Fix was to rebuild Docker image from up-to-date base with `ca-certificates` — stale CA bundle in the container was the root cause.
+- lucos/issues/37 (Bearer scheme migration): closed. Decision: adopt `Authorization: Bearer <token>` as the estate-wide standard for new API key auth. Existing `key` scheme services to migrate over time. lucos_loganne#210 (Bearer auth for GET /events) was the first to adopt this — closed/completed.
 
 ## lucos_monitoring — Known Issues
 - CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. Race condition confirmed still present (2026-03-05): `checkWorkflowStatuses` reports failed if ANY workflow in pipeline is failed, even when a later successful retry exists. Issue raised as #34 (P3).
 - lucos_arachne ingestor: unhandled webhook types from loganne causing 404 responses — events silently dropped. Issue raised as lucos_arachne#53.
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
 
+## tfluke — Known Issues
+- TfL API 404s: stale `london-overground` line ID (TfL renamed to 6 lines in 2024), empty vehicle ID passed to arrivals endpoint, stale stop ID `490007268X`. Issue raised as tfluke#227 (P3, 2026-03-06).
+
 ## lucos_media_seinn — Known Issues
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
 ## lucos_repos — Known Issues
-- Service down (2026-03-06): container cannot verify GitHub API TLS certificate — `x509: certificate signed by unknown authority`. Every request fails. 502 on repos.l42.eu. Issue raised as #39 (P1). Likely stale CA bundle in Docker image. Fix: rebuild image from up-to-date base with `ca-certificates` installed.
+- Issue #39 (TLS x509 failure, P1): closed/resolved. Service was down on 2026-03-06 due to stale CA bundle in Docker image. Fixed by rebuilding from up-to-date base image with `ca-certificates`. No currently open known issues.
 
 ## lucos_deploy_orb — Known Issues
 - "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
