@@ -44,6 +44,9 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_comhra — Known Issues
 - Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Service went down after avalon reboot; manually restarted. Will recur on next reboot until fixed.
 
+## lucos_arachne — Known Issues
+- Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.
+
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
 - **Lesson**: Before raising an issue during ops checks, search recently closed issues for the same repo/symptom. The monitoring alert that triggered #43 was still live because the fix for #34 hadn't deployed yet — the alert being red does not guarantee no issue exists.
