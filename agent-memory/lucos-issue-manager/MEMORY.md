@@ -87,10 +87,12 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 - CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
 - Issues from ops checks (`lucos-system-administrator[bot]`, `lucos-site-reliability[bot]`) are similarly well-specified and actionable.
 
-## Ops check duplicate prevention (introduced 2026-03-05)
+## Ops check duplicate prevention (introduced 2026-03-05, strengthened 2026-03-06)
 
 - All three ops-check personas (security, SRE, sysadmin) have explicit "Duplicate prevention" instructions in their persona files
 - They must search open issues before creating new ones, and comment on existing issues with new info rather than creating duplicates
+- Additionally, all three must scan the 10 most recent open issues in the target repo (broad scan) to catch cross-persona duplicates where different agents describe the same root cause differently
+- Prompted by lucos_backups#34 (sysadmin) and lucos_backups#43 (SRE) being duplicates of the same find+du timeout issue
 - Documented in `docs/issue-workflow.md` in the lucos repo
 
 ## Issue closure policy
