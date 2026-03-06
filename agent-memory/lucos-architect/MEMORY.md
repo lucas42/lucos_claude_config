@@ -85,7 +85,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Follow-ups: lucos_time#74, lucos_eolas#67, lucos_eolas#68.
 
 ### lucos_eolas
-- Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, awaiting approval to file implementation tickets. lucos_time#76 blocked on this.
+- Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, agent-approved, awaiting implementation.
+- FestivalPeriod data population (#71): recommended Django data migration with name-based lookups. Removes dependency on arachne MCP (#15). Blocked by #68. lucos_time#76 blocked on #68.
 
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.

@@ -135,14 +135,24 @@ Claude Code caches persona files (`~/.claude/agents/*.md`) at conversation start
 
 Confirmed 2026-03-06: restructured the SRE persona file mid-conversation but the SRE agent still received the old version in subsequent Task invocations.
 
-## Persona ops-checks restructure (2026-03-06) — UNTESTED
+## Persona ops-checks restructure (2026-03-06)
 
-Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks.md` files in `~/.claude/agents/`. Changes committed to `lucos_claude_config` but could not be verified in the same session due to the caching issue above. **Needs verification after a Claude restart.**
+Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks.md` files in `~/.claude/agents/`. Changes committed to `lucos_claude_config`. Requires a fresh Claude session to pick up persona file changes (see caching note above).
 
 ## lucos-architect MEMORY.md length issue
 
 As of 2026-03-06, lucos-architect's MEMORY.md is 203 lines — 3 over the 200-line truncation limit — causing the User-Agent ADR convention entry to be lost. This still needs fixing: move older notes to a topic file to bring the main file under 200 lines.
 
+## lucos_arachne one-shot containers (confirmed 2026-03-06)
+
+`lucos_arachne_ingestor`, `lucos_arachne_triplestore`, and `lucos_arachne_search` all have `restart: no` — they are intentional one-shot containers that run to completion and exit. They will always appear in `Exited` state between runs. Do NOT raise issues for these containers being stopped.
+
+`lucos_arachne_web` and `lucos_arachne_explore` are the persistent services that should always be `Up`.
+
 ## Missing `restart: always` — silent failure pattern
 
 Containers without `restart: always` will stay down after a host reboot or a `docker compose stop`. This looks like an unexplained outage but is just missing config. Confirmed by lucos_comhra#2 (closed superseded by #3). When investigating containers that stopped without an obvious crash, check for missing restart policy before raising an outage issue.
+
+## Check for existing issues before raising new ones
+
+Before filing a new issue for an ongoing condition (crash-loops, service down, etc.), search open issues in the same repo first. Duplicate issues create noise and wasted triage work. Example: lucos_repos#38 was filed simultaneously with lucos_repos#39 by two different agents — issue-manager closed #38 as a duplicate.
