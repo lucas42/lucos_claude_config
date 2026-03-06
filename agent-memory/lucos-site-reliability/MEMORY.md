@@ -8,7 +8,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Worker not yet implemented — Loganne event delivery mechanism unresolved (issue #24 still open).
 - Database indexes added via Alembic migration (issue #20 closed/completed by lucos-developer).
 - Qdrant replaced by pgvector (#29 completed). Orphaned container and volume manually removed from avalon on 2026-03-05 (issue #76 closed). Stale `qdrant-reachable` health check removed — issue #79 closed/completed 2026-03-06. Note: `docker compose up` does NOT stop containers for services removed from the compose file — they must be stopped/removed manually.
-- PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. P3 issue raised as #77.
+- PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. Issue #77 closed/resolved: lucos-system-administrator ran `ALTER DATABASE photos REFRESH COLLATION VERSION;` directly on production (also on `postgres` and `template1` system databases). No code change required — pure one-off maintenance. This is the correct remediation for collation mismatch warnings.
 - `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
 
 ## Closed Issue Learnings
@@ -43,7 +43,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #46 (P2, 2026-03-06): Audit sweep failing — GitHub repos API returns 404. GitHub App auth works (token obtained) but the `GET /orgs/lucas42/repos` call returns 404. Likely a GitHub App installation permission/scope issue — the app may not have org-level repo list access. Check the App installation settings at `https://github.com/organizations/lucas42/settings/installations`.
 
 ## lucos_comhra — Known Issues
-- Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Service went down after avalon reboot; manually restarted. Will recur on next reboot until fixed.
+- Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Closed/completed — lucos-developer added `restart: always` to both `llm` and `agent` services.
 
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.

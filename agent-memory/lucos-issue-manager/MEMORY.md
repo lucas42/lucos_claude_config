@@ -95,6 +95,11 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 - Prompted by lucos_backups#34 (sysadmin) and lucos_backups#43 (SRE) being duplicates of the same find+du timeout issue
 - Documented in `docs/issue-workflow.md` in the lucos repo
 
+## Closed issue review tracking
+
+- See [closed-issues-reviewed.md](closed-issues-reviewed.md) for which closed issues have been checked for learnings
+- Last reviewed: 2026-03-06 (10 issues, no concerns)
+
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
