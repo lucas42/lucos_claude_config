@@ -19,10 +19,10 @@ Format: `container_name: YYYY-MM-DD`
 lucos_photos_api: 2026-03-05
 lucos_photos_worker: 2026-03-05
 lucos_comhra_agent: 2026-03-06
-loganne: 2026-03-05
-lucos_configy: 2026-03-05
+loganne: 2026-03-06
+lucos_configy: 2026-03-06
 monitoring: 2026-03-05
-lucos_backups: 2026-03-05
+lucos_backups: 2026-03-06
 authentication: 2026-03-06
 media_metadata_api: 2026-03-05
 lucos_comhra_llm: 2026-03-05
@@ -31,8 +31,8 @@ lucos_schedule_tracker: 2026-03-06
 lucos_arachne_ingestor: 2026-03-06
 notes: 2026-03-06
 lucos_repos: 2026-03-06
-lucos_contacts_app: 2026-03-05
-lucos_arachne_web: 2026-03-05
+lucos_contacts_app: 2026-03-06
+lucos_arachne_web: 2026-03-06
 lucos_arachne_search: 2026-03-05
 lucos_arachne_explore: 2026-03-05
 lucos_arachne_triplestore: 2026-03-05

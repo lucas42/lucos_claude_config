@@ -39,8 +39,10 @@ See topic files for details. Key patterns confirmed in operation:
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
 ## lucos_repos — Known Issues
-- Issue #39 (TLS x509 failure, P1): closed/resolved. Service was down on 2026-03-06 due to stale CA bundle in Docker image. Fixed by rebuilding from up-to-date base image with `ca-certificates`. No currently open known issues.
-- **PENDING**: Incident report for #39 not yet written — must be done on next ops checks run (Check 2: Incident Report Coverage).
+- Issue #39 (TLS x509 failure, P1): closed/resolved. Incident report written (lucos/pull/40). No currently open known issues.
+
+## lucos_comhra — Known Issues
+- Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Service went down after avalon reboot; manually restarted. Will recur on next reboot until fixed.
 
 ## lucos_backups — Known Issues
 - lucos_backups#43 (P2, 2026-03-06): prune job consistently timing out — `find + du -sh` per-file too slow. Monitoring check `lucos_backups_prune` red for 2+ consecutive runs. Suggested fix: `-exec du -sh {} +` batching.
@@ -68,7 +70,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Tracking file: `ops-checks.md` — records last-run timestamps for monthly checks and per-container log review history. Always consult and update this file when running ops checks.
 - Ops checks definition was restructured on 2026-03-06: extracted from the main persona file into `~/.claude/agents/sre-ops-checks.md`. The persona file now instructs reading that file when running ops checks. There are now **6 checks** (not 5) and a mandatory completion manifest table at the end of each run.
 - Check 2 in the new structure is "Incident Report Coverage" (every run) — scan recently closed `priority:critical` issues and write incident reports for any that don't have one. This was previously Check 6 at the very end of the old persona file and was missed in two consecutive runs.
-- **Pending incident report**: lucos_repos#39 (TLS x509 crash-loop, P1, closed 2026-03-06) still needs an incident report written. Pick this up on the next ops checks run.
+- Incident reports for lucos_repos#39 and lucos_arachne#60 written 2026-03-06 via lucos/pull/40.
 - Claude Code caches persona files at conversation start — mid-session changes to persona files are NOT picked up in the same session. If the persona file is updated mid-session, the new instructions won't be visible until the next conversation.
 
 ## /_info Schema Compliance

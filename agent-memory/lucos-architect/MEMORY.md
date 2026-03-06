@@ -10,6 +10,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - database.py engine issue (#25) closed, split into #39 (pg_isready retry) and #40 (engine function wrap)
 - No docker-compose healthchecks -- reliability gap
 - Android backup client (#3): separate repo `lucos_photos_android`
+- Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
 - Video upload (#60): needs-refining. See `project-details.md`.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)

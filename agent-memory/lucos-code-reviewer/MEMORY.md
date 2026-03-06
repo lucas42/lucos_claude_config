@@ -63,3 +63,5 @@
 - Pink-tongued skink / Cyclodomorphus gerrardii (mentioned 2026-03-06)
 - Sunbeam snake / Xenopeltis unicolor (mentioned 2026-03-06)
 - Spiny-tailed agama / Uromastyx acanthinura (mentioned 2026-03-06)
+- Sailfin dragon / Hydrosaurus pustulatus (mentioned 2026-03-06)
+- Fire-bellied toad / Bombina spp. (mentioned 2026-03-06)
