@@ -36,7 +36,7 @@
 - Sidewinder rattlesnake / Crotalus cerastes (mentioned 2026-03-04)
 - Emerald tree monitor / Varanus prasinus (mentioned 2026-03-04)
 - Aldabra giant tortoise / Aldabrachelys gigantea (mentioned 2026-03-04)
-- Argentine black and white tegu / Salvator merianae (mentioned 2026-03-04)
+- Argentine black and white tegu / Salvator merianae (mentioned 2026-03-04, again 2026-03-07)
 - Saltwater crocodile / Crocodylus porosus (mentioned 2026-03-04)
 - King cobra / Ophiophagus hannah (mentioned 2026-03-04)
 - Bog turtle / Glyptemys muhlenbergii (mentioned 2026-03-05)
