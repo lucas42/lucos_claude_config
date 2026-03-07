@@ -15,3 +15,4 @@
 - Komodo dragon (2026-03-07)
 - Ball python (2026-03-07)
 - Gila monster (2026-03-07)
+- Bearded dragon (2026-03-07)
