@@ -10,18 +10,18 @@ external_deps: 2026-03-06
 
 lucos_comhra_agent: 2026-03-07
 lucos_comhra_llm: 2026-03-07
-lucos_schedule_tracker: 2026-03-06
+lucos_schedule_tracker: 2026-03-07
 lucos_media_weightings: 2026-03-06
 lucos_photos_worker: 2026-03-06
 lucos_arachne_explore: 2026-03-06
 lucos_arachne_web: 2026-03-06
 lucos_backups: 2026-03-06
 authentication: 2026-03-07
-lucos_repos_app: 2026-03-06
+lucos_repos_app: 2026-03-07
 bind: 2026-03-07
 loganne: 2026-03-07
 lucos_configy: 2026-03-06
-lucos_contacts_app: 2026-03-06
+lucos_contacts_app: 2026-03-07
 lucos_contacts_db: 2026-03-06
 lucos_contacts_googlesync_import: 2026-03-06
 lucos_contacts_web: 2026-03-06
@@ -29,7 +29,7 @@ lucos_creds: 2026-03-06
 lucos_creds_configy_sync: 2026-03-06
 lucos_creds_ui: 2026-03-06
 lucos_dns_sync: 2026-03-06
-lucos_eolas_app: 2026-03-06
+lucos_eolas_app: 2026-03-07
 lucos_eolas_db: 2026-03-06
 lucos_eolas_web: 2026-03-06
 lucos_locations_mosquitto: 2026-03-06
