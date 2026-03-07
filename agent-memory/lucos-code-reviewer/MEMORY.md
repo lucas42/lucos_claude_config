@@ -62,12 +62,12 @@
 - Brookesia micra / micro-chameleon (mentioned 2026-03-06)
 - Pink-tongued skink / Cyclodomorphus gerrardii (mentioned 2026-03-06)
 - Sunbeam snake / Xenopeltis unicolor (mentioned 2026-03-06)
-- Spiny-tailed agama / Uromastyx acanthinura (mentioned 2026-03-06)
+- Spiny-tailed agama / Uromastyx acanthinura (mentioned 2026-03-06, again 2026-03-07)
 - Sailfin dragon / Hydrosaurus pustulatus (mentioned 2026-03-06)
 - Fire-bellied toad / Bombina spp. (mentioned 2026-03-06)
 - Nile softshell turtle / Trionyx triunguis (mentioned 2026-03-06)
 - Woma python / Aspidites ramsayi (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06)
-- Mimic glass lizard / Ophisaurus mimicus (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-07, again 2026-03-07)
+- Mimic glass lizard / Ophisaurus mimicus (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-07, again 2026-03-07, again 2026-03-07)
 
 ## Repo-Specific Review Rules
 
