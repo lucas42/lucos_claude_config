@@ -7,6 +7,7 @@
 ## User Preferences
 
 - **Workflow changes** (issue lifecycle, dispatch workflows, agent prompts, label conventions, process documentation) should be routed to the `lucos-issue-manager` persona via the Task tool, not handled directly by the dispatcher. This includes edits to `~/.claude/skills/routine/SKILL.md` and similar workflow files.
+- **All changes to `~/.claude` files** (persona files, skills, workflow docs — anything tracked in `lucos_claude_config`) must be delegated to a persona from the start. The dispatcher should never edit these files directly then hand off to a persona just for the commit. The persona doing the work needs full context of the changes, so it should make the edits itself. Route to the appropriate persona: `lucos-issue-manager` for workflow/process changes, `lucos-system-administrator` for infrastructure/environment changes.
 - **Repository secrets and settings** (e.g. setting GitHub secrets, enabling auto-merge) must be done via the `lucos-system-administrator` persona, as it's the only one with permissions for these changes.
 - **ADRs after system design**: Always create an ADR after completing a full system design or re-design. Route to `lucos-architect` persona.
 - **Don't paraphrase agent output in ad-hoc conversations.** When relaying what a persona said back to the user, show the agent's full response verbatim. Only summarise during pre-defined skills (e.g. `/routine`, `/next`). The user wants to see exactly what the persona said, in its own words.
