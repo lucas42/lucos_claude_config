@@ -117,6 +117,8 @@ Key principles for triaging `audit-finding` issues:
 - **New issues, not reopened ones.** If a convention regresses after being fixed, the audit creates a brand new issue referencing the old one. It does not reopen the closed issue.
 - **No suppression mechanism.** If a convention genuinely doesn't apply to a repo, the convention's check function must encode that logic. There is no `audit-suppressed` label.
 - **`audit-finding` label** is present on every audit-raised issue for efficient querying and visibility.
+- **When a convention is deleted/replaced**, all open issues referencing the old convention become obsolete. Close them as completed (the goal was achieved by the replacement). The audit will not re-raise them because the old convention no longer runs.
+- **False positive audit findings on blocked issues**: If the convention genuinely doesn't apply but hasn't been fixed yet (e.g. lucos_deploy_orb can't use its own orb), mark as `agent-approved` + `status:blocked` with a reference to the fix issue. Do NOT close -- closing causes the audit to re-raise on the next sweep.
 
 ## Issue closure policy
 
