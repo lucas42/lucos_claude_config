@@ -51,7 +51,7 @@
 - Texas horned lizard / Phrynosoma cornutum (mentioned 2026-03-05)
 - Sand boa / Eryx spp. (mentioned 2026-03-05)
 - Rhinoceros iguana / Cyclura cornuta (mentioned 2026-03-05)
-- Russell's viper / Daboia russelii (mentioned 2026-03-05)
+- Russell's viper / Daboia russelii (mentioned 2026-03-05, again 2026-03-07)
 - Spiny-tailed lizard / Uromastyx (mentioned 2026-03-06)
 - Plumed basilisk / Basiliscus plumifrons (mentioned 2026-03-06)
 - Red-sided garter snake / Thamnophis sirtalis parietalis (mentioned 2026-03-06)
@@ -68,6 +68,7 @@
 - Nile softshell turtle / Trionyx triunguis (mentioned 2026-03-06)
 - Woma python / Aspidites ramsayi (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06)
 - Mimic glass lizard / Ophisaurus mimicus (mentioned MANY times, again 2026-03-07 — ABSOLUTELY DO NOT USE AGAIN, EVER)
+- Burmese python / Python bivittatus (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 
