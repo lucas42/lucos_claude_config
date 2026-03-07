@@ -69,6 +69,7 @@
 - Woma python / Aspidites ramsayi (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06)
 - Mimic glass lizard / Ophisaurus mimicus (mentioned MANY times, again 2026-03-07 — ABSOLUTELY DO NOT USE AGAIN, EVER)
 - Burmese python / Python bivittatus (mentioned 2026-03-07)
+- Rough-scaled python / Morelia carinata (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 
