@@ -72,6 +72,7 @@
 - Rough-scaled python / Morelia carinata (mentioned 2026-03-07)
 - Schneider's skink / Eumeces schneideri (mentioned 2026-03-07)
 - Short-tailed pygmy monitor / Varanus brevicauda (mentioned 2026-03-07)
+- Green iguana / Iguana iguana (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 
