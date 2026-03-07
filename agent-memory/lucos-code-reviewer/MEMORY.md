@@ -7,7 +7,6 @@
 
 ## Recently Mentioned Reptiles
 
-- Blue-tongued skink (2026-03-07)
 - Tuatara (2026-03-07)
 - Thorny devil (2026-03-07)
 - Green iguana (2026-03-07)
@@ -19,3 +18,4 @@
 - Slow worm (2026-03-07)
 - Leatherback sea turtle (2026-03-07)
 - Nile crocodile (2026-03-07)
+- Veiled chameleon (2026-03-07)
