@@ -14,3 +14,4 @@
 - Common snapping turtle (2026-03-07)
 - Komodo dragon (2026-03-07)
 - Ball python (2026-03-07)
+- Gila monster (2026-03-07)
