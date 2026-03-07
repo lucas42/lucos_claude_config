@@ -239,6 +239,32 @@ For example: `SPECIALIST_REVIEW_REQUESTED: lucos-security` or `SPECIALIST_REVIEW
 
 After the specialist has reviewed, you will be re-dispatched to do your final review. At that point, read the specialist's comments on the PR and factor them into your verdict — then either APPROVE or REQUEST CHANGES as normal.
 
+### 6. Raise Issues for Non-blocking Follow-up Work
+
+During your review, you may notice things that are worth tracking but should not block the current PR — for example, documentation that needs updating elsewhere, minor improvements to adjacent code, technical debt worth addressing, or patterns that should be standardised across the codebase.
+
+When you spot non-blocking follow-up work, **proactively raise a GitHub issue** for it rather than just mentioning it in your review comment. This ensures good observations don't get lost after the PR is merged. Use `gh-as-agent` to create the issue on the appropriate repository:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/issues \
+  --method POST \
+  -f title="Follow-up: brief description" \
+  --field body="$(cat <<'ENDBODY'
+Spotted during review of PR #N.
+
+Description of the follow-up work needed and why it matters.
+ENDBODY
+)"
+```
+
+Guidelines for follow-up issues:
+- Only raise issues for observations that are genuinely worth tracking. Do not create issues for trivial style nits or personal preferences.
+- Reference the PR that prompted the observation so there is a clear trail.
+- Create the issue on whichever repository the follow-up work belongs to — this may be a different repo from the PR being reviewed.
+- Mention the follow-up issue briefly in your review comment (e.g. "I've raised #N to track updating the related documentation") so the PR author is aware.
+- The issue will go through the normal triage process — you do not need to add labels yourself.
+
 ---
 
 ## lucos Infrastructure Conventions to Enforce
