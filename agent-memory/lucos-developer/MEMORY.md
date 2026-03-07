@@ -37,7 +37,7 @@
 - **Tests**: Robolectric (sdk=34) for worker tests, plain JUnit + mockk for uploader tests
 - **Local SDK**: Only android-34 + build-tools 34.0.0 installed at `/opt/android-sdk`. SDK dir is read-only — cannot install SDK 35/36 locally.
 - **Conscrypt aarch64 issue**: Robolectric tests fail locally with `UnsatisfiedLinkError: no conscrypt_openjdk_jni-linux-aarch_64` because `conscrypt-openjdk-uber:2.5.2` (Robolectric's dep) has no aarch64 native lib. CI (x86_64) is unaffected.
-- **WorkManager + TestListenableWorkerBuilder**: Do NOT call `WorkManagerTestInitHelper.initializeTestWorkManager()` in tests that use `TestListenableWorkerBuilder`. WorkManager is a singleton — calling init in `@Before` fails on the 2nd+ test with `IllegalStateException: already initialized`. `TestListenableWorkerBuilder` bypasses WorkManager entirely and does not need it.
+- **WorkManager + Robolectric tests**: Use `@Config(sdk = [34], application = Application::class)` to prevent Robolectric from instantiating `PhotoBackupApplication`, whose `onCreate()` initialises WorkManager's static singleton. WorkManager's singleton interacts badly with Robolectric's per-test lifecycle. `TestListenableWorkerBuilder` bypasses WorkManager entirely — no WorkManager init is needed in tests.
 
 ## lucos_monitoring
 
