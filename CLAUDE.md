@@ -386,6 +386,7 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
    - `Pull requests: Read & write` (required to enable auto-merge)
    - `Issues: Read & write` (required to close linked issues)
 3. **Repository setting** — "Allow auto-merge" must be enabled in the repo's settings
+4. **Required status checks** — the CodeQL check run name(s) must be added to the branch protection rules for `main` as required status checks (e.g. `Analyze (python)` for Python repos, `Analyze (javascript)` for JavaScript repos). This prevents a race condition where CodeQL warnings arrive after the code-reviewer approval but before auto-merge completes. Without this, CodeQL findings are silently ignored at merge time.
 
 **Reference implementation:** `lucos_photos/.github/workflows/code-reviewer-auto-merge.yml`
 
