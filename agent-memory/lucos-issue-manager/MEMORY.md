@@ -104,14 +104,6 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 - See [closed-issues-reviewed.md](closed-issues-reviewed.md) for which closed issues have been checked for learnings
 - Last reviewed: 2026-03-06 (10 issues, no concerns)
 
-## Blocked audit-finding issues
-
-8 `has-circleci-config` audit-finding issues are blocked by lucos_repos#62 (which will take their repos out of scope for the convention). Do not re-triage or close these until #62 is implemented:
-- lucos#43, lucos_agent#22, lucos_agent_coding_sandbox#23, lucos_antigravity_config#1
-- lucos_claude_config#13, lucos_contacts_fb_import#18, lucos_contacts_gphotos_import#17, vue-leaflet-antimeridian#5
-
-When lucos_repos#62 is closed, remove `status:blocked` from all 8 on the next triage pass.
-
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
