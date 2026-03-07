@@ -65,7 +65,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_arachne
 - nginx + Typesense + Fuseki + Python ingestor. configy#33: recommended closing.
-- **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69.
+- **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69. Scaffold (#63) and search tool (#64) both closed/completed.
 - **Key insight: LLMs cannot reliably generate SPARQL** against custom ontologies (killed lucos_comhra). MCP server solves this by hiding SPARQL behind structured tool parameters. Fundamental constraint, not a model quality issue.
 - Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, OWL reasoning). `systems_to_graphs` in `ingestor/triplestore.py`.
 - Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
