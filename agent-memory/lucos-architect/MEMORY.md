@@ -64,7 +64,11 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Rust API serving YAML config. Single-host-for-domain constraint (#25): recommended Option A (validation test in existing test suite). dns_sync depends on `hosts[0]` -- silent misconfiguration if violated. Option B (schema split host/hosts) deferred.
 
 ### lucos_arachne
-- nginx + Typesense + Fuseki + Python ingestor. MCP (#15): not now. configy#33: recommended closing.
+- nginx + Typesense + Fuseki + Python ingestor. configy#33: recommended closing.
+- **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69.
+- **Key insight: LLMs cannot reliably generate SPARQL** against custom ontologies (killed lucos_comhra). MCP server solves this by hiding SPARQL behind structured tool parameters. Fundamental constraint, not a model quality issue.
+- Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, OWL reasoning). `systems_to_graphs` in `ingestor/triplestore.py`.
+- Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
 
 ### lucos_monitoring
 - Erlang OTP, in-memory state, email notifications. `/api/status` endpoint proposed (#26).
