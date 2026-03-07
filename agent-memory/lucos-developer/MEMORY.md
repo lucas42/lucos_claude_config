@@ -25,15 +25,19 @@
 ## lucos_photos_android
 
 - **Repo**: `https://github.com/lucas42/lucos_photos_android` (created 2026-03-04)
-- **Language**: Kotlin, minSdk 26, targetSdk 35
-- **Build**: Gradle 8.10.2 wrapper, AGP 8.7.3. CI uses `cimg/android:2025.01`.
+- **Language**: Kotlin, minSdk 26, targetSdk 36, compileSdk 36
+- **Build**: Gradle 8.11.1 wrapper, AGP 8.9.1. CI uses `cimg/android:2025.01` (x86_64).
 - **Key files**: `app/src/main/kotlin/eu/l42/lucos_photos_android/`
   - `PhotoSyncWorker.kt` — WorkManager CoroutineWorker, MediaStore query, incremental timestamp sync
   - `PhotoUploader.kt` — OkHttp multipart upload, retryable/non-retryable failure classification
   - `SyncPreferences.kt` — SharedPreferences wrapper for lastSyncTimestampMs
   - `Config.kt` — hardcoded SERVER_URL and API_KEY (placeholder in v1)
-- **Tests**: Robolectric for worker tests, plain JUnit + mockk for uploader tests
-- **Android SDK not on this VM**: `lima.yaml` changes pending provisioning. Builds verified by CI only.
+  - `PhotoSyncWorkerFactory.kt` — custom WorkerFactory for DI
+  - `PhotoBackupApplication.kt` — manually inits WorkManager (auto-init disabled in manifest)
+- **Tests**: Robolectric (sdk=34) for worker tests, plain JUnit + mockk for uploader tests
+- **Local SDK**: Only android-34 + build-tools 34.0.0 installed at `/opt/android-sdk`. SDK dir is read-only — cannot install SDK 35/36 locally.
+- **Conscrypt aarch64 issue**: Robolectric tests fail locally with `UnsatisfiedLinkError: no conscrypt_openjdk_jni-linux-aarch_64` because `conscrypt-openjdk-uber:2.5.2` (Robolectric's dep) has no aarch64 native lib. CI (x86_64) is unaffected.
+- **WorkManager + TestListenableWorkerBuilder**: Do NOT call `WorkManagerTestInitHelper.initializeTestWorkManager()` in tests that use `TestListenableWorkerBuilder`. WorkManager is a singleton — calling init in `@Before` fails on the 2nd+ test with `IllegalStateException: already initialized`. `TestListenableWorkerBuilder` bypasses WorkManager entirely and does not need it.
 
 ## lucos_monitoring
 
