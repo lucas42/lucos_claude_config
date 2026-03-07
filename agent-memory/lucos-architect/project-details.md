@@ -28,6 +28,7 @@ Overflow from MEMORY.md for projects with extensive design history.
   - Repo list from GitHub API (all lucas42 repos), not hardcoded
   - Auth: GitHub App (not PAT -- lucas42 wants clear attribution)
   - Implementation tickets filed: #23-#30
+- Auto-merge reusable workflows (#70): recommended `lucas42/.github` repo (Option A). Two reusable workflows + thin per-repo callers. Pinned to `@main` (branch-protected). #71 (convention checks) blocked by #70.
 - Audit issue lifecycle (#30): design posted 2026-03-05
   - Audit result is source of truth, not issue state
   - New issues instead of reopening (cleaner timeline, avoids confusion)

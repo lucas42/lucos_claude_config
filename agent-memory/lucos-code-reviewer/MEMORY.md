@@ -4,3 +4,8 @@
 
 ### lucos_repos
 - If a PR adds or changes a convention definition, compare it against the "Checklist for reviewing convention PRs" in `docs/convention-guide.md` in that repo.
+
+## Recently Mentioned Reptiles
+
+- Blue-tongued skink (2026-03-07)
+- Tuatara (2026-03-07)
