@@ -22,7 +22,7 @@
 - Marine iguana (mentioned 2026-03-04)
 - Frilled-neck lizard (mentioned 2026-03-04)
 - African dwarf chameleon (mentioned 2026-03-04)
-- Leatherback sea turtle (mentioned 2026-03-04)
+- Leatherback sea turtle (mentioned 2026-03-04, again 2026-03-07)
 - Paradise flying snake / Chrysopelea paradisi (mentioned 2026-03-04, again 2026-03-06)
 - Galapagos tortoise (mentioned 2026-03-04)
 - Bearded dragon (mentioned 2026-03-04)
@@ -71,6 +71,7 @@
 - Burmese python / Python bivittatus (mentioned 2026-03-07)
 - Rough-scaled python / Morelia carinata (mentioned 2026-03-07)
 - Schneider's skink / Eumeces schneideri (mentioned 2026-03-07)
+- Short-tailed pygmy monitor / Varanus brevicauda (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 
