@@ -26,21 +26,20 @@ Rationale: Phase 1 applies `owner:` labels that later agents use to discover the
 
 Once the 15-second delay has elapsed, launch agents that have ops checks concurrently in the same response:
 
-2. `lucos-code-reviewer` — "review your issues"
-3. `lucos-code-reviewer` — "review any open PRs"
-4. `lucos-security` — "run your ops checks"
-5. `lucos-system-administrator` — "run your ops checks"
-6. `lucos-site-reliability` — "run your ops checks"
+2. `lucos-code-reviewer` — "review any open PRs"
+3. `lucos-security` — "run your ops checks"
+4. `lucos-system-administrator` — "run your ops checks"
+5. `lucos-site-reliability` — "run your ops checks"
 
 **Wait for all to complete before proceeding.**
 
-Rationale: ops checks run early so that any issues they raise can be triaged and reviewed in the same routine run, rather than waiting until the next run. Code review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
+Rationale: ops checks run early so that any issues they raise can be triaged and reviewed in the same routine run, rather than waiting until the next run. PR review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
 
 ## Phase 3: Mid-routine Triage (sequential — after Phase 2 completes)
 
 Once Phase 2 is done, launch one agent:
 
-7. `lucos-issue-manager` — "triage your issues"
+6. `lucos-issue-manager` — "triage your issues"
 
 **Wait for it to complete before proceeding.**
 
@@ -54,18 +53,19 @@ Rationale: same as Phase 1.5 — newly applied `owner:` labels need time to prop
 
 ## Phase 4: Issue Review (parallel — after propagation delay)
 
-Once the 15-second delay has elapsed, launch these six agents concurrently in the same response:
+Once the 15-second delay has elapsed, launch these seven agents concurrently in the same response:
 
-8. `lucos-architect` — "review your issues"
-9. `lucos-system-administrator` — "review your issues"
-10. `lucos-security` — "review your issues"
-11. `lucos-site-reliability` — "review your issues"
-12. `lucos-issue-manager` — "review your issues"
-13. `lucos-developer` — "review your issues"
+7. `lucos-architect` — "review your issues"
+8. `lucos-system-administrator` — "review your issues"
+9. `lucos-security` — "review your issues"
+10. `lucos-site-reliability` — "review your issues"
+11. `lucos-issue-manager` — "review your issues"
+12. `lucos-developer` — "review your issues"
+13. `lucos-code-reviewer` — "review your issues"
 
 **Wait for all to complete before proceeding.**
 
-Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its triage role). The developer reviews issues where implementation input is needed during the design phase.
+Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its triage role). The developer reviews issues where implementation input is needed during the design phase. The code reviewer reviews closed issues it raised and any needs-refining issues assigned to it.
 
 ## Phase 5: Final Triage (sequential — after Phase 4 completes)
 
