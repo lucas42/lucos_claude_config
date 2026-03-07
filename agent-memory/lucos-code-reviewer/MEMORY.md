@@ -68,3 +68,8 @@
 - Nile softshell turtle / Trionyx triunguis (mentioned 2026-03-06)
 - Woma python / Aspidites ramsayi (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06)
 - Mimic glass lizard / Ophisaurus mimicus (mentioned 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-06, again 2026-03-07, again 2026-03-07)
+
+## Repo-Specific Review Rules
+
+### lucos_repos
+- If a PR adds or changes a convention definition, compare it against the "Checklist for reviewing convention PRs" in `docs/convention-guide.md` in that repo.
