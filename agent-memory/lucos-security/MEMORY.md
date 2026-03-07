@@ -94,6 +94,19 @@ When I raised lucas42/lucos#36 (add top-level `permissions: contents: read` to C
 
 General principle: GitHub Actions workflow conventions that apply across all repos should be defined in `lucos_repos`, not raised as individual per-repo issues.
 
+## CodeQL: `safe_path` Pattern is a False Positive for py/url-redirection
+
+`lucos_photos` uses a `safe_path()` wrapper that strips scheme and netloc before using user-supplied input in a redirect URL. CodeQL flags this as `py/url-redirection` but it is a false positive — the mitigation is in place. If this alert resurfaces, it should be dismissed with the note that `safe_path` provides the necessary guarantee. See lucos_photos#96 (closed as "not planned", 2026-03-06).
+
+## Convention: Dependabot Config Checks (Design 2026-03-07)
+
+For the `lucos_repos` Dependabot convention (lucos_repos#65), the security-critical checks are:
+1. `.github/dependabot.yml` exists
+2. At least one `github-actions` entry with `directory: "/"` is present (supply chain attack mitigation)
+3. `dependency-type: "all"` on all entries (keeps dep base current so security patches land on maintained code)
+
+Do NOT check for specific ecosystems (npm/pip/docker) per-repo — these vary legitimately and the convention framework doesn't know what ecosystems a repo uses.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.

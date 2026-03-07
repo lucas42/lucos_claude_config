@@ -11,6 +11,9 @@ See topic files for details. Key patterns confirmed in operation:
 - PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. Issue #77 closed/resolved: lucos-system-administrator ran `ALTER DATABASE photos REFRESH COLLATION VERSION;` directly on production (also on `postgres` and `template1` system databases). No code change required — pure one-off maintenance. This is the correct remediation for collation mismatch warnings.
 - `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
 
+## lucos_repos — Convention Checks
+- Docker healthcheck convention check (issue #59, closed 2026-03-07): lucos_repos now checks that every service with a `build:` key in `docker-compose.yml` has a `healthcheck:` defined. Implemented by lucos-developer. Applies to system and component repos. If a service is missing a Docker healthcheck, this convention check will fail.
+
 ## Closed Issue Learnings
 - Issue #9 (add env vars to worker proactively): closed `not_planned` — lucas42 preference is to add env vars only when a container actually needs them, not speculatively. Don't raise issues proposing env vars "in advance of future functionality".
 - Issue #25 (database.py import-time engine): split into #39 and #40 per lucas42. SRE diagnosis of `pg_isready` startup thrash was confirmed correct. Both sub-issues now open and approved.
