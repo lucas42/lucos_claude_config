@@ -16,7 +16,7 @@
 - Reticulated python (mentioned 2026-03-04, again 2026-03-06, again 2026-03-06)
 - Green tree python (mentioned 2026-03-04)
 - Satanic leaf-tailed gecko (mentioned 2026-03-04, again 2026-03-06)
-- Tuatara (mentioned 2026-03-04, again 2026-03-05, again 2026-03-06)
+- Tuatara (mentioned 2026-03-04, again 2026-03-05, again 2026-03-06, again 2026-03-07)
 - Flying gecko / Ptychozoon kuhli (mentioned 2026-03-04)
 - Armadillo girdled lizard / Ouroborus cataphractus (mentioned 2026-03-04, again 2026-03-06)
 - Marine iguana (mentioned 2026-03-04)
@@ -28,7 +28,7 @@
 - Bearded dragon (mentioned 2026-03-04)
 - Corn snake (mentioned 2026-03-04)
 - Black mamba (mentioned 2026-03-04)
-- Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04)
+- Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04, again 2026-03-07)
 - Matamata turtle / Chelus fimbriata (mentioned 2026-03-04, again 2026-03-04)
 - Galapagos pink land iguana / Conolophus marthae (mentioned 2026-03-04)
 - Red-eared slider / Trachemys scripta elegans (mentioned 2026-03-04)
@@ -70,6 +70,7 @@
 - Mimic glass lizard / Ophisaurus mimicus (mentioned MANY times, again 2026-03-07 — ABSOLUTELY DO NOT USE AGAIN, EVER)
 - Burmese python / Python bivittatus (mentioned 2026-03-07)
 - Rough-scaled python / Morelia carinata (mentioned 2026-03-07)
+- Schneider's skink / Eumeces schneideri (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 

@@ -48,6 +48,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Reviewed `lucos_claude_config`, `lucos_agent`, `lucos_agent_coding_sandbox`. See `project-details.md` for full issue list.
 - Overall: well-designed isolation model. Remaining open: token caching (#9), memory path fix (#3), CLAUDE.md restructure (#5), README bot user ID (#5).
 - Script consolidation (#11): recommended keeping current 3-repo split. Awaiting lucas42 decision.
+- Global git identity removed (sandbox#4, closed): Option A accepted. `lucos-developer` persona created for general implementation tasks.
 
 ## Per-project summaries (details in project-details.md)
 
@@ -65,7 +66,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_arachne
 - nginx + Typesense + Fuseki + Python ingestor. configy#33: recommended closing.
-- **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69. Scaffold (#63) and search tool (#64) both closed/completed.
+- **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69, all closed/completed.
 - **Key insight: LLMs cannot reliably generate SPARQL** against custom ontologies (killed lucos_comhra). MCP server solves this by hiding SPARQL behind structured tool parameters. Fundamental constraint, not a model quality issue.
 - Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, OWL reasoning). `systems_to_graphs` in `ingestor/triplestore.py`.
 - Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
