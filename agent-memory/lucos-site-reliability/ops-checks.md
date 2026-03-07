@@ -21,7 +21,7 @@ lucos_repos_app: 2026-03-07
 bind: 2026-03-07
 loganne: 2026-03-07
 lucos_configy: 2026-03-07
-lucos_contacts_app: 2026-03-07
+lucos_contacts_app: 2026-03-07 (2nd review)
 lucos_contacts_db: 2026-03-06
 lucos_contacts_googlesync_import: 2026-03-06
 lucos_contacts_web: 2026-03-06
@@ -29,7 +29,7 @@ lucos_creds: 2026-03-07
 lucos_creds_configy_sync: 2026-03-06
 lucos_creds_ui: 2026-03-06
 lucos_dns_sync: 2026-03-07
-lucos_eolas_app: 2026-03-07
+lucos_eolas_app: 2026-03-07 (2nd review)
 lucos_eolas_db: 2026-03-06
 lucos_eolas_web: 2026-03-06
 lucos_locations_mosquitto: 2026-03-07
@@ -52,7 +52,7 @@ seinn: 2026-03-07
 tfluke: 2026-03-07
 media_metadata_api_exporter: 2026-03-07
 media_metadata_manager: 2026-03-07
-notes: 2026-03-07
+notes: 2026-03-07 (2nd review)
 root: 2026-03-07
 router: 2026-03-07
 semweb: 2026-03-07

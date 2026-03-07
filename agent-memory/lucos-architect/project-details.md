@@ -15,7 +15,8 @@ Overflow from MEMORY.md for projects with extensive design history.
 - GET/PUT/PATCH must use same shape (no asymmetry). PUT/PATCH replaces all values for multi-value predicates.
 - `DecodeTrack` needs custom JSON unmarshaller for v3 (tags become `map[string]interface{}`)
 - 8-step implementation plan: audit -> internal refactor -> define multiValuePredicates -> DB migration -> v3 endpoints -> update rdfgen -> migrate consumers -> deprecate v2
-- Revised design posted. Awaiting lucas42 confirmation before filing implementation tickets.
+- Revised design posted. lucas42 confirmed. Implementation tickets filed: #35-#42.
+- v3 ideation (#45): proposed bundling 3 additional breaking changes: rename `trackid` -> `id` in JSON, remove debug weighting fields (`_random_weighting`, `_cum_weighting`), structured JSON error responses. Also flagged for discussion: weighting endpoint JSON format, richer pagination. Explicitly excluded: container naming, auth scheme. Awaiting lucas42 decision.
 
 ## lucos_repos -- Greenfield redesign (#22)
 
