@@ -9,3 +9,4 @@
 
 - Blue-tongued skink (2026-03-07)
 - Tuatara (2026-03-07)
+- Thorny devil (2026-03-07)

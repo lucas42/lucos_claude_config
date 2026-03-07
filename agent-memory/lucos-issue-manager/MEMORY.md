@@ -90,7 +90,7 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 - When adding labels via POST to a repo that doesn't have them yet, GitHub auto-creates labels with default grey (`ededed`) colour. Always fix colours immediately after by PATCHing each new label.
 - CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
 - Issues from ops checks (`lucos-system-administrator[bot]`, `lucos-site-reliability[bot]`) are similarly well-specified and actionable.
-- **Audit findings** from `lucos-repo-audit[bot]` are well-specified convention violations with clear problem statements, rationale, and suggested fixes. Can typically be approved directly. Watch for false positives where the convention doesn't apply (e.g. `circleci-uses-lucos-orb` on repos that don't use Docker deploys, or on the orb repo itself).
+- **Audit findings** from `lucos-repo-audit[bot]` are well-specified convention violations with clear problem statements, rationale, and suggested fixes. Can typically be approved directly. Watch for false positives where the convention doesn't apply (e.g. `circleci-uses-lucos-orb` on repos that don't use Docker deploys, or on the orb repo itself). See "Audit-finding issue lifecycle" section below for how these issues interact with closure and re-creation.
 
 ## Ops check duplicate prevention (introduced 2026-03-05, strengthened 2026-03-06)
 
@@ -104,6 +104,19 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 
 - See [closed-issues-reviewed.md](closed-issues-reviewed.md) for which closed issues have been checked for learnings
 - Last reviewed: 2026-03-06 (10 issues, no concerns)
+
+## Audit-finding issue lifecycle (ADR-0002 in lucos_repos)
+
+Key principles for triaging `audit-finding` issues:
+
+- **The audit result is the source of truth, not the issue.** The audit tool checks whether a convention passes or fails *right now*. Issue state is just a notification mechanism.
+- **The audit tool only creates issues; it never closes, reopens, or comments on them.** When a convention starts passing, the tool simply does nothing -- it does not close the issue or comment "now passing".
+- **Closing an audit-finding issue is the triage manager's job** (or whoever merges the fixing PR). If a PR with `Closes #N` is merged and the fix is correct, the issue stays closed. If the fix was incomplete, the next audit sweep (up to 6 hours) creates a *new* issue.
+- **Never leave audit-finding issues open "waiting for the audit to close them"** -- the audit tool will never close them. Triage and close them through the normal workflow (PR merge with closing keyword, or manual close if obsolete).
+- **Never close audit-finding issues expecting the audit to "clean up"** by not re-raising them -- if the convention still fails, a new issue will be created on the next sweep.
+- **New issues, not reopened ones.** If a convention regresses after being fixed, the audit creates a brand new issue referencing the old one. It does not reopen the closed issue.
+- **No suppression mechanism.** If a convention genuinely doesn't apply to a repo, the convention's check function must encode that logic. There is no `audit-suppressed` label.
+- **`audit-finding` label** is present on every audit-raised issue for efficient querying and visibility.
 
 ## Issue closure policy
 

@@ -58,7 +58,7 @@
 ## lucos_repos
 
 - **Purpose**: Repository audit tool; sweeps repos for convention compliance and raises issues
-- **Known context**: ADR-0002 documents audit-raised issue lifecycle (new issues instead of reopening; audit result is source of truth, not issue state)
+- **Known context**: ADR-0002 documents audit-raised issue lifecycle (new issues instead of reopening; audit result is source of truth, not issue state). Sweep interval is 6 hours max. Audit tool only creates issues -- never closes, reopens, or comments on them.
 - **lucas42 preference**: No suppression lists for audit findings. Prefer updating audit logic to handle nuance rather than tagging exceptions case-by-case.
 
 ## lucos_photos
