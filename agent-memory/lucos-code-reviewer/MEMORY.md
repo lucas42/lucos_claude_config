@@ -29,7 +29,7 @@
 - Corn snake (mentioned 2026-03-04)
 - Black mamba (mentioned 2026-03-04)
 - Spiny-tailed iguana / Ctenosaura (mentioned 2026-03-04, again 2026-03-07)
-- Matamata turtle / Chelus fimbriata (mentioned 2026-03-04, again 2026-03-04, again 2026-03-07)
+- Matamata turtle / Chelus fimbriata (mentioned 2026-03-04, again 2026-03-04, again 2026-03-07, again 2026-03-07)
 - Galapagos pink land iguana / Conolophus marthae (mentioned 2026-03-04)
 - Red-eared slider / Trachemys scripta elegans (mentioned 2026-03-04)
 - Gharial / Gavialis gangeticus (mentioned 2026-03-04)
