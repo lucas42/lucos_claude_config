@@ -6,6 +6,13 @@ Format: `check_name: YYYY-MM-DD`
 
 A check is due if there is no entry for it, or if elapsed time since last_run >= the check's frequency.
 
+## Every-run checks
+
+| Check | Last run |
+|---|---|
+| dependabot-alerts | 2026-03-07 |
+| codeql-secret-scanning | 2026-03-07 |
+
 ## Monthly checks
 
 | Check | Last run |

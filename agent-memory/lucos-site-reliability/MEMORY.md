@@ -36,6 +36,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_locations — Known Issues
 - Issue #9 (P3, 2026-03-06): `lucos_locations_otfrontend` (192.168.176.2) makes continuous TLS MQTT connections to mosquitto on port 8883, failing with "protocol error" every ~60 seconds. Longstanding (confirmed from 2026-03-01). Likely wrong port/TLS config — `otrecorder` correctly uses plain 1883. Related to issue #4 (cert auto-renewal).
+- Issue #10 (P3, 2026-03-07): `lucos_locations_otfrontend` nginx logs `connect() failed (111: Connection refused)` to `[::1]:8080/_info` on every monitoring poll. External `/_info` still returns 200 (fallback/static response) so monitoring appears healthy but the application backend may not be running. Potentially a false health signal.
 
 ## tfluke — Known Issues
 - TfL API 404s: stale `london-overground` line ID (TfL renamed to 6 lines in 2024), empty vehicle ID passed to arrivals endpoint, stale stop ID `490007268X`. Issue raised as tfluke#227 (P3, 2026-03-06).
