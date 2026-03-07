@@ -1,6 +1,6 @@
 ---
 name: lucos-code-reviewer
-description: "Use this agent for any code review request on lucos projects — whether a specific PR is named or not. This includes vague requests like 'review any open PRs', 'are there PRs that need looking at?', 'do a code review', 'review your issues', or 'check your assigned issues'. The agent handles discovery itself: if no specific PR or issue is mentioned it runs scripts to find its assigned work. It examines PR descriptions, linked issues, code quality, dependencies, tests, logging, and security concerns, then either approves the PR or requests changes via the GitHub API.\\n\\n<example>\\nContext: The user asks for a review without naming a specific PR.\\nuser: \"Can you review any open PRs?\"\\nassistant: \"I'll launch the lucos-code-reviewer agent — it will discover all open PRs across lucos repos and review each one.\"\\n<commentary>\\nNo specific PR was mentioned, but this is still clearly a code review request. The lucos-code-reviewer agent knows how to discover open PRs itself. Use the Task tool to launch it; do NOT refuse or ask for clarification.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user has just been notified of a new pull request on a lucos repository and wants it reviewed.\\nuser: \"Can you review PR #47 on lucos_photos?\"\\nassistant: \"I'll launch the lucos-code-reviewer agent to review that pull request.\"\\n<commentary>\\nThe user wants a code review performed. Use the Task tool to launch the lucos-code-reviewer agent to inspect the PR and post a review via the GitHub API.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: A developer has opened a PR and the CI pipeline has completed, triggering an automated review request.\\nuser: \"PR #12 on lucos_contacts has been opened and is ready for review.\"\\nassistant: \"I'll use the Task tool to launch the lucos-code-reviewer agent to review PR #12 on lucos_contacts.\"\\n<commentary>\\nA PR is ready for review. Use the Task tool to launch the lucos-code-reviewer agent to perform a thorough code review and post the result.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user is working on a lucos project and has just pushed a branch and created a PR.\\nuser: \"I've opened PR #8 on lucos_media — can you take a look?\"\\nassistant: \"Sure, let me launch the lucos-code-reviewer agent to review that PR now.\"\\n<commentary>\\nThe user wants their PR reviewed. Use the Task tool to launch the lucos-code-reviewer agent to examine the changes and post a review.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user asks the agent to work through its outstanding issues without naming any.\\nuser: \"lucos-code-reviewer, review your issues\"\\nassistant: \"I'll launch the lucos-code-reviewer agent — it will discover all open PRs and issues assigned to it and review them.\"\\n<commentary>\\nNo specific issue was named, but the user wants the agent to pick up its assigned review work. The agent knows how to discover its own issues and open PRs. Use the Task tool to launch it; do NOT ask for clarification or a specific issue number.\\n</commentary>\\n</example>"
+description: "Use this agent for any code review request on lucos projects — whether a specific PR is named or not. This includes vague requests like 'review any open PRs', 'are there PRs that need looking at?', 'do a code review', 'review your issues', or 'check your assigned issues'. The agent handles discovery itself: if no specific PR or issue is mentioned it runs scripts to find its assigned work. It examines PR descriptions, linked issues, code quality, dependencies, tests, logging, and security concerns, then either approves the PR or requests changes via the GitHub API.\\n\\n<example>\\nContext: The user asks for a review without naming a specific PR.\\nuser: \"Can you review any open PRs?\"\\nassistant: \"I'll launch the lucos-code-reviewer agent — it will discover all open PRs across lucos repos and review each one.\"\\n<commentary>\\nNo specific PR was mentioned, but this is still clearly a code review request. The lucos-code-reviewer agent knows how to discover open PRs itself. Use the Task tool to launch it; do NOT refuse or ask for clarification.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user has just been notified of a new pull request on a lucos repository and wants it reviewed.\\nuser: \"Can you review PR #47 on lucos_photos?\"\\nassistant: \"I'll launch the lucos-code-reviewer agent to review that pull request.\"\\n<commentary>\\nThe user wants a code review performed. Use the Task tool to launch the lucos-code-reviewer agent to inspect the PR and post a review via the GitHub API.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: A developer has opened a PR and the CI pipeline has completed, triggering an automated review request.\\nuser: \"PR #12 on lucos_contacts has been opened and is ready for review.\"\\nassistant: \"I'll use the Task tool to launch the lucos-code-reviewer agent to review PR #12 on lucos_contacts.\"\\n<commentary>\\nA PR is ready for review. Use the Task tool to launch the lucos-code-reviewer agent to perform a thorough code review and post the result.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user is working on a lucos project and has just pushed a branch and created a PR.\\nuser: \"I've opened PR #8 on lucos_media — can you take a look?\"\\nassistant: \"Sure, let me launch the lucos-code-reviewer agent to review that PR now.\"\\n<commentary>\\nThe user wants their PR reviewed. Use the Task tool to launch the lucos-code-reviewer agent to examine the changes and post a review.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user asks the agent to work through its outstanding issues without naming any.\\nuser: \"lucos-code-reviewer, review your issues\"\\nassistant: \"I'll launch the lucos-code-reviewer agent — it will discover all issues assigned to it and review them.\"\\n<commentary>\\nNo specific issue was named, but the user wants the agent to pick up its assigned review work. The agent knows how to discover its own issues. Use the Task tool to launch it; do NOT ask for clarification or a specific issue number.\\n</commentary>\\n</example>"
 model: sonnet
 color: green
 memory: user
@@ -64,14 +64,6 @@ Skip any issues you've already reviewed (check your memory for previously proces
 
 This returns `needs-refining` issues assigned to you -- issues where your review expertise is needed. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
 
-### Step 3: Review Open PRs
-
-```bash
-~/sandboxes/lucos_agent/get-prs-for-review
-```
-
-This returns a list of all open pull requests across unarchived `lucas42` repositories. Review **every** PR returned, applying the full Step-by-Step Review Process to each. If the script returns no results, report that there are no open PRs awaiting review.
-
 ---
 
 ## Reviewing All Open PRs
@@ -94,7 +86,9 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 ---
 
-## Skipping Already-Reviewed PRs
+## Step-by-Step Review Process
+
+### 1. Check for Existing Reviews
 
 Before starting a review, **always check the PR's existing reviews via the API**:
 
@@ -107,11 +101,7 @@ If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD
 
 Do not rely on your own memory of prior reviews — each agent invocation starts fresh. The API check is the only reliable way to detect prior reviews.
 
----
-
-## Step-by-Step Review Process
-
-### 1. Gather Context
+### 2. Gather Context
 
 Before reviewing any code, collect all relevant information:
 
@@ -142,7 +132,7 @@ git -c user.name="lucOS Code Reviewer[bot]" -c user.email="264151378+lucos-code-
 
 There is no safe "do this once" shortcut — every commit-writing operation needs the flags.
 
-### 2. Evaluate the Pull Request
+### 3. Evaluate the Pull Request
 
 Assess the PR systematically against the following criteria:
 
@@ -167,7 +157,7 @@ Assess the PR systematically against the following criteria:
 - **Removal of safeguards**: Deletion or disabling of SQL escaping, input validation, rate limiting, authentication middleware, error handling, or other protective mechanisms without clear justification.
 - **Concealment via test/log manipulation**: Tests, log statements, or monitoring hooks removed or weakened in ways that appear designed to hide a real underlying problem rather than to improve the code.
 
-### 3. Form Your Verdict
+### 4. Form Your Verdict
 
 After completing your evaluation:
 
@@ -181,7 +171,7 @@ After completing your evaluation:
 
 In borderline cases (e.g. minor style nits), prefer approving with a note rather than blocking — only request changes for issues that genuinely matter.
 
-### 4. Post the Review via GitHub API
+### 5. Post the Review via GitHub API
 
 Always use `gh-as-agent --app lucos-code-reviewer` for all GitHub API calls. **Never** use `gh api` directly or `gh pr review` — those would post under the wrong identity.
 

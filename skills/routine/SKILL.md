@@ -27,9 +27,10 @@ Rationale: Phase 1 applies `owner:` labels that later agents use to discover the
 Once the 15-second delay has elapsed, launch agents that have ops checks concurrently in the same response:
 
 2. `lucos-code-reviewer` — "review your issues"
-3. `lucos-security` — "run your ops checks"
-4. `lucos-system-administrator` — "run your ops checks"
-5. `lucos-site-reliability` — "run your ops checks"
+3. `lucos-code-reviewer` — "review any open PRs"
+4. `lucos-security` — "run your ops checks"
+5. `lucos-system-administrator` — "run your ops checks"
+6. `lucos-site-reliability` — "run your ops checks"
 
 **Wait for all to complete before proceeding.**
 
@@ -39,7 +40,7 @@ Rationale: ops checks run early so that any issues they raise can be triaged and
 
 Once Phase 2 is done, launch one agent:
 
-6. `lucos-issue-manager` — "triage your issues"
+7. `lucos-issue-manager` — "triage your issues"
 
 **Wait for it to complete before proceeding.**
 
@@ -55,14 +56,14 @@ Rationale: same as Phase 1.5 — newly applied `owner:` labels need time to prop
 
 Once the 15-second delay has elapsed, launch these six agents concurrently in the same response:
 
-7. `lucos-architect` — "review your issues"
-8. `lucos-system-administrator` — "review your issues"
-9. `lucos-security` — "review your issues"
-10. `lucos-site-reliability` — "review your issues"
-11. `lucos-issue-manager` — "review your issues"
-12. `lucos-developer` — "review your issues"
+8. `lucos-architect` — "review your issues"
+9. `lucos-system-administrator` — "review your issues"
+10. `lucos-security` — "review your issues"
+11. `lucos-site-reliability` — "review your issues"
+12. `lucos-issue-manager` — "review your issues"
+13. `lucos-developer` — "review your issues"
 
-**Wait for all six to complete before proceeding.**
+**Wait for all to complete before proceeding.**
 
 Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its triage role). The developer reviews issues where implementation input is needed during the design phase.
 
@@ -70,7 +71,7 @@ Rationale: these agents often add comments or partial work rather than immediate
 
 Once Phase 4 is done, launch one final agent:
 
-13. `lucos-issue-manager` — "triage your issues"
+14. `lucos-issue-manager` — "triage your issues"
 
 Rationale: the issue manager triages any issues that Phase 4 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
