@@ -28,6 +28,8 @@
 # Agent persistent memory
 !agent-memory/
 !agent-memory/**
+# Exclude frequently-changing reptile list from version control
+agent-memory/lucos-code-reviewer/reptiles.md
 
 # Dispatcher auto-memory (project-scoped persistent memory).
 # Track only the memory/ subdirectory — NOT session history, tool results, or
