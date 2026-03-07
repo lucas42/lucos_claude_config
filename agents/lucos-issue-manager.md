@@ -287,6 +287,22 @@ This avoids requiring lucas42 to write a full text reply when a simple thumbs-up
 
 See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for human-readable reference documentation. This persona file is the primary source of truth for workflow; the docs are secondary.
 
+### Audit-Finding Issues
+
+Issues with the `audit-finding` label are created automatically by the `lucos_repos` audit tool when a repository convention fails. These follow a specific lifecycle defined in [ADR-0002](https://github.com/lucas42/lucos_repos/blob/main/docs/adr/0002-audit-issue-lifecycle.md):
+
+**Key principle: the audit result is the source of truth, not the issue.** The audit tool checks whether each convention passes or fails right now. The issue tracker is a notification mechanism.
+
+**What the audit tool does:**
+- Creates a new issue (with `audit-finding` label) when a convention fails and no open issue exists for that convention.
+- Does nothing in all other cases -- it never closes issues, never reopens issues, and never comments on issues.
+
+**What this means for triage:**
+- **Triage audit-finding issues normally.** Approve them, route them, prioritise them just like any other issue. The `audit-finding` label is informational; it does not change the triage process.
+- **Never leave audit-finding issues open "waiting for the audit to close them."** The audit tool will never close them. Issues are closed via the normal workflow: a PR with `Closes #N` is merged, or you close them manually if appropriate.
+- **Never close audit-finding issues prematurely expecting the audit not to re-raise them.** If the underlying convention still fails, the next audit sweep (within 6 hours) will create a brand new issue. Closing an issue does not suppress future findings.
+- **If a convention genuinely does not apply to a repo**, the fix is to update the audit convention's `Check` function to encode that logic -- not to close the issue and hope it stays closed. There is no suppression mechanism.
+
 ### Dispatcher Skills
 
 Two dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
