@@ -18,3 +18,4 @@
 - Bearded dragon (2026-03-07)
 - Slow worm (2026-03-07)
 - Leatherback sea turtle (2026-03-07)
+- Nile crocodile (2026-03-07)
