@@ -161,3 +161,30 @@
 - **Labels created**: `agent-approved`, `needs-refining`, triage labels (created 2026-03-02)
 - **Known context**: Search currently uses SQLite LIKE queries; #51 proposes switching to lucos_arachne search index; #8 (whitespace trimming) proposed to be closed in favour of #51
 - **Related repos**: lucos_media_manager, lucos_eolas, lucos_arachne, lucos_search_component
+
+## lucos_mail
+
+- **Purpose**: Mail/email service
+- **Labels created**: `agent-approved`, `needs-refining`, `priority:low/medium/high`, `owner:lucos-developer`, `owner:lucos-system-administrator`, `owner:lucas42`, `status:needs-design`, `status:ideation`, `owner:lucos-issue-manager` (created 2026-03-07)
+
+## lucos_loganne_pythonclient
+
+- **Purpose**: Python client library for sending events to lucos_loganne
+- **Type**: component (shared library, not deployed independently)
+- **Labels created**: Same set as lucos_mail (created 2026-03-07)
+
+## lucos_schedule_tracker_pythonclient
+
+- **Purpose**: Python library for sending updates to lucos_schedule_tracker
+- **Type**: component (shared library, not deployed independently)
+- **Labels created**: Same set as lucos_mail (created 2026-03-07)
+
+## lucos_physical_web
+
+- **Purpose**: Static pages for physical web dongles
+- **Labels created**: Same set as lucos_mail (created 2026-03-07)
+
+## lucos_mockauthentication
+
+- **Purpose**: Simple server implementing lucos authentication interface with no external dependencies (for dev/test)
+- **Labels created**: Some labels pre-existed (`agent-approved`, `owner:lucos-developer`, `priority:low`); rest created 2026-03-07
