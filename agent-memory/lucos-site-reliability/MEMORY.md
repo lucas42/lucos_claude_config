@@ -13,6 +13,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_repos — Convention Checks
 - Docker healthcheck convention check (issue #59, closed 2026-03-07): lucos_repos now checks that every service with a `build:` key in `docker-compose.yml` has a `healthcheck:` defined. Implemented by lucos-developer. Applies to system and component repos. If a service is missing a Docker healthcheck, this convention check will fail.
+- YAML parse bug (issue #80, closed 2026-03-07): `yaml.v3` cannot unmarshal `workflows.version: 2` into a `ciWorkflow` struct — caused all 5 CircleCI conventions to fail on all repos. Fixed in PR #81 with a custom `UnmarshalYAML`. Incident report at lucos/pull/44. Follow-up: lucos_repos#82 (surface Detail string in issue bodies).
 
 ## Closed Issue Learnings
 - Issue #9 (add env vars to worker proactively): closed `not_planned` — lucas42 preference is to add env vars only when a container actually needs them, not speculatively. Don't raise issues proposing env vars "in advance of future functionality".

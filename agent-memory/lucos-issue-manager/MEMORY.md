@@ -90,6 +90,7 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 - When adding labels via POST to a repo that doesn't have them yet, GitHub auto-creates labels with default grey (`ededed`) colour. Always fix colours immediately after by PATCHing each new label.
 - CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
 - Issues from ops checks (`lucos-system-administrator[bot]`, `lucos-site-reliability[bot]`) are similarly well-specified and actionable.
+- **Audit findings** from `lucos-repo-audit[bot]` are well-specified convention violations with clear problem statements, rationale, and suggested fixes. Can typically be approved directly. Watch for false positives where the convention doesn't apply (e.g. `circleci-uses-lucos-orb` on repos that don't use Docker deploys, or on the orb repo itself).
 
 ## Ops check duplicate prevention (introduced 2026-03-05, strengthened 2026-03-06)
 
