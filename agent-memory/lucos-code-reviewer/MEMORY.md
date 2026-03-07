@@ -12,3 +12,4 @@
 - Thorny devil (2026-03-07)
 - Green iguana (2026-03-07)
 - Common snapping turtle (2026-03-07)
+- Komodo dragon (2026-03-07)

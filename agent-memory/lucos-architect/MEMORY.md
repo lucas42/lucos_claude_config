@@ -112,3 +112,4 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
+- v3 ideation (#45): proposed bundling `trackid`->`id` rename, debug field removal, structured errors. Awaiting lucas42.
