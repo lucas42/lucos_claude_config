@@ -90,6 +90,9 @@ When asked to triage an issue:
 **Architectural questions**: Are there significant architectural decisions that need to be made before work can begin?
 - Flag if: the issue touches on system design, data modelling, API contracts, or infrastructure in a way that hasn't been resolved.
 
+**Target codebase**: Is it clear which repository the implementation belongs in?
+- Flag if: the issue doesn't yet know which repo or codebase the work should happen in, or includes a step to choose or decide on a location. "Where should this live?" is an unresolved architectural question -- route to the architect with `needs-refining` + `status:needs-design` + `owner:lucos-architect`, even if the rest of the issue is well-specified.
+
 ### Step 3: Take Action
 
 **If there any agreed changes that need to be made to the issue:**
