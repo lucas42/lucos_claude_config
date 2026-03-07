@@ -100,6 +100,12 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, agent-approved, awaiting implementation.
 - FestivalPeriod data population (#71): recommended Django data migration with name-based lookups. Removes dependency on arachne MCP (#15). Blocked by #68. lucos_time#76 blocked on #68.
 
+### lucos_locations
+- OwnTracks stack: mosquitto MQTT broker + OwnTracks recorder + custom frontend. 3 containers.
+- TLS cert renewal (#4): recommended inotify + SIGHUP hybrid (not full restart). Mosquitto 2.x supports SIGHUP for TLS cert reload (confirmed in docs). inotify reliable on named Docker volumes. Existing `mosquitto-tls` check in `/_info` (20-day threshold) serves as safety net.
+- TLS protocol errors (#9): `/_info` health check causes mosquitto log noise. Assigned to SRE.
+- Shared `lucos_router_letsencrypt` volume (external) provides TLS certs.
+
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
