@@ -5,7 +5,10 @@ Only recording the most recent batch reviewed each session to avoid re-checking.
 
 ## Last reviewed: 2026-03-07
 
-Reviewed 2 new closures since last session:
+Reviewed 1 new closure since last check:
+- lucos_photos#66 (Add HTTP range request support for video serving -- implemented by lucos-developer, closed via merged PR)
+
+Previous batch (2026-03-07 earlier):
 - lucos_repos#52 (New convention: CodeQL must be a required status check on repos with auto-merge -- implemented by lucos-developer)
 - lucos#42 (Auto-merge race condition: CodeQL as required status check -- implemented by lucos-system-administrator)
 
