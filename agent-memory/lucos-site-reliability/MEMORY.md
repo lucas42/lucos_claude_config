@@ -98,6 +98,9 @@ See topic files for details. Key patterns confirmed in operation:
 - CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
 - To retry a failed workflow: `curl -H "Circle-Token: $TOKEN" -H "Content-Type: application/json" -X POST "https://circleci.com/api/v2/workflow/{workflow_id}/rerun" -d '{"from_failed": true}'`
 
+## lucos_photos_android — Known Issues & Patterns
+- Issue #28 (signing): root cause was Kotlin DSL variable shadowing. In a `SigningConfig.() -> Unit` lambda, unqualified names like `keyPassword` resolve to `SigningConfig.keyPassword` (receiver member) before outer scope vals. This caused `this.keyPassword = keyPassword` to be a self-assignment. Fix: prefix outer vals with `signing` (e.g. `signingKeyPassword`) so they don't shadow the DSL properties. Commit `23db310` on 2026-03-07. CI confirmed: `production-build-apk` now passes.
+
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
 - Pass body text inline using `-f body="..."` — no need to write payload files.
