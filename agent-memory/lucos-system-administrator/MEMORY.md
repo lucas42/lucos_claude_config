@@ -12,11 +12,11 @@ Note: the lucos-code-reviewer commit email uses the login `lucos-code-reviewer[b
 
 Get user ID via: `curl -s 'https://api.github.com/users/lucos-agent%5Bbot%5D' | jq .id`
 
-Always use `git -c user.name="..." -c user.email="..."` on the commit command itself — never `git config` which would affect all subsequent commits.
+Use `~/sandboxes/lucos_agent/git-as-agent --app <persona-name>` for all commit-writing git operations — never `git config` which would affect all subsequent commits. The wrapper reads identity from `personas.json` and prepends the correct `-c` flags automatically.
 
-**The `-c` flags must appear on EVERY commit-writing git operation**, including `--amend`. When amending, git preserves the original author but sets a new committer using the current identity — which without `-c` flags falls back to the global config (`lucos-agent[bot]`). This produces a mismatched author/committer. Confirmed bug in commit `b207d1e` on `lucos_agent` (2026-03-02).
+**The wrapper must be used for EVERY commit-writing git operation**, including `--amend`. When amending, git preserves the original author but sets a new committer using the current identity — which without the wrapper falls back to the global config (`lucos-agent[bot]`). This produces a mismatched author/committer. Confirmed bug in commit `b207d1e` on `lucos_agent` (2026-03-02).
 
-Current VM git config is correct (fixed 2026-02-27). `lima.yaml` in `lucos_agent_coding_sandbox` updated to match.
+`git-as-agent` was created 2026-03-07 specifically to prevent this class of error.
 
 ## Claude Code permissions: correct settings.json format
 

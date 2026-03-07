@@ -100,23 +100,25 @@ ENDBODY
 
 ## Git Commit Identity
 
-Use the `-c` flag on the `git` command itself to set the correct identity for each commit — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
-
-Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-system-administrator` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`.
+Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
 
 ```bash
-git -c user.name="lucos-system-administrator[bot]" -c user.email="264392982+lucos-system-administrator[bot]@users.noreply.github.com" commit -m "..."
+~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator commit -m "..."
+~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator commit --amend
+~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator cherry-pick abc123
 ```
 
-**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without `-c` flags will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+`git-as-agent` looks up the persona's `bot_name` and `bot_user_id` from `~/sandboxes/lucos_agent/personas.json` and prepends the correct `-c user.name=... -c user.email=...` flags automatically. All remaining arguments are passed through to `git`.
 
-**Always include the `-c` flags on every git command that writes a commit**, including:
+**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without the wrapper will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+
+**Always use `git-as-agent` for every git command that writes a commit**, including:
 - `git commit -m "..."`
 - `git commit --amend`
 - `git cherry-pick`
 - Any other operation that creates or rewrites a commit
 
-There is no safe "do this once" shortcut — every commit-writing operation needs the flags.
+There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
 
 ## Review and Implementation
 

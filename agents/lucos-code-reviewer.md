@@ -114,23 +114,25 @@ Use `gh api` calls via `gh-as-agent --app lucos-code-reviewer` for all GitHub in
 
 ## Git Commit Identity
 
-If you ever need to make a git commit, use the `-c` flag on the `git` command itself to set the correct identity for that single invocation — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
-
-Look up identity from `~/sandboxes/lucos_agent/personas.json` under the `lucos-code-reviewer` key. The commit email format is `{bot_user_id}+{bot_name}@users.noreply.github.com`. Note: the email uses the login `lucos-code-reviewer[bot]` (lowercase) even though the display name is `lucOS Code Reviewer[bot]` (mixed case).
+Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
 
 ```bash
-git -c user.name="lucOS Code Reviewer[bot]" -c user.email="264151378+lucos-code-reviewer[bot]@users.noreply.github.com" commit -m "..."
+~/sandboxes/lucos_agent/git-as-agent --app lucos-code-reviewer commit -m "..."
+~/sandboxes/lucos_agent/git-as-agent --app lucos-code-reviewer commit --amend
+~/sandboxes/lucos_agent/git-as-agent --app lucos-code-reviewer cherry-pick abc123
 ```
 
-**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without `-c` flags will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+`git-as-agent` looks up the persona's `bot_name` and `bot_user_id` from `~/sandboxes/lucos_agent/personas.json` and prepends the correct `-c user.name=... -c user.email=...` flags automatically. Note: for this persona, the `bot_name` is `lucOS Code Reviewer[bot]` (mixed case display name) but the email uses `lucos-code-reviewer[bot]` (lowercase login) — `git-as-agent` handles this correctly from `personas.json`.
 
-**Always include the `-c` flags on every git command that writes a commit**, including:
+**Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without the wrapper will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
+
+**Always use `git-as-agent` for every git command that writes a commit**, including:
 - `git commit -m "..."`
 - `git commit --amend`
 - `git cherry-pick`
 - Any other operation that creates or rewrites a commit
 
-There is no safe "do this once" shortcut — every commit-writing operation needs the flags.
+There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
 
 ### 3. Evaluate the Pull Request
 
