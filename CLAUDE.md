@@ -396,7 +396,13 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
 
 ### Version-controlled `~/.claude` changes
 
-`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes are made to files under `~/.claude` that are part of this repo (e.g. `CLAUDE.md` itself, persona instruction files), those changes must be committed and pushed to `main`. Always ensure the repo is on the `main` branch before committing — do not create or use feature branches. As with all git operations, this must be done via a persona (e.g. `lucos-system-administrator`) using the Task tool — the dispatcher cannot commit directly.
+`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes need to be made to files under `~/.claude`, the dispatcher must **never** edit those files directly — all changes must be delegated to the appropriate persona from the start using the Task tool. The persona should make both the file edits and the commit, so it has full context of what changed and why.
+
+Route to the appropriate persona based on the type of change:
+- **`lucos-issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
+- **`lucos-system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
+
+Always commit to `main` and push. Do not create or use feature branches.
 
 ### VM environment changes
 
