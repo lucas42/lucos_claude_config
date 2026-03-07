@@ -79,6 +79,10 @@ Two domains get specialist follow-up after the primary owner finishes, before `a
 Both also apply mid-lifecycle if concerns are raised in comments after initial triage.
 Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (monitoring endpoint, primary owner architect)
 
+## Triage readiness checks
+
+- **Unknown target codebase = not ready for `agent-approved`.** If an issue doesn't yet know which repo or codebase the implementation belongs in, that's an unresolved architectural question. Route to the architect with `needs-refining` + `status:needs-design` + `owner:lucos-architect`. This applies even if the rest of the issue is well-specified -- "choose a location" is a design decision that must be resolved first.
+
 ## Common pitfalls
 
 - **Issue body formatting**: When creating/updating issue bodies that contain backticks or double quotes, always use the heredoc pattern (`--field body="$(cat <<'ENDBODY' ... ENDBODY)"`) with a single-quoted delimiter. Using `-f body="..."` with shell interpolation escapes backticks and quotes, producing `\`` and `\"` in the rendered markdown.
