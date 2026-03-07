@@ -6,6 +6,9 @@ Only recording the most recent batch reviewed each session to avoid re-checking.
 ## Last reviewed: 2026-03-07
 
 Reviewed 1 new closure since last check:
+- lucos_repos#67 (Replace search API calls with Issues List API in audit sweep -- implemented by lucos-developer, closed as completed)
+
+Previous batches (2026-03-07):
 - lucos_photos#67 (Update UI to display videos with playback support -- implemented by lucos-developer, closed via merged PR)
 
 Previous batches (2026-03-07):
