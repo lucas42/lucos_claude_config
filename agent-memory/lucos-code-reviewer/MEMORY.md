@@ -75,6 +75,7 @@
 - Green iguana / Iguana iguana (mentioned 2026-03-07)
 - Red-eyed crocodile skink / Tribolonotus gracilis (mentioned 2026-03-07)
 - Short-horned lizard / Phrynosoma hernandesi (mentioned 2026-03-07)
+- Panther chameleon / Furcifer pardalis (mentioned 2026-03-07)
 
 ## Repo-Specific Review Rules
 
