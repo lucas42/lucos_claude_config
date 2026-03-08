@@ -12,7 +12,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Android backup client (#3): separate repo `lucos_photos_android`
 - Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
 - Video upload (#60): needs-refining. See `project-details.md`.
-- Face-to-contact linking (#104): design posted. 5-step sequencing: (1) photo detail view with face overlays, (2) face assignment UI (local persons), (3) JSON API on lucos_contacts, (4) contact search proxy, (5) link person to contact. Steps 1-2 have no cross-service dependency. Awaiting lucas42 decision on detail view vs lightbox, sequencing, and contacts API approach.
+- Face-to-contact linking (#104): revised design agreed. Sequencing: (1) JSON API on contacts (lucos_contacts#529), (2) person-to-contact linking UI using `lucos_search_component` with `data-types="Person"`, (3) photo detail view (#103), (4) face assignment UI. Steps 1-2 independent of #103. lucas42 wants names managed in contacts, not photos. No proxy endpoint needed -- search component queries arachne client-side. API keys: `KEY_LUCOS_ARACHNE` (client-side search), `KEY_LUCOS_CONTACTS` (server-side only). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, may not be fully landed in code yet).
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -55,7 +55,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_contacts
 - Django app, calendar ICS endpoint. Recommended 1-month lookback (#523), Facebook import as separate repo (#7).
-- No JSON API for listing/searching contacts. Only HTML + RDF (content negotiation). `serializePerson()` returns dict but only used for templates. Needs JSON endpoint for lucos_photos integration.
+- No JSON API yet. Only HTML + RDF (content negotiation). `serializePerson()` returns dict but only used for templates. JSON endpoint filed as #529 (extends content negotiation on `/people/all`).
 
 ### lucos_media_manager
 - Java, long-polling. Flaky test (#79): race condition fix. Device list cleanup (#112): lazy filtering via `lastSeen`.
