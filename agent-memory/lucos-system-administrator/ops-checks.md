@@ -5,14 +5,14 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-07  # (eighth run) all clean; xwing lucos_media_import_test still Exited(0) one-shot — not a concern
-resource_checks: 2026-03-05
-syslog_review: 2026-03-05
-software_updates: 2026-03-05
+container_status: 2026-03-08
+resource_checks: 2026-03-08
+syslog_review: 2026-03-08
+software_updates: 2026-03-08
 docker_image_staleness: 2026-03-05
 backup_verification: 2026-03-05
 certificate_expiry: 2026-03-05
-sandbox_drift: 2026-03-05
+sandbox_drift: 2026-03-08
 ```
 
 ## Known Limitations
@@ -227,6 +227,37 @@ sandbox_drift: 2026-03-05
 - xwing: `lucos_media_import_test` Exited (0), 12 days old — one-shot test container, not a concern
 
 ---
+
+### 2026-03-08 (checks 1–5 due; 6–8 not yet due — last run 3 days ago)
+
+**Container status**:
+- avalon: `lucos_arachne_triplestore` Exited (137) — SIGKILL, OOM kill by kernel. Fuseki (`startup.sh: Killed fuseki-server`). restart: no so stayed down. Commented on lucos_arachne#62. Also: swap at 505Mi/511Mi.
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 13 days old — one-shot test container, not a concern
+
+**Resources**:
+- avalon: swap 505Mi/511Mi (98%) — refilled within 2 days of 2026-03-06 reboot. Issue raised: lucos_agent_coding_sandbox#25. Memory fix (#58) deployed but underlying capacity insufficient.
+- xwing: memory OK (472Mi available of 906Mi). Disk 28% (fine).
+- salvare: memory fine (3.3Gi available of 3.7Gi). Disk 75% (42G used of 58G, 14G free — recovering from 95% in March).
+
+**Syslog**:
+- avalon: only lucos-agent sudo failures from March 6 reboot sequence. No hardware errors.
+- xwing: journal inaccessible (no sudo) — known limitation
+- salvare: journal inaccessible (no sudo) — known limitation
+
+**Software updates**:
+- avalon: no upgradable packages (clean)
+- xwing: libc6, openssl, kernel (6.12.47→6.12.62), Docker 29.1.3→29.3.0 pending. Issue raised: lucos_agent_coding_sandbox#24
+- salvare: kernel (6.12.25→6.12.62) and raspi-utils pending — minor, not security-tagged `-security`
+
+**Sandbox drift**: no local unpushed commits, no remote commits to pull — clean.
+
+**Issues raised**:
+- lucos_agent_coding_sandbox#24: xwing OS updates pending (libc6, openssl, kernel)
+- lucos_agent_coding_sandbox#25: avalon swap exhausted again (98%, 2 days post-reboot)
+
+**Issues commented on**:
+- lucos_arachne#62: OOM kill context added (Exited 137, confirmed kernel kill of Fuseki)
 
 **Issues raised**:
 - lucos_agent_coding_sandbox#14: salvare disk at 95%
