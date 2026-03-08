@@ -10,6 +10,8 @@ Do not add `Co-Authored-By` trailers to git commits. The bot identity on each co
 
 When you fail to follow an instruction, do not apologise. Instead, suggest a concrete improvement to the instructions or environment that would prevent the same mistake from happening again. There is nothing wrong with making mistakes — but we should always learn from them.
 
+When a mistake occurs in a routine task (ops checks, triage, issue review, etc.), prefer updating the relevant instruction files — persona files, skill files, triage procedures — rather than only updating agent memory. Memory is session context that may not persist reliably across conversations; instructions are what agents actually follow every run. If a mistake reveals a gap in a persona's standing instructions, fix the instructions.
+
 ## Lucos Infrastructure Reference
 
 A reference for AI agents working on any lucos project. Covers deployment infrastructure, CI/CD, and conventions.
