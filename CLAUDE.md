@@ -306,6 +306,14 @@ All remaining arguments are passed through to `git` directly. The wrapper handle
 
 ---
 
+## Cross-Repository Issue References
+
+When referencing GitHub issues or PRs in a different repository from comments, PR descriptions, or issue bodies, always use the fully-qualified format including the owner: `lucas42/<repo>#<number>` (e.g. `lucas42/lucos_arachne#86`). Without the `lucas42/` prefix, GitHub does not create a clickable link -- it renders as plain text.
+
+Within the same repository, `#<number>` is sufficient.
+
+---
+
 ## Working on GitHub Issues
 
 When assigned or asked to work on a GitHub issue, follow this workflow:
