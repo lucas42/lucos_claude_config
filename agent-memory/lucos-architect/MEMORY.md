@@ -12,7 +12,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Android backup client (#3): separate repo `lucos_photos_android`
 - Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
 - Video upload (#60): needs-refining. See `project-details.md`.
-- Face-to-contact linking (#104): revised design agreed. Sequencing: (1) JSON API on contacts (lucos_contacts#529), (2) person-to-contact linking UI using `lucos_search_component` with `data-types="Person"`, (3) photo detail view (#103), (4) face assignment UI. Steps 1-2 independent of #103. lucas42 wants names managed in contacts, not photos. No proxy endpoint needed -- search component queries arachne client-side. API keys: `KEY_LUCOS_ARACHNE` (client-side search), `KEY_LUCOS_CONTACTS` (server-side only). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, may not be fully landed in code yet).
+- Face-to-contact linking (#104): revised design agreed. Sequencing: (1) JSON API on contacts (lucos_contacts#529), (2) person-to-contact linking UI using `lucos_search_component` with `data-types="Person"`, (3) photo detail view (#103), (4) face assignment UI. Steps 1-2 independent of #103. lucas42 wants names managed in contacts, not photos. No proxy endpoint needed -- search component queries arachne client-side. API keys: `KEY_LUCOS_ARACHNE` (client-side search), `KEY_LUCOS_CONTACTS` (server-side only). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, landed in production).
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -28,6 +28,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Auth domain hardcoded as `https://auth.l42.eu` -- prefer in application code, not compose env var
 - Always specify sequencing dependencies for cross-repo infrastructure changes
 - lucas42 prefers splitting multi-concern issues into separate tickets
+- **Always check `origin/HEAD` before reviewing code.** Sandbox copies of repos may be on stale branches. If lucas42 mentions a change they made and the code you're reading doesn't reflect it, run `git fetch && git checkout origin/main` (or equivalent) to ensure you're looking at the latest deployed code.
 - Strong one-service-per-repo convention. Naming: `lucos_{subsystem}_{qualifier}`
 - Agent instruction compliance ADR: `~/.claude/docs/adr/0001-agent-instruction-compliance.md` in lucos_claude_config. Key practices: extract task lists into short files, explicit counts + completion manifests, dispatcher verification, order by criticality, group by schedule, 200-line max. Originally placed in lucos repo (PR #39, merged then removed), moved to lucos_claude_config as it is specific to agent config.
 - lucos_claude_config ADRs live in `~/.claude/docs/adr/`. `.gitignore` updated to allow `docs/` directory. Numbering is independent from lucos repo ADRs.
