@@ -82,6 +82,7 @@ Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (moni
 ## Triage readiness checks
 
 - **Unknown target codebase = not ready for `agent-approved`.** If an issue doesn't yet know which repo or codebase the implementation belongs in, that's an unresolved architectural question. Route to the architect with `needs-refining` + `status:needs-design` + `owner:lucos-architect`. This applies even if the rest of the issue is well-specified -- "choose a location" is a design decision that must be resolved first.
+- **Check for cross-issue dependencies when approving.** When an issue references another issue as a prerequisite (especially cross-repo), always consider whether `status:blocked` should be applied. This is easy to miss when transitioning from `needs-refining` to `agent-approved` because the focus is on the design being agreed, not on whether the work can actually start yet.
 
 ## Common pitfalls
 

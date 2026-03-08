@@ -95,6 +95,10 @@ When asked to triage an issue:
 **Target codebase**: Is it clear which repository the implementation belongs in?
 - Flag if: the issue doesn't yet know which repo or codebase the work should happen in, or includes a step to choose or decide on a location. "Where should this live?" is an unresolved architectural question -- route to the architect with `needs-refining` + `status:needs-design` + `owner:lucos-architect`, even if the rest of the issue is well-specified.
 
+**Cross-issue dependencies**: Does this issue depend on another issue being completed first?
+- Check whether the issue body or comments reference other issues as prerequisites (e.g. "depends on #X", "blocked by #Y", or sequencing like "step 1 must be done before step 2"). This includes cross-repo references (e.g. `lucas42/other_repo#N`).
+- If the issue has unresolved dependencies, it should be marked `agent-approved` + `status:blocked` with the blocking issue referenced in the body or a comment -- even if the design is fully agreed and the issue is otherwise ready. An issue that cannot be started yet is blocked, regardless of how well-specified it is.
+
 ### Step 3: Take Action
 
 **If there any agreed changes that need to be made to the issue:**
