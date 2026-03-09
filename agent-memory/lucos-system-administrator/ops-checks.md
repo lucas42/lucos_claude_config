@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-09
+container_status: 2026-03-09 (multiple runs)
 resource_checks: 2026-03-08
 syslog_review: 2026-03-08
 software_updates: 2026-03-08
@@ -279,3 +279,12 @@ sandbox_drift: 2026-03-08
 - xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern
 
 **Note**: lucos_arachne ingestor/triplestore/search all showing "Up" this run (previously `restart: no` one-shots). May have been redeployed since the OOM-kill incident.
+
+### 2026-03-09 (SECOND RUN — container status only; all weekly/monthly checks ran 2026-03-08 or later, not due)
+
+**Container status**:
+- avalon: mostly clean. `lucos_arachne_web` still showing `(unhealthy)` — the localhost/IPv6 healthcheck issue (lucos_arachne#91) is still open and unresolved, but service is externally healthy. All other containers up.
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern
+
+**No new issues raised.** Existing tracked issues: lucos_arachne#91 (healthcheck IPv6 fix), lucos_agent_coding_sandbox#24 (xwing updates), lucos_agent_coding_sandbox#25 (avalon swap).

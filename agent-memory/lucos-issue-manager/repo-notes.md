@@ -125,8 +125,8 @@
 
 - **Language**: Java (Android)
 - **Purpose**: Android app for lucos_photos
-- **Labels created**: `agent-approved`, `needs-refining`, `owner:lucos-developer`, `owner:lucas42`, `owner:lucos-system-administrator`, `status:ideation`, `priority:high` (created 2026-03-04)
-- **Known context**: Needs human-facing installation documentation (README.md); #14 is high priority per lucas42
+- **Labels created**: `agent-approved`, `needs-refining`, `owner:lucos-developer`, `owner:lucas42`, `owner:lucos-system-administrator`, `owner:lucos-architect`, `status:ideation`, `status:needs-design`, `status:blocked`, `priority:high`, `priority:low`, `priority:medium`, `owner:lucos-site-reliability` (created/updated 2026-03-04 to 2026-03-09; priority:low and priority:medium colours fixed to canonical 2026-03-09)
+- **Known context**: App launched and in production use. Post-launch bugs being filed. #38 (auto-increment version) is a prerequisite for #40 (new version banner). #39 (telemetry) needs architectural design. #41 (>1MB upload bug) is highest priority bug.
 
 ## lucos_comhra
 
