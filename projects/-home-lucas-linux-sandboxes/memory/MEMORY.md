@@ -19,7 +19,7 @@
 
 ## Loganne as a Communication Channel
 
-- **Planned maintenance events**: When performing planned maintenance (reboots, migrations, etc.), post a custom Loganne event so other agents (especially lucos-site-reliability) can distinguish planned downtime from incidents. POST to `https://loganne.l42.eu/events` with `source`, `type` (e.g. `plannedMaintenance`), `humanReadable`, and optionally `url`. No auth required for writes. Note: Loganne is in-memory, so also leave a durable record (e.g. GitHub comment) for long-term reference.
+- **Planned maintenance events**: When performing planned maintenance (reboots, migrations, etc.), post a custom Loganne event so other agents (especially lucos-site-reliability) can distinguish planned downtime from incidents. Use `~/sandboxes/lucos_agent/loganne-event <type> <humanReadable>` — no auth required, source is hardcoded to `lucos_agent`. Note: Loganne is in-memory, so also leave a durable record (e.g. GitHub comment) for long-term reference.
 
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
