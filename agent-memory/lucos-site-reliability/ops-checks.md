@@ -11,7 +11,7 @@ external_deps: 2026-03-06
 lucos_comhra_agent: 2026-03-07
 lucos_comhra_llm: 2026-03-07
 lucos_schedule_tracker: 2026-03-07
-lucos_media_weightings: 2026-03-07
+lucos_media_weightings: 2026-03-09
 lucos_photos_worker: 2026-03-09
 lucos_arachne_explore: 2026-03-09
 lucos_arachne_web: 2026-03-09
@@ -43,20 +43,20 @@ lucos_arachne_triplestore: 2026-03-07
 lucos_mail_docs: 2026-03-07
 lucos_photos_postgres: 2026-03-09
 lucos_photos_redis: 2026-03-07
-lucos_scenes: 2026-03-07
+lucos_scenes: 2026-03-09
 lukeblaney.co.uk: 2026-03-07
 media_manager: 2026-03-07
 media_metadata_api: 2026-03-07
 monitoring: 2026-03-07
-seinn: 2026-03-07
-tfluke: 2026-03-07
+seinn: 2026-03-09
+tfluke: 2026-03-09
 media_metadata_api_exporter: 2026-03-07
 media_metadata_manager: 2026-03-07
 notes: 2026-03-07 (2nd review)
 root: 2026-03-07
 router: 2026-03-07
 semweb: 2026-03-07
-time: 2026-03-07
+time: 2026-03-09
 lucos_arachne_mcp: 2026-03-07
 
 ## Notes

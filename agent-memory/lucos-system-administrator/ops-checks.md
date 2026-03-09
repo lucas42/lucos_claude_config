@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-09 (multiple runs)
+container_status: 2026-03-09 (multiple runs — updated healthcheck check method)
 resource_checks: 2026-03-08
 syslog_review: 2026-03-08
 software_updates: 2026-03-08
@@ -288,3 +288,20 @@ sandbox_drift: 2026-03-08
 - xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern
 
 **No new issues raised.** Existing tracked issues: lucos_arachne#91 (healthcheck IPv6 fix), lucos_agent_coding_sandbox#24 (xwing updates), lucos_agent_coding_sandbox#25 (avalon swap).
+
+### 2026-03-09 (THIRD RUN — container status with improved unhealthy check; all other checks not due)
+
+**PROCEDURE IMPROVEMENT**: Added `grep 'unhealthy'` to container status check. Previous `grep -v 'Up '` was missing containers that are Up but (unhealthy).
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_arachne_web` (known #91), `lucos_repos_app` (5,611 failures — wget missing from container), `lucos_backups` (5,622 failures — localhost/IPv6 issue), `lucos_comhra_agent` (18,671 failures — localhost/IPv6 issue)
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2 weeks — one-shot, not a concern; no unhealthy containers
+
+**Issues raised**:
+- lucos_backups#49: healthcheck IPv6 localhost false-negative (fix: use 127.0.0.1)
+- lucos_comhra#9: healthcheck IPv6 localhost false-negative (fix: use 127.0.0.1)
+- lucos_repos#99: healthcheck broken — wget not installed in container image
+
+**Ops-checks improvement**: Updated `~/.claude/agents/sysadmin-ops-checks.md` to add unhealthy container check. Committed to lucos_claude_config (90cc6b5).
