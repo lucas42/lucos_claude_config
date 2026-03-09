@@ -160,6 +160,16 @@ ssh <shortname>.s.l42.eu
 
 No need to specify `-i` (the key is configured automatically) or `-l` (the user is configured automatically).
 
+### Before making changes on production
+
+Before executing any write operation on a production host, send a Loganne event to signal the activity. If the change involves multiple steps, one event covering the full action is sufficient — you do not need to send one per command.
+
+```bash
+~/sandboxes/lucos_agent/loganne-event plannedMaintenance "Brief description of what you are about to do"
+```
+
+This allows other agents (especially `lucos-site-reliability`) to distinguish intentional changes from unexpected incidents.
+
 ### Safe read-only commands
 
 When investigating production, prefer read-only commands such as:
@@ -562,9 +572,11 @@ No authentication required. Returns JSON.
 
 ---
 
-## Loganne Events API
+## Loganne
 
-Loganne is the central event logging service for lucos. The events endpoint provides a chronological feed of system events — deployments, data changes, and other notable activity across all lucos services. Useful for understanding what has changed recently, especially when investigating incidents.
+Loganne is the central event logging service for lucos. It provides a chronological feed of system events — deployments, data changes, and other notable activity across all lucos services. Useful for understanding what has changed recently, especially when investigating incidents.
+
+### Reading events
 
 ```
 GET https://loganne.l42.eu/events
@@ -572,11 +584,26 @@ GET https://loganne.l42.eu/events
 
 Requires Bearer token authentication using the `KEY_LUCOS_LOGANNE` env var from `~/sandboxes/lucos_agent/.env`.
 
-### Example usage
-
 ```bash
 source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
 ```
 
 Returns a JSON array of recent events across the lucos ecosystem (deploys, service activity, etc.).
+
+### Writing events
+
+Use the `loganne-event` script in `~/sandboxes/lucos_agent/`:
+
+```bash
+~/sandboxes/lucos_agent/loganne-event <type> <humanReadable>
+```
+
+- `type` — event type string (e.g. `plannedMaintenance`, `hostRebooted`)
+- `humanReadable` — plain English description of the event
+
+No authentication required for writes. The `source` is hardcoded to `lucos_agent`.
+
+```bash
+~/sandboxes/lucos_agent/loganne-event plannedMaintenance "avalon rebooted to apply kernel update"
+```
 
