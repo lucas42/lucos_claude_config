@@ -10,6 +10,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - database.py engine issue (#25) closed, split into #39 (pg_isready retry) and #40 (engine function wrap)
 - No docker-compose healthchecks -- reliability gap
 - Android backup client (#3): separate repo `lucos_photos_android`
+- App downloads (#115): recommended GitHub Releases for APK storage, `GET /api/app/latest` endpoint. Depends on #38 (versioning).
+- App telemetry (#39 on android repo): recommended extending photos API with `POST /api/telemetry`. Skip OpenTelemetry. Revisit central service if second consumer appears.
 - Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
 - Video upload (#60): needs-refining. See `project-details.md`.
 - Face-to-contact linking (#104): revised design agreed. Sequencing: (1) JSON API on contacts (lucos_contacts#529), (2) person-to-contact linking UI using `lucos_search_component` with `data-types="Person"`, (3) photo detail view (#103), (4) face assignment UI. Steps 1-2 independent of #103. lucas42 wants names managed in contacts, not photos. No proxy endpoint needed -- search component queries arachne client-side. API keys: `KEY_LUCOS_ARACHNE` (client-side search), `KEY_LUCOS_CONTACTS` (server-side only). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, landed in production).
@@ -72,6 +74,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **ADR-0001 (2026-03-07):** MCP server for knowledge graph access. Container `lucos_arachne_mcp` in arachne stack, routed via nginx at `/mcp/`. Five tools (`search`, `list_types`, `get_entity`, `find_entities`, `count_by_property`). No raw SPARQL — server generates it from typed parameters. Read-only, reasoning endpoint. SSE transport. Implementation: #63-#69, all closed/completed.
 - **Key insight: LLMs cannot reliably generate SPARQL** against custom ontologies (killed lucos_comhra). MCP server solves this by hiding SPARQL behind structured tool parameters. Fundamental constraint, not a model quality issue.
 - Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, OWL reasoning). `systems_to_graphs` in `ingestor/triplestore.py`.
+- Memory #86: lucas42 reframed -- values inferencing (transitive containedIn), not wedded to Fuseki. Recommended pre-computing closures in ingestor. RDFS reasoner alone insufficient (no owl:TransitiveProperty).
+- Monitoring #87: lucas42 wants /_info delegated to explore container with real authenticated checks, not sidecar script. Revised design posted.
 - Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
 
 ### lucos_monitoring
@@ -115,4 +119,4 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
-- v3 ideation (#45): proposed bundling `trackid`->`id` rename, debug field removal, structured errors. Awaiting lucas42.
+- v3 ideation (#45): API changes decided (trackid->id, debug removal, structured errors, pagination). Data modelling: controlled vocabs, freetext migration, people/groups -- see project-details.md. Sequencing: API changes in v3, data modelling post-v3.

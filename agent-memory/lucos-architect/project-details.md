@@ -16,7 +16,12 @@ Overflow from MEMORY.md for projects with extensive design history.
 - `DecodeTrack` needs custom JSON unmarshaller for v3 (tags become `map[string]interface{}`)
 - 8-step implementation plan: audit -> internal refactor -> define multiValuePredicates -> DB migration -> v3 endpoints -> update rdfgen -> migrate consumers -> deprecate v2
 - Revised design posted. lucas42 confirmed. Implementation tickets filed: #35-#42.
-- v3 ideation (#45): proposed bundling 3 additional breaking changes: rename `trackid` -> `id` in JSON, remove debug weighting fields (`_random_weighting`, `_cum_weighting`), structured JSON error responses. Also flagged for discussion: weighting endpoint JSON format, richer pagination. Explicitly excluded: container naming, auth scheme. Awaiting lucas42 decision.
+- v3 ideation (#45): API structural changes DECIDED: rename `trackid` -> `id`, remove debug weighting fields, structured JSON errors, richer pagination. Weighting endpoint stays plain text (lucas42 rejected). lucas42 then raised much larger data modelling scope:
+  - Moving controlled vocabularies to lucos_eolas: recommended `offence` only; keep `singalong`, `provenance`, `dance` local. General principle: don't centralise speculatively.
+  - Freetext-to-controlled: `memory` -> eolas Memory type, `theme_tune`/`soundtrack` -> eolas CreativeWork, `album` -> first-class local concept in API (new table). Merge tooling is prerequisite, not optional.
+  - People/groups: recommended Option C (split by type -- contacts for personal, eolas for famous/fictional, link via arachne). Depends on lucos_eolas#19 resolution.
+  - Sequencing: v3 ships API structural changes + album concept. Controlled vocab migrations post-v3 (one at a time). People modelling longer term.
+  - Awaiting lucas42 decision on sequencing and per-field recommendations.
 
 ## lucos_repos -- Greenfield redesign (#22)
 
@@ -46,6 +51,22 @@ Overflow from MEMORY.md for projects with extensive design history.
 - Streaming upload is prerequisite (current endpoint reads entire file into memory)
 - Range request support needed for video serving
 - Residual Qdrant check still in /_info endpoint code
+
+## lucos_photos -- App downloads (#115)
+
+- Architectural question: where to store Android APK build artifacts.
+- Recommended GitHub Releases (Option 1). No new infra. Aligns with #38 (auto-increment version).
+- lucos_photos gets `GET /api/app/latest` endpoint (caches GitHub releases API, serves version+download URL).
+- Dependency: lucos_photos_android#38 must complete first (versioning + releases).
+- Awaiting lucas42 decision.
+
+## lucos_photos_android -- App telemetry (#39)
+
+- Recommended Option A: extend lucos_photos API with `POST /api/telemetry` endpoint (Postgres storage, flexible JSON `data` column).
+- Rejected central telemetry service (one consumer, speculative reuse) and Loganne (in-memory, no persistence).
+- OpenTelemetry: massive overkill for one app. Skip.
+- Migration path: if second consumer appears, extract to central service then.
+- Awaiting lucas42 decision.
 
 ## lucos_eolas -- Festival duration (#68)
 
@@ -122,8 +143,8 @@ Awaiting lucas42 decision.
 - Dedicated `tracks` collection planned (#47) with ~15 faceted fields
 - lucos_configy#33 (persona data via configy API): recommended closing as not planned.
 - **Triplestore config:** TDB2 disk-backed storage + OWLMicroFBRuleReasoner. Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, reasoning). Reasoner materialises inferred triples in memory -- dominant RAM consumer.
-- **Memory issue (#86):** OOM-killed twice on avalon. 2GB container limit, `-Xmx1600m`. Root cause: OWL reasoner in-memory inference closure over 14 graphs + invalidation/rebuild on each ingestion run. Recommended: (A) downgrade to RDFS reasoner or remove entirely, (B) JVM GC tuning, (C) prune unused external ontologies.
-- **Monitoring gap (#87):** `/_info` is a static JSON file served by nginx -- no backend health checks. Recommended: background shell script in web container that polls all 5 backends and rewrites `_info.json` periodically.
+- **Memory issue (#86):** OOM-killed twice on avalon. 2GB container limit, `-Xmx1600m`. Root cause: OWL reasoner in-memory inference closure over 14 graphs + invalidation/rebuild on each ingestion run. lucas42 reframed: values inferencing (esp. transitive `containedIn` for places), but not wedded to Fuseki. Revised recommendation: **Option 3 -- pre-compute transitive closures in ingestor**, write to dedicated `urn:lucos:inferred` graph, remove OWL reasoner entirely. Fuseki becomes simple SPARQL store. RDFS reasoner alone won't work (doesn't handle owl:TransitiveProperty). Awaiting lucas42 decision.
+- **Monitoring gap (#87):** lucas42 rejected sidecar script (Option 4). Wants `/_info` delegated to **explore container** (Express.js, already has credentials). Checks must be real authenticated queries not pings. Revised design posted: SPARQL query for triplestore, collection lookup for search, TCP for ingestor, skip MCP check (backends covered by other checks). Awaiting lucas42 sign-off.
 - **Docker healthcheck (#91):** IPv6/localhost false negative -- `wget http://localhost/_info` fails because nginx binds IPv4 only. Fix: use `127.0.0.1`.
 
 ## lucos_monitoring
