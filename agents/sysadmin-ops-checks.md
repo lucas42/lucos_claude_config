@@ -34,13 +34,17 @@ When raising issues, include: which host(s) affected, what was observed, when it
 
 ### Check 1: Container Status
 
-SSH into each active host and check for containers that have crashed and not recovered:
+SSH into each active host and run **two** commands — one for crashed containers, one for unhealthy containers (both can have problems; unhealthy containers still show "Up" so the first command misses them):
 
 ```bash
+# Crashed/stopped containers
 ssh <host> "docker ps -a --format 'table {{.Names}}\t{{.Status}}' | grep -v 'Up '"
+
+# Unhealthy containers (still running but healthcheck failing)
+ssh <host> "docker ps --format 'table {{.Names}}\t{{.Status}}' | grep 'unhealthy'"
 ```
 
-Any container showing `Exited`, `Restarting`, or similar is a concern. Observe and raise a GitHub issue on the relevant repo if not already tracked. Do not restart containers yourself — that's incident response.
+Any container showing `Exited`, `Restarting`, or `(unhealthy)` is a concern. Observe and raise a GitHub issue on the relevant repo if not already tracked. Do not restart containers yourself — that's incident response.
 
 If a crash-looping container might have an application-level root cause (e.g. an unhandled exception rather than resource exhaustion), note this in the issue body for lucos-site-reliability to cross-check.
 
