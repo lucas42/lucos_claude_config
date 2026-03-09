@@ -10,12 +10,16 @@ See topic files for details. Key patterns confirmed in operation:
 - Qdrant replaced by pgvector (#29 completed). Orphaned container and volume manually removed from avalon on 2026-03-05 (issue #76 closed). Stale `qdrant-reachable` health check removed — issue #79 closed/completed 2026-03-06. Note: `docker compose up` does NOT stop containers for services removed from the compose file — they must be stopped/removed manually.
 - PostgreSQL collation version mismatch (2.41 vs 2.36) logged as WARNING on worker startup. Issue #77 closed/resolved: lucos-system-administrator ran `ALTER DATABASE photos REFRESH COLLATION VERSION;` directly on production (also on `postgres` and `template1` system databases). No code change required — pure one-off maintenance. This is the correct remediation for collation mismatch warnings.
 - `lucos_photos_postgres_data` volume classified as `considerable` (not `huge`) — lucas42 confirmed manually curated face/person data is re-doable with effort.
+- Issue #100 (hide unprocessed photos): closed/completed. Fix: `GET /photos` list endpoint now joins with `ProcessingStatus` and filters to `state == complete`. Unprocessed items no longer surface to the frontend.
+- Issue #101 (LOGANNE_ENDPOINT on worker): closed/completed. Worker container was missing the env var — added as pass-through in `docker-compose.yml` `environment` block. No code change needed.
+- Issue #105 (processing-pending count stuck): closed — lucos-developer diagnosed two bugs: (1) sweep enqueues `process_photo` for all stuck items regardless of media type (videos get wrong task); (2) items stuck in `processing` state (crashed mid-process) aren't swept at all. Fix tracked via that issue resolution.
 
 ## lucos_repos — Convention Checks
 - Docker healthcheck convention check (issue #59, closed 2026-03-07): lucos_repos now checks that every service with a `build:` key in `docker-compose.yml` has a `healthcheck:` defined. Implemented by lucos-developer. Applies to system and component repos. If a service is missing a Docker healthcheck, this convention check will fail.
 - YAML parse bug (issue #80, closed 2026-03-07): `yaml.v3` cannot unmarshal `workflows.version: 2` into a `ciWorkflow` struct — caused all 5 CircleCI conventions to fail on all repos. Fixed in PR #81 with a custom `UnmarshalYAML`. Incident report at lucos/pull/44.
 - Surface Detail string in issue bodies (issue #82, closed 2026-03-08): `ConventionResult.Detail` was not forwarded to issue bodies. Fixed by adding `Detail` to `ConventionInfo`, populating it in the sweep loop, and rendering it in `createIssue`.
 - Audit sweep fails on archived/issues-disabled repos (issue #90, closed/completed 2026-03-07): lucos-developer skipped archived repos entirely and treated 410 (issues disabled) as soft failure. Both fixes applied.
+- lucos_repos rate limit exhaustion (issue #66, closed 2026-03-09): bottleneck was GitHub Search API (30 req/min, not the 5000/hr REST limit). Used in `EnsureIssueExists`. Split into #67 (replace search with Issues List API), #68 (rate limit backoff), #69 (fix misleading success reporting). All three `agent-approved` + `priority:high`.
 
 ## Closed Issue Learnings
 - Issue #9 (add env vars to worker proactively): closed `not_planned` — lucas42 preference is to add env vars only when a container actually needs them, not speculatively. Don't raise issues proposing env vars "in advance of future functionality".
@@ -101,6 +105,8 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_photos_android — Known Issues & Patterns
 - Issue #28 (signing): root cause was Kotlin DSL variable shadowing. In a `SigningConfig.() -> Unit` lambda, unqualified names like `keyPassword` resolve to `SigningConfig.keyPassword` (receiver member) before outer scope vals. This caused `this.keyPassword = keyPassword` to be a self-assignment. Fix: prefix outer vals with `signing` (e.g. `signingKeyPassword`) so they don't shadow the DSL properties. Commit `23db310` on 2026-03-07. CI confirmed: `production-build-apk` now passes.
+- Issue #31 (sync re-scans entire library): closed/completed. Root cause was `triggerImmediateSync()` using plain `WorkManager.enqueue()` with no uniqueness constraint, allowing duplicate concurrent sync workers. Fix: use `WorkManager.enqueueUniqueWork()` with a named key.
+- Issue #30 (missing EXIF DateTimeOriginal): closed/completed. Investigation confirmed upload path does NOT strip EXIF — photos genuinely lack the field on device (screenshots, WhatsApp, etc). Resolution: use file last-modified time as fallback date when EXIF is absent.
 
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.

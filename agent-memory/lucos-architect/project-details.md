@@ -116,12 +116,15 @@ Awaiting lucas42 decision.
 
 ## lucos_arachne
 
-- Architecture: nginx web proxy + Typesense search + Apache Jena Fuseki triplestore + Python ingestor + explore UI
+- Architecture: nginx web proxy + Typesense search + Apache Jena Fuseki triplestore + Python ingestor + explore UI + MCP server. 6 containers.
 - Typesense `items` collection: `type`, `category` (facets), `pref_label`, `labels`, `description`, `lyrics`, `lang_family`
-- Ingestor consumes RDF from multiple lucos systems, converts to Typesense docs
+- Ingestor consumes RDF from 14 named graphs (4 lucos systems + 10 external ontologies), converts to Typesense docs
 - Dedicated `tracks` collection planned (#47) with ~15 faceted fields
-- MCP server (#15): recommended against for now. Revisit when multiple agents need access.
 - lucos_configy#33 (persona data via configy API): recommended closing as not planned.
+- **Triplestore config:** TDB2 disk-backed storage + OWLMicroFBRuleReasoner. Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, reasoning). Reasoner materialises inferred triples in memory -- dominant RAM consumer.
+- **Memory issue (#86):** OOM-killed twice on avalon. 2GB container limit, `-Xmx1600m`. Root cause: OWL reasoner in-memory inference closure over 14 graphs + invalidation/rebuild on each ingestion run. Recommended: (A) downgrade to RDFS reasoner or remove entirely, (B) JVM GC tuning, (C) prune unused external ontologies.
+- **Monitoring gap (#87):** `/_info` is a static JSON file served by nginx -- no backend health checks. Recommended: background shell script in web container that polls all 5 backends and rewrites `_info.json` periodically.
+- **Docker healthcheck (#91):** IPv6/localhost false negative -- `wget http://localhost/_info` fails because nginx binds IPv4 only. Fix: use `127.0.0.1`.
 
 ## lucos_monitoring
 

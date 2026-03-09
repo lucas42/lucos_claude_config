@@ -169,6 +169,12 @@ Alternatively: add `listen [::]:80;` to the nginx config to also bind IPv6. The 
 
 Found in `lucos_arachne_web` (2026-03-09) — 542 consecutive failures. Documented in lucos_arachne#87. Worth sweeping other containers that use `localhost` in their healthchecks.
 
+## avalon memory pressure: lucos_photos_redis (confirmed 2026-03-08)
+
+`lucos_photos_redis` was consuming **2.3GiB** with no `maxmemory` limit — the single largest memory consumer on avalon (30% of host RAM). Redis defaults to unbounded growth. lucos_photos#112 tracks adding `maxmemory` with `allkeys-lru` eviction.
+
+Swap on avalon was increased from 512MB to 4.5GB by adding a `/swapfile` (4GB swapfile + original `/dev/sda3` partition). The `lucos-agent` SSH user lacks root/sudo on avalon, so this required a human to run the `dd`/`mkswap`/`swapon`/`fstab` commands.
+
 ## Nginx upstream DNS resolution pattern (lucos_arachne#60)
 
 When nginx starts before upstream containers, it fails to resolve upstream hostnames at startup and crash-loops. Fix: use variable-based upstream hostnames in `proxy_pass` with `set $upstream_host "hostname";`. This defers DNS resolution to request time. Also requires `resolver 127.0.0.11 valid=30s;` (Docker's embedded DNS resolver). Apply to all upstream `location` blocks.
