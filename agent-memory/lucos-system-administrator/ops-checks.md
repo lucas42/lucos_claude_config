@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-08
+container_status: 2026-03-09
 resource_checks: 2026-03-08
 syslog_review: 2026-03-08
 software_updates: 2026-03-08
@@ -270,3 +270,12 @@ sandbox_drift: 2026-03-08
 - lucos_backups#32: no lucos_backups on xwing or salvare
 - lucos_repos#38: crash-loop due to x509 cert failure inside container (stale CA bundle)
 - lucos_comhra#2: lucos_comhra_agent + lucos_comhra_llm down on avalon (simultaneous exit 255, 2026-03-06)
+
+### 2026-03-09 (container status only; weekly checks last ran 2026-03-08; monthly checks last ran 2026-03-05 — none due)
+
+**Container status**:
+- avalon: all containers Up. `lucos_arachne_triplestore` is back up (was OOM-killed 2026-03-08). `lucos_arachne_web` is showing as "unhealthy" (542 consecutive healthcheck failures) — root cause: Docker healthcheck uses `wget http://localhost/_info` but nginx only binds IPv4 (`0.0.0.0:80`), not IPv6 (`[::]:80`). `localhost` resolves to `::1` first in the container, causing "Connection refused". Service externally healthy (lucos_monitoring gets HTTP 200 every minute). Commented on lucos_arachne#87 with diagnosis and fix recommendation.
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern
+
+**Note**: lucos_arachne ingestor/triplestore/search all showing "Up" this run (previously `restart: no` one-shots). May have been redeployed since the OOM-kill incident.
