@@ -159,6 +159,16 @@ Before filing a new issue for an ongoing condition (crash-loops, service down, e
 - lucos_repos#38 was filed simultaneously with lucos_repos#39 by two different agents — issue-manager closed #38 as a duplicate.
 - lucos_repos#53 (CodeQL required status check convention) was closed as duplicate of #52, which already tracked the same requirement. Always search lucos_repos open issues before raising new convention requests there.
 
+## Docker healthcheck localhost→IPv6 false-negative pattern
+
+Docker healthchecks using `wget http://localhost/_info` (or `curl http://localhost/_info`) can silently fail if nginx binds only to `0.0.0.0:80` (IPv4). Inside Alpine-based containers, `localhost` resolves to `::1` (IPv6) first. wget/curl then get "Connection refused" and report unhealthy, even though the service is externally functional.
+
+Fix: use `http://127.0.0.1/_info` (explicit IPv4) in healthcheck probe commands rather than `http://localhost/_info`.
+
+Alternatively: add `listen [::]:80;` to the nginx config to also bind IPv6. The explicit IP approach is simpler and doesn't require nginx config changes.
+
+Found in `lucos_arachne_web` (2026-03-09) — 542 consecutive failures. Documented in lucos_arachne#87. Worth sweeping other containers that use `localhost` in their healthchecks.
+
 ## Nginx upstream DNS resolution pattern (lucos_arachne#60)
 
 When nginx starts before upstream containers, it fails to resolve upstream hostnames at startup and crash-loops. Fix: use variable-based upstream hostnames in `proxy_pass` with `set $upstream_host "hostname";`. This defers DNS resolution to request time. Also requires `resolver 127.0.0.11 valid=30s;` (Docker's embedded DNS resolver). Apply to all upstream `location` blocks.
