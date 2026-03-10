@@ -34,6 +34,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Strong one-service-per-repo convention. Naming: `lucos_{subsystem}_{qualifier}`
 - Agent instruction compliance ADR: `~/.claude/docs/adr/0001-agent-instruction-compliance.md` in lucos_claude_config. Key practices: extract task lists into short files, explicit counts + completion manifests, dispatcher verification, order by criticality, group by schedule, 200-line max. Originally placed in lucos repo (PR #39, merged then removed), moved to lucos_claude_config as it is specific to agent config.
 - lucos_claude_config ADRs live in `~/.claude/docs/adr/`. `.gitignore` updated to allow `docs/` directory. Numbering is independent from lucos repo ADRs.
+- ADR-0002: Agent teams migration (lucos_claude_config#14, closed via PR #15). Migrated from subagent Task tool dispatch to agent teams with SendMessage. Identity via persona instructions (not fragile -- same delivery mechanism as before). Team config tracked as `config.canonical.json` (stripped of runtime state). Known constraints: no session resumability, token cost unmeasured, rollback via git revert.
 - User-Agent convention (lucos#19, closed): ADR-0001 in lucas42/lucos (`docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`). Set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
 
 ## Auto-merge & security checks
