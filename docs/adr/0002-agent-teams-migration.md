@@ -37,7 +37,7 @@ A `/team` skill discovers persona files by globbing `~/.claude/agents/lucos-*.md
 
 ### 5. Team config in version control
 
-`teams/lucos-all-hands/config.json` is tracked in git. The `.gitignore` permits `config.json` while excluding inbox files and other runtime state.
+A canonical version of the team config (`teams/lucos-all-hands/config.canonical.json`) is tracked in git, stripped of runtime state like timestamps, session IDs, and pane IDs. The `.gitignore` permits `config.canonical.json` while excluding `config.json` (which Claude Code overwrites each session) and other runtime state like inboxes.
 
 ## Consequences
 
