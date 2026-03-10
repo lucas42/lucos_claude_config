@@ -3,9 +3,13 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-08
+## Last reviewed: 2026-03-10
 
 Reviewed 2 new closures since last check:
+- lucos_photos_android#49 (Create GitHub Releases with APK assets in CI pipeline -- implemented by lucos-site-reliability, closed as completed)
+- lucos_agent_coding_sandbox#26 (Install Android SDK 36 in the sandbox environment -- implemented by lucos-system-administrator, closed as completed)
+
+Previous batches (2026-03-08):
 - lucos_repos#91 (Exclude non-Docker repos from circleci-uses-lucos-orb convention -- implemented by lucos-developer, closed as completed)
 - lucos_repos#83 (Exclude lucos_deploy_orb from circleci-uses-lucos-orb convention -- implemented by lucos-developer, closed as completed)
 

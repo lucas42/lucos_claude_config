@@ -5,14 +5,14 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-09 (multiple runs — updated healthcheck check method)
-resource_checks: 2026-03-08
-syslog_review: 2026-03-08
-software_updates: 2026-03-08
+container_status: 2026-03-10
+resource_checks: 2026-03-10
+syslog_review: 2026-03-10
+software_updates: 2026-03-10
 docker_image_staleness: 2026-03-05
 backup_verification: 2026-03-05
 certificate_expiry: 2026-03-05
-sandbox_drift: 2026-03-08
+sandbox_drift: 2026-03-10
 ```
 
 ## Known Limitations
@@ -305,3 +305,34 @@ sandbox_drift: 2026-03-08
 - lucos_repos#99: healthcheck broken — wget not installed in container image
 
 **Ops-checks improvement**: Updated `~/.claude/agents/sysadmin-ops-checks.md` to add unhealthy container check. Committed to lucos_claude_config (90cc6b5).
+
+---
+
+### 2026-03-10 (checks 1–5 due; 6–8 not due — last run 2026-03-05)
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_arachne_web` (known #91 — subsumed by #87), `lucos_backups` (known #49), `lucos_comhra_agent` (known #9) — all existing tracked issues, no new issues raised
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2+ weeks — one-shot test container, not a concern; no unhealthy containers
+
+**Resources**:
+- avalon: memory 4.4Gi used, 3.2Gi available — healthy. Swap 829Mi/4.5Gi (18%) — healthy (was 98%, now resolved with 4.5GB swap). Disk 10% (fine). Load 0.63. Journal 17.8M (fine).
+- xwing: 468Mi available of 906Mi. Disk 31% (fine). Swap 254Mi/905Mi (28%).
+- salvare: 3.3Gi available of 3.7Gi. Disk 81% (45G of 58G) — up from 75% last week. Approaching the 80% threshold but not there yet.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- avalon: only lucos-agent sudo failures (reboot attempt 2026-03-06, apt upgrade attempt, dd/swapfile attempt 2026-03-08, find commands 2026-03-09) — all expected from agent ops work. No hardware errors, no OOM kills in past 7 days.
+
+**Software updates**:
+- avalon: no upgradable packages — clean
+- xwing: Docker 29.1.3→29.3.0, libc6, openssl, kernel 6.12.47→6.12.62 still pending (tracked in #24). No security-origin tags. Commented on #24 with updated package list.
+- salvare: kernel 6.12.25→6.12.62 and raspi-utils pending — routine, no security tags.
+
+**Sandbox drift**: lucos_agent_coding_sandbox has one remote commit (Android SDK 36, PR #27) not in local checkout — but `git pull` showed already up to date. The commit is a lima.yaml provisioning change only (new VM creation), no live VM action required. No drift issue raised.
+
+**Issues commented on**:
+- lucos_agent_coding_sandbox#24: updated xwing package status
+
+**Notes**:
+- salvare disk at 81% — watch trend. Was 75% last week. If it hits 85% next check, raise an issue.
