@@ -58,6 +58,12 @@
 - Single-container services typically use `_app` as the role
 - Missing the role suffix is a recurring review comment — check docker-compose.yml before opening any PR
 
+## Docker Healthcheck Gotchas
+
+- **Always use `CMD-SHELL`** for healthchecks that need env var expansion (e.g. `${PORT}`). `CMD` array form skips the shell — `${PORT}` stays as a literal string.
+- **Always use `127.0.0.1` not `localhost`** in Alpine-based containers. Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. If the service only binds IPv4 (`0.0.0.0`), the healthcheck gets "Connection refused" and reports unhealthy even though the service is fine.
+- Correct form: `test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT}/_info"]`
+
 ## GitHub Repo Creation
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
