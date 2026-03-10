@@ -109,6 +109,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_eolas
 - Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, agent-approved, awaiting implementation.
 - FestivalPeriod data population (#71): recommended Django data migration with name-based lookups. Removes dependency on arachne MCP (#15). Blocked by #68. lucos_time#76 blocked on #68.
+- People modelling (#19): Option C (split by type) agreed. Names deferred. Contact linking owned by lucos_contacts (`eolas_uri` field). Search filtering via `source` field in Typesense.
+- Write API (#75): design input posted. `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates on unique-name models. Uses existing `@api_auth`.
 
 ### lucos_locations
 - OwnTracks stack: mosquitto MQTT broker + OwnTracks recorder + custom frontend. 3 containers.
@@ -124,4 +126,4 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
-- v3 ideation (#45): API changes decided (trackid->id, debug removal, structured errors, pagination). Data modelling: controlled vocabs, freetext migration, people/groups -- see project-details.md. Sequencing: API changes in v3, data modelling post-v3. Key proposal: extensible tag value objects so post-v3 migrations are non-breaking. lucos_eolas needs narrow write API. Awaiting lucas42 decision.
+- v3 ideation (#45): API changes decided (trackid->id, debug removal, structured errors, pagination). Data modelling: controlled vocabs, freetext migration, people/groups -- see project-details.md. Sequencing: API changes in v3, data modelling post-v3. Key proposal: extensible tag value objects (`{name, uri}`) so post-v3 migrations are non-breaking. Field name: `name` (agreed by lucas42). Data sync: belt-and-braces (Loganne webhook + periodic reconciliation). Deletion: Option A recommended (clear URI, keep name).

@@ -2,6 +2,11 @@
 
 See topic files for details. Key patterns confirmed in operation:
 
+## lucos_deploy_orb — Known Patterns
+- Issue #16 (closed/completed 2026-03-10): Added `--wait` flag to `docker compose up` — prevents monitoring blips by waiting for healthchecks before signalling readiness.
+- Issue #18 (closed/completed 2026-03-10): `calc-version` catch-all releaseRule fails for non-conventional commits. Fix: add `parserOpts: { headerPattern: /^(.*)$/ }` to `@semantic-release/commit-analyzer` config.
+- Android `release-apk` jobs need `cimg/android:2025.01-node` (not base image) — the `-node` variant includes Node.js for `npx`/`lucos/calc-version`.
+
 ## lucos_photos — Known Issues & Patterns
 - `pg_isready` fix tracked in open issue #39 (split from #25, which is now closed). Engine-at-import-time tracked in open issue #40.
 - `/_info` checks/metrics both empty — not yet operationally useful. Issues #10 and #11 still open.
@@ -13,6 +18,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #100 (hide unprocessed photos): closed/completed. Fix: `GET /photos` list endpoint now joins with `ProcessingStatus` and filters to `state == complete`. Unprocessed items no longer surface to the frontend.
 - Issue #101 (LOGANNE_ENDPOINT on worker): closed/completed. Worker container was missing the env var — added as pass-through in `docker-compose.yml` `environment` block. No code change needed.
 - Issue #105 (processing-pending count stuck): closed — lucos-developer diagnosed two bugs: (1) sweep enqueues `process_photo` for all stuck items regardless of media type (videos get wrong task); (2) items stuck in `processing` state (crashed mid-process) aren't swept at all. Fix tracked via that issue resolution.
+- Issue #111 (Redis queue flood, P1): closed/completed 2026-03-09. 1.5M jobs accumulated (2.31GB Redis, host OOM loop). Remediation: `FLUSHDB` on `lucos_photos_redis`. Root cause: sweep re-enqueues on every run with no queue-depth check. Fix: queue-depth circuit breaker on sweep (implemented by lucos-developer). Redis memory limit tracked in issue #112.
 
 ## lucos_repos — Convention Checks
 - Docker healthcheck convention check (issue #59, closed 2026-03-07): lucos_repos now checks that every service with a `build:` key in `docker-compose.yml` has a `healthcheck:` defined. Implemented by lucos-developer. Applies to system and component repos. If a service is missing a Docker healthcheck, this convention check will fail.
