@@ -1,18 +1,13 @@
 {
   "name": "lucos-all-hands",
   "description": "All lucos personas assembled for team coordination",
-  "createdAt": 1773157210163,
   "leadAgentId": "team-lead@lucos-all-hands",
-  "leadSessionId": "9aa4b674-63b7-480f-9db4-20785296e9a2",
   "members": [
     {
       "agentId": "team-lead@lucos-all-hands",
       "name": "team-lead",
       "agentType": "team-lead",
       "model": "claude-opus-4-6",
-      "joinedAt": 1773157210163,
-      "tmuxPaneId": "",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": []
     },
     {
@@ -23,9 +18,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "blue",
       "planModeRequired": false,
-      "joinedAt": 1773157214343,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     },
@@ -37,9 +29,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "green",
       "planModeRequired": false,
-      "joinedAt": 1773157215683,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     },
@@ -51,9 +40,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "yellow",
       "planModeRequired": false,
-      "joinedAt": 1773157217111,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     },
@@ -65,12 +51,8 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "purple",
       "planModeRequired": false,
-      "joinedAt": 1773157217884,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
-      "backendType": "in-process",
-      "isActive": false
+      "backendType": "in-process"
     },
     {
       "agentId": "lucos-security@lucos-all-hands",
@@ -80,9 +62,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "orange",
       "planModeRequired": false,
-      "joinedAt": 1773157219235,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     },
@@ -94,9 +73,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "pink",
       "planModeRequired": false,
-      "joinedAt": 1773157220569,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     },
@@ -108,9 +84,6 @@
       "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
       "color": "cyan",
       "planModeRequired": false,
-      "joinedAt": 1773157221415,
-      "tmuxPaneId": "in-process",
-      "cwd": "/home/lucas.linux/sandboxes",
       "subscriptions": [],
       "backendType": "in-process"
     }

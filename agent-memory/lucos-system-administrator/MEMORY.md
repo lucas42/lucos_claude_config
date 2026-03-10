@@ -131,9 +131,9 @@ The auto-commit cron script at `~/.claude/scripts/commit-agent-memory.sh` also s
 
 ## Claude Code persona file caching
 
-Claude Code caches persona files (`~/.claude/agents/*.md`) at conversation start. Changes made mid-conversation are NOT picked up by new Task tool invocations within the same conversation. A Claude restart is required for agents to receive updated persona files.
+Claude Code caches persona files (`~/.claude/agents/*.md`) at conversation start. Changes made mid-conversation are NOT picked up by new teammate agent invocations within the same conversation. A Claude restart is required for agents to receive updated persona files.
 
-Confirmed 2026-03-06: restructured the SRE persona file mid-conversation but the SRE agent still received the old version in subsequent Task invocations.
+Confirmed 2026-03-06: restructured the SRE persona file mid-conversation but the SRE agent still received the old version in subsequent invocations within that same session.
 
 ## Persona ops-checks restructure (2026-03-06)
 
