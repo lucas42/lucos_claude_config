@@ -371,7 +371,7 @@ Issues should be closed automatically via the closing keyword in the merged PR. 
 
 ## After a PR is Created
 
-After opening a pull request, implementation teammates are responsible for requesting their own code review. Send a message to the `code-reviewer` teammate directly, following the process in [`pr-review-loop.md`](pr-review-loop.md).
+After opening a pull request, implementation teammates are responsible for requesting their own code review. Send a message to the `lucos-code-reviewer` teammate directly, following the process in [`pr-review-loop.md`](pr-review-loop.md).
 
 The dispatcher no longer orchestrates this — the review loop is handled peer-to-peer between the implementation teammate and the code reviewer.
 
@@ -433,8 +433,8 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
 `~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes need to be made to files under `~/.claude`, the dispatcher must **never** edit those files directly — all changes must be delegated to the appropriate teammate from the start via SendMessage. The teammate should make both the file edits and the commit, so it has full context of what changed and why.
 
 Route to the appropriate teammate based on the type of change:
-- **`issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
-- **`system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
+- **`lucos-issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
+- **`lucos-system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
 
 Always commit to `main` and push. Do not create or use feature branches.
 

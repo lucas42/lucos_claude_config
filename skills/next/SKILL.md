@@ -24,7 +24,7 @@ If the script reports no implementable issues, tell the user there is nothing re
 
 ## Step 2: Dispatch the correct teammate
 
-Extract the teammate name from the owner label by stripping both the `owner:` and `lucos-` prefixes (e.g. `owner:lucos-developer` becomes teammate `developer`). Send a message to that teammate using SendMessage, passing the **specific issue URL** so they know exactly what to work on. For example:
+Extract the teammate name from the owner label by stripping the `owner:` prefix (e.g. `owner:lucos-developer` becomes teammate `lucos-developer`). Send a message to that teammate using SendMessage, passing the **specific issue URL** so they know exactly what to work on. For example:
 
 > "implement issue https://github.com/lucas42/lucos_photos/issues/42"
 
@@ -45,7 +45,7 @@ If a PR was created and approved:
    - **If there ARE dependent issues to unblock:**
      - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
      - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
-     - Once the issue is closed, send a message to the `issue-manager` teammate asking it to update any issues that were blocked by the now-closed issue (i.e. remove the blocking relationship / unblock dependent issues).
+     - Once the issue is closed, send a message to the `lucos-issue-manager` teammate asking it to update any issues that were blocked by the now-closed issue (i.e. remove the blocking relationship / unblock dependent issues).
    - **If there are NO dependent issues:** skip the waiting entirely — the PR will merge on its own via auto-merge and there is nothing else to do.
 
 4. **If `unsupervisedAgentCode` is missing or `false`:**

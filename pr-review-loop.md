@@ -10,11 +10,11 @@ After creating a PR, track the **iteration count** starting at 1.
 
 ### Step 1: Request code review
 
-Send a message to the `code-reviewer` teammate asking it to review the PR:
+Send a message to the `lucos-code-reviewer` teammate asking it to review the PR:
 
 > "review PR {pr_url}"
 
-Wait for the code-reviewer to respond.
+Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
@@ -34,7 +34,7 @@ Address the code review feedback yourself -- you are the implementation teammate
 
 ### Step 4: Specialist review
 
-The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the persona name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line and derive the teammate name by stripping the `lucos-` prefix (e.g. `lucos-security` becomes teammate `security`).
+The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the teammate name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line — the persona name is also the teammate name (e.g. `lucos-security`).
 
 Send a message to that specialist teammate asking it to review the PR:
 
