@@ -117,9 +117,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Shared `lucos_router_letsencrypt` volume (external) provides TLS certs.
 
 ### lucos_docker_health (lucos#45)
-- Proposed new service: monitors Docker container healthchecks, exposes via `/_info`.
-- Design posted: Go, avalon-only initially, own domain, container name as check key, omit containers without healthchecks (count as metric), `:ro` socket + non-root + minimal image.
-- Awaiting lucas42 feedback on design.
+- Proposed new service: monitors Docker container healthchecks.
+- **Revised design (lucas42 proposal, agreed):** Push model via `lucos_schedule_tracker` instead of `/_info` polling. Go binary reads Docker socket (`:ro`), POSTs to schedule_tracker `/report-status` every 60s. `system` field: `lucos_docker_health_{hostname}`. Per-host granularity (unhealthy container names in `message`). Same image all hosts, different `SYSTEM` env var. No new domains/configy/router needed. Security: `:ro` socket, read-only API calls, non-root, minimal image.
+- Awaiting lucas42 decision on next step (ADR vs implementation tickets).
 
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
