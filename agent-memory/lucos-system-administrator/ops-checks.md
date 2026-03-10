@@ -336,3 +336,14 @@ sandbox_drift: 2026-03-10
 
 **Notes**:
 - salvare disk at 81% — watch trend. Was 75% last week. If it hits 85% next check, raise an issue.
+
+### 2026-03-10 (SECOND RUN — container status only; weekly checks ran earlier today, monthly checks last ran 2026-03-05 — not yet due)
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_arachne_web` (known #87/#91), `lucos_backups` (known #49), `lucos_comhra_agent` (known #9) — all existing tracked issues. NEW: `lucos_photos_api` (unhealthy, up only 8 minutes — recently redeployed, healthcheck failing with `wget: not found`, exit 127)
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern; no unhealthy containers
+
+**Issue raised**:
+- lucos_photos#127: healthcheck broken — wget not installed in container image
