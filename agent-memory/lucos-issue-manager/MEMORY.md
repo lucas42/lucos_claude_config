@@ -64,8 +64,8 @@ When marking `agent-approved`, also assign an `owner:*` label for implementation
 - lucos-issue-manager responds to both "triage your issues" and "review your issues"
 - Review covers `needs-refining` issues assigned via `owner:lucos-issue-manager` -- typically workflow, process docs, issue conventions
 - Uses `get-issues-for-persona --review lucos-issue-manager` for discovery
-- Participates in Phase 2 of /routine skill (alongside specialist agents)
-- lucos-developer also participates in Phase 2 review for design-phase input
+- Participates in Phase 4 of /routine skill (alongside specialist teammates)
+- lucos-developer also participates in Phase 4 review for design-phase input
 
 Labels exist across 20+ repos (including newer repos like lucos_mail, lucos_physical_web, lucos_loganne_pythonclient, lucos_schedule_tracker_pythonclient, lucos_mockauthentication). See [label-colours.md](label-colours.md) for full colour scheme.
 

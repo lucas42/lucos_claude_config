@@ -264,7 +264,7 @@ Canonical identity data for all personas (App ID, Installation ID, bot user ID, 
 
 Each persona must use its own dedicated GitHub App. The `--app` flag is **required** — there is no default. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`. Omitting `--app` will result in an error.
 
-**Important:** Git and GitHub API calls must be made within a persona context. The dispatcher itself cannot make git commits or GitHub API calls — any task requiring these must be handed off to the appropriate persona via the Task tool.
+**Important:** Git and GitHub API calls must be made within a persona context. The dispatcher itself cannot make git commits or GitHub API calls — any task requiring these must be handed off to the appropriate teammate via SendMessage.
 
 ### Setup
 
@@ -373,7 +373,7 @@ Issues should be closed automatically via the closing keyword in the merged PR. 
 
 **Every time any persona creates a pull request, the dispatcher MUST run the PR review loop.** No exceptions — this applies whether the PR came from `/next`, an ad-hoc task, an ops check fix, or any other workflow.
 
-The full procedure is documented in [`pr-review-loop.md`](pr-review-loop.md). In short: launch `lucos-code-reviewer` to review the PR, then iterate between the code reviewer and the implementation persona until the PR is approved (up to 5 iterations).
+The full procedure is documented in [`pr-review-loop.md`](pr-review-loop.md). In short: send a message to the `code-reviewer` teammate to review the PR, then iterate between the code reviewer and the implementation teammate until the PR is approved (up to 5 iterations).
 
 Do not consider an implementation task complete until the review loop has finished.
 
@@ -430,11 +430,11 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
 
 ### Version-controlled `~/.claude` changes
 
-`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes need to be made to files under `~/.claude`, the dispatcher must **never** edit those files directly — all changes must be delegated to the appropriate persona from the start using the Task tool. The persona should make both the file edits and the commit, so it has full context of what changed and why.
+`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes need to be made to files under `~/.claude`, the dispatcher must **never** edit those files directly — all changes must be delegated to the appropriate teammate from the start via SendMessage. The teammate should make both the file edits and the commit, so it has full context of what changed and why.
 
-Route to the appropriate persona based on the type of change:
-- **`lucos-issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
-- **`lucos-system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
+Route to the appropriate teammate based on the type of change:
+- **`issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
+- **`system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
 
 Always commit to `main` and push. Do not create or use feature branches.
 

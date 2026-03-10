@@ -4,15 +4,17 @@ description: All agents review their issues and run ops checks
 disable-model-invocation: true
 ---
 
-Dispatch agents in sequential phases using the Task tool. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
+Dispatch teammates in sequential phases using SendMessage. Do not ask for clarification — immediately begin Phase 1. You must wait for each phase to fully complete before starting the next.
+
+Teammate names correspond to persona names with the `lucos-` prefix stripped (e.g. `lucos-issue-manager` → teammate `issue-manager`).
 
 ## Phase 1: Triage (sequential — run immediately)
 
-Launch one agent:
+Send a message to one teammate:
 
-1. `lucos-issue-manager` — "triage your issues"
+1. `issue-manager` — "triage your issues"
 
-**Wait for it to complete before proceeding.**
+**Wait for the teammate to respond before proceeding.**
 
 Rationale: the issue manager runs first to assign `owner:` labels to unowned issues so that later phases pick up fresh work.
 
@@ -24,24 +26,24 @@ Rationale: Phase 1 applies `owner:` labels that later agents use to discover the
 
 ## Phase 2: Ops Checks (parallel — after propagation delay)
 
-Once the 15-second delay has elapsed, launch agents that have ops checks concurrently in the same response:
+Once the 15-second delay has elapsed, send messages to these teammates concurrently in the same response:
 
-2. `lucos-code-reviewer` — "review any open PRs"
-3. `lucos-security` — "run your ops checks"
-4. `lucos-system-administrator` — "run your ops checks"
-5. `lucos-site-reliability` — "run your ops checks"
+2. `code-reviewer` — "review any open PRs"
+3. `security` — "run your ops checks"
+4. `system-administrator` — "run your ops checks"
+5. `site-reliability` — "run your ops checks"
 
-**Wait for all to complete before proceeding.**
+**Wait for all teammates to respond before proceeding.**
 
 Rationale: ops checks run early so that any issues they raise can be triaged and reviewed in the same routine run, rather than waiting until the next run. PR review runs here because it's independent of the issue pipeline — PRs exist whether or not there are issues to review. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
 
 ## Phase 3: Mid-routine Triage (sequential — after Phase 2 completes)
 
-Once Phase 2 is done, launch one agent:
+Once Phase 2 is done, send a message to one teammate:
 
-6. `lucos-issue-manager` — "triage your issues"
+6. `issue-manager` — "triage your issues"
 
-**Wait for it to complete before proceeding.**
+**Wait for the teammate to respond before proceeding.**
 
 Rationale: the issue manager triages any issues raised during ops checks, assigns `owner:` labels, and ensures they are ready for the issue review phase that follows.
 
@@ -53,25 +55,25 @@ Rationale: same as Phase 1.5 — newly applied `owner:` labels need time to prop
 
 ## Phase 4: Issue Review (parallel — after propagation delay)
 
-Once the 15-second delay has elapsed, launch these seven agents concurrently in the same response:
+Once the 15-second delay has elapsed, send messages to these seven teammates concurrently in the same response:
 
-7. `lucos-architect` — "review your issues"
-8. `lucos-system-administrator` — "review your issues"
-9. `lucos-security` — "review your issues"
-10. `lucos-site-reliability` — "review your issues"
-11. `lucos-issue-manager` — "review your issues"
-12. `lucos-developer` — "review your issues"
-13. `lucos-code-reviewer` — "review your issues"
+7. `architect` — "review your issues"
+8. `system-administrator` — "review your issues"
+9. `security` — "review your issues"
+10. `site-reliability` — "review your issues"
+11. `issue-manager` — "review your issues"
+12. `developer` — "review your issues"
+13. `code-reviewer` — "review your issues"
 
-**Wait for all to complete before proceeding.**
+**Wait for all teammates to respond before proceeding.**
 
 Rationale: these agents often add comments or partial work rather than immediately closing issues, which may leave issues needing reassignment or label transitions. The issue manager reviews workflow/process issues assigned to it (distinct from its triage role). The developer reviews issues where implementation input is needed during the design phase. The code reviewer reviews closed issues it raised and any needs-refining issues assigned to it.
 
 ## Phase 5: Final Triage (sequential — after Phase 4 completes)
 
-Once Phase 4 is done, launch one final agent:
+Once Phase 4 is done, send a message to one final teammate:
 
-14. `lucos-issue-manager` — "triage your issues"
+14. `issue-manager` — "triage your issues"
 
 Rationale: the issue manager triages any issues that Phase 4 agents touched or raised, reassigns or transitions labels as appropriate, and tidies up anything left in an intermediate state.
 
