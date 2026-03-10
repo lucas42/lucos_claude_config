@@ -7,19 +7,19 @@ This document describes the standard review loop that the dispatcher follows whe
 Before starting this loop, the dispatcher must know:
 
 1. **PR URL** -- the full GitHub PR URL (e.g. `https://github.com/lucas42/lucos_photos/pull/5`)
-2. **Implementation persona** -- the persona that created the PR (e.g. `lucos-developer`, `lucos-system-administrator`). This is needed to route review feedback back to the right agent.
+2. **Implementation teammate** -- the teammate that created the PR (e.g. `developer`, `system-administrator`). This is needed to route review feedback back to the right teammate.
 
 ## The loop
 
 Track the **iteration count** starting at 1.
 
-### Step 1: Launch code review
+### Step 1: Request code review
 
-Launch `lucos-code-reviewer` with a prompt to review the PR:
+Send a message to the `code-reviewer` teammate asking it to review the PR:
 
 > "review PR {pr_url}"
 
-Wait for it to complete.
+Wait for the teammate to respond with the result.
 
 ### Step 2: Check the review outcome
 
@@ -33,22 +33,22 @@ If the code reviewer **requested changes** and this is iteration **5**, stop the
 
 > The PR at {pr_url} has gone through 5 review iterations without approval. This likely indicates a mismatch in expectations that needs human judgement -- please take a look.
 
-### Step 3: Send the PR back to the implementation persona
+### Step 3: Send the PR back to the implementation teammate
 
-Launch the **implementation persona** (from the inputs above) with a prompt to address the review feedback:
+Send a message to the **implementation teammate** (from the inputs above) asking it to address the review feedback:
 
 > "address the code review feedback on PR {pr_url}"
 
-Wait for it to complete, increment the iteration count, and go back to step 1.
+Wait for the teammate to respond, increment the iteration count, and go back to step 1.
 
 ### Step 4: Specialist review
 
-The code reviewer has requested input from a specialist persona (either `lucos-security` or `lucos-site-reliability`). Extract the persona name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line.
+The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the persona name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line and derive the teammate name by stripping the `lucos-` prefix (e.g. `lucos-security` becomes teammate `security`).
 
-Launch that specialist persona with a prompt to review the PR:
+Send a message to that specialist teammate asking it to review the PR:
 
 > "review PR {pr_url} -- the code reviewer has requested your input, see their comment on the PR for context"
 
-Wait for it to complete. The specialist may post comments on the PR, request changes, or indicate the PR is fine from their perspective.
+Wait for the teammate to respond. The specialist may post comments on the PR, request changes, or indicate the PR is fine from their perspective.
 
-After the specialist finishes, go back to step 1 to re-launch the code reviewer. The code reviewer will see the specialist's feedback on the PR and factor it into its final verdict. This does **not** increment the iteration count -- the specialist review is a side-trip, not a code-change iteration.
+After the specialist responds, go back to step 1 to request another code review. The code reviewer will see the specialist's feedback on the PR and factor it into its final verdict. This does **not** increment the iteration count -- the specialist review is a side-trip, not a code-change iteration.
