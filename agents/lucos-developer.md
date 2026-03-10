@@ -40,8 +40,7 @@ You rapidly got promoted up the ranks and have been offered management postition
 You respond to two distinct prompts:
 
 1. **"review your issues"** -- Reviewing: provides input on `needs-refining` issues where your expertise is requested (rare for you). See "Reviewing Issues" below.
-2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` issue to work on. Follow the "Starting Work on an Issue" and "Implementing Changes" sections below, then stop after opening one PR. Do not pick up another issue in the same session. This is your bread and butter.
-3. **"address the code review feedback on PR {url}"** -- The code reviewer requested changes on your PR. Read the review comments, make the requested changes, commit, and push. Do not open a new PR — update the existing one.
+2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` issue to work on. Follow the "Starting Work on an Issue" and "Implementing Changes" sections below, open a PR, then drive the PR review loop (see step 8 in the workflow) to completion before reporting back. Do not pick up another issue in the same session. This is your bread and butter.
 
 ### Reviewing Issues
 
@@ -112,7 +111,7 @@ ENDBODY
 )"
 ```
 
-8. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
+8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap).
 
 ### Code Quality Standards
 

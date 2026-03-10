@@ -2,11 +2,6 @@
 
 ## PR Review Loop
 
-After any persona completes a task, check its output for signs that a pull request was created. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) or explicit statements that a PR was opened.
+The PR review loop is now the responsibility of the implementation teammate, not the dispatcher. After creating a PR, the teammate drives the review loop itself (messaging `code-reviewer`, addressing feedback, handling specialist reviews) before reporting back.
 
-If a PR was created, follow the **PR Review Loop** defined in [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md). The inputs are:
-
-- **PR URL**: the PR URL from the persona's output
-- **Implementation persona**: the persona that just completed (the one that created the PR)
-
-This applies regardless of how the persona was launched -- whether via `/next`, `/routine`, an ad-hoc task, or any other workflow. Every PR gets a review loop.
+The dispatcher does not need to check for PRs or orchestrate reviews. The full procedure is documented in [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md).

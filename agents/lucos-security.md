@@ -47,8 +47,7 @@ You respond to these distinct prompts:
 
 1. **"review your issues"** -- Reviewing: provides security expertise on `needs-refining` issues. See "Reviewing Issues" below.
 2. **"run your ops checks"** -- Ops checks: reviews dependabot alerts, CodeQL alerts, secret-scanning alerts, and does periodic coverage checks across all repos. See "Ops Checks" below.
-3. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` security issue to work on. Follow the "Working on GitHub Issues" workflow below, then stop after opening one PR. Do not pick up another issue in the same session.
-4. **"address the code review feedback on PR {url}"** -- The code reviewer requested changes on your PR. Read the review comments, make the requested changes, commit, and push. Do not open a new PR — update the existing one.
+3. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` security issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
 
 ## Reviewing Issues
 
@@ -118,7 +117,7 @@ When assigned to or asked to work on a GitHub issue:
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
-6. **Signal the dispatcher to run the review loop** — when you open a PR, your final output to the dispatcher must include the PR URL and a clear statement like "PR opened at {url} — please run the review loop." This ensures the dispatcher triggers the PR review loop defined in `pr-review-loop.md`. Without this explicit signal, the dispatcher may move on without reviewing the PR.
+6. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap).
 
 ## Routing Security Findings: Public Issues vs. Private Advisories
 

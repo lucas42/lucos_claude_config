@@ -113,7 +113,7 @@ ENDBODY
 
 If multiple critical issues need reports, include them all in a single PR with a commit per report.
 
-Signal the dispatcher to run the review loop after opening the PR.
+After opening the PR, follow the PR review loop defined in `pr-review-loop.md` — message the `code-reviewer` teammate and drive the review to completion before reporting back.
 
 ---
 
