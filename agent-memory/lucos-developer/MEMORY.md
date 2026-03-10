@@ -38,8 +38,8 @@
   - `PhotoSyncWorkerFactory.kt` — custom WorkerFactory for DI
   - `PhotoBackupApplication.kt` — manually inits WorkManager (auto-init disabled in manifest)
 - **Tests**: Robolectric (sdk=34) for worker tests, plain JUnit + mockk for uploader tests
-- **Local SDK**: Only android-34 + build-tools 34.0.0 installed at `/opt/android-sdk`. SDK dir is read-only — cannot install SDK 35/36 locally.
-- **Conscrypt aarch64 issue**: Robolectric tests fail locally with `UnsatisfiedLinkError: no conscrypt_openjdk_jni-linux-aarch_64` because `conscrypt-openjdk-uber:2.5.2` (Robolectric's dep) has no aarch64 native lib. CI (x86_64) is unaffected.
+- **Local SDK**: Android SDK 36 + build-tools installed at `/opt/android-sdk` (as of 2026-03-10). Tests are configured with `@Config(sdk = [34])` so Robolectric still uses SDK 34 for test execution.
+- **Conscrypt aarch64 issue**: Robolectric tests (`PhotoSyncWorkerTest`) fail locally with `UnsatisfiedLinkError: no conscrypt_openjdk_jni-linux-aarch_64` because `conscrypt-openjdk-uber:2.5.2` (Robolectric's dep) has no aarch64 native lib. Installing SDK 36 does NOT fix this — it is a Robolectric/Conscrypt issue unrelated to the Android SDK version. CI (x86_64) is unaffected. `PhotoUploaderTest` (plain JUnit + mockk, no Robolectric) passes locally fine.
 - **WorkManager + Robolectric tests**: Use `@Config(sdk = [34], application = Application::class)` to prevent Robolectric from instantiating `PhotoBackupApplication`, whose `onCreate()` initialises WorkManager's static singleton. WorkManager's singleton interacts badly with Robolectric's per-test lifecycle. `TestListenableWorkerBuilder` bypasses WorkManager entirely — no WorkManager init is needed in tests.
 - **Robolectric MediaStore seeding**: `ContentResolver.insert()` on MediaStore URIs returns a URI but stores nothing (no real MediaProvider registered). Use `RoboCursor` + `ShadowContentResolver.setCursor(uri, cursor)` to pre-set query results, plus `registerInputStream()` for `openInputStream()`. Do NOT rely on insert/query round-tripping.
 
