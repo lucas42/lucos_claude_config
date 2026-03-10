@@ -314,7 +314,7 @@ Issues with the `audit-finding` label are created automatically by the `lucos_re
 Two dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
 
 - **`/routine`** (`~/.claude/skills/routine/SKILL.md`) — triggers a four-phase dispatch of all agent personas to triage issues, review them, run ops checks, and triage again. lucos-issue-manager runs in Phase 1 (triage), Phase 2 (review of issues assigned to it), and Phase 4 (triage again to handle anything Phase 2/3 agents touched).
-- **`/next`** (`~/.claude/skills/next/SKILL.md`) — finds the highest-priority `agent-approved` issue across all repos and dispatches the correct implementation persona, followed by a code review loop.
+- **`/next`** (`~/.claude/skills/next/SKILL.md`) — finds the highest-priority `agent-approved` issue across all repos and dispatches the correct implementation teammate. The teammate drives its own code review loop before reporting back.
 
 These skills are maintained as part of the `lucos_claude_config` repo (which tracks `~/.claude`). If the underlying workflow changes, the skill files should be updated alongside any persona instruction changes.
 

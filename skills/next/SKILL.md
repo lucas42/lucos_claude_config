@@ -28,24 +28,13 @@ Extract the teammate name from the owner label by stripping both the `owner:` an
 
 > "implement issue https://github.com/lucas42/lucos_photos/issues/42"
 
-Wait for the teammate to respond with the result.
+Wait for the teammate to respond with the result. The teammate is responsible for driving the PR review loop (see [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md)) before reporting back.
 
-## Step 3: Check for a new PR
+## Step 3: Post-completion handling
 
-After the teammate responds, check the output to determine whether a pull request was created. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) or explicit statements that a PR was opened.
+After the teammate reports back, check whether a PR was created and approved. Look for PR URLs (e.g. `https://github.com/lucas42/.../pull/N`) and approval confirmation in the teammate's response. If no PR was created (e.g. the teammate hit a blocker), report this to the user and stop.
 
-## Step 4: Review loop (if a PR was created)
-
-If no PR was created (e.g. the agent hit a blocker before opening a PR), skip this step.
-
-If a PR was created, follow the **PR Review Loop** defined in [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md). The inputs are:
-
-- **PR URL**: the URL from the agent's output
-- **Implementation teammate**: the teammate messaged in Step 2
-
-## Step 5: Post-approval handling
-
-After the PR review loop completes with approval:
+If a PR was created and approved:
 
 1. **Determine the repository name** from the PR URL (e.g. `lucos_photos` from `https://github.com/lucas42/lucos_photos/pull/5`).
 

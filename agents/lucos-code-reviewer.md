@@ -231,7 +231,7 @@ ENDBODY
 
 **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
 
-**2. Output a signal line** so the dispatcher knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
+**2. Output a signal line** so the implementation teammate knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
 
 ```
 SPECIALIST_REVIEW_REQUESTED: <persona-name>
