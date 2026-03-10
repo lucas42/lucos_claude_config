@@ -49,3 +49,8 @@ scripts/*.log
 # GitHub Actions workflows and other repo config
 !.github/
 !.github/**
+
+# Team config (config.json only — not inboxes or other runtime state)
+!teams/
+!teams/*/
+!teams/*/config.json
