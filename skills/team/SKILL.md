@@ -14,9 +14,7 @@ Run this command to list all persona files, excluding non-persona files:
 ls ~/.claude/agents/lucos-*.md | grep -v -e 'common-sections' -e 'ops-checks' -e 'circleci-api'
 ```
 
-For each file returned, derive two values:
-- **subagent_type**: the filename without the `.md` suffix (e.g. `lucos-developer`)
-- **teammate name**: the filename with both the `lucos-` prefix and `.md` suffix stripped (e.g. `developer`)
+For each file returned, derive the **teammate name** from the filename without the `.md` suffix (e.g. `lucos-developer`). This is also the `subagent_type`.
 
 ## Step 2: Create the team
 
@@ -26,8 +24,8 @@ Use the TeamCreate tool to create a team named `lucos-all-hands`.
 
 For **each** persona discovered in Step 1, spawn a teammate using the Task tool with these parameters:
 - `team_name`: `lucos-all-hands`
-- `name`: the teammate name (e.g. `developer`, `issue-manager`, `architect`)
-- `subagent_type`: the subagent_type (e.g. `lucos-developer`, `lucos-issue-manager`, `lucos-architect`)
+- `name`: the teammate name (e.g. `lucos-developer`, `lucos-issue-manager`, `lucos-architect`)
+- `subagent_type`: same as the teammate name (e.g. `lucos-developer`, `lucos-issue-manager`, `lucos-architect`)
 - `prompt`: `"You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions."`
 
 Spawn **all** teammates in parallel — make all Task tool calls in the same response.
