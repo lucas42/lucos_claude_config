@@ -56,8 +56,8 @@ After the PR review loop completes with approval:
 3. **If `unsupervisedAgentCode` is `true`:**
    - First, check whether any open issues are blocked by the issue this PR closes. Search for open issues that reference the closing issue as a blocker (e.g. issues with `status:blocked` that mention the issue number in their body or comments).
    - **If there ARE dependent issues to unblock:**
-     - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 5 minutes.
-     - If after 5 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
+     - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
+     - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
      - Once the issue is closed, launch `lucos-issue-manager` via the Task tool and ask it to update any issues that were blocked by the now-closed issue (i.e. remove the blocking relationship / unblock dependent issues).
    - **If there are NO dependent issues:** skip the waiting entirely — the PR will merge on its own via auto-merge and there is nothing else to do.
 
