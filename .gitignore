@@ -50,7 +50,8 @@ scripts/*.log
 !.github/
 !.github/**
 
-# Team config (config.json only — not inboxes or other runtime state)
+# Team config — track config.canonical.json (stripped of runtime state) not config.json
+# (config.json is overwritten by Claude Code each session with timestamps, session IDs, etc.)
 !teams/
 !teams/*/
-!teams/*/config.json
+!teams/*/config.canonical.json
