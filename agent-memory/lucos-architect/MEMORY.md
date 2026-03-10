@@ -116,6 +116,11 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - TLS protocol errors (#9): `/_info` health check causes mosquitto log noise. Assigned to SRE.
 - Shared `lucos_router_letsencrypt` volume (external) provides TLS certs.
 
+### lucos_docker_health (lucos#45)
+- Proposed new service: monitors Docker container healthchecks, exposes via `/_info`.
+- Design posted: Go, avalon-only initially, own domain, container name as check key, omit containers without healthchecks (count as metric), `:ro` socket + non-root + minimal image.
+- Awaiting lucas42 feedback on design.
+
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
