@@ -21,7 +21,13 @@ Overflow from MEMORY.md for projects with extensive design history.
   - Freetext-to-controlled: `memory` -> eolas Memory type, `theme_tune`/`soundtrack` -> eolas CreativeWork, `album` -> first-class local concept in API (new table). Merge tooling is prerequisite, not optional.
   - People/groups: recommended Option C (split by type -- contacts for personal, eolas for famous/fictional, link via arachne). Depends on lucos_eolas#19 resolution.
   - Sequencing: v3 ships API structural changes + album concept. Controlled vocab migrations post-v3 (one at a time). People modelling longer term.
-  - Awaiting lucas42 decision on sequencing and per-field recommendations.
+  - lucas42 DECIDED: options 1,2,3,5 approved. Option 4 (weighting JSON) rejected.
+  - lucas42 raised data modelling scope. Architect responded with per-field recommendations + sequencing.
+  - Follow-up (2026-03-10): lucas42 agreed Option C for people. Three questions answered:
+    1. lucos_eolas write API: narrow `POST /api/{type}/` for create-on-the-fly (Person, CreativeWork). Not general CRUD.
+    2. Posted Option C rationale on lucos_eolas#19.
+    3. Breaking change strategy: design v3 tag values as objects (`{"value": "...", "uri": "..."}`) from day one. Then all post-v3 controlled vocab migrations are data migrations, not API changes. No further version bumps needed. Key insight: v3 tag value format must be extensible.
+  - Awaiting lucas42 decision on tag value format proposal and overall approach.
 
 ## lucos_repos -- Greenfield redesign (#22)
 

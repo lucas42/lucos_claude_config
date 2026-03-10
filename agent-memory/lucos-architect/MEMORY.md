@@ -124,4 +124,4 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
 - 6 multi-value predicates: composer, producer, language, offence, about, mentions.
-- v3 ideation (#45): API changes decided (trackid->id, debug removal, structured errors, pagination). Data modelling: controlled vocabs, freetext migration, people/groups -- see project-details.md. Sequencing: API changes in v3, data modelling post-v3.
+- v3 ideation (#45): API changes decided (trackid->id, debug removal, structured errors, pagination). Data modelling: controlled vocabs, freetext migration, people/groups -- see project-details.md. Sequencing: API changes in v3, data modelling post-v3. Key proposal: extensible tag value objects so post-v3 migrations are non-breaking. lucos_eolas needs narrow write API. Awaiting lucas42 decision.
