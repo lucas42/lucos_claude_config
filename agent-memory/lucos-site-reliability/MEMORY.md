@@ -61,6 +61,9 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_comhra — Known Issues
 - Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Closed/completed — lucos-developer added `restart: always` to both `llm` and `agent` services.
 
+## lucos_media_metadata_manager — Known Issues
+- Issue #58 (P3, 2026-03-10): PHP warnings `Undefined array key` for optional POST fields (`offence`, `about`, `mentions`) in `updatetrack.php` lines 22-23. Non-fatal but indicates missing `isset()` / null coalescing for optional form fields. Fix: use `$_POST["fieldname"] ?? null`.
+
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.
 
