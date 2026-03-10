@@ -27,7 +27,9 @@ Overflow from MEMORY.md for projects with extensive design history.
     1. lucos_eolas write API: narrow `POST /api/{type}/` for create-on-the-fly (Person, CreativeWork). Not general CRUD.
     2. Posted Option C rationale on lucos_eolas#19.
     3. Breaking change strategy: design v3 tag values as objects (`{"value": "...", "uri": "..."}`) from day one. Then all post-v3 controlled vocab migrations are data migrations, not API changes. No further version bumps needed. Key insight: v3 tag value format must be extensible.
-  - Awaiting lucas42 decision on tag value format proposal and overall approach.
+  - lucas42 DECIDED (2026-03-10): tag value format approved. Field name: `name` (not `value` or `label`), consistent with lucos_eolas. Data sync: belt-and-braces (Loganne webhook + periodic reconciliation). Deletion: architect recommended Option A (clear URI, keep name). All awaiting final decision.
+  - Write API for lucos_eolas filed as #75. Design input posted: `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates. Uses existing `@api_auth`.
+  - lucos_eolas#19 follow-ups addressed (2026-03-10): names deferred, contact-to-person linking owned by lucos_contacts (`eolas_uri` field), search filtering via `source` field in Typesense (not RDF type distinction).
 
 ## lucos_repos -- Greenfield redesign (#22)
 

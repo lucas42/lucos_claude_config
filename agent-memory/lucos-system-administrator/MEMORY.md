@@ -149,6 +149,12 @@ As of 2026-03-06, lucos-architect's MEMORY.md is 203 lines — 3 over the 200-li
 
 `lucos_arachne_web` and `lucos_arachne_explore` are the persistent services that should always be `Up`.
 
+## lucos_docker_health: new service (2026-03-10)
+
+A new service `lucas42/lucos_docker_health` was created to monitor Docker container healthchecks across all hosts. Design (from lucos#45): a Go binary runs periodically on each host, reads local Docker healthcheck states, and pushes results to `lucos_schedule_tracker`. Uses `system` value `lucos_docker_health_{hostname}` (e.g. `lucos_docker_health_avalon`). Status is `error` if any container is unhealthy (with message), `healthy` otherwise.
+
+This means healthcheck monitoring will eventually be visible via `lucos_monitoring` (which polls schedule_tracker). When deployed, this will supersede the manual unhealthy-container check I do in ops checks. Implementation issues are tracked on `lucas42/lucos_docker_health`.
+
 ## Missing `restart: always` — silent failure pattern
 
 Containers without `restart: always` will stay down after a host reboot or a `docker compose stop`. This looks like an unexplained outage but is just missing config. Confirmed by lucos_comhra#2 (closed superseded by #3). When investigating containers that stopped without an obvious crash, check for missing restart policy before raising an outage issue.
