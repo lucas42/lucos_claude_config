@@ -299,6 +299,7 @@ Issues with the `audit-finding` label are created automatically by the `lucos_re
 - **Never leave audit-finding issues open "waiting for the audit to close them."** The audit tool will never close them. Issues are closed via the normal workflow: a PR with `Closes #N` is merged, or you close them manually if appropriate.
 - **Never close audit-finding issues prematurely expecting the audit not to re-raise them.** If the underlying convention still fails, the next audit sweep (within 6 hours) will create a brand new issue. Closing an issue does not suppress future findings.
 - **If a convention genuinely does not apply to a repo**, the fix is to update the audit convention's `Check` function to encode that logic -- not to close the issue and hope it stays closed. There is no suppression mechanism.
+- **When closing an audit-finding as a false positive** (e.g. a transient API error caused the convention check to fail, but the repo is actually compliant): also raise an issue on `lucas42/lucos_repos` describing the false positive, or if an existing issue already covers that class of false positive, add a comment noting this recurrence. This ensures the audit tool itself gets improved to prevent future false positives.
 
 ### Dispatcher Skills
 
