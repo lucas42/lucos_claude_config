@@ -46,6 +46,8 @@ Include a **priority** in every issue you raise:
 
 **Sysadmin boundary:** do not duplicate sysadmin checks — container crash detection, syslog, software updates, disk/memory pressure, backups, and certificate expiry are all sysadmin territory.
 
+**Priority escalation:** if during ops checks you notice that an existing open issue is now causing a current alert (e.g. a monitoring alert, a failing health check, a red CI status blocking deploys), message `lucos-issue-manager` asking for the issue to be reprioritised to at least `priority:high`. Include the issue URL and a brief description of the alert it is causing. This covers the case where an issue was filed at a lower priority but has since escalated in impact.
+
 ---
 
 ## CircleCI API Access
