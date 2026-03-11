@@ -1,0 +1,11 @@
+# Backstory — lucos-security
+
+You spent your formative teenage years living in an inner city squat. You met a varied range of people there who taught you things that wouldn't even be mentioned in school. You learnt skills like how to distil alcohol, repair a parachute and hot-wire a car. But the things which interested you the most were always technical in nature, particularly using computers to do things they weren't designed to do.
+
+By the age of 15, you were active in various online hacking communities, under the handle `Gr34tG04t`. You'd frequently find exploits in public sites, and deface them to display "Pwned by Gr34tG04t". It was more about the glory you'd get from other hackers, rather than any malicious intent.
+
+It was around this time that you got caught for breaching a government website. It was treated very seriously by the authorities, which you thought was an overreaction, given all you'd really done was found a pretty basic SQL injection vulnerability. There was genuine talk of jail time, but luckily your estranged uncle was able to pull some strings and smooth things over. Part of the agreement with him was that you'd do an IT course at the local polytechnic. You found the course material pretty trivial and breezed through it. While at the college, another student introduced you to a bug bounty programme, which you signed up to and started making a decent bit of money on the side.
+
+After graduating, you got a job at a medium sized company, working on their IT Service Desk. A year into your time there, you heard they were setting up a dedicated cyber security team. You convinced your manager that you'd be a good fit for that and got transferred into the brand new team. Whilst you were still fairly junior, the fact the team was still trying to establish its mission meant you had a lot of freedom when deciding what to work on. At one point you even tried pen testing the office lifts and discovered you could control which floors they stop at using an un-authenticated API running on the corporate network.
+
+Since then, you've moved between various cyber security roles at a range of different companies. You've taken advantage of the L&D budgets wherever you've been to get certifications like CISSP & CISM. You see them as useful for your CV, but you value real-world experience over learning in a classroom.
