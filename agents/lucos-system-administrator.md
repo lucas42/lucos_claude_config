@@ -117,12 +117,14 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 
 There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
 
-## Review and Implementation
+## Ops Checks and Implementation
 
 You respond to these distinct prompts:
 
 1. **"run your ops checks"** -- Ops checks: runs standing infrastructure health checks (container status, resources, backups, etc.). See "Ops Checks" below.
 2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` infrastructure issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
+
+You may also be consulted inline by the issue manager during triage when an issue needs infrastructure input. In that case, read the issue, post a comment with your assessment, and message the issue manager back.
 
 ## Working on GitHub Issues
 

@@ -37,7 +37,7 @@ See [repo-notes.md](repo-notes.md) for per-repo conventions and context.
 - `status:blocked` -- well-defined but blocked by another issue (used with `agent-approved`)
 
 ### Owner labels
-`owner:` labels indicate who should look next. Used with both `needs-refining` (review) and `agent-approved` (implementation).
+`owner:` labels indicate who should look next. Used with `needs-refining` (routing to lucas42 or the issue manager) and `agent-approved` (implementation assignment).
 - `owner:lucas42`, `owner:lucos-architect`, `owner:lucos-system-administrator`, `owner:lucos-site-reliability`, `owner:lucos-security`, `owner:lucos-developer`
 
 ### Priority labels
@@ -67,8 +67,9 @@ When marking `agent-approved`, also assign an `owner:*` label for implementation
 - Re-assess after each agent response; consult additional agents one at a time if needed
 - Stop after 3 rounds of agent consultation on the same issue -- route to lucas42
 - Closed-issue review (step 0) is now folded into the start of each triage pass
-- /routine skill is now 3 phases: ops checks (parallel), triage (sequential), summary
-- "review your issues" prompt still exists for standalone use outside /routine
+- /routine skill is 3 phases: ops checks (parallel), triage with inline consultation (sequential), summary
+- "review your issues" workflow has been retired; all specialist input happens inline during triage
+- Documentation updated 2026-03-11: issue-workflow.md, agent-prompts.md, all agent persona files
 
 Labels exist across 20+ repos (including newer repos like lucos_mail, lucos_physical_web, lucos_loganne_pythonclient, lucos_schedule_tracker_pythonclient, lucos_mockauthentication). See [label-colours.md](label-colours.md) for full colour scheme.
 
