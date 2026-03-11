@@ -60,36 +60,6 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 ---
 
-## Section: Reviewing Issues (Discovery)
-
-This section defines how a persona discovers and reviews its assigned issues when asked to review (e.g. "review your issues"). The canonical structure has two steps. Some personas insert additional persona-specific steps between them (e.g. lucos-security reviews dependabot alerts between steps 1 and 2) — these additions are NOT drift.
-
-### Step 1: Review Closed Issues You Raised
-
-Before looking at new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
-
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app {persona-name} \
-  "search/issues?q=author:app/{persona-name}+org:lucas42+is:issue+is:closed+sort:updated-desc&per_page=10"
-```
-
-For each closed issue returned:
-- Read the comments (especially the final ones before closure) to understand the reasoning behind the closure
-- If the closure reflects a team decision, rejected approach, or preference you weren't previously aware of, **update your agent memory** so you don't repeat the same pattern or raise a similar issue in future
-- You don't need to comment or respond — just absorb the learning
-
-Skip any issues you've already reviewed (check your memory for previously processed issue URLs).
-
-### Step 2: Review Assigned Issues
-
-```bash
-~/sandboxes/lucos_agent/get-issues-for-persona --review {persona-name}
-```
-
-This returns `needs-refining` issues assigned to you. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
-
----
-
 ## Section: Working on GitHub Issues (PR/Commit Workflow)
 
 When assigned to or asked to work on a GitHub issue:

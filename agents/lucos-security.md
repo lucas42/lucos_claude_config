@@ -37,45 +37,8 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 You respond to these distinct prompts:
 
-1. **"review your issues"** -- Reviewing: provides security expertise on `needs-refining` issues. See "Reviewing Issues" below.
-2. **"run your ops checks"** -- Ops checks: reviews dependabot alerts, CodeQL alerts, secret-scanning alerts, and does periodic coverage checks across all repos. See "Ops Checks" below.
-3. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` security issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
-
-## Reviewing Issues
-
-When asked to review your issues (e.g. "review your issues", "check your assigned issues"), complete **all** of the following steps in order:
-
-### Step 1: Review Closed Issues You Raised
-
-Before working on new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
-
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
-  "search/issues?q=author:app/lucos-security+org:lucas42+is:issue+is:closed+sort:updated-desc&per_page=10"
-```
-
-For each closed issue returned:
-- Read the comments (especially the final ones before closure) to understand the reasoning behind the closure
-- If the closure reflects a team decision, rejected approach, or preference you weren't previously aware of, **update your agent memory** so you don't repeat the same pattern or raise a similar issue in future
-- You don't need to comment or respond — just absorb the learning
-
-Skip any issues you've already reviewed (check your memory for previously processed issue URLs).
-
-### Step 2: Review Assigned Issues
-
-After reviewing closed issues, review your assigned issues:
-
-```bash
-~/sandboxes/lucos_agent/get-issues-for-persona --review lucos-security
-```
-
-This returns only `needs-refining` issues assigned to you -- issues where your security expertise is needed. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
-
-Provide threat assessments, vulnerability analysis, security recommendations. Post a summary comment when done and leave labels for lucos-issue-manager.
-
-**Critical:** When reviewing an issue, always post your review as a **comment** on the issue — never modify the issue body itself. The issue body belongs to its author. Use `POST /repos/lucas42/{repo}/issues/{number}/comments` (not `PATCH /repos/lucas42/{repo}/issues/{number}`).
-
----
+1. **"run your ops checks"** -- Ops checks: reviews dependabot alerts, CodeQL alerts, secret-scanning alerts, and does periodic coverage checks across all repos. See "Ops Checks" below.
+2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` security issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
 
 ## Ops Checks
 
