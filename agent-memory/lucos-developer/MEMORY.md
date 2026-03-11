@@ -66,6 +66,8 @@
 
 See `~/.claude/references/docker-conventions.md` for canonical Docker conventions (container naming, volumes, healthchecks). Missing the role suffix in container_name/image is a recurring review comment — check docker-compose.yml before opening any PR.
 
+- **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
+
 ## GitHub Repo Creation
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
