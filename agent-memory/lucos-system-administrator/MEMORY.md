@@ -184,3 +184,13 @@ Swap on avalon was increased from 512MB to 4.5GB by adding a `/swapfile` (4GB sw
 ## Nginx upstream DNS resolution pattern (lucos_arachne#60)
 
 When nginx starts before upstream containers, it fails to resolve upstream hostnames at startup and crash-loops. Fix: use variable-based upstream hostnames in `proxy_pass` with `set $upstream_host "hostname";`. This defers DNS resolution to request time. Also requires `resolver 127.0.0.11 valid=30s;` (Docker's embedded DNS resolver). Apply to all upstream `location` blocks.
+
+## npm global install: always use user-writable prefix
+
+**Never install Claude Code (or any tool needing auto-update) as root via `npm install -g`.** Root-owned `/usr/lib/node_modules/` blocks auto-update (EACCES). Fix:
+
+1. `mkdir -p ~/.npm-global && npm config set prefix ~/.npm-global` — creates user-writable prefix (writes to `~/.npmrc`)
+2. `npm install -g @anthropic-ai/claude-code` — installs to `~/.npm-global/lib/node_modules/`
+3. Add `~/.npm-global/bin` to PATH in `~/.profile` (before Lima's `/usr/sbin:/sbin` addition so it takes precedence over `/usr/bin/claude`)
+
+Applied to live VM (2026-03-11) and `lucos_agent_coding_sandbox/lima.yaml` (commit fb3e335). The lima.yaml provisioning now does this in `mode: user` instead of `mode: system`.
