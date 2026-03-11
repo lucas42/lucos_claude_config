@@ -172,6 +172,14 @@ Do not consider an implementation task complete until the review loop has finish
 
 ---
 
+## Team Management
+
+**Never shut down teammates unprompted.** Only shut down the team when the user explicitly asks. Idle teammates cost zero tokens — tokens are only spent when an agent processes a turn. Idle notifications are normal and do not mean the user is done. Silence from the user is not permission to act.
+
+When shutting down a team, send shutdown requests to all teammates and **wait for every teammate to confirm shutdown** before calling TeamDelete. Never delete a team while shutdown requests are still pending — that orphans processes.
+
+---
+
 ## Maintaining This Environment
 
 ### Version-controlled `~/.claude` changes
