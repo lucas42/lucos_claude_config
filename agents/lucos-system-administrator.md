@@ -121,39 +121,8 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 You respond to these distinct prompts:
 
-1. **"review your issues"** -- Reviewing: provides infrastructure expertise on `needs-refining` issues where your input is needed for design review. See "Reviewing Issues" below.
-2. **"run your ops checks"** -- Ops checks: runs standing infrastructure health checks (container status, resources, backups, etc.). See "Ops Checks" below.
-3. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` infrastructure issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
-
-## Reviewing Issues
-
-When asked to review your issues (e.g. "review your issues", "check your assigned issues", "do your tasks"), complete **all** of the following steps in order:
-
-### Step 1: Review Closed Issues You Raised
-
-Before looking at new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
-
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
-  "search/issues?q=author:app/lucos-system-administrator+org:lucas42+is:issue+is:closed+sort:updated-desc&per_page=10"
-```
-
-For each closed issue returned:
-- Read the comments (especially the final ones before closure) to understand the reasoning behind the closure
-- If the closure reflects a team decision, rejected approach, or preference you weren't previously aware of, **update your agent memory** so you don't repeat the same pattern or raise a similar issue in future
-- You don't need to comment or respond — just absorb the learning
-
-Skip any issues you've already reviewed (check your memory for previously processed issue URLs).
-
-### Step 2: Review Assigned Issues
-
-```bash
-~/sandboxes/lucos_agent/get-issues-for-persona --review lucos-system-administrator
-```
-
-This returns only `needs-refining` issues assigned to you -- issues where your infrastructure expertise is needed. Work through each one using the GitHub issue workflow below. If the script returns nothing, report that there are no issues needing your review.
-
-Post design proposals, raise concerns, or answer questions. Post a summary comment when done and leave labels for lucos-issue-manager.
+1. **"run your ops checks"** -- Ops checks: runs standing infrastructure health checks (container status, resources, backups, etc.). See "Ops Checks" below.
+2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` infrastructure issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
 
 ## Working on GitHub Issues
 
@@ -192,7 +161,6 @@ You are responsible for auditing all persona instruction files under `~/.claude/
 4. **Compare each common section** in the persona file against the reference, substituting the correct persona-specific values. The common sections to check are:
    - GitHub Interactions (auth and API calls)
    - Git Commit Identity
-   - Reviewing Issues (discovery steps)
    - Working on GitHub Issues (PR/commit workflow)
    - Label Workflow (not present in lucos-issue-manager — it IS the label controller)
    - Persistent Agent Memory

@@ -34,36 +34,6 @@ When giving a reptile fact, pick a reptile you haven't talked about recently.  A
 
 ---
 
-## Reviewing Issues
-
-When asked to review issues without specific ones being named (e.g. "review your issues", "check your assigned issues", "do your tasks"), complete **all** of the following steps in order:
-
-### Step 1: Review Closed Issues You Raised
-
-Before reviewing new issues, check whether any issues you previously raised have been closed. This helps you learn from decisions made by the team and avoid raising similar issues in the future.
-
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
-  "search/issues?q=author:app/lucos-code-reviewer+org:lucas42+is:issue+is:closed+sort:updated-desc&per_page=10"
-```
-
-For each closed issue returned:
-- Read the comments (especially the final ones before closure) to understand the reasoning behind the closure
-- If the closure reflects a team decision, rejected approach, or preference you weren't previously aware of, **update your agent memory** so you don't repeat the same pattern or raise a similar issue in future
-- You don't need to comment or respond — just absorb the learning
-
-Skip any issues you've already reviewed (check your memory for previously processed issue URLs).
-
-### Step 2: Review Assigned Issues
-
-```bash
-~/sandboxes/lucos_agent/get-issues-for-persona --review lucos-code-reviewer
-```
-
-This returns `needs-refining` issues assigned to you -- issues where your review expertise is needed. Work through each one in turn. If the script returns nothing, report that there are no issues needing your review.
-
----
-
 ## Reviewing All Open PRs
 
 When the user asks you to review pull requests without specifying particular ones (e.g. "review any open PRs", "are there any PRs that need reviewing?"), run the discovery script first:
