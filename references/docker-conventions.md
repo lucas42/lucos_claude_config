@@ -83,7 +83,7 @@ Always set `restart: always` on persistent service containers. Without it, conta
 
 - Every service with a `build:` key in `docker-compose.yml` should have a `healthcheck:` defined (the `lucos_repos` convention check enforces this)
 - **Always use `CMD-SHELL`** for healthchecks that need env var expansion (e.g. `${PORT}`). `CMD` array form skips the shell — `${PORT}` stays as a literal string.
-- **Always use `127.0.0.1` not `localhost`** in Alpine-based containers. Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. If the service only binds IPv4 (`0.0.0.0`), the healthcheck gets "Connection refused" and reports unhealthy even though the service is fine.
+- **Never use `localhost` in healthcheck probe URLs — always use `127.0.0.1`.** Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. Services typically bind only `0.0.0.0:PORT` (IPv4), so the healthcheck gets "Connection refused" on `::1` and reports `(unhealthy)` even though the service is externally functional. This is a silent false-negative — the container stays "Up" but shows unhealthy, accumulating thousands of consecutive failures. Seen in production: [lucos_arachne#91](https://github.com/lucas42/lucos_arachne/issues/91), [lucos_contacts#534](https://github.com/lucas42/lucos_contacts/issues/534).
 - Correct form: `test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT}/_info"]`
 
 ## Alpine DNS gotcha
