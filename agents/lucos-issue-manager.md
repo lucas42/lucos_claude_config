@@ -127,8 +127,14 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 3. Remove any `status:*` and review-phase `owner:*` labels.
 4. Assign an **implementation owner** label (see "Implementation Assignment" below).
 5. Assign a **priority** label (see "Priority Labels" below).
-6. Do NOT leave a comment unless there is something genuinely useful to add.
-7. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved -- this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
+6. **Add the issue URL to the implementation queue.** Append the URL to `~/sandboxes/lucos/docs/implementation-queue.txt`:
+   - For `priority:critical`: insert at the very top of the file (before all other URLs)
+   - For `priority:high`: append after the last `priority:high` URL (or after the `# priority:high` comment if no high issues exist)
+   - For `priority:medium`: append after the last `priority:medium` URL
+   - For `priority:low` or unprioritised: append at the end of the file
+   - Then commit and push the change to the `lucos` repo: `cd ~/sandboxes/lucos && git add docs/implementation-queue.txt && ~/sandboxes/lucos_agent/git-as-agent --app lucos-issue-manager commit -m "Add <issue_url> to implementation queue" && git push origin main`
+7. Do NOT leave a comment unless there is something genuinely useful to add.
+8. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved -- this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
 
 **If the issue needs input from another agent:**
 
