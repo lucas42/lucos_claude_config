@@ -55,3 +55,7 @@ scripts/*.log
 !teams/
 !teams/*/
 !teams/*/config.canonical.json
+
+# Infrastructure and convention reference files
+!references/
+!references/**
