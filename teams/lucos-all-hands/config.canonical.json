@@ -86,6 +86,83 @@
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-architect-2@lucos-all-hands",
+      "name": "lucos-architect-2",
+      "agentType": "lucos-architect",
+      "model": "opus",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "blue",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-code-reviewer-2@lucos-all-hands",
+      "name": "lucos-code-reviewer-2",
+      "agentType": "lucos-code-reviewer",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "green",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-developer-2@lucos-all-hands",
+      "name": "lucos-developer-2",
+      "agentType": "lucos-developer",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "yellow",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-issue-manager-2@lucos-all-hands",
+      "name": "lucos-issue-manager-2",
+      "agentType": "lucos-issue-manager",
+      "model": "opus",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "purple",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-security-2@lucos-all-hands",
+      "name": "lucos-security-2",
+      "agentType": "lucos-security",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "orange",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-site-reliability-2@lucos-all-hands",
+      "name": "lucos-site-reliability-2",
+      "agentType": "lucos-site-reliability",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "pink",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
+    },
+    {
+      "agentId": "lucos-system-administrator-2@lucos-all-hands",
+      "name": "lucos-system-administrator-2",
+      "agentType": "lucos-system-administrator",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions.",
+      "color": "cyan",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "in-process"
     }
   ]
 }
