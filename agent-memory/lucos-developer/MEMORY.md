@@ -61,18 +61,9 @@
 - **Workflow statuses**: `failed` → red, `success`/`running`/`on_hold` → green.
 - **`checkWorkflowStatuses/4`**: Pure function, fully unit-testable without HTTP mocks.
 
-## Docker Naming Convention (always check this)
+## Docker Conventions
 
-- `container_name` must be `lucos_<project>_<role>` — e.g. `lucos_repos_app`, `lucos_photos_api`
-- `image` must be `lucas42/lucos_<project>_<role>` — e.g. `lucas42/lucos_repos_app`
-- Single-container services typically use `_app` as the role
-- Missing the role suffix is a recurring review comment — check docker-compose.yml before opening any PR
-
-## Docker Healthcheck Gotchas
-
-- **Always use `CMD-SHELL`** for healthchecks that need env var expansion (e.g. `${PORT}`). `CMD` array form skips the shell — `${PORT}` stays as a literal string.
-- **Always use `127.0.0.1` not `localhost`** in Alpine-based containers. Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. If the service only binds IPv4 (`0.0.0.0`), the healthcheck gets "Connection refused" and reports unhealthy even though the service is fine.
-- Correct form: `test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT}/_info"]`
+See `~/.claude/references/docker-conventions.md` for canonical Docker conventions (container naming, volumes, healthchecks). Missing the role suffix in container_name/image is a recurring review comment — check docker-compose.yml before opening any PR.
 
 ## GitHub Repo Creation
 
