@@ -59,25 +59,27 @@ When marking `agent-approved`, also assign an `owner:*` label for implementation
 - Workflow/process docs: `owner:lucos-issue-manager`
 - Mixed work: `owner:lucos-developer` (ensure specialist reviewed first)
 
-## Review capability (introduced 2026-03-05)
+## Triage with inline agent consultation (introduced 2026-03-11)
 
-- lucos-issue-manager responds to both "triage your issues" and "review your issues"
-- Review covers `needs-refining` issues assigned via `owner:lucos-issue-manager` -- typically workflow, process docs, issue conventions
-- Uses `get-issues-for-persona --review lucos-issue-manager` for discovery
-- Participates in Phase 4 of /routine skill (alongside specialist teammates)
-- lucos-developer also participates in Phase 4 review for design-phase input
+- During triage, when an issue needs agent input, message the agent directly via SendMessage instead of labelling and waiting for a review phase
+- Do not comment on the issue about what input is needed -- include that in the message to the agent
+- Agent posts their comment/reaction on the issue, then messages back
+- Re-assess after each agent response; consult additional agents one at a time if needed
+- Stop after 3 rounds of agent consultation on the same issue -- route to lucas42
+- Closed-issue review (step 0) is now folded into the start of each triage pass
+- /routine skill is now 3 phases: ops checks (parallel), triage (sequential), summary
+- "review your issues" prompt still exists for standalone use outside /routine
 
 Labels exist across 20+ repos (including newer repos like lucos_mail, lucos_physical_web, lucos_loganne_pythonclient, lucos_schedule_tracker_pythonclient, lucos_mockauthentication). See [label-colours.md](label-colours.md) for full colour scheme.
 
-## Specialist follow-up routing (introduced 2026-03-03)
+## Specialist follow-up routing (introduced 2026-03-03, updated 2026-03-11)
 
-Two domains get specialist follow-up after the primary owner finishes, before `agent-approved`:
+Two domains get specialist follow-up after the primary agent's input, before `agent-approved`:
 
-- **SRE**: Issues touching monitoring, logging, observability, reliability, or incident management (response, reporting, post-mortems, tracking) get re-routed to `owner:lucos-site-reliability`
-- **Security**: Issues touching authentication, authorisation, data protection, secret management, or other security topics get re-routed to `owner:lucos-security`
+- **SRE**: Issues touching monitoring, logging, observability, reliability, or incident management -- consult SRE after primary agent
+- **Security**: Issues touching authentication, authorisation, data protection, secret management -- consult security after primary agent
 
-Both also apply mid-lifecycle if concerns are raised in comments after initial triage.
-Examples: pici#2 (monitoring, primary owner sysadmin), lucos_monitoring#26 (monitoring endpoint, primary owner architect)
+Now handled inline during triage (message the specialist sequentially after the primary agent) rather than via label-based re-routing between triage passes.
 
 ## Triage readiness checks
 
