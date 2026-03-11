@@ -38,7 +38,10 @@ If a PR was created and approved:
 
 1. **Determine the repository name** from the PR URL (e.g. `lucos_photos` from `https://github.com/lucas42/lucos_photos/pull/5`).
 
-2. **Check `~/sandboxes/lucos_configy/config/systems.yaml`** for the entry matching that repository name. Look for the field `unsupervisedAgentCode`.
+2. **Check the lucos_configy config files** for the entry matching that repository name. Look for the field `unsupervisedAgentCode` in all three files:
+   - `~/sandboxes/lucos_configy/config/systems.yaml`
+   - `~/sandboxes/lucos_configy/config/scripts.yaml`
+   - `~/sandboxes/lucos_configy/config/components.yaml`
 
 3. **If `unsupervisedAgentCode` is `true`:**
    - First, check whether any open issues are blocked by the issue this PR closes. Search for open issues that reference the closing issue as a blocker (e.g. issues with `status:blocked` that mention the issue number in their body or comments).
