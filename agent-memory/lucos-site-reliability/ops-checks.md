@@ -8,8 +8,8 @@ external_deps: 2026-03-06
 
 ## Container Log Review History
 
-lucos_comhra_agent: 2026-03-07
-lucos_comhra_llm: 2026-03-07
+lucos_comhra_agent: 2026-03-11
+lucos_comhra_llm: 2026-03-11
 lucos_schedule_tracker: 2026-03-10
 lucos_media_weightings: 2026-03-09
 lucos_photos_worker: 2026-03-09
@@ -25,7 +25,7 @@ lucos_contacts_app: 2026-03-07 (2nd review)
 lucos_contacts_db: 2026-03-09
 lucos_contacts_googlesync_import: 2026-03-09
 lucos_contacts_web: 2026-03-09
-lucos_creds: 2026-03-07
+lucos_creds: 2026-03-11
 lucos_creds_configy_sync: 2026-03-09
 lucos_creds_ui: 2026-03-09
 lucos_dns_sync: 2026-03-10
@@ -53,9 +53,9 @@ tfluke: 2026-03-09
 media_metadata_api_exporter: 2026-03-10
 media_metadata_manager: 2026-03-10
 notes: 2026-03-10
-root: 2026-03-07
+root: 2026-03-11
 router: 2026-03-10
-semweb: 2026-03-07
+semweb: 2026-03-11
 time: 2026-03-09
 lucos_arachne_mcp: 2026-03-10
 
