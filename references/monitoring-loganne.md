@@ -1,4 +1,4 @@
-# Monitoring Status API & Loganne
+# Monitoring & Loganne
 
 ## Monitoring Status API
 
@@ -69,8 +69,6 @@ No authentication required. Returns JSON.
 
 Loganne is the central event logging service for lucos. It provides a chronological feed of system events — deployments, data changes, and other notable activity across all lucos services. Useful for understanding what has changed recently, especially when investigating incidents.
 
-**Note:** Loganne is in-memory (no persistent storage). For long-term records, also leave a durable record (e.g. GitHub comment) when logging maintenance events.
-
 ### Reading events
 
 ```
@@ -102,11 +100,6 @@ No authentication required for writes. The `source` is hardcoded to `lucos_agent
 ~/sandboxes/lucos_agent/loganne-event plannedMaintenance "avalon rebooted to apply kernel update"
 ```
 
-### When to write Loganne events
+### Loganne as a communication channel
 
-**Planned maintenance**: Post a Loganne event before performing planned maintenance (reboots, migrations, etc.) so other agents (especially `lucos-site-reliability`) can distinguish planned downtime from incidents. Post the GitHub comment first (GitHub is up), then Loganne when the host recovers.
-
-Loganne event format for maintenance:
-```json
-{ "source": "lucos_agent", "type": "plannedMaintenance", "humanReadable": "avalon rebooted to clear swap", "url": "https://github.com/lucas42/..." }
-```
+When performing planned maintenance (reboots, migrations, etc.), post a Loganne event so other agents (especially `lucos-site-reliability`) can distinguish planned downtime from incidents. Note: Loganne is in-memory, so also leave a durable record (e.g. GitHub comment) for long-term reference.
