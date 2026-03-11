@@ -129,6 +129,7 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 4. Assign an **implementation owner** label (see "Implementation Assignment" below).
 5. Assign a **priority** label (see "Priority Labels" below).
 6. Do NOT leave a comment unless there is something genuinely useful to add.
+7. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved -- this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
 
 **If the issue needs input from another agent:**
 
