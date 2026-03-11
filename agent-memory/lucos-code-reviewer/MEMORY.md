@@ -1,5 +1,12 @@
 # Persistent Memory — lucOS Code Reviewer
 
+## Cross-Repo Review Rules
+
+### Docker Healthchecks — `localhost` vs `127.0.0.1`
+- **Always flag `localhost` in healthcheck URLs as a blocking issue.** On Alpine-based containers, `localhost` can resolve to `::1` (IPv6) rather than `127.0.0.1` (IPv4). If the service binds only IPv4, the healthcheck will fail silently.
+- The correct pattern is `http://127.0.0.1:<port>/_info`.
+- This was confirmed as a real failure mode via lucos_arachne#91. A missed instance in lucos_contacts PR #533 required a follow-up issue (#534).
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
