@@ -86,6 +86,11 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_deploy_orb — Known Issues
 - "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
 
+## lucos_contacts — Known Issues & Patterns
+- Django `ALLOWED_HOSTS` must include `127.0.0.1` when Docker healthchecks use `wget http://127.0.0.1:<port>/_info`. `wget` sends `Host: 127.0.0.1:<port>` which Django rejects by default. Fixed in PR #536 (2026-03-11). This is a general pattern — any Django service with an IP-based healthcheck needs the IP in `ALLOWED_HOSTS`.
+- PR #533 (add healthchecks) → PR #535 (localhost→127.0.0.1) → PR #536 (add 127.0.0.1 to ALLOWED_HOSTS). Full recovery after PR #536 CI deploy (~10 min from merge).
+- `schedule-tracker.l42.eu` check `lucos_contacts_googlesync_import` lags behind outages — it tracks the last N job runs, so it stays unhealthy until a successful run clears the error history. Self-heals without intervention.
+
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
 - Redis (`redis:7-alpine`) has persistence disabled by default — not suitable for durable queues without AOF/RDB config.
