@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-10
+container_status: 2026-03-11
 resource_checks: 2026-03-10
 syslog_review: 2026-03-10
 software_updates: 2026-03-10
@@ -347,3 +347,13 @@ sandbox_drift: 2026-03-10
 
 **Issue raised**:
 - lucos_photos#127: healthcheck broken — wget not installed in container image
+
+### 2026-03-11 (container status only; weekly checks last ran 2026-03-10, monthly checks last ran 2026-03-05 — none due)
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_arachne_web` (known #87/#91), `lucos_backups` (known #49), `lucos_comhra_agent` (known #9) — all existing tracked issues
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2+ weeks — one-shot test container, not a concern; no unhealthy containers
+
+**Note**: `lucos_photos_api` is now showing (healthy) on avalon — looks like a new image was deployed. Commented on lucos_photos#127 noting recovery. Issue-manager to close if confirmed.
