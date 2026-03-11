@@ -6,15 +6,21 @@ disable-model-invocation: true
 
 Follow this process. Do not ask for clarification — immediately begin.
 
-## Step 1: Clean up stale team
+## Step 1: Check for existing team
 
-The team `lucos-all-hands` may already exist from a previous session with stale members registered in its config. Before creating the team, clean up any leftover state:
+Before creating a new team, check whether `lucos-all-hands` already exists with healthy members:
+
+```bash
+cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
+```
+
+If the team exists and has members listed, try sending a test message to one teammate (e.g. the first member). If they respond, the team is healthy — **skip Steps 2–4 and go straight to Step 5** (report the roster). Reuse the existing team.
+
+If the team file doesn't exist, or exists but no teammates respond (stale from a previous session), clean up and proceed:
 
 ```bash
 rm -rf ~/.claude/teams/lucos-all-hands ~/.claude/tasks/lucos-all-hands
 ```
-
-This ensures TeamCreate starts fresh with no pre-existing members.
 
 ## Step 2: Discover personas
 
@@ -80,3 +86,11 @@ If `config.canonical.json` has no changes (the roster hasn't changed since the l
 ## Step 6: Report the roster
 
 After all teammates have been spawned, report the team roster to the user. List each teammate by name and confirm the team is ready.
+
+## Shutting down the team
+
+When the user asks to shut down the team:
+
+1. Send a `shutdown_request` to every teammate.
+2. **Wait for every teammate to confirm shutdown** before proceeding. Do not call TeamDelete while any shutdown requests are still pending — that orphans processes.
+3. Only after all confirmations are received, call TeamDelete to clean up.
