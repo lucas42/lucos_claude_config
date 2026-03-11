@@ -8,7 +8,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - ADR-0001: pgvector instead of Qdrant (decided #23, implemented #29, both closed)
 - Worker-Loganne constraint lifted (#24, closed): worker CAN call Loganne directly. Key learning: question architectural constraints early.
 - database.py engine issue (#25) closed, split into #39 (pg_isready retry) and #40 (engine function wrap)
-- No docker-compose healthchecks -- reliability gap
+- Docker-compose healthchecks now present (api + worker)
+- SSR (#137): recommended Option 2 (Jinja2 in existing API container). 3 pages to convert (index, photo, people). Eliminates nav duplication and client-side data fetching issues.
 - Android backup client (#3): separate repo `lucos_photos_android`
 - App downloads (#115): recommended GitHub Releases for APK storage, `GET /api/app/latest` endpoint. Depends on #38 (versioning).
 - App telemetry (#39 on android repo): recommended extending photos API with `POST /api/telemetry`. Skip OpenTelemetry. Revisit central service if second consumer appears.
@@ -110,7 +111,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_eolas
 - Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, agent-approved, awaiting implementation.
 - FestivalPeriod data population (#71): recommended Django data migration with name-based lookups. Removes dependency on arachne MCP (#15). Blocked by #68. lucos_time#76 blocked on #68.
-- People modelling (#19): Option C (split by type) agreed. Names deferred. Contact linking owned by lucos_contacts (`eolas_uri` field). Search filtering via `source` field in Typesense.
+- People modelling (#19): Option C (split by type) agreed. Names deferred. Contact linking owned by lucos_contacts (`eolas_uri` field). Search filtering: revised to `is_contact` boolean (not `source` field) -- simpler for merged records where one person appears in both contacts and eolas. Merge logic in arachne ingestor using `owl:sameAs`; contacts URI used as primary `id` in merged records.
 - Write API (#75): design input posted. `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates on unique-name models. Uses existing `@api_auth`.
 
 ### lucos_locations

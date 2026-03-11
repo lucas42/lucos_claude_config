@@ -49,6 +49,8 @@ See topic files for details. Key patterns confirmed in operation:
 - CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. Race condition confirmed still present (2026-03-05): `checkWorkflowStatuses` reports failed if ANY workflow in pipeline is failed, even when a later successful retry exists. Issue raised as #34 (P3).
 - lucos_arachne ingestor: unhandled webhook types from loganne causing 404 responses — events silently dropped. Issue raised as lucos_arachne#53.
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
+- Issue #41 (Emit Loganne events on health state transitions): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
+- lucos_loganne issue #215 (Increase event retention and add time-based filtering): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
 
 ## lucos_locations — Known Issues
 - Issue #9 (P3, 2026-03-06): `lucos_locations_otfrontend` (192.168.176.2) makes continuous TLS MQTT connections to mosquitto on port 8883, failing with "protocol error" every ~60 seconds. Longstanding (confirmed from 2026-03-01). Likely wrong port/TLS config — `otrecorder` correctly uses plain 1883. Related to issue #4 (cert auto-renewal).
