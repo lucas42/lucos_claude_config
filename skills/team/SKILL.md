@@ -37,7 +37,7 @@ Use the TeamCreate tool to create a team named `lucos-all-hands`.
 For **each** persona discovered in Step 2, spawn a teammate using TeamCreate with these parameters:
 - `team_name`: `lucos-all-hands`
 - `name`: the teammate name (e.g. `lucos-developer`, `lucos-issue-manager`, `lucos-architect`)
-- `prompt`: `"You have joined the lucos-all-hands team. Introduce yourself briefly and wait for instructions."`
+- `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
 
 Spawn **all** teammates in parallel — make all TeamCreate calls in the same response.
 
