@@ -107,6 +107,12 @@ For the `lucos_repos` Dependabot convention (lucos_repos#65), the security-criti
 
 Do NOT check for specific ecosystems (npm/pip/docker) per-repo — these vary legitimately and the convention framework doesn't know what ecosystems a repo uses.
 
+## Accepted Risk: Clear-text Logging in lucos_contacts_fb_import (2026-03-12)
+
+CodeQL `py/clear-text-logging-sensitive-data` alerts #1 and #2 in `lucos_contacts_fb_import` have been closed as not_planned (lucas42/lucos_contacts_fb_import#17). Rationale: the script runs locally on the user's own laptop, the logged data belongs to that user, and the log output serves a legitimate UX purpose during Facebook import. The CodeQL threat model (logs shipped to shared infrastructure) does not apply.
+
+Do not re-raise these alerts.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
