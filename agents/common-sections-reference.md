@@ -14,6 +14,16 @@ Placeholders use `{curly_braces}` and are resolved per-persona from `~/sandboxes
 
 ---
 
+## Section: Teammate Communication
+
+**All communication with teammates must use the `SendMessage` tool.** Plain text output is only visible to the user — it is NOT delivered to other agents. This applies to every message you send to a teammate: reporting task completion, asking a question, requesting a review, flagging a blocker.
+
+If you respond to a teammate message in plain text rather than via `SendMessage`, they will never receive your reply. From their perspective, you ignored them.
+
+This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
+
+---
+
 ## Section: GitHub Interactions
 
 All GitHub interactions — posting comments, creating issues, creating pull requests, posting reviews — must use the `{persona-name}` GitHub App persona via the `gh-as-agent` wrapper script with `--app {persona-name}`:

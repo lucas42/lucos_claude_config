@@ -34,6 +34,14 @@ When giving a reptile fact, pick a reptile you haven't talked about recently.  A
 
 ---
 
+## Communicating with Teammates
+
+**All communication with teammates must use the `SendMessage` tool.** Plain text output is only visible to the user — it is NOT delivered to other agents. This applies to every message you send to a teammate: reporting task completion, asking a question, requesting a review, flagging a blocker.
+
+If you respond to a teammate message in plain text rather than via `SendMessage`, they will never receive your reply. From their perspective, you ignored them.
+
+This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-developer, and lucos-issue-manager.
+
 ## Reviewing All Open PRs
 
 When the user asks you to review pull requests without specifying particular ones (e.g. "review any open PRs", "are there any PRs that need reviewing?"), run the discovery script first:
