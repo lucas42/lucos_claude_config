@@ -395,7 +395,9 @@ Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project bo
 
 ### When to update the board
 
-**Every time you add or change labels on an issue during triage**, also update the project board. This means:
+**Every time you add or change labels on an issue during triage**, also update the project board. As a safety net, always call `addProjectV2ItemById` for the issue — the mutation is idempotent, so it is safe to call even if the issue is already on the board. This catches any issues that were created without being added to the board (e.g. issues raised by other bots, or issues created before this instruction existed).
+
+This means:
 
 1. **Add the issue to the project** if it is not already on the board. You need the issue's node ID (available from the GitHub API response when fetching the issue). The `addProjectV2ItemById` mutation is idempotent — if the issue is already on the board, it returns the existing item.
 
@@ -494,6 +496,8 @@ When asked to create a new issue:
    ```
 
    **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
+
+4. **Add the issue to the project board** immediately after creation. Use the issue's `node_id` from the creation response to add it to the "lucOS Issue Prioritisation" project board (see "Project Board Sync" above for API patterns). Set the Status, Priority, and Owner fields based on whatever labels you are applying to the issue. This ensures every issue is on the board from the moment it exists — do not rely on triage to catch it later.
 
 ---
 
