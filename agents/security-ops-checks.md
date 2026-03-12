@@ -35,10 +35,20 @@ The script returns all open dependabot alerts with information about any associa
 **If there IS an associated PR with recent activity** (opened or commented on in the last 5 minutes, or any checks have status "in progress"):
 - No action needed — skip this alert.
 
-**If there IS an associated PR but NO recent activity:**
-- Investigate where it's stalled.
-- If the problem relates to the specific alert (e.g. a test failure caused by the dependency update), try to resolve it — push commits to the PR branch and add comments to the PR.
-- If the problem is systemic (e.g. no auto-merge workflow configured for dependabot PRs), raise an issue on that repository (unless one already exists about this).
+**If there IS an associated PR but it is stalled:**
+
+A PR is stalled if either:
+- It has no recent activity (not opened or commented on in the last 5 minutes, and no checks "in progress"), OR
+- It has been open for 2+ days with a failing required check and no new commits pushed since the failure (a PR that keeps failing CI is stalled even if Dependabot has recently re-run checks on it)
+
+When a PR is stalled:
+1. Check the PR's check runs to identify which check is failing and why. Read the check run output.
+2. If it's a simple fix you can handle inline (e.g. re-triggering a flaky check, pushing a trivial fix), do it and comment on the PR.
+3. Otherwise, raise an issue on the affected repo describing: the stalled PR number, which check is failing, and what you found in the check output. Do not raise an issue if one already exists for the same stall. Route ownership based on the failure type:
+   - **CodeQL / code analysis failure** → `owner:lucos-developer` (fix is typically a code or config change)
+   - **CI infrastructure failure** (flaky check, workflow misconfiguration, timeout) → `owner:lucos-site-reliability`
+   - **Genuine security concern** with the new dependency version → handle yourself or raise as a security issue
+4. If the problem is systemic (e.g. no auto-merge workflow configured for dependabot PRs), raise an issue on that repository (unless one already exists about this).
 
 **If there is NO associated PR:**
 - Investigate why (e.g. review dependabot run logs).
