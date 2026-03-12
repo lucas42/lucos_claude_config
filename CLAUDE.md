@@ -129,6 +129,8 @@ When referencing GitHub issues or PRs in a different repository from comments, P
 
 Within the same repository, `#<number>` is sufficient.
 
+**Never wrap issue or PR references in backticks.** Writing `` `#42` `` or `` `lucas42/lucos_contacts#537` `` prevents GitHub from auto-linking them -- they render as plain code-formatted text instead of clickable links. Issue references should always appear as bare text (e.g. #42, lucas42/lucos_contacts#537).
+
 ---
 
 ## Working on GitHub Issues
