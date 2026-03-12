@@ -29,7 +29,7 @@ Overflow from MEMORY.md for projects with extensive design history.
     3. Breaking change strategy: design v3 tag values as objects (`{"value": "...", "uri": "..."}`) from day one. Then all post-v3 controlled vocab migrations are data migrations, not API changes. No further version bumps needed. Key insight: v3 tag value format must be extensible.
   - lucas42 DECIDED (2026-03-10): tag value format approved. Field name: `name` (not `value` or `label`), consistent with lucos_eolas. Data sync: belt-and-braces (Loganne webhook + periodic reconciliation). Deletion: architect recommended Option A (clear URI, keep name). All awaiting final decision.
   - Write API for lucos_eolas filed as #75. Design input posted: `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates. Uses existing `@api_auth`.
-  - lucos_eolas#19 follow-ups addressed (2026-03-10): names deferred, contact-to-person linking owned by lucos_contacts (`eolas_uri` field), search filtering via `source` field in Typesense (not RDF type distinction).
+  - lucos_eolas#19 follow-ups addressed (2026-03-10): names deferred, contact-to-person linking owned by lucos_contacts (`eolas_uri` field), search filtering via `is_contact` boolean (not `source` field) -- simpler for merged records where one person appears in both contacts and eolas. Merge logic in arachne ingestor using `owl:sameAs`; **eolas URI** used as primary `id` in merged records (revised 2026-03-12 after lucas42 flagged URI consistency problem for media_metadata_api). contacts URI used as primary would cause mixed-URI tags when a person becomes a contact after initial tagging. Consumers needing contacts URI (e.g. lucos_photos) extract it from search record metadata.
 
 ## lucos_repos -- Greenfield redesign (#22)
 
