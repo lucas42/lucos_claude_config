@@ -18,7 +18,7 @@ Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
-If the code reviewer **approved** the PR, check whether you are allowed to merge it (see "Merge permissions" below). Then report the outcome (approval + PR URL + whether it was merged or is awaiting human merge) back to whoever asked you to do the work.
+If the code reviewer **approved** the PR, go to step 2a.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
@@ -27,6 +27,15 @@ If the code reviewer **requested changes** and the iteration count is **less tha
 If the code reviewer **requested changes** and this is iteration **5**, stop the loop and report back:
 
 > The PR at {pr_url} has gone through 5 review iterations without approval. This likely indicates a mismatch in expectations that needs human judgement.
+
+### Step 2a: Check merge permissions
+
+**Do not merge the PR yet.** First, look up the repository in lucos_configy's configuration and check for `unsupervisedAgentCode: true`.
+
+- **If the repo has `unsupervisedAgentCode: true`**: merge the PR, then report the outcome (approval + PR URL + that it was merged) back to whoever asked you to do the work.
+- **If the repo does NOT have `unsupervisedAgentCode: true`** (or the flag is absent/false): do **not** merge. Report back that the PR is approved and awaiting human merge.
+
+This check is mandatory. Merging a PR in a repo without `unsupervisedAgentCode: true` bypasses human oversight that the repo owner requires. **Never skip this step.**
 
 ### Step 3: Address the review feedback
 
@@ -43,11 +52,3 @@ Send a message to that specialist teammate asking it to review the PR:
 Wait for the specialist to respond. The specialist may post comments on the PR, request changes, or indicate the PR is fine from their perspective.
 
 After the specialist responds, go back to step 1 to request another code review. The code reviewer will see the specialist's feedback on the PR and factor it into its final verdict. This does **not** increment the iteration count -- the specialist review is a side-trip, not a code-change iteration.
-
-## Merge permissions
-
-After a PR is approved, **do not automatically merge it.** Whether an agent is allowed to merge depends on the repository's configuration in lucos_configy.
-
-**Check `unsupervisedAgentCode`:** Look up the repository in lucos_configy's configuration. If the repo has `unsupervisedAgentCode: true`, the agent may merge the PR. If the repo does not have this flag (or it is `false`), the agent must **not** merge -- instead, report back to whoever assigned the work that the PR is approved but awaiting human merge.
-
-This distinction exists because some repositories require human oversight before code reaches production. Merging a PR in a repo without `unsupervisedAgentCode: true` bypasses that oversight.
