@@ -79,6 +79,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
+- lucos_backups#57 / PR #56 (2026-03-12): P1 outage — lucos-loganne-pythonclient and lucos-schedule-tracker-pythonclient both call `sys.exit()` at import time if `SYSTEM` env var is not set. The old local loganne.py hardcoded the system name and needed no env vars. Migrating to the PyPI clients without adding `SYSTEM` to docker-compose `environment:` passthrough caused immediate crash loop on startup. Fix: add `SYSTEM`, `ENVIRONMENT`, `APP_ORIGIN` to environment block. **General lesson**: when switching from a hand-rolled util to a PyPI client that reads env vars at import time, always audit the new import-time requirements against the docker-compose environment passthrough.
 - **Lesson**: Before raising an issue during ops checks, search recently closed issues for the same repo/symptom. The monitoring alert that triggered #43 was still live because the fix for #34 hadn't deployed yet — the alert being red does not guarantee no issue exists.
 
 ## lucos_time — Known Issues
