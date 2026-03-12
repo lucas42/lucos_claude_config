@@ -105,15 +105,18 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.
 
+### lucos_media_weightings
+- Python, cron-based. Weighting explosion (#39): recommended switching from multiplicative to additive bonuses (+20 seasonal, +30 brand-new, +15 two-week) with safety cap at 50. Awaiting lucas42 decision.
+
 ### lucos_time
-- Node.js, raw http.createServer. `/current-items` (#70): design agreed, ready for implementation.
+- Node.js, raw http.createServer. `/current-items` (#70): design agreed, ready for implementation. New requirement (2026-03-05): festivals with `commemorates` predicate (P547) should transitively include HistoricalEvents in the response. Design comment posted.
 - Follow-ups: lucos_time#74, lucos_eolas#67, lucos_eolas#68.
 
 ### lucos_eolas
 - Django, personal metadata/ontology, Postgres. Festival duration (#68): Option C decided, agent-approved, awaiting implementation.
 - FestivalPeriod data population (#71): recommended Django data migration with name-based lookups. Removes dependency on arachne MCP (#15). Blocked by #68. lucos_time#76 blocked on #68.
 - People modelling (#19): Option C (split by type) agreed. Names deferred. Contact linking owned by lucos_contacts (`eolas_uri` field). Search filtering: revised to `is_contact` boolean (not `source` field) -- simpler for merged records where one person appears in both contacts and eolas. Merge logic in arachne ingestor using `owl:sameAs`; eolas URI used as primary `id` in merged records (revised -- contacts URI would cause mixed-URI tags in media_metadata_api). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, landed in production).
-- Write API (#75): design input posted. `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates on unique-name models. Uses existing `@api_auth`.
+- Write API (#75): agent-approved, priority:low. `POST /metadata/{type}/`, returns `{id, name, uri}`, 409 for duplicates on unique-name models. Uses existing `@api_auth`. Security note: extract only `name` from request body (no mass assignment).
 
 ### lucos_locations
 - OwnTracks stack: mosquitto MQTT broker + OwnTracks recorder + custom frontend. 3 containers.
