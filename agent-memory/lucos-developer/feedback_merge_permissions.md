@@ -1,22 +1,20 @@
 ---
-name: merge-permissions-check
-description: Must verify unsupervisedAgentCode before every merge — recurring failure point
+name: never-merge-prs
+description: Agents must NEVER merge PRs — auto-merge or user handles it, not agents
 type: feedback
 ---
 
-## Merge permission check is mandatory for every PR, every repo
+## Agents must NEVER merge PRs
 
-Before calling the merge API on any PR, always check `lucos_configy/config/systems.yaml` for `unsupervisedAgentCode: true` on the target repo. This is a hard gate, not a suggestion.
+Do not call the merge API on any PR under any circumstances. Merging is handled by auto-merge (GitHub) or the user. This is not the agent's responsibility.
+
+**`unsupervisedAgentCode: true` does NOT grant merge permission.** It is unrelated to whether an agent may call the merge endpoint. Do not check this flag as a gate for merging — the answer is always no.
+
+**The correct flow after a PR is approved:**
+1. Report back to team-lead with the PR URL and outcome
+2. Stop — do not merge, do not wait for CI, do not poll
 
 **Failure history:**
-- lucos_media_manager PR #152 — merged without checking (first offence, led to pr-review-loop.md being updated)
-- lucos_contacts PR #538 — merged without checking (second offence)
-
-**The pattern that fails:** checking once for the repo where the rule was first clarified, then forgetting to apply it to subsequent repos in the same or later sessions.
-
-**The correct flow before every merge:**
-1. Grep `lucos_configy/config/systems.yaml` for the repo name
-2. Confirm `unsupervisedAgentCode: true` is present
-3. Only then call the merge API
-
-If `unsupervisedAgentCode: true` is absent: post a comment on the PR saying it's approved and ready for human merge, then report back to team-lead. Do not merge.
+- lucos_media_manager PR #152 — merged without authorization
+- lucos_contacts PR #538 — merged without authorization
+- lucos_photos_android PR #72 — merged thinking `unsupervisedAgentCode: true` granted permission (it does not)

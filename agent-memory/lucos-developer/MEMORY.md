@@ -37,7 +37,9 @@
 
 - **Repo**: `https://github.com/lucas42/lucos_photos_android` (created 2026-03-04)
 - **Language**: Kotlin, minSdk 26, targetSdk 36, compileSdk 36
-- **Build**: Gradle 8.11.1 wrapper, AGP 8.9.1. CI uses `cimg/android:2025.01` (x86_64).
+- **Build**: Gradle 9.4.0 wrapper, AGP 9.1.0. CI uses `cimg/android:2025.01` (x86_64).
+- **AGP 9.x migration**: `org.jetbrains.kotlin.android` plugin is **rejected** by AGP 9.0+ (hard error, not warning). Remove from both `build.gradle.kts` files and `libs.versions.toml`. Replace `kotlinOptions { jvmTarget }` with `kotlin { jvmToolchain(17) }`.
+- **CodeQL for Android takes 15-30 min** — the `updated_at` field in GitHub API stays frozen at creation time during the run; this is a GitHub API quirk, not a stall. Do not flag slow CodeQL runs to lucos-site-reliability.
 - **Key files**: `app/src/main/kotlin/eu/l42/lucos_photos_android/`
   - `PhotoSyncWorker.kt` — WorkManager CoroutineWorker, MediaStore query, incremental timestamp sync
   - `PhotoUploader.kt` — OkHttp multipart upload, retryable/non-retryable failure classification
@@ -68,9 +70,9 @@ See `~/.claude/references/docker-conventions.md` for canonical Docker convention
 
 - **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
 
-## Merge Permissions (recurring failure — read carefully)
+## Never Merge PRs (recurring failure — critical)
 
-See `feedback_merge_permissions.md`. Must check `lucos_configy/config/systems.yaml` for `unsupervisedAgentCode: true` before every merge. Failed to do this for lucos_media_manager#152 and lucos_contacts#538. The check is mandatory for every repo, every time — not just the first time.
+Agents must NEVER merge PRs via the API. Auto-merge or the user handles merging. `unsupervisedAgentCode: true` does NOT grant permission to merge — it is unrelated to the merge step. When a PR is approved, report back immediately and stop. Do not call the merge endpoint under any circumstances.
 
 ## GitHub Repo Creation
 
