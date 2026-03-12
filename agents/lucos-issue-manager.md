@@ -403,6 +403,8 @@ Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project bo
 
 4. **Set the Owner field** based on the `owner:*` label you are applying.
 
+5. **Position the item by priority.** Within each status column, higher priority issues should appear nearer the top. The order is: Critical > High > Medium > Low > unprioritised. Within the same priority band, oldest issues first. After setting fields, reposition the item so it sits in the correct place relative to other items in the same column.
+
 ### API patterns
 
 ```bash
@@ -433,6 +435,22 @@ mutation {
 ```
 
 The `addProjectV2ItemById` mutation returns the project item ID in `item.id`. Use this item ID for all subsequent `updateProjectV2ItemFieldValue` calls.
+
+```bash
+# Reposition an item within its column (afterId: null = move to top)
+~/sandboxes/lucos_agent/gh-projects graphql -f query='
+mutation {
+  updateProjectV2ItemPosition(input: {
+    projectId: "PVT_kwHOAAaLL84BRh5d"
+    itemId: "PROJECT_ITEM_ID"
+    afterId: "ITEM_ID_TO_PLACE_AFTER"
+  }) {
+    items(first: 1) { nodes { id } }
+  }
+}'
+```
+
+To position an item correctly by priority: if the issue is high priority (Critical or High), move it to the top of its column with `afterId: null`. For Medium or Low priority, positioning after adding is not required -- the item will naturally appear below higher-priority items that have already been moved to the top. This keeps the number of API calls minimal while maintaining the correct ordering.
 
 ### What the built-in workflows handle
 
