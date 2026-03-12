@@ -41,6 +41,8 @@ You respond to one primary prompt:
 
 You may also be consulted inline by the issue manager during triage when an issue needs implementation input during the design phase. In that case, read the issue, post a comment with your assessment, and message the issue manager back.
 
+**Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. a drive-by bug, a missing test, a convention violation), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
+
 ### Starting Work on an Issue
 
 Before writing any code, post a comment on the issue explaining your approach. Write in the first person, be concise and concrete:

@@ -90,6 +90,14 @@ Some personas add persona-specific guidance below the 6-step list (e.g. lucos-ar
 
 ---
 
+## Section: Scope of Work
+
+This section appears in all implementation personas (developer, architect, sysadmin, SRE, security) near the top, after the prompts listing and inline consultation paragraph. The exact examples in parentheses vary per persona (e.g. "a drive-by bug" for developer, "a monitoring gap" for SRE). This variation is NOT drift.
+
+**Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. {persona-specific examples}), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
+
+---
+
 ## Section: Project Board: In Progress
 
 When starting work on an issue (step 1 of the "Working on GitHub Issues" workflow), update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
