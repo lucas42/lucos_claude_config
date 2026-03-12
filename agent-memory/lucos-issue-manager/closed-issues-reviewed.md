@@ -5,7 +5,11 @@ Only recording the most recent batch reviewed each session to avoid re-checking.
 
 ## Last reviewed: 2026-03-12
 
-Reviewed 3 new closures since last check:
+Reviewed 2 new closures since last check:
+- lucos#49 (Improve dependency tracking between issues -- closed as completed by me, implemented lucas42's two agreed changes)
+- lucos_photos#160 (Add stable sort order and pagination controls to /people page -- completed)
+
+Previous batches (2026-03-12):
 - lucos#46 (Implement file-based implementation queue -- closed as not_planned, approach was reverted)
 - lucos_photos#143 (Add delete button to photo pages -- completed)
 - lucos_arachne#91 (Docker healthcheck fails due to IPv6 localhost resolution -- completed)
