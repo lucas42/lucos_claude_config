@@ -405,26 +405,22 @@ Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project bo
 
 **Every time you add or change labels on an issue during triage**, also update the project board. As a safety net, always call `addProjectV2ItemById` for the issue — the mutation is idempotent, so it is safe to call even if the issue is already on the board. This catches any issues that were created without being added to the board (e.g. issues raised by other bots, or issues created before this instruction existed).
 
-This means:
+For each issue, complete **all four** of the following steps as a single unit of work. Do not move on to the next issue until all four are done for the current one.
 
-1. **Add the issue to the project** if it is not already on the board. You need the issue's node ID (available from the GitHub API response when fetching the issue). The `addProjectV2ItemById` mutation is idempotent — if the issue is already on the board, it returns the existing item.
+1. **Add the issue to the project** using `addProjectV2ItemById` (idempotent — safe to call even if already on the board). Note the returned project item ID.
 
-2. **Set the Status field** based on the label combination you are applying, using the mapping table above.
+2. **Set all three fields** — Status, Priority, and Owner — using `updateProjectV2ItemFieldValue` with the item ID from step 1. Use the mapping tables above to determine the correct option IDs.
 
-3. **Set the Priority field** based on the `priority:*` label you are applying.
+3. **Position the item by priority.** The board uses manual position ordering — there is no auto-sort. If the issue is Critical or High priority, call `updateProjectV2ItemPosition` with no `afterId` to move it to the top of its column. For Medium or Low priority, skip this step — the item will sit below higher-priority items that have been moved to the top.
 
-4. **Set the Owner field** based on the `owner:*` label you are applying.
-
-5. **Position the item by priority.** Within each status column, higher priority issues should appear nearer the top. The order is: Critical > High > Medium > Low > unprioritised. Within the same priority band, oldest issues first. After setting fields, reposition the item so it sits in the correct place relative to other items in the same column.
+4. **Verify you completed step 3.** Before moving on, confirm you actually made the positioning API call for Critical/High items. This step exists because it is easy to stop after setting fields and forget to reposition. If you skipped step 3 for a high-priority item, go back and do it now.
 
 ### API patterns
 
-```bash
-# Get an issue's node ID (included in the standard issue response)
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
-    --jq '.node_id'
+The complete workflow for a single issue:
 
-# Add issue to the project (idempotent — safe to call even if already on board)
+```bash
+# 1. Add to project (get item ID)
 ~/sandboxes/lucos_agent/gh-projects graphql -f query='
 mutation {
   addProjectV2ItemById(input: {projectId: "PVT_kwHOAAaLL84BRh5d", contentId: "ISSUE_NODE_ID"}) {
@@ -432,7 +428,7 @@ mutation {
   }
 }'
 
-# Set a field value (Status, Priority, or Owner)
+# 2. Set fields (Status, Priority, Owner — three separate calls using the item ID above)
 ~/sandboxes/lucos_agent/gh-projects graphql -f query='
 mutation {
   updateProjectV2ItemFieldValue(input: {
@@ -444,25 +440,20 @@ mutation {
     projectV2Item { id }
   }
 }'
-```
 
-The `addProjectV2ItemById` mutation returns the project item ID in `item.id`. Use this item ID for all subsequent `updateProjectV2ItemFieldValue` calls.
-
-```bash
-# Reposition an item within its column (afterId: null = move to top)
+# 3. Position (Critical/High only — omit afterId to move to top)
 ~/sandboxes/lucos_agent/gh-projects graphql -f query='
 mutation {
   updateProjectV2ItemPosition(input: {
     projectId: "PVT_kwHOAAaLL84BRh5d"
     itemId: "PROJECT_ITEM_ID"
-    afterId: "ITEM_ID_TO_PLACE_AFTER"
   }) {
     items(first: 1) { nodes { id } }
   }
 }'
 ```
 
-To position an item correctly by priority: if the issue is high priority (Critical or High), move it to the top of its column with `afterId: null`. For Medium or Low priority, positioning after adding is not required -- the item will naturally appear below higher-priority items that have already been moved to the top. This keeps the number of API calls minimal while maintaining the correct ordering.
+The `addProjectV2ItemById` mutation returns the project item ID in `item.id`. Use this item ID for all subsequent calls. To get the issue's node ID, use `~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} --jq '.node_id'`.
 
 ### What the built-in workflows handle
 
