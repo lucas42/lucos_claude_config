@@ -125,6 +125,17 @@ Key principles for triaging `audit-finding` issues:
 - **False positive audit findings on blocked issues**: If the convention genuinely doesn't apply but hasn't been fixed yet (e.g. lucos_deploy_orb can't use its own orb), mark as `agent-approved` + `status:blocked` with a reference to the fix issue. Do NOT close -- closing causes the audit to re-raise on the next sweep.
 - **Closing audit-findings as false positives**: When closing a false positive (e.g. transient API error), also raise an issue on `lucas42/lucos_repos` about the root cause, or comment on an existing issue if one covers that class of false positive. Example: lucos_backups#51 was a 502-induced false positive, led to lucos_repos#102.
 
+## Project board sync (introduced 2026-03-12)
+
+- Project: "lucOS Issue Prioritisation" at https://github.com/users/lucas42/projects/8
+- Use `~/sandboxes/lucos_agent/gh-projects` (PAT-based) for all project board API calls, not `gh-as-agent`
+- Issue manager syncs board during triage: adds issues, sets Status/Priority/Owner fields
+- Implementation agents set "In Progress" when starting work
+- Built-in workflows handle: item added -> Needs Triage, item closed -> Done, PR merged -> Done
+- Full field/option ID reference is in the persona file's "Project Board Sync" section
+- `addProjectV2ItemById` is idempotent -- safe to call even if issue is already on board
+- GitHub user node ID for lucas42: `MDQ6VXNlcjQyODg0Nw==` (legacy) / `U_kgDOAAaLLw` (new)
+
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed
