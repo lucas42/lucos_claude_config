@@ -14,7 +14,7 @@ Before creating a new team, check whether `lucos-all-hands` already exists with 
 cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
 ```
 
-If the team exists and has members listed, try sending a test message to one teammate (e.g. the first member). If they respond, the team is healthy — **skip Steps 2–4 and go straight to Step 5** (report the roster). Reuse the existing team.
+If the team exists and has members listed, try sending a test message to one teammate (e.g. the first member). Wait up to 15 seconds for a response. If they respond, the team is healthy — **skip Steps 2–4 and go straight to Step 5** (report the roster). Reuse the existing team. If no response arrives within 15 seconds, treat the team as stale.
 
 If the team file doesn't exist, or exists but no teammates respond (stale from a previous session), clean up and proceed:
 
