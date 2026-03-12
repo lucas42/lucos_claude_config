@@ -93,6 +93,18 @@ Use the `gh-as-agent` wrapper script instead of calling `gh api` directly. It ha
 
 All `gh api` flags and arguments are passed through directly. There is no need to generate or manage tokens manually.
 
+### GitHub Projects API calls (PAT required)
+
+GitHub Apps cannot access v2 user projects. For GitHub Projects interactions **only**, use the `gh-projects` wrapper instead of `gh-as-agent`:
+
+```bash
+# Query projects via GraphQL
+~/sandboxes/lucos_agent/gh-projects graphql \
+    -f query='{ viewer { projectsV2(first: 10) { nodes { id title } } } }'
+```
+
+**Do not use `gh-projects` for anything other than GitHub Projects.** All other GitHub API calls must use `gh-as-agent` with the appropriate `--app`.
+
 ### Making git commits as a persona
 
 Use the `git-as-agent` wrapper script instead of passing `-c user.name=... -c user.email=...` flags manually on every git operation. It looks up the persona's identity from `personas.json` and prepends the correct `-c` flags automatically. `--app` must be the first argument:
