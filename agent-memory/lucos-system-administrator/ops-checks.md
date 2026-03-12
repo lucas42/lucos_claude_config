@@ -5,14 +5,14 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-11
-resource_checks: 2026-03-10
-syslog_review: 2026-03-10
-software_updates: 2026-03-10
-docker_image_staleness: 2026-03-05
-backup_verification: 2026-03-05
-certificate_expiry: 2026-03-05
-sandbox_drift: 2026-03-10
+container_status: 2026-03-12
+resource_checks: 2026-03-12
+syslog_review: 2026-03-12
+software_updates: 2026-03-12
+docker_image_staleness: 2026-03-12
+backup_verification: 2026-03-12
+certificate_expiry: 2026-03-12
+sandbox_drift: 2026-03-12
 ```
 
 ## Known Limitations
@@ -347,6 +347,45 @@ sandbox_drift: 2026-03-10
 
 **Issue raised**:
 - lucos_photos#127: healthcheck broken — wget not installed in container image
+
+### 2026-03-12 (ALL 8 checks due)
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_backups` (known #49), `lucos_comhra_agent` (known #9). `lucos_arachne_web` no longer showing unhealthy — may have been fixed.
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2+ weeks — one-shot test container, not a concern; no unhealthy containers
+
+**Resources**:
+- avalon: 3.6Gi available of 7.6Gi. Swap 1.6Gi/4.5Gi (36%) — healthy. Disk 11%. Load 0.97 (fine).
+- xwing: 403Mi available of 906Mi. Swap 373Mi/905Mi (41%). Disk 38%. Load average 3.38–3.52 — elevated on a low-resource machine running 35 days. Worth monitoring.
+- salvare: disk at **95%** again (53G/58G, 3G free) — was 81% on 2026-03-10. Issue raised: lucos_agent_coding_sandbox#28.
+
+**Syslog** (avalon only):
+- All errors are lucos-agent sudo failures from prior ops work (reboot attempts, apt upgrade, dd/swapfile, find commands). All expected. No hardware errors, no OOM kills.
+
+**Software updates**:
+- avalon: clean, no upgradable packages.
+- xwing: Docker 29.1.3→29.3.0 + buildx + compose-plugin, libc6, openssl, kernel 6.12.47→6.12.62 still pending (all previously tracked in #24). Commented on #24.
+- salvare: kernel 6.12.25→6.12.62, libc6, openssl (via rpt1+deb13u1), raspi-utils pending. No security-tagged packages.
+
+**Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
+
+**Backups**: lucos_backups running correctly on avalon. Config fetch + tracking both completed successfully in the last 48h. No issues.
+
+**Certificates**:
+- xwing: all 4 domains renewed 2026-03-07, notAfter=Jun 5 2026 (85 days). Fine.
+- avalon: most domains expire Apr 20–22 (39–41 days). `schedule-tracker.l42.eu` expires Apr 11 (30 days exactly). Certbot should auto-renew imminently.
+- Stale/dead certs present in avalon letsencrypt (router.l42.eu 2019, speak.l42.eu 2022, googlecontactsync.l42.eu 2023, valen.* 2021) — these are for decommissioned services. Not actively served, not a security concern, but worth noting as clutter.
+- avalon router container name is `router` (not `lucos_router_nginx`).
+
+**Image staleness**:
+- avalon: `lucos_locations_otrecorder` still from 2025-08-12 (7 months stale). All other images from Feb–Mar 2026. Issue #20 remains open.
+- xwing/salvare: image staleness query returns "unknown" — docker inspect on pulled images doesn't have local build dates. Known limitation.
+
+**Issues raised/commented**:
+- lucos_agent_coding_sandbox#28: salvare disk 95% again
+- lucos_agent_coding_sandbox#24: commented with updated xwing package list + Docker updates
 
 ### 2026-03-11 (container status only; weekly checks last ran 2026-03-10, monthly checks last ran 2026-03-05 — none due)
 

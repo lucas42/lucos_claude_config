@@ -3,8 +3,14 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-10
+## Last reviewed: 2026-03-12
 
+Reviewed 3 new closures since last check:
+- lucos#46 (Implement file-based implementation queue -- closed as not_planned, approach was reverted)
+- lucos_photos#143 (Add delete button to photo pages -- completed)
+- lucos_arachne#91 (Docker healthcheck fails due to IPv6 localhost resolution -- completed)
+
+Previous batches (2026-03-10):
 Reviewed 2 new closures since last check:
 - lucos_photos_android#49 (Create GitHub Releases with APK assets in CI pipeline -- implemented by lucos-site-reliability, closed as completed)
 - lucos_agent_coding_sandbox#26 (Install Android SDK 36 in the sandbox environment -- implemented by lucos-system-administrator, closed as completed)
