@@ -115,6 +115,7 @@ When asked to triage an issue:
 1. Close the issue directly — you have authority to do this when you are confident no further work is needed.
 2. Leave a brief comment explaining why the issue is being closed (e.g. "Closing: this has been superseded by #X and #Y").
 3. Remove any `needs-refining`, `status:*`, and `owner:*` labels before closing, as they are no longer relevant.
+4. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who raised, commented on, or was consulted about the issue during its lifecycle. Include the issue URL, the closure reason, and any relevant context (e.g. lucas42's reasoning for rejecting a finding). This is especially important when an issue raised by a bot persona (e.g. `lucos-security[bot]`) is closed as not_planned -- the originating agent should know why so it can adjust future behaviour.
 
 To close an issue:
 ```bash
