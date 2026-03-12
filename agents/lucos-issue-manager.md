@@ -341,6 +341,110 @@ ENDBODY
 
 ---
 
+## Project Board Sync
+
+The **lucOS Issue Prioritisation** project board (https://github.com/users/lucas42/projects/8) tracks all issues across lucos repos. The issue manager is responsible for keeping the board in sync with label changes during triage.
+
+Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project board API calls. This script authenticates with a PAT that has project access — GitHub Apps cannot access v2 user projects.
+
+### Reference: Project IDs
+
+| Entity | ID |
+|---|---|
+| Project | `PVT_kwHOAAaLL84BRh5d` |
+| **Status field** | `PVTSSF_lAHOAAaLL84BRh5dzg_VMcg` |
+| **Priority field** | `PVTSSF_lAHOAAaLL84BRh5dzg_VMpk` |
+| **Owner field** | `PVTSSF_lAHOAAaLL84BRh5dzg_VMvo` |
+
+#### Status options
+
+| Option | ID | Maps to |
+|---|---|---|
+| Ideation | `69592674` | `needs-refining` + `status:ideation` |
+| Needs Triage | `d5369b39` | No labels yet (set automatically when item is added) |
+| Needs Refining | `30a87ba8` | `needs-refining` + `status:needs-design` |
+| Awaiting Decision | `639e1909` | `needs-refining` + `status:awaiting-decision` |
+| Blocked | `8849d0c4` | `agent-approved` + `status:blocked` |
+| Ready | `bfb298e3` | `agent-approved` (no blocking status) |
+| In Progress | `a24089a4` | Set by implementation agents when starting work |
+| Done | `e6140890` | Set automatically when issue is closed |
+
+#### Priority options
+
+| Option | ID | Maps to |
+|---|---|---|
+| Critical | `546bd144` | `priority:critical` |
+| High | `a3a12fdd` | `priority:high` |
+| Medium | `f0df2978` | `priority:medium` |
+| Low | `5f866d33` | `priority:low` |
+
+#### Owner options
+
+| Option | ID | Maps to |
+|---|---|---|
+| lucas42 | `a9a6994c` | `owner:lucas42` |
+| lucos-developer | `a9aa2c31` | `owner:lucos-developer` |
+| lucos-architect | `6dd9da80` | `owner:lucos-architect` |
+| lucos-system-administrator | `29bb2d74` | `owner:lucos-system-administrator` |
+| lucos-site-reliability | `342f9448` | `owner:lucos-site-reliability` |
+| lucos-security | `2adf0456` | `owner:lucos-security` |
+| lucos-issue-manager | `be20910b` | `owner:lucos-issue-manager` |
+| lucos-code-reviewer | `89bbc325` | `owner:lucos-code-reviewer` |
+
+### When to update the board
+
+**Every time you add or change labels on an issue during triage**, also update the project board. This means:
+
+1. **Add the issue to the project** if it is not already on the board. You need the issue's node ID (available from the GitHub API response when fetching the issue). The `addProjectV2ItemById` mutation is idempotent — if the issue is already on the board, it returns the existing item.
+
+2. **Set the Status field** based on the label combination you are applying, using the mapping table above.
+
+3. **Set the Priority field** based on the `priority:*` label you are applying.
+
+4. **Set the Owner field** based on the `owner:*` label you are applying.
+
+### API patterns
+
+```bash
+# Get an issue's node ID (included in the standard issue response)
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
+    --jq '.node_id'
+
+# Add issue to the project (idempotent — safe to call even if already on board)
+~/sandboxes/lucos_agent/gh-projects graphql -f query='
+mutation {
+  addProjectV2ItemById(input: {projectId: "PVT_kwHOAAaLL84BRh5d", contentId: "ISSUE_NODE_ID"}) {
+    item { id }
+  }
+}'
+
+# Set a field value (Status, Priority, or Owner)
+~/sandboxes/lucos_agent/gh-projects graphql -f query='
+mutation {
+  updateProjectV2ItemFieldValue(input: {
+    projectId: "PVT_kwHOAAaLL84BRh5d"
+    itemId: "PROJECT_ITEM_ID"
+    fieldId: "FIELD_ID"
+    value: {singleSelectOptionId: "OPTION_ID"}
+  }) {
+    projectV2Item { id }
+  }
+}'
+```
+
+The `addProjectV2ItemById` mutation returns the project item ID in `item.id`. Use this item ID for all subsequent `updateProjectV2ItemFieldValue` calls.
+
+### What the built-in workflows handle
+
+The project has built-in workflows (configured in the GitHub UI) that handle:
+- **Item added to project** -> sets Status to "Needs Triage"
+- **Item closed** -> sets Status to "Done"
+- **Pull request merged** -> sets Status to "Done"
+
+You do **not** need to set Status to "Needs Triage" when adding an item (the built-in workflow does it), but you **do** need to set it to the correct status immediately after adding, since your triage action will move it past "Needs Triage". You also do not need to set Status to "Done" when closing an issue.
+
+---
+
 ## Creating Issues
 
 When asked to create a new issue:
