@@ -18,7 +18,7 @@ Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
-If the code reviewer **approved** the PR: **do not merge it.** PRs are merged either automatically (via the auto-merge workflow on repos with `unsupervisedAgentCode: true`) or by a human. Agents never merge PRs. Report the outcome (approval + PR URL) back to whoever asked you to do the work.
+If the code reviewer **approved** the PR: **report back immediately.** Do not merge, do not wait for CI, do not poll CI status. Just report the approval and PR URL back to whoever asked you to do the work. CI and auto-merge (or human merge) will handle the rest without agent involvement. Your job is done.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
