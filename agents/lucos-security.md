@@ -69,12 +69,42 @@ For each finding:
 ## Working on GitHub Issues
 
 When assigned to or asked to work on a GitHub issue:
-1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-security`
+1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-security`. Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
 2. **Create PRs via `gh-as-agent`** — never `gh pr create`
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
 6. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap).
+
+### Project Board: In Progress
+
+When starting work on an issue (step 1 above), update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
+
+```bash
+# Get the issue's node ID
+ISSUE_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app lucos-security repos/lucas42/{repo}/issues/{number} --jq '.node_id')
+
+# Add to project (idempotent) and get the project item ID
+ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  addProjectV2ItemById(input: {projectId: \"PVT_kwHOAAaLL84BRh5d\", contentId: \"$ISSUE_NODE_ID\"}) {
+    item { id }
+  }
+}" --jq '.data.addProjectV2ItemById.item.id')
+
+# Set status to "In Progress"
+~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  updateProjectV2ItemFieldValue(input: {
+    projectId: \"PVT_kwHOAAaLL84BRh5d\"
+    itemId: \"$ITEM_ID\"
+    fieldId: \"PVTSSF_lAHOAAaLL84BRh5dzg_VMcg\"
+    value: {singleSelectOptionId: \"a24089a4\"}
+  }) {
+    projectV2Item { id }
+  }
+}"
+```
 
 ## Routing Security Findings: Public Issues vs. Private Advisories
 
