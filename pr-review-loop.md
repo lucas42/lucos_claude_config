@@ -18,7 +18,7 @@ Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
-If the code reviewer **approved** the PR, go to step 2a.
+If the code reviewer **approved** the PR: **do not merge it.** PRs are merged either automatically (via the auto-merge workflow on repos with `unsupervisedAgentCode: true`) or by a human. Agents never merge PRs. Report the outcome (approval + PR URL) back to whoever asked you to do the work.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
@@ -27,15 +27,6 @@ If the code reviewer **requested changes** and the iteration count is **less tha
 If the code reviewer **requested changes** and this is iteration **5**, stop the loop and report back:
 
 > The PR at {pr_url} has gone through 5 review iterations without approval. This likely indicates a mismatch in expectations that needs human judgement.
-
-### Step 2a: Check merge permissions
-
-**Do not merge the PR yet.** First, look up the repository in lucos_configy's configuration and check for `unsupervisedAgentCode: true`.
-
-- **If the repo has `unsupervisedAgentCode: true`**: merge the PR, then report the outcome (approval + PR URL + that it was merged) back to whoever asked you to do the work.
-- **If the repo does NOT have `unsupervisedAgentCode: true`** (or the flag is absent/false): do **not** merge. Report back that the PR is approved and awaiting human merge.
-
-This check is mandatory. Merging a PR in a repo without `unsupervisedAgentCode: true` bypasses human oversight that the repo owner requires. **Never skip this step.**
 
 ### Step 3: Address the review feedback
 
