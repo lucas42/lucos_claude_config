@@ -129,10 +129,10 @@ Note: `lucos_backups` runs as a single container on avalon and handles all hosts
 
 ### Check 7: Certificate Expiry
 
-TLS termination happens in `lucos_router`, which runs on the production hosts. Check certificate expiry for domains served:
+TLS termination happens in the `router` container, which runs on the production hosts. Note: on both avalon and xwing the container is named `router` (not `lucos_router_nginx`). Check certificate expiry for all domains served:
 
 ```bash
-ssh <host> "docker exec lucos_router_nginx cat /etc/letsencrypt/live/*/cert.pem 2>/dev/null | openssl x509 -noout -dates 2>/dev/null"
+ssh <host> "docker exec router sh -c 'for f in /etc/letsencrypt/live/*/cert.pem; do echo \"=== \$f ===\"; openssl x509 -noout -dates -in \$f; done'"
 ```
 
 **Renewal context**: certbot renews certificates when they are under 30 days from expiry. lucos_monitoring fires an alert when certificates are under 20 days from expiry. Do not raise issues for certificates expiring in more than 30 days — that is the normal operating window before certbot has triggered.
