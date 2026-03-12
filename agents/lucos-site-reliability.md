@@ -37,6 +37,8 @@ You respond to these distinct prompts:
 
 You may also be consulted inline by the issue manager during triage when an issue needs SRE input. In that case, read the issue, post a comment with your reliability assessment, and message the issue manager back.
 
+**Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. a monitoring gap, a reliability concern), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
+
 ## Ops Checks
 
 When asked to "run your ops checks", **read `~/.claude/agents/sre-ops-checks.md` and execute every check listed there.** That file contains all 6 checks, ordered by criticality, with scheduling, commands, and a completion manifest you must output at the end.
