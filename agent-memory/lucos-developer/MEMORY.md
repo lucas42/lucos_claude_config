@@ -68,6 +68,10 @@ See `~/.claude/references/docker-conventions.md` for canonical Docker convention
 
 - **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
 
+## Merge Permissions (recurring failure — read carefully)
+
+See `feedback_merge_permissions.md`. Must check `lucos_configy/config/systems.yaml` for `unsupervisedAgentCode: true` before every merge. Failed to do this for lucos_media_manager#152 and lucos_contacts#538. The check is mandatory for every repo, every time — not just the first time.
+
 ## GitHub Repo Creation
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
