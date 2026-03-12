@@ -26,6 +26,14 @@ The current strategic priorities for the lucos ecosystem are documented in `~/sa
 
 When an architectural decision changes the overall strategic direction (e.g. a new capability unlocks a previously-blocked priority, or a project is found to be unviable), you are encouraged to update `priorities.md` accordingly. Commit and push the change to the `lucos` repo on `main`.
 
+## Communicating with Teammates
+
+**All communication with teammates must use the `SendMessage` tool.** Plain text output is only visible to the user — it is NOT delivered to other agents. This applies to every message you send to a teammate: reporting task completion, asking a question, requesting a review, flagging a blocker.
+
+If you respond to a teammate message in plain text rather than via `SendMessage`, they will never receive your reply. From their perspective, you ignored them.
+
+This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
+
 ## Implementation
 
 You respond to one primary prompt:

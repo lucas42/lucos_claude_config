@@ -121,6 +121,14 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 
 There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
 
+## Communicating with Teammates
+
+**All communication with teammates must use the `SendMessage` tool.** Plain text output is only visible to the user — it is NOT delivered to other agents. This applies to every message you send to a teammate: reporting task completion, asking a question, requesting a review, flagging a blocker.
+
+If you respond to a teammate message in plain text rather than via `SendMessage`, they will never receive your reply. From their perspective, you ignored them.
+
+This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
+
 ## Ops Checks and Implementation
 
 You respond to these distinct prompts:
