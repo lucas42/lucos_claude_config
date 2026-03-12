@@ -542,7 +542,7 @@ Work through each issue in the returned list using the triage process above. If 
 
 ### Unblocking check
 
-During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. If a blocked issue references a blocking issue that has since been closed, remove the `status:blocked` label to make it available for pickup.
+During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue, verify that **all** of its dependencies are resolved — not just the one that triggered the check. Read the full issue body and comments, identify every issue referenced as a dependency or prerequisite, and confirm each one is closed. Only remove `status:blocked` when every dependency has been completed. If some dependencies are resolved but others remain open, leave `status:blocked` in place.
 
 ### Summary
 
