@@ -135,6 +135,7 @@ Key principles for triaging `audit-finding` issues:
 - Full field/option ID reference is in the persona file's "Project Board Sync" section
 - `addProjectV2ItemById` is idempotent -- safe to call even if issue is already on board
 - GitHub user node ID for lucas42: `MDQ6VXNlcjQyODg0Nw==` (legacy) / `U_kgDOAAaLLw` (new)
+- **Always reposition high-priority items after adding.** The board uses manual position ordering (no auto-sort). After setting fields, call `updateProjectV2ItemPosition` with no `afterId` to move Critical/High items to the top. Easy to forget -- do it as the final step of every board update.
 
 ## Issue closure policy
 
