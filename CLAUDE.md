@@ -101,9 +101,11 @@ Use the `git-as-agent` wrapper script instead of passing `-c user.name=... -c us
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator commit -m "Fix something"
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-site-reliability cherry-pick abc123
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-developer commit --amend
+~/sandboxes/lucos_agent/git-as-agent --app lucos-developer pull --rebase origin main
+~/sandboxes/lucos_agent/git-as-agent --app lucos-developer rebase main
 ```
 
-All remaining arguments are passed through to `git` directly. The wrapper handles the identity for any commit-writing operation — `commit`, `cherry-pick`, `commit --amend`, etc. — ensuring the author and committer are always attributed to the correct bot, not the global git config.
+All remaining arguments are passed through to `git` directly. The wrapper handles the identity for any commit-writing operation — `commit`, `cherry-pick`, `commit --amend`, `pull --rebase`, `rebase`, etc. — ensuring the author and committer are always attributed to the correct bot, not the global git config.
 
 **Never** use `git config user.name` or `git config user.email` — that would affect all future commits in the environment.
 

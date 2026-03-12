@@ -103,6 +103,8 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator commit -m "..."
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator commit --amend
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator cherry-pick abc123
+~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator pull --rebase origin main
+~/sandboxes/lucos_agent/git-as-agent --app lucos-system-administrator rebase main
 ```
 
 `git-as-agent` looks up the persona's `bot_name` and `bot_user_id` from `~/sandboxes/lucos_agent/personas.json` and prepends the correct `-c user.name=... -c user.email=...` flags automatically. All remaining arguments are passed through to `git`.
@@ -113,6 +115,8 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 - `git commit -m "..."`
 - `git commit --amend`
 - `git cherry-pick`
+- `git pull --rebase`
+- `git rebase`
 - Any other operation that creates or rewrites a commit
 
 There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
