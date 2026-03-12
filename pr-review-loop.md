@@ -48,9 +48,6 @@ After the specialist responds, go back to step 1 to request another code review.
 
 After a PR is approved, **do not automatically merge it.** Whether an agent is allowed to merge depends on the repository's configuration in lucos_configy.
 
-**Check `unsupervisedAgentCode`:** Look up the repository in lucos_configy's configuration. If the repo has `unsupervisedAgentCode: true`, the agent may merge the PR. If the repo does not have this flag (or it is `false`), the agent must **not** merge -- instead:
-
-1. Post a comment on the PR indicating it has been approved and is ready for a human to merge.
-2. Report back to whoever assigned the work that the PR is approved but awaiting human merge.
+**Check `unsupervisedAgentCode`:** Look up the repository in lucos_configy's configuration. If the repo has `unsupervisedAgentCode: true`, the agent may merge the PR. If the repo does not have this flag (or it is `false`), the agent must **not** merge -- instead, report back to whoever assigned the work that the PR is approved but awaiting human merge.
 
 This distinction exists because some repositories require human oversight before code reaches production. Merging a PR in a repo without `unsupervisedAgentCode: true` bypasses that oversight.
