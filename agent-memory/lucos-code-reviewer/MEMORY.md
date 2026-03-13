@@ -31,3 +31,4 @@
 - Malagasy leaf-tailed gecko (2026-03-10)
 - Pancake tortoise (2026-03-10) — COMPLETELY BANNED, massively overused
 - Panther chameleon (2026-03-10) — DO NOT USE AGAIN SOON
+- Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13) — DO NOT USE, massively overused

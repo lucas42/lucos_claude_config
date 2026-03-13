@@ -113,6 +113,23 @@ CodeQL `py/clear-text-logging-sensitive-data` alerts #1 and #2 in `lucos_contact
 
 Do not re-raise these alerts.
 
+## Design: lucos_creds Scoped Key Permissions (lucos_creds#87, approved 2026-03-13)
+
+`CLIENT_KEYS` format extended with `|` delimiter for optional scopes:
+```
+clientsystem:clientenv=key|scope1,scope2
+```
+Unscoped entries unchanged. Scopes only set after server is migrated (deploy first, set scopes second — env vars pulled at deployment time is the natural safety checkpoint).
+
+Key security decisions accepted:
+- **No scope = no permissions** (fail-closed by default on migrated systems)
+- Scope enforcement is server-side only; client never knows its own scopes
+- Scopes opaque to lucos_creds; each service defines its own vocabulary (`{resource}:{action}` convention)
+- Loganne audit trail for scope changes to be included
+- Scope-aware flag rejected — migration risk accepted given deployment-time env var pull
+
+Do not re-raise the scope-aware flag concern.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
