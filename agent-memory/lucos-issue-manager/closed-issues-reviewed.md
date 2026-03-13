@@ -3,9 +3,11 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-12
+## Last reviewed: 2026-03-13
 
-Reviewed 2 new closures since last check:
+No new closures since last check (2026-03-12).
+
+Previous batches (2026-03-12):
 - lucos#49 (Improve dependency tracking between issues -- closed as completed by me, implemented lucas42's two agreed changes)
 - lucos_photos#160 (Add stable sort order and pagination controls to /people page -- completed)
 
