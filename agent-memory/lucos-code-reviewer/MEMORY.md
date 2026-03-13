@@ -7,6 +7,16 @@
 - The correct pattern is `http://127.0.0.1:<port>/_info`.
 - This was confirmed as a real failure mode via lucos_arachne#91. A missed instance in lucos_contacts PR #533 required a follow-up issue (#534).
 
+### Docker Healthchecks — tool availability in Debian-based images
+- **`golang:N` images do NOT include `nc` or `wget` by default**, despite being Debian-based. Unlike `node:N` (which bundles `buildpack-deps` with many tools), `golang:N` is a minimal Debian image. Any tool needed for healthchecks must be explicitly installed.
+- `node:N` (non-slim, non-alpine) DOES include `wget` and `nc` via `buildpack-deps`.
+- `debian:*` minimal base images do NOT include `wget`, `nc`, or `curl` by default.
+- Confirmed: lucos_creds#88 approved `nc` healthcheck without verifying it was installed; required fix in #89.
+
+### Docker Healthchecks — verify the correct port
+- **For services that do NOT use `$PORT` (e.g. internal app containers), always verify the actual bind port from `startup.sh` or the CMD before approving.** Do not assume the port from the Dockerfile's `EXPOSE` or `FROM` image name.
+- Example: lucos_eolas `app` uses gunicorn binding on `:80` (confirmed in `app/startup.sh`), not port 8000. Approved the wrong port (8000) in lucos_eolas#80; required a follow-up fix in lucos_eolas#84.
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
