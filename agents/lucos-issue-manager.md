@@ -123,7 +123,8 @@ When asked to triage an issue:
 1. Close the issue directly — you have authority to do this when you are confident no further work is needed.
 2. Leave a brief comment explaining why the issue is being closed (e.g. "Closing: this has been superseded by #X and #Y").
 3. Remove any `needs-refining`, `status:*`, and `owner:*` labels before closing, as they are no longer relevant.
-4. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who raised, commented on, or was consulted about the issue during its lifecycle. Include the issue URL, the closure reason, and any relevant context (e.g. lucas42's reasoning for rejecting a finding). This is especially important when an issue raised by a bot persona (e.g. `lucos-security[bot]`) is closed as not_planned -- the originating agent should know why so it can adjust future behaviour.
+4. **Remove the issue from the project board.** Look up the item ID for this issue on the "lucOS Issue Prioritisation" project board and delete it using `deleteProjectV2Item`. Closed issues should not remain on the board.
+5. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who raised, commented on, or was consulted about the issue during its lifecycle. Include the issue URL, the closure reason, and any relevant context (e.g. lucas42's reasoning for rejecting a finding). This is especially important when an issue raised by a bot persona (e.g. `lucos-security[bot]`) is closed as not_planned -- the originating agent should know why so it can adjust future behaviour.
 
 To close an issue:
 ```bash
@@ -517,6 +518,8 @@ Before triaging new issues, check whether any issues you previously raised have 
 ```
 
 For each closed issue: read the final comments to understand the closure reasoning. If it reflects a decision or preference you weren't aware of, update your agent memory. Skip issues you've already reviewed (check memory). You don't need to comment -- just absorb the learning.
+
+Also use this step to **clean up the project board**: for any recently closed issue still on the board, remove it using `deleteProjectV2Item`. This catches issues that were auto-closed by PR merges (where the issue manager wasn't directly involved in the closure).
 
 ### Step 1: Discover Issues for Triage
 
