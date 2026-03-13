@@ -104,9 +104,10 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.
+- Scoped permissions (#87): Option 2 confirmed (scope in `CLIENT_KEYS` using `|` delimiter). Format: `client:env=key|scope1,scope2`. Scopes nullable, opaque to creds. Migration: deploy scope-aware parser first, then set scopes. Awaiting lucas42 decision on final design.
 
 ### lucos_media_weightings
-- Python, cron-based. Weighting explosion (#39): recommended switching from multiplicative to additive bonuses (+20 seasonal, +30 brand-new, +15 two-week) with safety cap at 50. Awaiting lucas42 decision.
+- Python, cron-based. Weighting explosion (#39): additive approach rejected (nerfs ratings). Revised to soft cap on multiplier product: `cap * (1 - e^(-raw/cap))`, cap=10. Preserves rating ratios perfectly, max boost 10x. Collection size dominance is a separate problem (selection algorithm, not weighting). Awaiting lucas42 decision.
 
 ### lucos_time
 - Node.js, raw http.createServer. `/current-items` (#70): design agreed, ready for implementation. New requirement (2026-03-05): festivals with `commemorates` predicate (P547) should transitively include HistoricalEvents in the response. Design comment posted.
