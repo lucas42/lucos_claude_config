@@ -172,6 +172,7 @@ This inline consultation replaces the old pattern of labelling with `owner:` and
 1. Handle it yourself -- you are the domain expert. Post your recommendation as a comment.
 2. If your recommendation resolves the issue, mark it `agent-approved`.
 3. If it needs lucas42's sign-off, mark it `needs-refining` + `status:awaiting-decision` + `owner:lucas42`.
+4. **Update the project board** — add the issue, set Status/Priority/Owner fields, and position by priority. See "Project Board Sync" below.
 
 ### Status and Owner Labels
 

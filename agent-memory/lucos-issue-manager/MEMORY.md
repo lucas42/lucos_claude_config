@@ -95,6 +95,7 @@ Now handled inline during triage (message the specialist sequentially after the 
 - CodeQL issues raised by `lucos-security[bot]` are generally well-specified with file locations, rule IDs, and remediation steps -- can typically be approved directly without further security review.
 - Issues from ops checks (`lucos-system-administrator[bot]`, `lucos-site-reliability[bot]`) are similarly well-specified and actionable.
 - **Audit findings** from `lucos-repo-audit[bot]` are well-specified convention violations with clear problem statements, rationale, and suggested fixes. Can typically be approved directly. Watch for false positives where the convention doesn't apply (e.g. `circleci-uses-lucos-orb` on repos that don't use Docker deploys, or on the orb repo itself). See "Audit-finding issue lifecycle" section below for how these issues interact with closure and re-creation.
+- **Project board sync is mandatory for every triage action.** After adding/changing labels on any issue, also update the project board (add issue, set fields, reposition). This was missed on lucos_photos_android#73 (2026-03-13) despite explicit instructions. Treat board sync as the final step of every triage action -- do not consider an issue "triaged" until the board is updated.
 
 ## Ops check duplicate prevention (introduced 2026-03-05, strengthened 2026-03-06)
 
@@ -127,6 +128,7 @@ Key principles for triaging `audit-finding` issues:
 
 ## Project board sync (introduced 2026-03-12)
 
+- **MANDATORY: Every triage action that changes labels MUST also update the project board.** This includes approving, routing to needs-refining, and closing issues. No exceptions. The board sync is as essential as the label change itself.
 - Project: "lucOS Issue Prioritisation" at https://github.com/users/lucas42/projects/8
 - Use `~/sandboxes/lucos_agent/gh-projects` (PAT-based) for all project board API calls, not `gh-as-agent`
 - Issue manager syncs board during triage: adds issues, sets Status/Priority/Owner fields
