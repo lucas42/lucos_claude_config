@@ -10,6 +10,7 @@
 ### Docker Healthchecks — tool availability in Debian-based images
 - **`golang:N` images do NOT include `nc` or `wget` by default**, despite being Debian-based. Unlike `node:N` (which bundles `buildpack-deps` with many tools), `golang:N` is a minimal Debian image. Any tool needed for healthchecks must be explicitly installed.
 - `node:N` (non-slim, non-alpine) DOES include `wget` and `nc` via `buildpack-deps`.
+- `nginx:N` (Debian) images include `curl` but NOT `wget`. Use `curl --fail -s -o /dev/null <url>` for healthchecks. Confirmed: approved `wget` in lucos_router#22; required fix in #24.
 - `debian:*` minimal base images do NOT include `wget`, `nc`, or `curl` by default.
 - Confirmed: lucos_creds#88 approved `nc` healthcheck without verifying it was installed; required fix in #89.
 
