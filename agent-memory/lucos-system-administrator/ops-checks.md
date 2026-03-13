@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-12
+container_status: 2026-03-13
 resource_checks: 2026-03-12
 syslog_review: 2026-03-12
 software_updates: 2026-03-12
@@ -396,3 +396,11 @@ sandbox_drift: 2026-03-12
 - xwing: `lucos_media_import_test` Exited (0), 2+ weeks — one-shot test container, not a concern; no unhealthy containers
 
 **Note**: `lucos_photos_api` is now showing (healthy) on avalon — looks like a new image was deployed. Commented on lucos_photos#127 noting recovery. Issue-manager to close if confirmed.
+
+### 2026-03-13 (container status only; all weekly/monthly checks ran 2026-03-12 — not due)
+
+**Container status**:
+- avalon crashed/stopped: clean
+- avalon unhealthy: `lucos_comhra_agent` (known lucos_comhra#9 — IPv6/localhost healthcheck). `lucos_backups` now showing (healthy) — IPv6 fix (lucos_backups#49) has been deployed.
+- salvare: clean
+- xwing: `lucos_media_import_test` Exited (0), 2 weeks old — one-shot test container, not a concern; no unhealthy containers

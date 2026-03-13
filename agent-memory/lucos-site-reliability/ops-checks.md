@@ -32,11 +32,11 @@ lucos_dns_sync: 2026-03-10
 lucos_eolas_app: 2026-03-07 (2nd review)
 lucos_eolas_db: 2026-03-09
 lucos_eolas_web: 2026-03-09
-lucos_locations_mosquitto: 2026-03-07
-lucos_locations_otfrontend: 2026-03-07
-lucos_locations_otrecorder: 2026-03-07
+lucos_locations_mosquitto: 2026-03-13
+lucos_locations_otfrontend: 2026-03-13
+lucos_locations_otrecorder: 2026-03-13
 lucos_mail_smtp: 2026-03-10
-lucos_photos_api: 2026-03-07
+lucos_photos_api: 2026-03-13
 lucos_arachne_ingestor: 2026-03-10
 lucos_arachne_search: 2026-03-10
 lucos_arachne_triplestore: 2026-03-10
