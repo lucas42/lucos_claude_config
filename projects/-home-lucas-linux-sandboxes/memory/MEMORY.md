@@ -17,6 +17,10 @@
 
 - **Never use `#N` syntax for Dependabot alerts, CodeQL alerts, or secret-scanning alerts** in GitHub comments or PR descriptions. The `#N` syntax always links to issues/PRs, and alert numbering is separate. Instead, use the CVE or GHSA identifier (e.g. `CVE-2026-0540`, `GHSA-v2wj-7wpq-c8vv`) — GitHub auto-links these. If no CVE/GHSA exists, refer descriptively or use the full alert URL.
 
+## Feedback
+
+- [Don't auto-revert agent work](feedback_revert_policy.md) — when user says an agent shouldn't have done something, ask whether to revert rather than assuming revert is needed
+
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
 - Long persona files suffer from attention degradation — agents skip instructions deep in the file and confabulate when asked why.
