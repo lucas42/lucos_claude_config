@@ -105,6 +105,9 @@ See topic files for details. Key patterns confirmed in operation:
 - Docker Compose named volumes must appear in both `services.<name>.volumes` and top-level `volumes:` AND in `lucos_configy/config/volumes.yaml`.
 - When removing a service from docker-compose, also remove its `/_info` health check — stale checks cause monitoring alerts after the container disappears.
 - To trigger an immediate refresh of lucos_backups volume tracking (instead of waiting for the hourly cron): POST to https://backups.l42.eu/refresh-tracking
+- **Healthcheck tool by base image**: `nginx:N` (Debian) has `curl` but NOT `wget`. Alpine images have `wget` but NOT `curl`. Wrong tool → command not found → container permanently unhealthy. Use `curl --fail -s -o /dev/null <url>` for Debian/nginx. (lucos_router PR #24, 2026-03-13)
+- **gunicorn port in Django healthchecks**: cross-check `--bind` in `startup.sh` against the healthcheck port. Many lucos services bind `:80` not the gunicorn default of 8000. (lucos_eolas PR #84, 2026-03-13)
+- **Django `ALLOWED_HOSTS` + IP healthchecks**: any Django service with `wget/curl http://127.0.0.1:<port>/` healthcheck needs `127.0.0.1` in `ALLOWED_HOSTS`. Applies to lucos_contacts and lucos_eolas (both fixed). Check this whenever adding healthchecks to a Django service.
 
 ## Issue Review Workflow
 - When not commenting on an issue because another agent has already covered the SRE angles: add a +1 reaction to that agent's comment instead of doing nothing.
