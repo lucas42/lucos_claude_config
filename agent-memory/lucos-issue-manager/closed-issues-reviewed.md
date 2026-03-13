@@ -5,7 +5,9 @@ Only recording the most recent batch reviewed each session to avoid re-checking.
 
 ## Last reviewed: 2026-03-13
 
-No new closures since last check (2026-03-12).
+- lucos_repos#104 (Exclude test docker-compose profile containers from conventions -- closed as completed, checker fix)
+
+Previous batch (2026-03-13):
 
 Previous batches (2026-03-12):
 - lucos#49 (Improve dependency tracking between issues -- closed as completed by me, implemented lucas42's two agreed changes)
