@@ -69,7 +69,7 @@
 See `~/.claude/references/docker-conventions.md` for canonical Docker conventions (container naming, volumes, healthchecks). Missing the role suffix in container_name/image is a recurring review comment — check docker-compose.yml before opening any PR.
 
 - **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
-- **`php:*-apache` images do NOT include `wget`** — they're `debian:bookworm-slim` based. Add `RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*` to the Dockerfile when using wget for healthchecks.
+- **`php:*-apache` images do NOT include `wget` or `curl`** — they're `debian:bookworm-slim` based. Install explicitly: `RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*`. Prefer `curl -sf` over `wget -qO-` for healthchecks — `-f` treats HTTP errors as failures, which wget doesn't do by default.
 
 ## Never Merge PRs (recurring failure — critical)
 
