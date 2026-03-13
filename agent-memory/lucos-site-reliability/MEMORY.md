@@ -6,6 +6,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #16 (closed/completed 2026-03-10): Added `--wait` flag to `docker compose up` — prevents monitoring blips by waiting for healthchecks before signalling readiness.
 - Issue #18 (closed/completed 2026-03-10): `calc-version` catch-all releaseRule fails for non-conventional commits. Fix: add `parserOpts: { headerPattern: /^(.*)$/ }` to `@semantic-release/commit-analyzer` config.
 - Android `release-apk` jobs need `cimg/android:2025.01-node` (not base image) — the `-node` variant includes Node.js for `npx`/`lucos/calc-version`.
+- Issue #21 (port-contention-during-deploy): open, no fix yet. `docker compose up --wait` fails when new container can't bind host port held by old container.
 
 ## lucos_photos — Known Issues & Patterns
 - `pg_isready` fix tracked in open issue #39 (split from #25, which is now closed). Engine-at-import-time tracked in open issue #40.
@@ -51,6 +52,8 @@ See topic files for details. Key patterns confirmed in operation:
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
 - `LongPollControllerV3Test` flaky — issue #79 (agent-approved, owner:lucos-developer, priority:high as of 2026-03-12). Flaky test causes CI failures which trigger monitoring alert on `ceol.l42.eu`. Related production `ConcurrentModificationException` in `Playlist.hashCode()` tracked in issue #151 (P2, 2026-03-12) — `LinkedList` not thread-safe under concurrent reads/writes.
 - Issue #41 (Emit Loganne events on health state transitions): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
+- Issue #50 (server.erl bad-return on eaddrinuse): open, fix PR #51 in review (retry bind for 30s). Root cause of deploy failures.
+- Issue #48 (CircleCI check misses push-to-fix): closed/completed 2026-03-13. PR #49 merged. Fix: check last 5 pipelines, flatten workflows, keepLatestWorkflowPerName across all.
 - lucos_loganne issue #215 (Increase event retention and add time-based filtering): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
 
 ## lucos_locations — Known Issues
@@ -95,6 +98,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
+- **`eaddrinuse` crash-loop on deploy**: when a new container starts while the old one still holds a host port, it fails immediately, `restart: always` keeps retrying, and CI `docker compose up --wait` catches the transient unhealthy state and fails even though the container eventually recovers. Symptom: container exit code 0, restart count climbing, logs show `eaddrinuse`. Fix tracked in lucos_monitoring#50 (server.erl retry) and lucos_deploy_orb#21 (broader port-contention issue). Any service binding a host port is susceptible.
 - Redis (`redis:7-alpine`) has persistence disabled by default — not suitable for durable queues without AOF/RDB config.
 - `/_info` checks must never propagate exceptions as 500s — monitoring distinguishes 500 (API broken) from `ok:false` (dependency unhealthy).
 - `lucos_monitoring` fetches `/_info` with a hard 1-second timeout. Health check timeouts inside `/_info` handlers must be well under 1 second (0.5s is a safe ceiling) or the whole endpoint times out and the service appears fully down.
