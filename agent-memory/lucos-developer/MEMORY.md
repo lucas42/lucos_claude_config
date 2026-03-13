@@ -11,7 +11,9 @@
 
 ## lucos_photos
 
-- **API**: FastAPI in `api/app/main.py`. Tests in `api/tests/`. Run with `cd api && python3 -m pytest`.
+- **API**: FastAPI. Entry: `api/app/main.py` (slim — app factory only). Domain modules: `auth.py`, `database.py`, `redis_client.py`, `serializers.py`, `services.py`, `routers/` (photos, people, faces, telemetry, webhooks, app_release). Tests in `api/tests/`. Run with `cd api && python3 -m pytest`.
+- **Shared `get_db`**: All routers import `get_db` from `app.database`. Tests override via `app.dependency_overrides[get_db]`. Patching `SessionLocal` in tests: patch BOTH `app.database.SessionLocal` AND `app.main.SessionLocal` (used by `check_db`/`get_metrics`).
+- **Test patching module locations**: auth functions → `app.auth.*`, Loganne/contacts clients → `app.routers.people.*` or `app.routers.faces.*`, DERIVATIVES_DIR for serializer → `app.serializers.DERIVATIVES_DIR`, app release cache → `app.routers.app_release.*`, httpx in auth → `app.auth.httpx.AsyncClient`.
 - **Model JSON type**: Use SQLAlchemy `JSON` (not `JSONB`) in models — `JSONB` is Postgres-only and breaks SQLite in-memory tests.
 - **Auth pattern for M2M endpoints**: use `verify_key` dependency (same as `POST /photos`). `verify_session` is for browser/cookie auth only.
 - **Some tests hang** when run together — `test_main.py::TestUpload` calls `emit_loganne_event` which tries to connect to the real Loganne service. This is pre-existing; run `tests/test_telemetry.py` and `tests/test_photos.py` separately for fast feedback.
