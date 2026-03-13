@@ -54,7 +54,7 @@ See topic files for details. Key patterns confirmed in operation:
 - lucos_loganne issue #215 (Increase event retention and add time-based filtering): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
 
 ## lucos_locations — Known Issues
-- Issue #9 (P3, 2026-03-06): `lucos_locations_otfrontend` (192.168.176.2) makes continuous TLS MQTT connections to mosquitto on port 8883, failing with "protocol error" every ~60 seconds. Longstanding (confirmed from 2026-03-01). Likely wrong port/TLS config — `otrecorder` correctly uses plain 1883. Related to issue #4 (cert auto-renewal).
+- Issue #9 (P3): mosquitto "protocol error" log noise from `/_info` TLS health check. Three PRs: #12 (ssl module, reduced to "unexpected eof"), #14 (cert-file via letsencrypt volume — lucas42 rejected: checks disk not served cert), #15 (proper MQTT CONNECT/DISCONNECT handshake in the `else` fallback — approved, awaiting human merge 2026-03-13). Final design: `MQTT_CERT_FILE` set → read from disk (zero noise, production); unset → MQTT handshake (clean "not authorised" disconnect, dev/CI). `unsupervisedAgentCode` not set on lucos_locations — never merge PRs yourself.
 - Issue #10 (P3, 2026-03-07): `lucos_locations_otfrontend` nginx logs `connect() failed (111: Connection refused)` to `[::1]:8080/_info` on every monitoring poll. External `/_info` still returns 200 (fallback/static response) so monitoring appears healthy but the application backend may not be running. Potentially a false health signal.
 
 ## tfluke — Known Issues
