@@ -538,6 +538,8 @@ Work through each issue in the returned list using the triage process above. If 
 
 During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue, verify that **all** of its dependencies are resolved — not just the one that triggered the check. Read the full issue body and comments, identify every issue referenced as a dependency or prerequisite, and confirm each one is closed. Only remove `status:blocked` when every dependency has been completed. If some dependencies are resolved but others remain open, leave `status:blocked` in place.
 
+**Special case — false positive audit findings:** When unblocking an `audit-finding` issue whose blocker was a fix to the convention checker itself (rather than a fix to the repo under audit), close the issue as completed instead of just removing `status:blocked`. The convention no longer fails for this repo, so there is nothing left to implement. Leave a comment noting the checker fix and close with `state_reason="completed"`.
+
 ### Summary
 
 When triaging a batch, summarise your findings to the user after completing all triage: how many were approved, how many need further refinement, and a brief note on each.
