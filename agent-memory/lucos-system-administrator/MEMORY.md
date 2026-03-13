@@ -194,3 +194,12 @@ When nginx starts before upstream containers, it fails to resolve upstream hostn
 3. Add `~/.npm-global/bin` to PATH in `~/.profile` (before Lima's `/usr/sbin:/sbin` addition so it takes precedence over `/usr/bin/claude`)
 
 Applied to live VM (2026-03-11) and `lucos_agent_coding_sandbox/lima.yaml` (commit fb3e335). The lima.yaml provisioning now does this in `mode: user` instead of `mode: system`.
+
+## Docker healthcheck tool availability: check final image stage
+
+When adding healthchecks, verify the probe tool is installed in the **final** image stage (not just the build stage). Common gaps found across the estate (2026-03-13):
+
+- `debian:trixie` minimal final stage — no `wget` by default; add to `apt-get install`
+- `alpine` + `postfix` — no `nc`; add `busybox-extras`
+- `alpine` + `busybox-extras` — still no `pgrep`; `pgrep` needs `procps` (not a BusyBox applet)
+- `docker:dind` Alpine — no `nc`; add `busybox-extras`
