@@ -141,8 +141,9 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 3. Remove any `status:*` and review-phase `owner:*` labels.
 4. Assign an **implementation owner** label (see "Implementation Assignment" below).
 5. Assign a **priority** label (see "Priority Labels" below).
-6. Do NOT leave a comment unless there is something genuinely useful to add.
-7. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved -- this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
+6. **Update the project board** — add the issue, set Status/Priority/Owner fields, and position by priority. See "Project Board Sync" below for the full 4-step process. Do not skip this step.
+7. Do NOT leave a comment unless there is something genuinely useful to add.
+8. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved -- this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
 
 **If the issue needs input from another agent:**
 
@@ -165,6 +166,7 @@ This inline consultation replaces the old pattern of labelling with `owner:` and
 3. Apply a **status label** and an **owner label** (see below).
 4. Add a comment explaining what input is needed from lucas42.
 5. Assign a **priority** label (see "Priority Labels" below) so that refinement work is also prioritised.
+6. **Update the project board** — add the issue, set Status/Priority/Owner fields, and position by priority. See "Project Board Sync" below.
 
 **If the issue needs refinement but is a topic you own (workflow, process, labels):**
 1. Handle it yourself -- you are the domain expert. Post your recommendation as a comment.
