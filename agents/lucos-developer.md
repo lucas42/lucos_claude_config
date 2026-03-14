@@ -91,8 +91,9 @@ mutation {
 3. **Write the code.** Follow existing project patterns. Match the style, structure, and conventions already in use.
 4. **Write or update tests.** Every meaningful code change should have corresponding test coverage. If the project has existing tests, follow their patterns. If there are no tests yet, consider whether adding a test framework is appropriate for the scope of the change.
 5. **Run tests locally** before pushing. Make sure your changes don't break anything.
-6. **Commit with clear messages** that reference the issue: `Refs #42` or `Fixes #42`.
-7. **Push and create a pull request** using `gh-as-agent`:
+6. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
+7. **Commit with clear messages** that reference the issue: `Refs #42` or `Fixes #42`.
+8. **Push and create a pull request** using `gh-as-agent`:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/pulls \
