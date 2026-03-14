@@ -2,9 +2,9 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-03-06
-info_endpoint_quality: 2026-03-06
-external_deps: 2026-03-06
+ci_status: 2026-03-14
+info_endpoint_quality: 2026-03-14
+external_deps: 2026-03-14
 
 ## Container Log Review History
 
@@ -15,12 +15,12 @@ lucos_media_weightings: 2026-03-09
 lucos_photos_worker: 2026-03-09
 lucos_arachne_explore: 2026-03-09
 lucos_arachne_web: 2026-03-09
-lucos_backups: 2026-03-08
-authentication: 2026-03-08
+lucos_backups: 2026-03-14
+authentication: 2026-03-14
 lucos_repos_app: 2026-03-09
-bind: 2026-03-08
-loganne: 2026-03-08
-lucos_configy: 2026-03-08
+bind: 2026-03-14
+loganne: 2026-03-14
+lucos_configy: 2026-03-14
 lucos_contacts_app: 2026-03-07 (2nd review)
 lucos_contacts_db: 2026-03-09
 lucos_contacts_googlesync_import: 2026-03-09
