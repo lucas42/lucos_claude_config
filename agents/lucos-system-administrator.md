@@ -145,43 +145,13 @@ You may also be consulted inline by the issue manager during triage when an issu
 ## Working on GitHub Issues
 
 When assigned to or asked to work on a GitHub issue:
-1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via gh-as-agent as `lucos-system-administrator`. Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
+1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via gh-as-agent as `lucos-system-administrator`.
 2. **Create PRs via gh-as-agent** — never `gh pr create`
 3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 4. **Comment on unexpected obstacles** — don't silently get stuck
 5. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
 6. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, manual server changes, configuration applied directly), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
 7. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
-
-### Project Board: In Progress
-
-When starting work on an issue (step 1 above), update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
-
-```bash
-# Get the issue's node ID
-ISSUE_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator repos/lucas42/{repo}/issues/{number} --jq '.node_id')
-
-# Add to project (idempotent) and get the project item ID
-ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query="
-mutation {
-  addProjectV2ItemById(input: {projectId: \"PVT_kwHOAAaLL84BRh5d\", contentId: \"$ISSUE_NODE_ID\"}) {
-    item { id }
-  }
-}" --jq '.data.addProjectV2ItemById.item.id')
-
-# Set status to "In Progress"
-~/sandboxes/lucos_agent/gh-projects graphql -f query="
-mutation {
-  updateProjectV2ItemFieldValue(input: {
-    projectId: \"PVT_kwHOAAaLL84BRh5d\"
-    itemId: \"$ITEM_ID\"
-    fieldId: \"PVTSSF_lAHOAAaLL84BRh5dzg_VMcg\"
-    value: {singleSelectOptionId: \"a24089a4\"}
-  }) {
-    projectV2Item { id }
-  }
-}"
-```
 
 ### Label workflow
 

@@ -380,7 +380,6 @@ Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project bo
 | Awaiting Decision | `639e1909` | `needs-refining` + `status:awaiting-decision` |
 | Blocked | `8849d0c4` | `agent-approved` + `status:blocked` |
 | Ready | `bfb298e3` | `agent-approved` (no blocking status) |
-| In Progress | `a24089a4` | Set by implementation agents when starting work |
 | Done | `e6140890` | Set automatically when issue is closed |
 
 #### Priority options
