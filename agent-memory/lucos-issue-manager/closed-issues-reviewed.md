@@ -3,8 +3,11 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-13
+## Last reviewed: 2026-03-14
 
+- lucos_repos#110 (docker-healthcheck profile exclusion -- closed as duplicate of #105 by lucas42; the false positive was caused by out-of-date dev environment, fixed by #108)
+
+Previous batch (2026-03-13):
 - lucos_repos#104 (Exclude test docker-compose profile containers from conventions -- closed as completed, checker fix)
 
 Previous batch (2026-03-13):
