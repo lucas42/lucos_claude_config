@@ -374,13 +374,12 @@ Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for all project bo
 
 | Option | ID | Maps to |
 |---|---|---|
-| Ideation | `69592674` | `needs-refining` + `status:ideation` |
-| Needs Triage | `d5369b39` | No labels yet (set automatically when item is added) |
-| Needs Refining | `30a87ba8` | `needs-refining` + `status:needs-design` |
-| Awaiting Decision | `639e1909` | `needs-refining` + `status:awaiting-decision` |
-| Blocked | `8849d0c4` | `agent-approved` + `status:blocked` |
-| Ready | `bfb298e3` | `agent-approved` (no blocking status) |
-| Done | `e6140890` | Set automatically when issue is closed |
+| Ideation | `5f521008` | `needs-refining` + `status:ideation` |
+| Needs Triage | `79f7273e` | No labels yet (set automatically when item is added) |
+| Awaiting Decision | `cf5e250d` | `needs-refining` + `status:awaiting-decision` |
+| Blocked | `d79b6b67` | `agent-approved` + `status:blocked` |
+| Ready | `3aaf8e5e` | `agent-approved` (no blocking status) |
+| Done | `878c350f` | Set automatically when issue is closed |
 
 #### Priority options
 
