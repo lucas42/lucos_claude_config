@@ -43,3 +43,4 @@
 - Pancake tortoise (2026-03-10) — COMPLETELY BANNED, massively overused
 - Panther chameleon (2026-03-10) — DO NOT USE AGAIN SOON
 - Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13) — DO NOT USE, massively overused
+- Tuatara (2026-03-04, 2026-03-05, 2026-03-06, 2026-03-07, 2026-03-14) — heavily used, avoid for now
