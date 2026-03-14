@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Standing Rule: Test Locally Before Pushing
+
+Docker is available locally (`docker build`, `docker run`, `docker compose up`). **Always build and run the container locally to verify a fix before opening a PR.** For compiled languages (Erlang, Go, etc.) or anything touching startup/runtime behaviour, a local container test catches crashes in ~2 minutes. Pushing untested fixes to production to see what happens is not acceptable — it was the mistake that turned a monitoring outage into a 3-PR crash-loop incident on 2026-03-14.
+
 See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_deploy_orb — Known Patterns
@@ -48,6 +52,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_monitoring — Known Issues
 - CircleCI check: migrated to v2 workflow-level API via #30/#32 (both closed). Issues #25 and #30 are now closed as completed. Race condition confirmed still present (2026-03-05): `checkWorkflowStatuses` reports failed if ANY workflow in pipeline is failed, even when a later successful retry exists. Issue raised as #34 (P3).
+- **Erlang OTP ssl startup pattern (incident 2026-03-14)**: `inets.app` only declares `kernel`/`stdlib` as dependencies — `ssl` is a `runtime_dependency` only. `ensure_all_started(inets)` does NOT start ssl. `ensure_started(ssl)` also fails because ssl depends on crypto/asn1/public_key. Correct fix: `{ok, _} = application:ensure_all_started([ssl, inets])` — single idempotent call, walks full dependency chain, works in both dev and production relx releases. Closed as #52/#54.
 - lucos_arachne ingestor: unhandled webhook types from loganne causing 404 responses — events silently dropped. Issue raised as lucos_arachne#53.
 - media-api.l42.eu (lucos_media_manager) `/_info` times out consistently — service appears as `name: "unknown"` in monitoring. Issue raised as lucos_media_manager#146 (P2, 2026-03-05).
 - `LongPollControllerV3Test` flaky — issue #79 (agent-approved, owner:lucos-developer, priority:high as of 2026-03-12). Flaky test causes CI failures which trigger monitoring alert on `ceol.l42.eu`. Related production `ConcurrentModificationException` in `Playlist.hashCode()` tracked in issue #151 (P2, 2026-03-12) — `LinkedList` not thread-safe under concurrent reads/writes.
