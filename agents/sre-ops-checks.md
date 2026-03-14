@@ -75,6 +75,8 @@ For each critical issue that has no corresponding incident report:
 
 4. **Reference the source issue**: Include a link to the original critical issue near the top of the report (e.g. in the summary or as a metadata field) so there is a clear audit trail.
 
+5. **Use fully-qualified cross-repo references.** Because incident reports live in the `lucos` repo, bare `#N` references resolve to `lucos` issues — not the repo where the incident occurred. Always use the `lucas42/repo_name#N` format for issue and PR references (e.g. `lucas42/lucos_contacts#42`, not `#42`). This is the general rule from CLAUDE.md but is especially easy to get wrong in incident reports, where nearly every reference points to a different repo.
+
 #### Step 4: Raise a PR
 
 Create a branch, commit the new incident report(s), and open a PR on the `lucos` repo:
