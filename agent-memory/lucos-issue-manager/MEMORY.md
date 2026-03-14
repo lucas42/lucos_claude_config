@@ -132,10 +132,11 @@ Key principles for triaging `audit-finding` issues:
 - Project: "lucOS Issue Prioritisation" at https://github.com/users/lucas42/projects/8
 - Use `~/sandboxes/lucos_agent/gh-projects` (PAT-based) for all project board API calls, not `gh-as-agent`
 - Issue manager syncs board during triage: adds issues, sets Status/Priority/Owner fields
-- Implementation agents set "In Progress" when starting work
 - Built-in workflows handle: item added -> Needs Triage, item closed -> Done, PR merged -> Done
+- **Always paginate board queries.** The board has 180+ items across multiple pages (100 per page). A single-page query misses items and produces incorrect analysis. Always check `pageInfo.hasNextPage` and follow cursors.
 - Full field/option ID reference is in the persona file's "Project Board Sync" section
 - `addProjectV2ItemById` is idempotent -- safe to call even if issue is already on board
+- **DANGER: `updateProjectV2Field` with `singleSelectOptions` regenerates ALL option IDs.** This orphans every existing item's field value (sets to null). Must re-assign status to every item afterwards. Learned 2026-03-14 when removing columns wiped all 187 items' statuses.
 - GitHub user node ID for lucas42: `MDQ6VXNlcjQyODg0Nw==` (legacy) / `U_kgDOAAaLLw` (new)
 - **Always reposition high-priority items after adding.** The board uses manual position ordering (no auto-sort). After setting fields, call `updateProjectV2ItemPosition` with no `afterId` to move Critical/High items to the top. Easy to forget -- do it as the final step of every board update.
 
