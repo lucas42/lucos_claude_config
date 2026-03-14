@@ -20,6 +20,7 @@
 ## Feedback
 
 - [Don't auto-revert agent work](feedback_revert_policy.md) — when user says an agent shouldn't have done something, ask whether to revert rather than assuming revert is needed
+- [Check before chasing](feedback_check_before_chasing.md) — don't repeatedly ask user to merge PRs; check PR state or system status first
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
