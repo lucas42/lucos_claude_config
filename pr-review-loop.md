@@ -18,7 +18,18 @@ Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
-If the code reviewer **approved** the PR: **report back immediately.** Do not merge, do not wait for CI, do not poll CI status. Just report the approval and PR URL back to whoever asked you to do the work. CI and auto-merge (or human merge) will handle the rest without agent involvement. Your job is done.
+If the code reviewer **approved** the PR: **do not merge.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
+
+Before reporting back, check the repo's `unsupervisedAgentCode` custom property:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <your-app> repos/lucas42/<repo>/properties/values --jq '.'
+```
+
+- If `unsupervisedAgentCode` is `YES` (or the property is not set): report back with the PR URL and approval. Auto-merge will handle the rest.
+- If `unsupervisedAgentCode` is `NO`: report back with the PR URL and explicitly note that this repo requires human review and merge. The PR should be left open for the user.
+
+Either way, do not wait for CI, do not poll CI status. Your job is done after reporting back.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
