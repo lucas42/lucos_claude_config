@@ -83,7 +83,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.
-- Issue #91 (P2, open): `lucos_arachne_web` Docker healthcheck uses `wget http://localhost/_info` but Alpine resolves `localhost` to `::1` (IPv6), nginx only binds `0.0.0.0:80` (IPv4). Container is externally healthy but Docker reports it as `unhealthy`. This is also blocking all CI deploys: `docker compose up --wait` fails because the healthcheck never passes. Fix: change healthcheck to use `http://127.0.0.1/_info`.
+- Issue #91 (closed 2026-03-15): `lucos_arachne_web` Docker healthcheck IPv6 localhost fix — confirmed healthy in production.
 
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
