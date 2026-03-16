@@ -24,6 +24,8 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #101 (LOGANNE_ENDPOINT on worker): closed/completed. Worker container was missing the env var — added as pass-through in `docker-compose.yml` `environment` block. No code change needed.
 - Issue #105 (processing-pending count stuck): closed — lucos-developer diagnosed two bugs: (1) sweep enqueues `process_photo` for all stuck items regardless of media type (videos get wrong task); (2) items stuck in `processing` state (crashed mid-process) aren't swept at all. Fix tracked via that issue resolution.
 - Issue #111 (Redis queue flood, P1): closed/completed 2026-03-09. 1.5M jobs accumulated (2.31GB Redis, host OOM loop). Remediation: `FLUSHDB` on `lucos_photos_redis`. Root cause: sweep re-enqueues on every run with no queue-depth check. Fix: queue-depth circuit breaker on sweep (implemented by lucos-developer). Redis memory limit tracked in issue #112.
+- Issue #202 (Loganne 400 on photoProcessed events): open, P3. Every `process_photo` job emits a 400 from Loganne — malformed event payload, non-fatal. Discovered during bulk EXIF reprocess on 2026-03-16.
+- **reprocess_photo idempotency trap**: `process_photo` short-circuits if both the original file AND thumbnail exist on disk — it reconciles status to complete without regenerating the thumbnail. To force thumbnail regeneration, delete the thumbnail files from `/data/photos/derivatives/` first, then re-enqueue. Thumbnails are named `{sha256hash}_thumb.jpg`.
 
 ## lucos_repos — Convention Checks
 - Docker healthcheck convention check (issue #59, closed 2026-03-07): lucos_repos now checks that every service with a `build:` key in `docker-compose.yml` has a `healthcheck:` defined. Implemented by lucos-developer. Applies to system and component repos. If a service is missing a Docker healthcheck, this convention check will fail.
@@ -100,6 +102,12 @@ See topic files for details. Key patterns confirmed in operation:
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` when Docker healthchecks use `wget http://127.0.0.1:<port>/_info`. `wget` sends `Host: 127.0.0.1:<port>` which Django rejects by default. Fixed in PR #536 (2026-03-11). This is a general pattern — any Django service with an IP-based healthcheck needs the IP in `ALLOWED_HOSTS`.
 - PR #533 (add healthchecks) → PR #535 (localhost→127.0.0.1) → PR #536 (add 127.0.0.1 to ALLOWED_HOSTS). Full recovery after PR #536 CI deploy (~10 min from merge).
 - `schedule-tracker.l42.eu` check `lucos_contacts_googlesync_import` lags behind outages — it tracks the last N job runs, so it stays unhealthy until a successful run clears the error history. Self-heals without intervention.
+
+## xwing — Host Facts
+- xwing is a Raspberry Pi 3 (Cortex-A53, CPU part 0xd03). **Already running 64-bit OS** (Debian 13 trixie, aarch64 kernel) — confirmed by sysadmin on 2026-03-16. The OS was upgraded at some point before lucos/issues/50 was raised.
+- Docker image tags like `armv7l-latest` are **legacy naming only** — Docker resolves the correct platform (arm64) from the multi-platform manifest at pull time. Do NOT infer OS bitness from Docker image tag names.
+- xwing runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media, pici. All already running arm64 images despite armv7l tag names.
+- Remaining cleanup: drop `linux/arm/v7` from deploy orb build-multiplatform job, migrate services off `:armv7l-latest` tag convention. Tracked in lucos_deploy_orb#9 (sysadmin scope).
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
