@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-15
+container_status: 2026-03-16
 resource_checks: 2026-03-12
 syslog_review: 2026-03-12
 software_updates: 2026-03-12
@@ -424,3 +424,12 @@ sandbox_drift: 2026-03-12
 - xwing: `lucos_media_import_test` Exited (0) — one-shot test container, not a concern; no unhealthy containers
 
 **Notable**: `lucos_comhra_agent` absent from unhealthy list for second run in a row — likely fix (lucos_comhra#9) has been deployed. Will stop tracking as an ongoing concern unless it reappears.
+
+### 2026-03-16 (container status only; weekly checks last ran 2026-03-12 — not due; monthly checks last ran 2026-03-12 — not due)
+
+**Container status**:
+- avalon crashed/stopped: clean; avalon unhealthy: none
+- salvare: clean; no unhealthy containers
+- xwing: `lucos_media_import_test` Exited (0) 2 days ago — one-shot test container, not a concern; no unhealthy containers
+
+**Notable**: lucos_comhra#9 confirmed closed. Three consecutive clean runs — no further tracking needed.
