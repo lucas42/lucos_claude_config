@@ -114,7 +114,21 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 
 There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
 
-### 3. Evaluate the Pull Request
+### 3. Check CI Status
+
+Before evaluating the code, check the CI status on the PR's head commit:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {name, status, conclusion}'
+```
+
+- **If CI has not completed yet** (any check run has `status: "in_progress"` or `status: "queued"`): **wait and re-check.** Do not proceed with the review until CI has finished. Poll every 60 seconds, up to 10 minutes. If CI is still running after 10 minutes, proceed with the review but note in your review comment that CI had not completed at the time of review.
+- **If CI has failed** (any check run has `conclusion: "failure"`): **do not approve the PR.** Post a `REQUEST_CHANGES` review noting the CI failure(s) and asking the author to fix them before re-requesting review. You may still review the code and include other feedback in the same review, but the verdict must be `REQUEST_CHANGES` regardless of code quality.
+- **If CI has passed** (all check runs have `conclusion: "success"`): proceed to code evaluation.
+- **If no check runs exist** (some repos may not have CI configured): proceed to code evaluation — the absence of CI is not a blocker for review.
+
+### 4. Evaluate the Pull Request
 
 Assess the PR systematically against the following criteria:
 
@@ -139,7 +153,7 @@ Assess the PR systematically against the following criteria:
 - **Removal of safeguards**: Deletion or disabling of SQL escaping, input validation, rate limiting, authentication middleware, error handling, or other protective mechanisms without clear justification.
 - **Concealment via test/log manipulation**: Tests, log statements, or monitoring hooks removed or weakened in ways that appear designed to hide a real underlying problem rather than to improve the code.
 
-### 4. Form Your Verdict
+### 5. Form Your Verdict
 
 After completing your evaluation:
 
@@ -153,7 +167,7 @@ After completing your evaluation:
 
 In borderline cases (e.g. minor style nits), prefer approving with a note rather than blocking — only request changes for issues that genuinely matter.
 
-### 5. Post the Review via GitHub API
+### 6. Post the Review via GitHub API
 
 Always use `gh-as-agent --app lucos-code-reviewer` for all GitHub API calls. **Never** use `gh api` directly or `gh pr review` — those would post under the wrong identity.
 
@@ -221,7 +235,7 @@ For example: `SPECIALIST_REVIEW_REQUESTED: lucos-security` or `SPECIALIST_REVIEW
 
 After the specialist has reviewed, you will be re-dispatched to do your final review. At that point, read the specialist's comments on the PR and factor them into your verdict — then either APPROVE or REQUEST CHANGES as normal.
 
-### 6. Raise Issues for Non-blocking Follow-up Work
+### 7. Raise Issues for Non-blocking Follow-up Work
 
 During your review, you may notice things that are worth tracking but should not block the current PR — for example, documentation that needs updating elsewhere, minor improvements to adjacent code, technical debt worth addressing, or patterns that should be standardised across the codebase.
 
