@@ -43,7 +43,32 @@ A monitoring check that has been failing for days without investigation or escal
 
 ### Check 2: Incident Report Coverage
 
-Verify that every resolved critical incident has a corresponding incident report. Follow the full process in [`references/incident-reporting.md`](../references/incident-reporting.md) — it covers finding closed critical issues, checking for existing reports, writing new reports, raising PRs, and notifying the team after merge.
+Verify that every resolved critical incident has a corresponding incident report in the `lucos` repo. Critical incidents deserve post-mortems — they are how the team learns and prevents recurrence.
+
+#### Step 1: Find recently closed critical issues
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "search/issues?q=org:lucas42+is:issue+is:closed+label:priority:critical+sort:updated-desc&per_page=20"
+```
+
+#### Step 2: Check for existing incident reports
+
+For each closed critical issue, check whether an incident report already exists in the `lucos` repo at `docs/incidents/`. Search by looking for the issue URL or issue title in existing reports:
+
+```bash
+# List existing incident reports
+ls ~/sandboxes/lucos/docs/incidents/*.md
+
+# Search for references to the issue URL or repo+number in existing reports
+grep -rl "lucas42/{repo}/issues/{number}" ~/sandboxes/lucos/docs/incidents/
+```
+
+If a matching incident report already exists, skip that issue — no action needed.
+
+#### Step 3: Write reports for uncovered issues
+
+For each critical issue that has no corresponding incident report, follow the process in [`references/incident-reporting.md`](../references/incident-reporting.md) to write the report, raise a PR, and notify the team after merge.
 
 ---
 
