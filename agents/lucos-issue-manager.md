@@ -414,9 +414,16 @@ For each issue, complete **all four** of the following steps as a single unit of
 
 2. **Set all three fields** — Status, Priority, and Owner — using `updateProjectV2ItemFieldValue` with the item ID from step 1. Use the mapping tables above to determine the correct option IDs.
 
-3. **Position the item by priority.** The board uses manual position ordering — there is no auto-sort. If the issue is Critical or High priority, call `updateProjectV2ItemPosition` with no `afterId` to move it to the top of its column. For Medium or Low priority, skip this step — the item will sit below higher-priority items that have been moved to the top.
+3. **Position the item by priority.** The board uses manual position ordering — there is no auto-sort. The prioritisation script (`get-next-implementation-issue`) returns items in board position order, so correct positioning is essential — an item in the wrong position will be picked up at the wrong time regardless of its priority label.
 
-4. **Verify you completed step 3.** Before moving on, confirm you actually made the positioning API call for Critical/High items. This step exists because it is easy to stop after setting fields and forget to reposition. If you skipped step 3 for a high-priority item, go back and do it now.
+   Position by priority level:
+   - **Critical or High**: call `updateProjectV2ItemPosition` with no `afterId` to move to the top.
+   - **Medium**: call `updateProjectV2ItemPosition` with `afterId` set to the last High-priority item on the board, so Medium items sit below all High items but above Low items. If you don't know the last High item's ID, move the item to the top — being too high is better than being stuck at the bottom below Low items.
+   - **Low**: no repositioning needed — items default to the bottom, which is the correct position for Low priority.
+
+   **Never skip this step for Critical, High, or Medium items.** A high-priority item left at the bottom of the board will be picked up last, defeating the purpose of priority labels.
+
+4. **Verify you completed step 3.** Before moving on, confirm you actually made the positioning API call. This step exists because it is easy to stop after setting fields and forget to reposition. If you skipped step 3, go back and do it now.
 
 ### API patterns
 
@@ -444,7 +451,7 @@ mutation {
   }
 }'
 
-# 3. Position (Critical/High only — omit afterId to move to top)
+# 3. Position by priority (omit afterId to move to top; or use afterId to place after a specific item)
 ~/sandboxes/lucos_agent/gh-projects graphql -f query='
 mutation {
   updateProjectV2ItemPosition(input: {
