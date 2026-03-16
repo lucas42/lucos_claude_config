@@ -76,7 +76,11 @@ See `~/.claude/references/docker-conventions.md` for canonical Docker convention
 
 ## Never Merge PRs (recurring failure — critical)
 
-Agents must NEVER merge PRs via the API. Auto-merge or the user handles merging. `unsupervisedAgentCode: true` does NOT grant permission to merge — it is unrelated to the merge step. When a PR is approved, report back immediately and stop. Do not call the merge endpoint under any circumstances.
+**STOP. Do not call the merge endpoint.** `pr-review-loop.md` step 2 is explicit: "do not merge. Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents." `unsupervisedAgentCode = YES` means auto-merge handles it — it does NOT mean I should merge. After approval: report back, done.
+
+## Alembic Autogenerate — Always Review Output
+
+Always manually review generated migration files before committing. Autogenerate diffs against the local dev DB, which may be out of sync with the model history, producing noise operations (index drops, type changes) that are destructive in production. Only keep operations directly related to the current change.
 
 ## GitHub Repo Creation
 
