@@ -20,14 +20,15 @@ Wait for the lucos-code-reviewer to respond.
 
 If the code reviewer **approved** the PR: **do not merge.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
 
-Before reporting back, check the repo's `unsupervisedAgentCode` custom property:
+Before reporting back, check whether `unsupervisedAgentCode` is set for the repo. This property is stored in `lucos_configy` and served via the configy API. Use the `check-unsupervised` wrapper script:
 
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app <your-app> repos/lucas42/<repo>/properties/values --jq '.'
+~/sandboxes/lucos_agent/check-unsupervised <repo-name>
 ```
 
-- If `unsupervisedAgentCode` is `YES` (or the property is not set): report back with the PR URL and approval. Auto-merge will handle the rest.
-- If `unsupervisedAgentCode` is `NO`: report back with the PR URL and explicitly note that this repo requires human review and merge. The PR should be left open for the user.
+- Exit code `0` (YES): report back with the PR URL and approval. Auto-merge will handle the rest.
+- Exit code `1` (NO): report back with the PR URL and explicitly note that this repo requires human review and merge. The PR should be left open for the user.
+- Exit code `2` (error / not found): treat as NO — report back noting that the repo requires human review and merge, and mention that the configy lookup failed so this should be investigated.
 
 Either way, do not wait for CI, do not poll CI status. Your job is done after reporting back.
 
