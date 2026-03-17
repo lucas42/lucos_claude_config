@@ -148,7 +148,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## Ops Checks
 - Tracking file: `ops-checks.md` — records last-run timestamps for monthly checks and per-container log review history. Always consult and update this file when running ops checks.
-- Ops checks definition was restructured on 2026-03-06: extracted from the main persona file into `~/.claude/agents/sre-ops-checks.md`. The persona file now instructs reading that file when running ops checks. There are now **6 checks** (not 5) and a mandatory completion manifest table at the end of each run.
+- Ops checks definition was restructured on 2026-03-06: extracted from the main persona file into `~/.claude/agents/sre-ops-checks.md`. The persona file now instructs reading that file when running ops checks. There are now **7 checks** (not 6) and a mandatory completion manifest table at the end of each run. Check 2 (added 2026-03-17) is "Loganne Alert History" — fetch recent `lucos_monitoring` events and investigate flappy or persistent alerts.
 - Check 2 in the new structure is "Incident Report Coverage" (every run) — scan recently closed `priority:critical` issues and write incident reports for any that don't have one. This was previously Check 6 at the very end of the old persona file and was missed in two consecutive runs.
 - Incident reports for lucos_repos#39 and lucos_arachne#60 written 2026-03-06 via lucos/pull/40.
 - Claude Code caches persona files at conversation start — mid-session changes to persona files are NOT picked up in the same session. If the persona file is updated mid-session, the new instructions won't be visible until the next conversation.
