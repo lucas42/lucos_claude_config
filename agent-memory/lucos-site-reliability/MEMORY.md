@@ -1,5 +1,21 @@
 # SRE Agent Memory
 
+## Production Host Directory Structure
+
+There are **no persistent per-service directories** on production hosts. Docker Compose files are deployed transiently to `/home/circleci/project` during CI and are not present afterwards. All production Docker operations must use container names directly — never `cd` into a service directory.
+
+```bash
+# Correct
+docker logs monitoring
+docker stop time
+docker restart monitoring
+
+# Wrong — path does not exist
+cd /home/docker/lucos_time && docker compose stop
+```
+
+Container names match the service name in `docker-compose.yml` (e.g. `monitoring`, `time`, `photos_api`).
+
 ## Standing Rules
 
 **Read the full function before editing any part of it.** Editing only the lines that look relevant risks removing a variable assignment that's used further down. This caused a regression in lucos_backups PR #62 — removed `project = labels[...]` when consolidating error handling, but `project` was still referenced 15 lines later.
