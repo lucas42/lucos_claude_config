@@ -32,6 +32,15 @@
 - Similarly, `re:replace/4` with `{return, list}` can return an iolist — wrap with `lists:flatten/1` before using with `++`.
 - Confirmed as a real CI failure in lucos_monitoring PR #58.
 
+## CircleCI Build Convention
+
+### `build-multiplatform` is the standard — `build-armv7l`, `build-amd64`, `build-arm64` are retired
+- As of 2026-03-17, all lucos services have migrated to `lucos/build-multiplatform` (Docker buildx + QEMU, produces a unified `linux/amd64,linux/arm64` manifest).
+- `build-armv7l`, `build-amd64`, `build-arm64`, and the pici Docker-in-Docker build host are all retired. pici repo is archived.
+- **Flag any PR that still uses arch-specific build jobs as needing migration.**
+- When a service uses `build-multiplatform`, the `docker-compose.yml` image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
+- No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
