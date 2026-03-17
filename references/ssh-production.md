@@ -37,6 +37,25 @@ Before executing any write operation on a production host, send a Loganne event 
 
 This allows other agents (especially `lucos-site-reliability`) to distinguish intentional changes from unexpected incidents.
 
+## Production host directory structure
+
+There are **no persistent per-service directories** on production hosts. Docker Compose files are deployed transiently to `/home/circleci/project` during CI deploys and are **not present** after the deploy completes.
+
+When working on production, always use `docker` commands with the container name directly — do not attempt to `cd` into a service directory:
+
+```bash
+# Correct — use container name directly
+docker logs monitoring
+docker stop time
+docker exec -it lucos_arachne_web sh
+
+# Wrong — these paths do not exist on production
+cd /home/docker/lucos_time          # does not exist
+cd /home/lucas/sites/lucos_time     # will not have docker-compose.yml after deploy
+```
+
+If you need the current docker-compose configuration for a running service, retrieve it from the GitHub repo, not from the production host filesystem.
+
 ## Safe read-only commands
 
 When investigating production, prefer read-only commands such as:
