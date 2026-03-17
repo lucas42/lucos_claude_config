@@ -32,6 +32,13 @@
 - Similarly, `re:replace/4` with `{return, list}` can return an iolist — wrap with `lists:flatten/1` before using with `++`.
 - Confirmed as a real CI failure in lucos_monitoring PR #58.
 
+## Android / MediaStore Pitfalls
+
+### MediaStore `NOT IN` with bound parameters silently returns empty cursor
+- **Never approve a PR that uses `NOT IN (?, ?)` in a MediaStore selection string with bound parameters.** On some Android versions, the MediaStore ContentProvider silently returns an empty cursor — no error, no exception, just zero results.
+- The correct approach is to apply the exclusion filter in Kotlin inside the cursor loop (e.g. `if (ownerPackage in EXCLUDED_PACKAGES) continue`).
+- Confirmed as a real production regression in lucos_photos_android: the TikTok `OWNER_PACKAGE_NAME NOT IN (?, ?)` filter broke sync entirely from v1.0.13 on at least one device. Fixed in PR #79.
+
 ## CircleCI Build Convention
 
 ### `build-multiplatform` is the standard — `build-armv7l`, `build-amd64`, `build-arm64` are retired
