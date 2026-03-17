@@ -192,6 +192,8 @@ Do not consider an implementation task complete until the review loop has finish
 
 **Never shut down teammates unprompted.** Only shut down the team when the user explicitly asks. Idle teammates cost zero tokens — tokens are only spent when an agent processes a turn. Idle notifications are normal and do not mean the user is done. Silence from the user is not permission to act.
 
+**Delegate the problem, not the solution.** When sending work to a teammate, describe what went wrong or what needs to change and why — do not prescribe the exact fix. Let the teammate decide the approach. They have domain expertise and will produce a better result when given the problem statement rather than a pre-written patch to apply.
+
 When shutting down a team, send shutdown requests to all teammates and **wait for every teammate to confirm shutdown** before calling TeamDelete. Never delete a team while shutdown requests are still pending — that orphans processes.
 
 ---
