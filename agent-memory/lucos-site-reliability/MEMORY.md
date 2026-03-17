@@ -1,6 +1,10 @@
 # SRE Agent Memory
 
-## Standing Rule: Test Locally Before Pushing
+## Standing Rules
+
+**Read the full function before editing any part of it.** Editing only the lines that look relevant risks removing a variable assignment that's used further down. This caused a regression in lucos_backups PR #62 — removed `project = labels[...]` when consolidating error handling, but `project` was still referenced 15 lines later.
+
+**Test Locally Before Pushing** (previously the sole standing rule):
 
 Docker is available locally (`docker build`, `docker run`, `docker compose up`). **Always build and run the container locally to verify a fix before opening a PR.** For compiled languages (Erlang, Go, etc.) or anything touching startup/runtime behaviour, a local container test catches crashes in ~2 minutes. Pushing untested fixes to production to see what happens is not acceptable — it was the mistake that turned a monitoring outage into a 3-PR crash-loop incident on 2026-03-14.
 
@@ -141,6 +145,12 @@ See topic files for details. Key patterns confirmed in operation:
 - CI status monthly check: use `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` — no auth needed for public repos.
 - CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
 - To retry a failed workflow: `curl -H "Circle-Token: $TOKEN" -H "Content-Type: application/json" -X POST "https://circleci.com/api/v2/workflow/{workflow_id}/rerun" -d '{"from_failed": true}'`
+
+## lucos_photos Telemetry Access
+- Endpoint: `GET https://photos.l42.eu/api/telemetry?since=YYYY-MM-DD&limit=100`
+- Auth: `Authorization: Bearer <android_app_production_key>` — the agent key (`KEY_LUCOS_PHOTOS`) is NOT valid; only the Android app's key works
+- Android app key: read from production with `ssh avalon.s.l42.eu "docker exec lucos_photos_api env | grep CLIENT_KEYS"`
+- Event types: `sync_completed`, `sync_failed`; key fields: `items_found`, `photos_synced`, `already_uploaded`, `errors`, `error_breakdown`
 
 ## lucos_photos_android — Known Issues & Patterns
 - Issue #28 (signing): root cause was Kotlin DSL variable shadowing. In a `SigningConfig.() -> Unit` lambda, unqualified names like `keyPassword` resolve to `SigningConfig.keyPassword` (receiver member) before outer scope vals. This caused `this.keyPassword = keyPassword` to be a self-assignment. Fix: prefix outer vals with `signing` (e.g. `signingKeyPassword`) so they don't shadow the DSL properties. Commit `23db310` on 2026-03-07. CI confirmed: `production-build-apk` now passes.
