@@ -89,7 +89,9 @@ If a PR was created and approved:
      ```bash
      ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'
      ```
-     Get the head SHA from the PR details (`head.sha`). If `total_count` is 0 (no checks have been created at all), or any check has `conclusion: "failure"`, flag it to the user as potentially stuck and provide the PR URL. Otherwise, CI is running or has passed — the PR will auto-merge on its own and there is nothing else to do.
+     Get the head SHA from the PR details (`head.sha`).
+     - If `total_count` is 0 (no checks created at all) or any check has `conclusion: "failure"`: send the PR back to the **developer who created it** for investigation. The developer has the most context on the code and likely failure modes — do not investigate yourself or escalate to SRE. Only if the developer identifies the failure as a pipeline/infrastructure problem (not a code/test issue) should SRE be looped in.
+     - Otherwise, CI is running or has passed — the PR will auto-merge on its own and there is nothing else to do.
 
 4. **If not unsupervised (exit code 1) or error (exit code 2):**
    - Tell the user they need to review and merge the pull request themselves. Provide the full PR URL so they can easily navigate to it.
