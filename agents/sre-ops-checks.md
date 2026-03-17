@@ -1,6 +1,6 @@
 # SRE Ops Checks
 
-**6 checks total — you MUST run all 6. See the completion manifest at the bottom.**
+**7 checks total — you MUST run all 7. See the completion manifest at the bottom.**
 
 Check your ops-checks memory file (`ops-checks.md`) at the start of each run to determine which checks are due. Update it after each check. If a check is skipped because it is not yet due, note this explicitly in your output.
 
@@ -20,7 +20,7 @@ If you find an existing issue that covers the same root cause, comment on that i
 
 ---
 
-## Every Run (2 checks)
+## Every Run (3 checks)
 
 ### Check 1: Monitoring API
 
@@ -41,7 +41,35 @@ A monitoring check that has been failing for days without investigation or escal
 
 ---
 
-### Check 2: Incident Report Coverage
+### Check 2: Loganne Alert History
+
+Fetch recent Loganne events and look for flappy or persistent monitoring alerts that warrant investigation.
+
+```bash
+source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/lucos_agent/.env | cut -d'"' -f2) && curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?limit=50"
+```
+
+Filter the results to events where `source == "lucos_monitoring"`. Look back over the last 24 hours (or since the last ops check run).
+
+#### What to look for
+
+**Flappy alerts** — a system that has fired multiple `monitoringAlert` / `monitoringRecovery` cycles in a short period. More than 2–3 oscillations within a few hours is worth investigating. Flappy systems may indicate:
+- An intermittent dependency (network, upstream service)
+- A service with a fragile healthcheck or tight timeout
+- A resource exhaustion cycle (OOM → restart → recover → repeat)
+
+**Persistent alerts** — a system with a `monitoringAlert` event and no subsequent `monitoringRecovery`. These may represent an ongoing failure that Check 1 (Monitoring API) should already surface, but the Loganne history provides context on how long the system has been failing.
+
+#### Action
+
+For any flappy or persistent alert not already covered by a known open issue:
+1. Check for an existing issue using the duplicate prevention queries above
+2. If none exists, raise a GitHub issue on the relevant repo with: the system name, the alert pattern observed (timestamps, number of cycles), and the risk if left unaddressed
+3. If the pattern suggests a systemic reliability problem, flag for deeper investigation
+
+---
+
+### Check 3: Incident Report Coverage
 
 Verify that every resolved critical incident has a corresponding incident report in the `lucos` repo. Critical incidents deserve post-mortems — they are how the team learns and prevents recurrence.
 
@@ -74,7 +102,7 @@ For each critical issue that has no corresponding incident report, follow the pr
 
 ## Rotating (1 check — run every time, covering 3-5 containers per run)
 
-### Check 3: Container Log Review
+### Check 4: Container Log Review
 
 SSH into production hosts and review logs for a rotating selection of containers. Track in `ops-checks.md` when each container was last reviewed so you cover them all over time.
 
@@ -107,7 +135,7 @@ After reviewing, update `ops-checks.md` with the date for each container you che
 
 ## Monthly (3 checks)
 
-### Check 4: CI Status
+### Check 5: CI Status
 
 Scan for repos where CI has been red for an extended period (more than a few days). A repo with persistently failing CI is a reliability risk — broken CI means unreviewed changes and delayed deployments.
 
@@ -124,7 +152,7 @@ After completing, update `ci_status` in `ops-checks.md` with today's date.
 
 ---
 
-### Check 5: `/_info` Endpoint Quality
+### Check 6: `/_info` Endpoint Quality
 
 Hit `/_info` directly on each monitored service to verify the response is well-formed and contains the expected fields (`system`, `checks`, `metrics`, `ci`, `title`, etc.).
 
@@ -138,7 +166,7 @@ After completing, update `info_endpoint_quality` in `ops-checks.md` with today's
 
 ---
 
-### Check 6: External Dependency Health
+### Check 7: External Dependency Health
 
 Verify reachability of external services that lucos depends on but does not control.
 
@@ -171,10 +199,11 @@ After completing your ops checks run, output a table like this:
 | Check | Status | Notes |
 |---|---|---|
 | 1. Monitoring API | Done / Skipped (not due) | Brief finding or "all healthy" |
-| 2. Incident Report Coverage | Done / Skipped (not due) | N critical issues checked, N reports needed |
-| 3. Container Log Review | Done | N containers reviewed: name1, name2, ... |
-| 4. CI Status | Done / Skipped (not due) | — |
-| 5. `/_info` Endpoint Quality | Done / Skipped (not due) | — |
-| 6. External Dependency Health | Done / Skipped (not due) | — |
+| 2. Loganne Alert History | Done | N monitoring events reviewed, N flappy/persistent alerts found |
+| 3. Incident Report Coverage | Done / Skipped (not due) | N critical issues checked, N reports needed |
+| 4. Container Log Review | Done | N containers reviewed: name1, name2, ... |
+| 5. CI Status | Done / Skipped (not due) | — |
+| 6. `/_info` Endpoint Quality | Done / Skipped (not due) | — |
+| 7. External Dependency Health | Done / Skipped (not due) | — |
 
-**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 6 checks were considered.
+**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 7 checks were considered.
