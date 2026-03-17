@@ -6,6 +6,10 @@ disable-model-invocation: true
 
 Follow this process. Do not ask for clarification — immediately begin Step 1.
 
+## Ad-hoc dispatch
+
+If the user gives a specific issue URL to implement (rather than asking for the next issue from the queue), skip Step 1 and go straight to Step 1a with that issue. In parallel with dispatching the developer in Step 2, send a message to the `lucos-issue-manager` teammate asking it to: set the issue to `priority:high`, ensure it's on the project board, and move it to the top of the Ready column. If the user is explicitly asking for an issue to be picked up, it's clearly high priority to them.
+
 ## Step 1: Find the next issue
 
 Run the global prioritisation script:
