@@ -38,7 +38,24 @@ If **any** dependency is still open, **do not dispatch the issue.** Instead, war
 
 Then stop. Do not proceed to Step 2.
 
-If all dependencies are closed (or no dependencies are mentioned), continue to Step 2.
+If all dependencies are closed (or no dependencies are mentioned), continue to Step 1b.
+
+## Step 1b: Check for existing PRs
+
+Before dispatching the issue, check whether a pull request already exists that would close it:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/timeline --jq '[.[] | select(.event == "cross-referenced" and .source.issue.pull_request != null) | {pr_number: .source.issue.number, pr_title: .source.issue.title, pr_state: .source.issue.state, pr_url: .source.issue.html_url}]'
+```
+
+If a PR exists that references the issue and is still **open**, the work has likely already been done — the PR just hasn't been merged yet. In that case:
+
+1. **Determine the repository name** from the issue URL.
+2. **Check whether the repository has unsupervised agent code enabled** by running `~/sandboxes/lucos_agent/check-unsupervised <repo-name>`.
+3. **If unsupervised (exit code 0):** the PR should auto-merge on its own. Tell the user the work is already done and the PR is awaiting auto-merge, then stop.
+4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to merge the existing PR before this issue can be closed. Provide the PR URL. Then stop — do not dispatch a teammate.
+
+If no open PR exists for the issue, continue to Step 2.
 
 ## Step 2: Dispatch the correct teammate
 
