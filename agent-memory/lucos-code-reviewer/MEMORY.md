@@ -40,6 +40,8 @@
 
 ## Recently Mentioned Reptiles
 
+**IMPORTANT**: Before choosing a reptile fact, always read `/home/lucas.linux/.claude/agent-memory/lucos-code-reviewer/reptiles.md` in full. The list below is only a summary of the most-overused animals — the full history is in that file. Many animals appear in reptiles.md that are not listed here.
+
 - Thorny devil (2026-03-07)
 - Green iguana (2026-03-07)
 - Common snapping turtle (2026-03-07, 2026-03-10)
@@ -58,3 +60,4 @@
 - Panther chameleon (2026-03-10) — DO NOT USE AGAIN SOON
 - Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13, 2026-03-16) — DO NOT USE, massively overused
 - Tuatara (2026-03-04, 2026-03-05, 2026-03-06, 2026-03-07, 2026-03-14) — heavily used, avoid for now
+- Axolotl (2026-03-10, 2026-03-12, 2026-03-14, 2026-03-17) — DO NOT USE, massively overused (also technically an amphibian)
