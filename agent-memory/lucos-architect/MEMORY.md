@@ -12,10 +12,11 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - SSR (#137): recommended Option 2 (Jinja2 in existing API container). 3 pages to convert (index, photo, people). Eliminates nav duplication and client-side data fetching issues.
 - Android backup client (#3): separate repo `lucos_photos_android`
 - App downloads (#115): recommended GitHub Releases for APK storage, `GET /api/app/latest` endpoint. Depends on #38 (versioning).
-- App telemetry (#39 on android repo): recommended extending photos API with `POST /api/telemetry`. Skip OpenTelemetry. Revisit central service if second consumer appears.
+- App telemetry (#39 on android repo): recommended extending photos API with `POST /api/telemetry`. Skip OpenTelemetry. Revisit central service if second consumer appears. Telemetry shares same Postgres DB as app data -- DB restore wipes telemetry too (learned from 2026-03-17 incident). Separation tracked in #211.
 - Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
 - Video upload (#60): needs-refining. See `project-details.md`.
 - Profile pictures (#149): agent-approved, priority:high. Phased approach: 4 criteria now (det_score, frontality from kps, face width, face height), smile/hat deferred. Worker generates crops, stored in `/data/photos/derivatives/`. Two columns on `person` table (profile_photo_id, profile_auto_generated). Need to persist det_score + kps from InsightFace (currently not saved).
+- Face reprocessing (#208, merged): `detect_and_save_faces` now preserves `person_confirmed=True` links via embedding cosine similarity matching. Option B (snapshot + re-apply). Key: bounding box IoU is fragile (EXIF orientation transforms coordinates); embedding similarity is invariant.
 - Face-to-contact linking (#104): revised design agreed. Sequencing: (1) JSON API on contacts (lucos_contacts#529), (2) person-to-contact linking UI using `lucos_search_component` with `data-types="Person"`, (3) photo detail view (#103), (4) face assignment UI. Steps 1-2 independent of #103. lucas42 wants names managed in contacts, not photos. No proxy endpoint needed -- search component queries arachne client-side. API keys: `KEY_LUCOS_ARACHNE` (client-side search), `KEY_LUCOS_CONTACTS` (server-side only). Open: whether `contact_id` stores full URI or numeric ID. Endpoint rename: `/persons` -> `/people` (lucas42 preference, landed in production).
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
@@ -49,6 +50,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - `depends_on` in compose does not wait for service readiness. Projects with Postgres should have startup retry logic.
 - ARM builds use pici (DinD+SSH). Recommended replacing with `docker buildx` + QEMU (pici#9). Decision pending.
 - ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media
+- **Docker volume restore gotcha**: `docker run` with a new volume does NOT apply Docker Compose labels. lucos_backups depends on these labels. Volume restores must use `docker compose` to create the volume first, or manually apply labels. Documented in lucos_backups#64.
+- **2026-03-17 incident** (docs/incidents/ in lucos repo): EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash on all 3 hosts. Five-stage cascade. Key systemic lesson: "idempotent" functions that delete-and-recreate must distinguish between ML-generated and human-curated data.
 
 ## Claude Code setup review (Mar 2026)
 
