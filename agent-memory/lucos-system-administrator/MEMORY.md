@@ -197,9 +197,19 @@ Applied to live VM (2026-03-11) and `lucos_agent_coding_sandbox/lima.yaml` (comm
 
 ## Docker healthcheck tool availability: check final image stage
 
-When adding healthchecks, verify the probe tool is installed in the **final** image stage (not just the build stage). Common gaps found across the estate (2026-03-13):
+When adding healthchecks, verify the probe tool is installed in the **final** image stage (not just the build stage). See `healthcheck-notes.md` for details.
 
-- `debian:trixie` minimal final stage — no `wget` by default; add to `apt-get install`
-- `alpine` + `postfix` — no `nc`; add `busybox-extras`
-- `alpine` + `busybox-extras` — still no `pgrep`; `pgrep` needs `procps` (not a BusyBox applet)
-- `docker:dind` Alpine — no `nc`; add `busybox-extras`
+## Docker volume restore procedure (CRITICAL — avoids label loss)
+
+**Never restore a volume using `docker run` + alpine tar directly into a new volume.** This creates the volume without Docker Compose labels, breaking lucos_backups tracking and blocking deploys.
+
+**Correct procedure:**
+1. Stop all containers using the volume
+2. Tar the live data OUT first: `docker run --rm -v <vol>:/source:ro -v /tmp:/backup alpine tar czf /backup/<vol>.live.tar.gz -C /source .`
+3. Remove stopped containers: `docker rm <container>`
+4. Remove the old volume: `docker volume rm <vol>`
+5. Create the new volume WITH labels: `docker volume create --label com.docker.compose.project=<project> --label com.docker.compose.version=2.27.1 --label com.docker.compose.volume=<shortname> <vol>`
+6. Restore data into it: `docker run --rm -v <vol>:/volume -v /tmp:/backup:ro alpine sh -c 'cd /volume && tar xzf /backup/<vol>.live.tar.gz'`
+7. Trigger a CircleCI redeploy (not `docker start`) to bring containers back up properly under compose
+
+Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.compose.version`, `com.docker.compose.volume`. Volumes without these labels crash lucos_backups tracking for the entire host. Confirmed incident: 2026-03-17 EXIF reprocess cascade.
