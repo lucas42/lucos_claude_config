@@ -84,7 +84,7 @@ If a PR was created and approved:
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
 3. **If unsupervised (exit code 0):**
-   - First, check whether any open issues are blocked by the issue this PR closes. Search for open issues that reference the closing issue as a blocker (e.g. issues with `status:blocked` that mention the issue number in their body or comments).
+   - First, check whether any open issues are blocked by the issue this PR closes. Search in the **issue's repo** (from the original issue URL dispatched in Step 2), not the PR's repo — these may differ when a PR in one repo closes an issue in another. Look for open issues with `status:blocked` that reference the closing issue number in their body or comments.
    - **If there ARE dependent issues to unblock:**
      - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
      - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
