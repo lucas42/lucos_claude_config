@@ -85,7 +85,11 @@ If a PR was created and approved:
      - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
      - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
      - Once the issue is closed, send a message to the `lucos-issue-manager` teammate asking it to check issues that were blocked by the now-closed issue. Remind it to verify that **all** dependencies of each blocked issue are resolved before removing `status:blocked` — not just the one that was just closed.
-   - **If there are NO dependent issues:** skip the waiting entirely — the PR will merge on its own via auto-merge and there is nothing else to do.
+   - **If there are NO dependent issues:** verify that CI checks have started on the PR before moving on. Check the PR's status checks:
+     ```bash
+     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'
+     ```
+     Get the head SHA from the PR details (`head.sha`). If `total_count` is 0 (no checks have been created at all), or any check has `conclusion: "failure"`, flag it to the user as potentially stuck and provide the PR URL. Otherwise, CI is running or has passed — the PR will auto-merge on its own and there is nothing else to do.
 
 4. **If not unsupervised (exit code 1) or error (exit code 2):**
    - Tell the user they need to review and merge the pull request themselves. Provide the full PR URL so they can easily navigate to it.
