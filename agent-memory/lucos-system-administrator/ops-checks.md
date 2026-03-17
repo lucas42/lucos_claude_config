@@ -5,14 +5,14 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-16
-resource_checks: 2026-03-12
-syslog_review: 2026-03-12
-software_updates: 2026-03-12
+container_status: 2026-03-17
+resource_checks: 2026-03-17
+syslog_review: 2026-03-17
+software_updates: 2026-03-17
 docker_image_staleness: 2026-03-12
 backup_verification: 2026-03-12
 certificate_expiry: 2026-03-12
-sandbox_drift: 2026-03-12
+sandbox_drift: 2026-03-17
 ```
 
 ## Known Limitations
@@ -433,3 +433,33 @@ sandbox_drift: 2026-03-12
 - xwing: `lucos_media_import_test` Exited (0) 2 days ago — one-shot test container, not a concern; no unhealthy containers
 
 **Notable**: lucos_comhra#9 confirmed closed. Three consecutive clean runs — no further tracking needed.
+
+### 2026-03-17 (checks 1–5 due; checks 6–8 not due — last ran 2026-03-12)
+
+**Note**: SSH host key verification failed initially — known_hosts was empty for all production hosts. Added keys via `ssh-keyscan` before proceeding.
+
+**Container status**:
+- avalon crashed/stopped: clean; avalon unhealthy: none
+- salvare: clean; no unhealthy containers
+- xwing: `lucos_media_import_test` Exited (0) 3 days ago — one-shot test container, not a concern; no unhealthy containers
+
+**Resources**:
+- avalon: 1.7Gi available (6.0Gi used of 7.6Gi). Swap 1.7Gi/4.5Gi (38%). Disk 11%. Load 1.77/3.35/2.41 — elevated but `monitoring` container had just started (09:39 UTC) and was at 27% CPU, explaining spike. Normalising.
+- xwing: 443Mi available of 906Mi. Swap 124Mi/905Mi (14%). Disk **47%** — up from 38% on 2026-03-12 (9% in 5 days). Monitoring trend.
+- salvare: 3.3Gi available of 3.7Gi. Disk **95%** (52G/58G) — recurring problem. Issue raised: lucos_agent_coding_sandbox#30.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible):
+- avalon: two sudo failures (2026-03-14 and 2026-03-15 from other agent activity), no hardware errors. Clean.
+
+**Software updates**:
+- avalon: `containerd.io` 2.2.1 → 2.2.2 pending. Not security-tagged.
+- xwing: same Docker/libc6/kernel backlog as before + `containerd.io` 2.2.2 now added. Commented on #24.
+- salvare: `openssl`/`libssl3` update from `oldstable` (not `oldstable-security`), plus kernel 6.12.25→6.12.62, libc6, raspi-utils. Routine.
+
+**Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
+
+**Issues raised**:
+- lucos_agent_coding_sandbox#30: salvare disk 95% (third recurrence — emphasised need to find root cause)
+
+**Issues commented on**:
+- lucos_agent_coding_sandbox#24: updated xwing package list

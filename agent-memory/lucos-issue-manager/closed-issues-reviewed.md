@@ -3,7 +3,16 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-14
+## Last reviewed: 2026-03-17
+
+- lucos_photos#209 (Restore face-person data from 2026-03-15 backup -- completed)
+- lucos_monitoring#28 (Retrospectively review existing Security Advisories against tighter decision rule -- completed)
+- lucos_photos#189 (Bug: face detection bounding boxes wrong on EXIF-rotated photos -- completed)
+- lucos_media_linuxplayer#24 (Migrate to build-multiplatform orb job -- completed)
+- lucos_deploy_orb#9 (Replace pici with docker buildx multi-platform builds -- completed)
+No concerning closures. All completed normally. Removed all 5 from project board.
+
+Previous batch: 2026-03-14
 
 - lucos_repos#110 (docker-healthcheck profile exclusion -- closed as duplicate of #105 by lucas42; the false positive was caused by out-of-date dev environment, fixed by #108)
 
