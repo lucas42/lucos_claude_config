@@ -21,15 +21,15 @@ lucos_repos_app: 2026-03-16
 bind: 2026-03-14
 loganne: 2026-03-14
 lucos_configy: 2026-03-14
-lucos_contacts_app: 2026-03-07 (2nd review)
+lucos_contacts_app: 2026-03-17
 lucos_contacts_db: 2026-03-16
 lucos_contacts_googlesync_import: 2026-03-16
-lucos_contacts_web: 2026-03-09
+lucos_contacts_web: 2026-03-17
 lucos_creds: 2026-03-11
-lucos_creds_configy_sync: 2026-03-09
-lucos_creds_ui: 2026-03-09
+lucos_creds_configy_sync: 2026-03-17
+lucos_creds_ui: 2026-03-17
 lucos_dns_sync: 2026-03-10
-lucos_eolas_app: 2026-03-07 (2nd review)
+lucos_eolas_app: 2026-03-17
 lucos_eolas_db: 2026-03-09
 lucos_eolas_web: 2026-03-09
 lucos_locations_mosquitto: 2026-03-13

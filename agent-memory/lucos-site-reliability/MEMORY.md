@@ -146,6 +146,9 @@ See topic files for details. Key patterns confirmed in operation:
 - CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
 - To retry a failed workflow: `curl -H "Circle-Token: $TOKEN" -H "Content-Type: application/json" -X POST "https://circleci.com/api/v2/workflow/{workflow_id}/rerun" -d '{"from_failed": true}'`
 
+## lucos_photos — Contact Display Names Bug
+- Issue #213 (open, P3): `sweep_contact_display_names` builds double-slash URLs because `LUCOS_CONTACTS_URL=https://contacts.l42.eu/` (trailing slash) is joined with `/people/{id}` (leading slash). Every contact lookup 404s silently. Fix: strip trailing slash in the code when constructing paths.
+
 ## lucos_photos Telemetry Access
 - Endpoint: `GET https://photos.l42.eu/api/telemetry?since=YYYY-MM-DD&limit=100`
 - Auth: `Authorization: Bearer <android_app_production_key>` — the agent key (`KEY_LUCOS_PHOTOS`) is NOT valid; only the Android app's key works
