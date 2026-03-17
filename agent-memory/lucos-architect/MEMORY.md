@@ -46,9 +46,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ## Infrastructure notes
 
-- `lucos/build-amd64` CI orb builds and pushes Docker images; large images (>1GB) impact build/deploy times
+- CI orb: `build-multiplatform` is the standard for multi-arch services (amd64+arm64 via buildx+QEMU). `build-amd64` still used for amd64-only services. Large images (>1GB) impact build/deploy times.
 - `depends_on` in compose does not wait for service readiness. Projects with Postgres should have startup retry logic.
-- ARM builds use pici (DinD+SSH). Recommended replacing with `docker buildx` + QEMU (pici#9). Decision pending.
+- ARM builds now use `build-multiplatform` orb job (docker buildx + QEMU). pici retired, repo archived (2026-03-17). No more remote SSH builds.
 - ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media
 - **Docker volume restore gotcha**: `docker run` with a new volume does NOT apply Docker Compose labels. lucos_backups depends on these labels. Volume restores must use `docker compose` to create the volume first, or manually apply labels. Documented in lucos_backups#64.
 - **2026-03-17 incident** (docs/incidents/ in lucos repo): EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash on all 3 hosts. Five-stage cascade. Key systemic lesson: "idempotent" functions that delete-and-recreate must distinguish between ML-generated and human-curated data.
@@ -96,8 +96,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_media_linuxplayer
 - Node.js + mplayer on ARM. Primary cause of stale position on device switch (#14).
 
-### pici
-- DinD CI for ARM. Stale images (#3): proposed `docker system prune` after push.
+### pici (archived 2026-03-17)
+- Retired. All services migrated to `build-multiplatform` (buildx + QEMU). Repo archived. `build-arm64` and `build-armv7l` orb jobs deprecated.
 
 ### lucos_repos
 - Greenfield redesign (#22): Go + SQLite, convention auditing. Tickets #23-#30. Audit lifecycle (#30) awaiting approval.

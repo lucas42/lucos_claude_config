@@ -185,10 +185,10 @@ Awaiting lucas42 decision.
 - Device UUIDs hardcoded per HOSTDOMAIN in local-device-updates.js
 - Only sends playback position to server on pause -- primary cause of stale position on device switch (#14)
 
-## pici
+## pici (RETIRED 2026-03-17)
 
-- Docker-in-Docker CI for ARM builds (armv7l on xwing, arm64 on salvare)
-- Stale images (#3): proposed `docker system prune -f --filter "until=48h"` in `quickbuild.sh` after push
+- Was Docker-in-Docker CI for ARM builds. All services migrated to `build-multiplatform` orb job (docker buildx + QEMU).
+- Repo archived. No active containers. lucos_deploy_orb#9 complete.
 
 ## lucos_time
 
