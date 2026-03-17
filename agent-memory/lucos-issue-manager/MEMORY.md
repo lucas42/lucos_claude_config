@@ -138,7 +138,7 @@ Key principles for triaging `audit-finding` issues:
 - `addProjectV2ItemById` is idempotent -- safe to call even if issue is already on board
 - **DANGER: `updateProjectV2Field` with `singleSelectOptions` regenerates ALL option IDs.** This orphans every existing item's field value (sets to null), AND disables all board workflows that reference those options. Must re-assign status to every item afterwards, and workflows must be manually re-enabled via the board settings UI (no API for this). Learned 2026-03-14 when removing columns wiped all 187 items' statuses and disabled 3 workflows. **Avoid this mutation if at all possible.**
 - GitHub user node ID for lucas42: `MDQ6VXNlcjQyODg0Nw==` (legacy) / `U_kgDOAAaLLw` (new)
-- **Always reposition high-priority items after adding.** The board uses manual position ordering (no auto-sort). After setting fields, call `updateProjectV2ItemPosition` with no `afterId` to move Critical/High items to the top. Easy to forget -- do it as the final step of every board update.
+- **Always reposition items by priority after adding.** The board uses manual position ordering (no auto-sort). The prioritisation script sorts by board position, not labels -- wrong position = wrong pickup order. Critical/High: move to top (no `afterId`). Medium: place after the last High item (or move to top if unknown). Low: leave at bottom (default). Never skip this step -- it was missed on lucos_photos#208 (2026-03-16) despite existing instructions.
 
 ## Issue closure policy
 
