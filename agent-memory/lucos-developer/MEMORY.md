@@ -23,7 +23,7 @@
 - **Job handlers in shared**: Both API (enqueue) and worker (execute) import from `lucos_photos_common.jobs`. Avoids string-based module path references.
 - **API tests use SQLite in-memory** via `conftest.py`; Redis unavailability is non-fatal — `enqueue_process_photo` catches exceptions.
 - **Worker tests patch `lucos_photos_common.jobs.SessionLocal`** directly to inject SQLite sessions.
-- **CI**: Two test jobs — `test-api` and `test-worker` — run in parallel with `lucos/build-amd64`.
+- **CI**: Two test jobs — `test-api` and `test-worker` — run in parallel with `lucos/build-multiplatform`.
 - `python3` is the binary (not `python`) in the local shell environment.
 - **Upload auth**: `Authorization: key <API_KEY>` header; `CLIENT_KEYS` env var is semicolon-separated `name=value` pairs.
 - **Deduplication**: Server uses SHA256 — returns 200 if duplicate, 201 if new.

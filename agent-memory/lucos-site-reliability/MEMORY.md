@@ -124,10 +124,9 @@ See topic files for details. Key patterns confirmed in operation:
 - `schedule-tracker.l42.eu` check `lucos_contacts_googlesync_import` lags behind outages — it tracks the last N job runs, so it stays unhealthy until a successful run clears the error history. Self-heals without intervention.
 
 ## xwing — Host Facts
-- xwing is a Raspberry Pi 3 (Cortex-A53, CPU part 0xd03). **Already running 64-bit OS** (Debian 13 trixie, aarch64 kernel) — confirmed by sysadmin on 2026-03-16. The OS was upgraded at some point before lucos/issues/50 was raised.
-- Docker image tags like `armv7l-latest` are **legacy naming only** — Docker resolves the correct platform (arm64) from the multi-platform manifest at pull time. Do NOT infer OS bitness from Docker image tag names.
-- xwing runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media, pici. All already running arm64 images despite armv7l tag names.
-- Remaining cleanup: drop `linux/arm/v7` from deploy orb build-multiplatform job, migrate services off `:armv7l-latest` tag convention. Tracked in lucos_deploy_orb#9 (sysadmin scope).
+- xwing is a Raspberry Pi 3 (Cortex-A53, CPU part 0xd03). **Already running 64-bit OS** (Debian 13 trixie, aarch64 kernel) — confirmed by sysadmin on 2026-03-16.
+- xwing runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media. pici is **retired** (repo archived 2026-03-17) — all services migrated to multi-platform Docker buildx via `build-multiplatform` orb job.
+- `build-multiplatform` is now the standard for arm builds. `build-armv7l`, `build-arm64`, and `:armv7l-latest` tag convention are all gone. lucos_deploy_orb#9 is complete.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
