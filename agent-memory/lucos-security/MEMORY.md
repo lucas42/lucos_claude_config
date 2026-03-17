@@ -48,9 +48,9 @@ The `remote-build.yml` command in `lucos_deploy_orb` passes `DOCKERHUB_USERNAME`
 
 Prefer v2 API structured status responses over raw log output wherever possible.
 
-## Risk Pattern: CircleCI Token in Query Parameter (lucos_monitoring)
+## Fixed: CircleCI Token in Query Parameter (lucos_monitoring)
 
-`src/fetcher.erl` appends `CIRCLECI_API_TOKEN` as a query param to CircleCI v1.1 API URLs. This exposes the token in logs, browser history, and HTTP intermediaries. The v1.1 API is also deprecated. Both problems are fixed by migrating to the v2 API with header-based auth. Flagged in lucos_monitoring#23 audit.
+The v1.1 query-param token exposure in `src/fetcher.erl` was fixed in lucos_monitoring#25. As of 2026-03-17, `checkCI` uses `{"Circle-Token", Token}` as an HTTP header and calls the v2 API (`/api/v2/project/.../pipeline`, `/api/v2/pipeline/.../workflow`). Issue #59 confirmed resolved. Do not re-raise.
 
 ## Risk Pattern: OS Command Injection via `os:cmd` with Unvalidated Input
 
