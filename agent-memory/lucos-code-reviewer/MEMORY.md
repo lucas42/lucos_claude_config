@@ -48,6 +48,19 @@
 - When a service uses `build-multiplatform`, the `docker-compose.yml` image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
 - No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
 
+## GitHub Actions — Dependabot Auto-Merge Workflows
+
+### `pull_request_target` is required — `pull_request` is insufficient
+- Dependabot PRs are treated as fork PRs by GitHub, so `pull_request` issues a read-only token that cannot be elevated even with job-level `permissions`. The `startup_failure` persists after moving permissions to job level.
+- **`pull_request_target` is the correct trigger** for Dependabot auto-merge caller workflows. It runs in the base-branch context with a write token.
+- The security guard is in the **reusable workflow** (`github.event.pull_request.user.login == 'dependabot[bot]'`) — this checks the PR *author*, not the run actor, so it is stable against maintainer re-runs. The caller's `github.actor` check is a weaker redundant layer.
+- Safety relies on **no checkout of PR code** — the elevated token never touches untrusted content.
+- Confirmed via lucos-security review of lucos_repos PR #144.
+
+### Permissions belong in the reusable workflow, not the callers
+- The `permissions` block (`pull-requests: write, contents: write`) stays in the reusable workflow at job level (`lucas42/.github`). Callers should not repeat it.
+- Caller template: `if:` guard + `uses:` call only, no `permissions` block.
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
