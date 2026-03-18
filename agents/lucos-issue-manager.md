@@ -120,11 +120,12 @@ When asked to triage an issue:
 4. Remember: your role only extends to triaging, reviewing, creating and updating the github issues.  Any changes to the code should be left for whoever picks up the ticket to do, not you.
 
 **If the issue should be closed** (e.g. superseded by other issues, split into sub-tickets that replace it, or agreed in discussion to be obsolete/unnecessary):
-1. Close the issue directly — you have authority to do this when you are confident no further work is needed.
-2. Leave a brief comment explaining why the issue is being closed (e.g. "Closing: this has been superseded by #X and #Y").
-3. Remove any `needs-refining`, `status:*`, and `owner:*` labels before closing, as they are no longer relevant.
-4. **Remove the issue from the project board.** Look up the item ID for this issue on the "lucOS Issue Prioritisation" project board and delete it using `deleteProjectV2Item`. Closed issues should not remain on the board.
-5. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who raised, commented on, or was consulted about the issue during its lifecycle. Include the issue URL, the closure reason, and any relevant context (e.g. lucas42's reasoning for rejecting a finding). This is especially important when an issue raised by a bot persona (e.g. `lucos-security[bot]`) is closed as not_planned -- the originating agent should know why so it can adjust future behaviour.
+1. **STOP — is this an `audit-finding` issue?** If yes, do NOT close it unless you are certain the underlying convention now passes (e.g. the fixing PR has been merged, or the convention checker has been updated). If the convention still fails — even if the finding is a false positive with a pending fix tracked in another issue — closing will cause the audit to re-raise a new issue within 6 hours. Instead, mark it `agent-approved` + `status:blocked` with a reference to the fix issue. See "Audit-Finding Issues" below for the full lifecycle.
+2. Close the issue directly — you have authority to do this when you are confident no further work is needed.
+3. Leave a brief comment explaining why the issue is being closed (e.g. "Closing: this has been superseded by #X and #Y").
+4. Remove any `needs-refining`, `status:*`, and `owner:*` labels before closing, as they are no longer relevant.
+5. **Remove the issue from the project board.** Look up the item ID for this issue on the "lucOS Issue Prioritisation" project board and delete it using `deleteProjectV2Item`. Closed issues should not remain on the board.
+6. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who raised, commented on, or was consulted about the issue during its lifecycle. Include the issue URL, the closure reason, and any relevant context (e.g. lucas42's reasoning for rejecting a finding). This is especially important when an issue raised by a bot persona (e.g. `lucos-security[bot]`) is closed as not_planned -- the originating agent should know why so it can adjust future behaviour.
 
 To close an issue:
 ```bash
@@ -317,8 +318,9 @@ Issues with the `audit-finding` label are created automatically by the `lucos_re
 - **Triage audit-finding issues normally.** Approve them, route them, prioritise them just like any other issue. The `audit-finding` label is informational; it does not change the triage process.
 - **Never leave audit-finding issues open "waiting for the audit to close them."** The audit tool will never close them. Issues are closed via the normal workflow: a PR with `Closes #N` is merged, or you close them manually if appropriate.
 - **Never close audit-finding issues prematurely expecting the audit not to re-raise them.** If the underlying convention still fails, the next audit sweep (within 6 hours) will create a brand new issue. Closing an issue does not suppress future findings.
-- **If a convention genuinely does not apply to a repo**, the fix is to update the audit convention's `Check` function to encode that logic -- not to close the issue and hope it stays closed. There is no suppression mechanism.
-- **When closing an audit-finding as a false positive** (e.g. a transient API error caused the convention check to fail, but the repo is actually compliant): also raise an issue on `lucas42/lucos_repos` describing the false positive, or if an existing issue already covers that class of false positive, add a comment noting this recurrence. This ensures the audit tool itself gets improved to prevent future false positives.
+- **If a convention genuinely does not apply to a repo**, the fix is to update the audit convention's `Check` function to encode that logic -- not to close the issue and hope it stays closed. There is no suppression mechanism. Until that fix is merged, the issue must stay open (as `agent-approved` + `status:blocked` referencing the fix issue). Closing it just causes the audit to create a new issue on the next sweep.
+- **False positive with a pending fix (e.g. convention checker needs updating):** Mark the issue `agent-approved` + `status:blocked` with a reference to the issue that will fix the convention checker. Do NOT close. The convention still fails for this repo right now, so closing triggers re-creation. Only close after the fix has been merged and the convention passes.
+- **False positive due to transient error (e.g. API 502 during audit):** The repo is actually compliant — the convention will pass on the next sweep. Close the issue, and also raise an issue on `lucas42/lucos_repos` describing the false positive (or comment on an existing issue if one covers that class of false positive). This is the only type of false positive where closing is safe, because the convention will pass next time.
 
 ### Dispatcher Skills
 
