@@ -95,7 +95,12 @@ If a PR was created and approved:
      ```
      Get the head SHA from the PR details (`head.sha`).
      - If `total_count` is 0 (no checks created at all) or any check has `conclusion: "failure"`: send the PR back to the **developer who created it** for investigation. The developer has the most context on the code and likely failure modes — do not investigate yourself or escalate to SRE. Only if the developer identifies the failure as a pipeline/infrastructure problem (not a code/test issue) should SRE be looped in.
-     - Otherwise, CI is running or has passed — the PR will auto-merge on its own and there is nothing else to do.
+     - Otherwise, CI is running or has passed. Now check whether the PR branch is behind main, which prevents auto-merge when strict branch protection is enabled:
+       ```bash
+       ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '{mergeable_state: .mergeable_state, mergeable: .mergeable}'
+       ```
+       If `mergeable_state` is `"behind"`, the branch needs rebasing before auto-merge can fire. Send the PR back to the **developer who created it** and ask them to rebase onto main and force-push. Wait for the developer to confirm the rebase is done before declaring the task complete.
+     - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
 4. **If not unsupervised (exit code 1) or error (exit code 2):**
    - Tell the user they need to review and merge the pull request themselves. Provide the full PR URL so they can easily navigate to it.
