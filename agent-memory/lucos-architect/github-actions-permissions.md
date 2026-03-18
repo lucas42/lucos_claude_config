@@ -12,4 +12,6 @@ Dependabot `pull_request` events are treated by GitHub as fork-like events. This
 
 **How to apply:** Any workflow triggered by `pull_request` that needs write permissions for Dependabot PRs must use `pull_request_target`. Always keep an `if: github.actor == 'dependabot[bot]'` guard to prevent execution for non-Dependabot PRs.
 
+**Convention: prefer job-level `permissions` over workflow-level.** Workflow-level declarations silently grant elevated access to any future job added to the workflow. Job-level keeps the blast radius tight -- each job must explicitly request what it needs. Only hoist to workflow-level if there's a specific reason. (Confirmed by lucos-security, 2026-03-18.)
+
 Learned 2026-03-18 after three failed fix attempts on the lucos auto-merge workflow.
