@@ -3,7 +3,19 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-17
+## Last reviewed: 2026-03-18
+
+- lucos_repos#71 (Implement convention checks for holistic auto-merge verification -- completed)
+- lucos_repos#70 (Create reusable GitHub Actions workflows for auto-merge -- completed)
+- lucos_repos#102 (Audit sweep creates false positive issues when GitHub API returns transient errors -- completed)
+- pici#12 (Retire pici -- completed)
+- lucos_media_import#68 (Migrate to build-multiplatform orb job -- completed)
+- lucos_private#5 (Migrate to build-multiplatform orb job -- completed)
+- lucos_router#25 (Migrate to build-multiplatform orb job -- completed)
+- lucos_static_media#4 (Migrate to build-multiplatform orb job -- completed)
+No concerning closures. All completed normally.
+
+Previous batch: 2026-03-17
 
 - lucos_photos#209 (Restore face-person data from 2026-03-15 backup -- completed)
 - lucos_monitoring#28 (Retrospectively review existing Security Advisories against tighter decision rule -- completed)
