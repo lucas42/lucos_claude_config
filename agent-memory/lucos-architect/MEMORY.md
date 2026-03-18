@@ -43,6 +43,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Auto-merge & security checks
 
 - lucos#42: CodeQL race condition with auto-merge. Recommended Option 1: make CodeQL a required status check. No workflow changes needed -- repo settings only. Check name on lucos_photos: `Analyze (python)`. Must be added to prerequisites checklist when rolling out auto-merge to new repos.
+- Dependabot auto-merge permissions: must use `pull_request_target` (not `pull_request`) because Dependabot events are fork-like with read-only GITHUB_TOKEN ceiling. See `github-actions-permissions.md`.
 
 ## Infrastructure notes
 
