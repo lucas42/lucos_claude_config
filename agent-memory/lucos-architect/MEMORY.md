@@ -86,6 +86,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_monitoring
 - Erlang OTP, in-memory state, email notifications. `/api/status` endpoint proposed (#26).
+- Flappiness threshold (#74): recommended per-check `failThreshold` field in `/_info` check objects. Default 1. No recovery threshold. Independent from existing `unknown_count` mechanism. Needs `/_info` spec update. Awaiting lucas42 decision.
 
 ### lucos_root
 - Static site, Apache. /_info 3-tier schema accepted (lucos#35). Spec doc: `docs/info-endpoint-spec.md` in lucos repo (PR #41). CLAUDE.md updated. Follow-up: monitoring title ticket, per-service compliance tickets.
