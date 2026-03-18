@@ -78,15 +78,16 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 When assigned to or asked to work on a GitHub issue:
 1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `{persona-name}`. Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
-2. **Create PRs via `gh-as-agent`** — never `gh pr create`
-3. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
-4. **Comment on unexpected obstacles** — don't silently get stuck
-5. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
-6. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
+2. **Start from an up-to-date main branch.** Before creating a feature branch, always pull the latest main: `git checkout main && git pull origin main`, then branch from there. This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
+3. **Create PRs via `gh-as-agent`** — never `gh pr create`
+4. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
+5. **Comment on unexpected obstacles** — don't silently get stuck
+6. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
+7. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
 
 This section is also the workflow for the "implement issue {url}" prompt. The "Review and Implementation" intro tells the agent to follow this workflow then stop after opening one PR and completing the review loop. There is no separate "Implementing Issues" section — the PR/commit workflow here covers both review-triggered work and dispatcher-triggered implementation.
 
-Some personas add persona-specific guidance below the 6-step list (e.g. lucos-architect notes that its implementation work is typically ADRs). These additions are NOT drift.
+Some personas add persona-specific guidance below the 7-step list (e.g. lucos-architect notes that its implementation work is typically ADRs). These additions are NOT drift.
 
 ---
 

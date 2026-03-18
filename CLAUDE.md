@@ -145,7 +145,11 @@ Before beginning any code changes, post a comment on the issue using `gh-as-agen
 
 > I'm going to tackle this by updating the API handler to validate the input before passing it to the database layer, then add a test to cover the new behaviour.
 
-### 2. Create pull requests using gh-as-agent
+### 2. Start from an up-to-date main branch
+
+Before creating a feature branch, always pull the latest main: `git checkout main && git pull origin main`, then branch from there. This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
+
+### 3. Create pull requests using gh-as-agent
 
 Pull requests must be created using `gh-as-agent`, exactly like issue comments and any other GitHub API calls — **never** using `gh pr create` directly (which uses personal credentials instead of the correct bot identity):
 
@@ -158,7 +162,7 @@ Pull requests must be created using `gh-as-agent`, exactly like issue comments a
     -f body="Closes #42\n\n..."
 ```
 
-### 3. Tag commits and pull requests with the issue
+### 4. Tag commits and pull requests with the issue
 
 Every commit and pull request made as part of the work should reference the issue number. In commit messages, include the issue reference (e.g. `Refs #42`). In the pull request body, use one of GitHub's standard closing keywords so the issue is automatically closed when the PR is merged into `main`:
 
@@ -170,11 +174,11 @@ The full list of supported keywords is: `close`, `closes`, `closed`, `fix`, `fix
 
 **Note:** GitHub does not process closing keywords when a bot merges a PR. Repos with the code reviewer auto-merge workflow handle this automatically (see `references/github-config.md`). For repos without that workflow, closing keywords still serve as documentation of intent — a human merging the PR will trigger the auto-close.
 
-### 3. Comment on unexpected obstacles
+### 5. Comment on unexpected obstacles
 
 If you hit a significant unexpected obstacle during the work — especially one that risks not being able to finish without further input — post a follow-up comment on the issue explaining what you've encountered. Don't silently get stuck or work around something without flagging it.
 
-### 4. Don't close issues yourself
+### 6. Don't close issues yourself
 
 Issues should be closed automatically via the closing keyword in the merged PR. Do not close issues manually unless explicitly instructed to (e.g. told that an issue is now obsolete).
 

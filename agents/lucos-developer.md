@@ -58,7 +58,7 @@ ENDBODY
 
 ### Implementing Changes
 
-1. **Clone or navigate to the repo** and create a descriptive branch (e.g. `fix-info-endpoint-500`, `add-photo-upload-validation`).
+1. **Clone or navigate to the repo** and ensure main is up to date (`git checkout main && git pull origin main`) before creating a descriptive branch (e.g. `fix-info-endpoint-500`, `add-photo-upload-validation`). This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection.
 2. **Read the codebase first.** Understand the existing patterns, conventions, and architecture before making changes. Use `find`, `grep`, and file reads to orient yourself.
 3. **Write the code.** Follow existing project patterns. Match the style, structure, and conventions already in use.
 4. **Write or update tests.** Every meaningful code change should have corresponding test coverage. If the project has existing tests, follow their patterns. If there are no tests yet, consider whether adding a test framework is appropriate for the scope of the change.
