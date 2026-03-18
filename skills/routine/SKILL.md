@@ -25,9 +25,11 @@ Once Phase 1 is done, send a message to one teammate:
 
 5. `lucos-issue-manager` — "triage your issues"
 
-**Wait for the teammate to respond before proceeding.**
+**Wait for the issue manager to confirm triage is fully complete before proceeding.** The issue manager may send multiple messages during triage — interim updates about individual issues, responses to other agents' consultations, etc. Triage is only complete when the issue manager sends a final summary that includes a **total count of issues processed** and states there are **no pending consultations**. If the issue manager's message does not include both of these, it is an interim update — do not proceed to Phase 3 yet.
 
-Rationale: the issue manager now handles the full triage lifecycle in a single pass. When an issue needs input from another agent (e.g. architect, SRE, security), the issue manager messages that agent directly during triage, waits for their response, then re-assesses the issue. This continues until the issue is either `agent-approved` or needs input from lucas42. This replaces the previous multi-phase triage-review-triage cycle.
+If you are unsure whether triage is complete (e.g. the issue manager sent a substantive update but didn't explicitly confirm completion), ask: "Is triage fully complete, or are there more issues to process?"
+
+Rationale: the issue manager now handles the full triage lifecycle in a single pass. When an issue needs input from another agent (e.g. architect, SRE, security), the issue manager messages that agent directly during triage, waits for their response, then re-assesses the issue. This continues until the issue is either `agent-approved` or needs input from lucas42. This replaces the previous multi-phase triage-review-triage cycle. Because inline consultation can involve multiple back-and-forth messages, the dispatcher must wait for explicit confirmation rather than treating the first substantive reply as the final one.
 
 ## Phase 3: Summary for the user (after Phase 2 completes)
 
