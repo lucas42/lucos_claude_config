@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-17
+container_status: 2026-03-18
 resource_checks: 2026-03-17
 syslog_review: 2026-03-17
 software_updates: 2026-03-17
@@ -19,6 +19,8 @@ sandbox_drift: 2026-03-17
 
 - Journal logs on xwing and salvare are inaccessible without sudo (no sudo available in non-interactive SSH). Syslog review only covers avalon fully.
 - Docker image staleness query needs single-quoted heredoc style — shell escaping is tricky over SSH.
+- Short hostnames (`avalon`, `salvare`, `xwing`) do not resolve via DNS — always use full domain names (`avalon.s.l42.eu`, `salvare.s.l42.eu`, `xwing.s.l42.eu`) for SSH. Issue raised: lucos_agent_coding_sandbox#34.
+- `~/.ssh/known_hosts` is cleared between VM sessions — must run `ssh-keyscan -H avalon.s.l42.eu salvare.s.l42.eu xwing.s.l42.eu >> ~/.ssh/known_hosts` at start of each session before SSH will work. Issue raised: lucos_agent_coding_sandbox#34.
 
 ## Run Log
 
@@ -463,3 +465,15 @@ sandbox_drift: 2026-03-17
 
 **Issues commented on**:
 - lucos_agent_coding_sandbox#24: updated xwing package list
+
+### 2026-03-18 (container status only; all weekly checks last ran 2026-03-17 — not due; monthly checks last ran 2026-03-12 — not due)
+
+**Note**: SSH known_hosts cleared again — required `ssh-keyscan -H avalon.s.l42.eu salvare.s.l42.eu xwing.s.l42.eu >> ~/.ssh/known_hosts` before proceeding. Second consecutive run with this issue. Issue raised: lucos_agent_coding_sandbox#34. Also confirmed short hostnames (avalon, salvare, xwing) do not resolve via DNS — must use full `.s.l42.eu` domains.
+
+**Container status**:
+- avalon crashed/stopped: clean; avalon unhealthy: none
+- salvare: clean; no unhealthy containers
+- xwing: `lucos_media_import_test` Exited (0) 4 days ago — one-shot test container, not a concern; no unhealthy containers
+
+**Issues raised**:
+- lucos_agent_coding_sandbox#34: SSH known_hosts cleared between sessions (recurring, second run affected)
