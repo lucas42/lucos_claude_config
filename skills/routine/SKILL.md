@@ -10,7 +10,7 @@ Dispatch teammates in sequential phases using SendMessage. Do not ask for clarif
 
 Send messages to these teammates concurrently in the same response:
 
-1. `lucos-code-reviewer` — "review any open PRs"
+1. `lucos-code-reviewer` — "review any open PRs" (this also includes a stuck PR audit — the code reviewer checks for PRs that are stuck due to CI failures, stale branches, unaddressed review feedback, or archived repos, and takes action on them)
 2. `lucos-security` — "run your ops checks"
 3. `lucos-system-administrator` — "run your ops checks"
 4. `lucos-site-reliability` — "run your ops checks"
