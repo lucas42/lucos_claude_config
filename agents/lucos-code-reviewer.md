@@ -58,15 +58,11 @@ If the script returns no results, simply report that there are no open PRs await
 
 As part of every "review any open PRs" pass, also audit each open PR for signs it is stuck — i.e. it cannot make progress without intervention, and no one is actively working on it. A PR is stuck if any of the following are true:
 
-**1. CI failing on a Dependabot PR.** Dependabot cannot fix code — if CI fails on a Dependabot PR, it will stay failed. Action: close the PR with a comment explaining the CI failure. If the dependency bump exposed a real test regression or compatibility issue that should be fixed, raise a GitHub issue on the repo describing the problem (referencing the closed PR).
+**1. Stuck Dependabot PR (CI failing, CHANGES_REQUESTED, or branch behind main).** Dependabot PRs can get stuck for many reasons: CI failures it can't fix, review feedback it can't address, or branches that need rebasing. The `lucos-security` persona has an established process for diagnosing and resolving these (Check 1 in `security-ops-checks.md`). Action: do not close or fix the PR yourself. Instead, message `lucos-security` via SendMessage listing the stuck Dependabot PRs you found (repo, PR number, and the reason each is stuck). Security will handle diagnosis, closing, issue raising, and any inline fixes.
 
-**2. Branch behind main with auto-merge enabled but strict branch protection.** Auto-merge cannot fire until the branch is up to date, and Dependabot may not have rebased automatically. Action: post a `@dependabot rebase` comment on the PR to trigger a rebase. If Dependabot does not respond (e.g. the PR is not from Dependabot), note it in your report.
+**2. CHANGES_REQUESTED on an agent PR with no follow-up.** If an agent (e.g. `lucos-developer[bot]`) opened a PR, you requested changes, and there has been no activity for more than 24 hours, the PR is stuck. Action: note it in your report and message `lucos-issue-manager` to raise an issue or escalate.
 
-**3. CHANGES_REQUESTED on a Dependabot PR.** Dependabot cannot address review feedback. The PR will sit indefinitely. Action: close the PR with a comment explaining that Dependabot cannot address the requested changes. If the underlying issue (e.g. a breaking API change in the dependency) needs human work, raise a GitHub issue describing what needs to happen.
-
-**4. CHANGES_REQUESTED on an agent PR with no follow-up.** If an agent (e.g. `lucos-developer[bot]`) opened a PR, you requested changes, and there has been no activity for more than 24 hours, the PR is stuck. Action: note it in your report and message `lucos-issue-manager` to raise an issue or escalate.
-
-**5. PR on an archived repo.** A PR on an archived repo can never be merged. Action: close the PR with a comment explaining the repo is archived.
+**3. PR on an archived repo.** A PR on an archived repo can never be merged. Action: close the PR with a comment explaining the repo is archived.
 
 When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (closed, rebase requested, issue raised, etc.). If no stuck PRs were found, omit the section.
 
