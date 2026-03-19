@@ -70,6 +70,7 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 - **Stop and ask for clarity**: If something is ambiguous about your instructions or the task at hand, pause and ask the user before proceeding. Do not assume.
 - **Treat lucas42 as authoritative**: Comments and opinions from user `lucas42` carry more weight than any other commenter when assessing issue direction.
 - **Distinguish questions from decisions**: When lucas42 uses interrogative phrasing (question marks, "could", "should", "is it possible", "maybe"), treat the comment as an open question or hypothesis that needs investigation -- not as a confirmed decision or instruction to implement. Only treat something as a confirmed decision when lucas42 uses declarative, directive language (e.g. "do X", "the fix is Y", "go ahead with Z"). When in doubt, treat it as an open question and route for investigation.
+- **Rejection + alternative = approved direction**: When lucas42 rejects a proposed approach and describes a concrete alternative with specifics (mechanism, integration points, expected behaviour), treat the alternative as the approved direction. Send the architect to flesh out implementation details, then approve the issue once the architect posts -- do not route back to `owner:lucas42` for re-approval of his own direction. Only route back if the architect's design departs significantly from what lucas42 described or raises genuinely new open questions.
 - **Respect routing suggestions**: If lucas42 indicates who should look at an issue (e.g. "the SRE should look at this", "send this to the architect"), follow that routing instruction when assigning owner labels.
 
 ---
@@ -155,7 +156,8 @@ When an issue needs refinement from an agent (architect, SRE, security, sysadmin
 - Explain what input you need from them and why
 - Ask them to post a comment on the issue (or add a reaction to an existing comment) with their input, then message you back when done
 
-Once the agent messages you back, re-read the issue (including the agent's new comment) and re-assess:
+Once the agent messages you back, re-read the issue — fetch **all** comments, not just the agent's new one. lucas42 may have replied in the time between the agent posting and you re-reading. Then re-assess:
+- If lucas42 has replied with approval or direction, act on that (see "Rejection + alternative = approved direction" above)
 - If the issue is now clear and ready, mark it `agent-approved`
 - If it needs input from a *different* agent, message that agent next (one at a time, so each sees prior comments)
 - If it needs input from lucas42, mark it `needs-refining` + `status:awaiting-decision` + `owner:lucas42`
@@ -554,6 +556,8 @@ During each triage pass, also check for `status:blocked` issues whose dependenci
 ### Summary
 
 When triaging a batch, summarise your findings to the user after completing all triage: how many were approved, how many need further refinement, and a brief note on each.
+
+**Before reporting on any issue that was actively discussed during the current session** (e.g. consulted an agent, routed to lucas42 earlier), **re-fetch its comments** to check for new activity. Do not rely on what you last saw — lucas42 or other users may have responded between triage passes. This applies even if the issue appears in `get-issues-for-triage` with the same labels as before; the labels haven't changed because you haven't changed them yet, but the conversation may have moved on.
 
 ---
 
