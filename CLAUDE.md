@@ -107,6 +107,17 @@ GitHub Apps cannot access v2 user projects. For GitHub Projects interactions **o
 
 **Do not use `gh-projects` for anything other than GitHub Projects.** All other GitHub API calls must use `gh-as-agent` with the appropriate `--app`.
 
+### GitHub App limitations — things agents cannot do
+
+Some GitHub operations require the **repo owner** (lucas42) to perform them in the GitHub web UI. Agents must not accept tasks for these — instead, tell the user what needs changing and why upfront:
+
+- **GitHub App permission changes** (adding permissions like `actions:write`, `contents:write`): requires the app owner to update them in the GitHub Developer Settings UI, then the repo owner to approve the new permissions on each installation. There is no API for this.
+- **`@dependabot` commands** (`recreate`, `rebase`, etc.): require push access to the repository. No agent app currently has push access.
+- **Actions workflow re-runs**: require `actions:write` permission. No agent app currently has this.
+- **Branch protection rule changes**: require admin access to the repository.
+
+When an agent discovers it lacks permissions for an action (e.g. a 403 response), it must **escalate immediately** with a clear explanation of what permission is missing and who can grant it — not retry, work around it, or silently drop the task.
+
 ### Making git commits as a persona
 
 Use the `git-as-agent` wrapper script instead of passing `-c user.name=... -c user.email=...` flags manually on every git operation. It looks up the persona's identity from `personas.json` and prepends the correct `-c` flags automatically. `--app` must be the first argument:
