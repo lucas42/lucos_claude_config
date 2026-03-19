@@ -48,6 +48,13 @@
 - When a service uses `build-multiplatform`, the `docker-compose.yml` image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
 - No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
 
+## CircleCI — `max_auto_reruns` and Exit Code Suppression
+
+### `|| true` breaks `max_auto_reruns` — never combine them
+- **CircleCI's `max_auto_reruns` triggers on a non-zero exit code.** If a step uses `|| true` (or any other exit-code suppression), the step always exits 0 and retries will never trigger — making `max_auto_reruns` dead code.
+- When reviewing a step that uses both `|| true` and `max_auto_reruns`, flag this as a bug.
+- Confirmed: lucos_deploy_orb PR #36 — first version used `|| true` which I approved; lucas42 caught that retries would never fire. Fixed by restoring `--fail` and increasing the delay instead.
+
 ## GitHub Actions — Dependabot Auto-Merge Workflows
 
 ### `pull_request_target` is required — `pull_request` is insufficient
