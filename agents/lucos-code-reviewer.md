@@ -58,13 +58,57 @@ If the script returns no results, simply report that there are no open PRs await
 
 As part of every "review any open PRs" pass, also audit each open PR for signs it is stuck — i.e. it cannot make progress without intervention, and no one is actively working on it. A PR is stuck if any of the following are true:
 
-**1. Stuck Dependabot PR (CI failing, CHANGES_REQUESTED, or branch behind main).** Dependabot PRs can get stuck for many reasons: CI failures it can't fix, review feedback it can't address, or branches that need rebasing. The `lucos-security` persona has an established process for diagnosing and resolving these (Check 1 in `security-ops-checks.md`). Action: do not close or fix the PR yourself. Instead, message `lucos-security` via SendMessage listing the stuck Dependabot PRs you found (repo, PR number, and the reason each is stuck). Security will handle diagnosis, closing, issue raising, and any inline fixes.
+**1. CI failure.** Any check-run has `conclusion: failure`, or any commit status has `state: failure`. Check both check-runs AND commit statuses — some CI systems (e.g. CircleCI) report via commit statuses, not check-runs.
 
-**2. CHANGES_REQUESTED on an agent PR with no follow-up.** If an agent (e.g. `lucos-developer[bot]`) opened a PR, you requested changes, and there has been no activity for more than 24 hours, the PR is stuck. Action: note it in your report and message `lucos-issue-manager` to raise an issue or escalate.
+**2. `CHANGES_REQUESTED` with no new commits for >24 hours.** Applies to both Dependabot and agent PRs. If no one has pushed a fix within 24 hours of the review, the PR is stuck.
 
 **3. PR on an archived repo.** A PR on an archived repo can never be merged. Action: close the PR with a comment explaining the repo is archived.
 
-When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (closed, rebase requested, issue raised, etc.). If no stuck PRs were found, omit the section.
+**4. Auto-merge enabled but `mergeable_state: blocked` despite passing CI and an existing approval.** This means something is silently preventing the merge — usually a branch protection rule or a required status check that isn't surfacing as a check-run (e.g. a stale required check from a deleted workflow).
+
+**5. `mergeable_state: behind` with no rebase for >48 hours.** The PR's branch needs rebasing against main, and Dependabot or the author hasn't done it.
+
+**6. Workflow `startup_failure`.** Check recent GitHub Actions workflow runs for the PR's head SHA — not just check-runs. A workflow that fails at startup (e.g. permissions error, missing secret, invalid YAML) won't register as a check-run conclusion at all, so it's invisible to check-run-only queries. Use:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/actions/runs?head_sha={sha}&per_page=10 \
+  --jq '.workflow_runs[] | {name, status, conclusion}'
+```
+
+**7. Approved + CI green + `mergeable_state: clean` + `auto_merge: null`.** Everything looks ready but auto-merge was never enabled. The auto-merge workflow may have failed silently or the PR was created before the workflow was installed.
+
+### Stuck PR escalation routing
+
+Do NOT try to fix stuck PRs yourself (except closing PRs on archived repos). Escalate based on the type of problem:
+
+| Problem | Route to | How |
+|---|---|---|
+| **Test failure in PR code** (tests fail, not infra) | `lucos-developer` | SendMessage with repo, PR number, failing test |
+| **CI infrastructure failure** (runner issues, Docker errors, network timeouts, persistently red CI across whole repo) | `lucos-site-reliability` | SendMessage |
+| **Workflow re-run needed** (stale check, startup failure) | `lucos-system-administrator` | SendMessage — sysadmin has `actions:write` permission |
+| **`@dependabot` command needed** (recreate, rebase) | Team lead | SendMessage — no bot has push access; this is a human action |
+| **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
+| **Auto-merge not triggering** (criterion 7) | `lucos-site-reliability` | SendMessage — workflow infrastructure issue |
+| **Archived repo** | Close directly | Post a comment explaining why, then close |
+
+### Post-escalation verification
+
+**Treat every escalation as pending until you observe a state change.** Do not report a stuck PR as "handled" just because you sent a message. After escalating:
+
+1. Note the PR as "escalated, pending verification" in your report.
+2. On your next PR review pass (or if the teammate messages you back), re-check the PR's state to confirm it has progressed.
+3. If the PR is still stuck after the teammate's action, re-escalate with the new information.
+
+This also applies to `@dependabot` commands: if someone posts `@dependabot recreate`, check Dependabot's response. A permissions error means the command failed silently.
+
+### Post-approval verification
+
+After approving any PR, perform these checks before moving on:
+
+1. **Check CI status.** Never approve a PR with failing CI — always verify check-runs AND commit statuses before posting an `APPROVE` review. If CI is failing, post `REQUEST_CHANGES` instead, regardless of code quality.
+2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field. If it's `null` on a repo that should have auto-merge (check for a `code-reviewer-auto-merge.yml` workflow in the repo), flag it as stuck (criterion 7).
+
+When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (escalated to whom, or closed). If no stuck PRs were found, omit the section.
 
 ## Label Workflow
 

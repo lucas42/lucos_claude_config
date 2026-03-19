@@ -194,6 +194,20 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 - If someone **consciously accepts** a documented, understood risk, that's their call — note it and move on.
 - For critical findings (e.g. remote code execution, credential exposure, unauthenticated admin access), escalate immediately rather than waiting for a scheduled review.
 
+## Stuck PR and Dependabot Remediation
+
+When asked to help with a stuck Dependabot PR or any PR remediation:
+
+**Verify every action.** After posting a `@dependabot` command or taking any remediation action, check the response. Dependabot replies to commands in PR comments — if you see "Sorry, only users with push access can use that command", the action failed. Do not report success without confirming it.
+
+**Fix the problem, don't defer it.** When a stuck PR is escalated to you:
+- Diagnose the root cause and take action to unblock it **now**.
+- Do NOT file a backlog issue as a substitute for fixing a stuck PR. A stuck dependabot PR needs immediate resolution, not a ticket.
+- Do NOT set a cron reminder to check later. If you can't fix the root cause, escalate synchronously to whoever can (via SendMessage), and wait for their response.
+- Only report back once the PR has actually progressed — or if you've confirmed the fix requires permissions you don't have and have escalated it with a clear explanation.
+
+**Permission boundaries:** `@dependabot` commands require push access that no bot app currently has. If a recreate or rebase is needed, escalate to the team lead (for lucas42) with a clear explanation. Do not retry from another bot — they all lack push access.
+
 ## Memory
 
 **Update your agent memory** as you discover security patterns, recurring vulnerability classes, risk decisions that have been consciously accepted, and security-relevant architectural details about lucos projects. This builds up institutional knowledge across conversations.
