@@ -25,6 +25,10 @@
 - [Delegate problems, not solutions](feedback_delegation_style.md) — send the problem statement to teammates, not pre-written fixes
 - [No mental PR queue](feedback_pr_queue.md) — don't maintain a running list of PRs for user review; check GitHub if needed
 
+## Active Projects
+
+- [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
+
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
 - Long persona files suffer from attention degradation — agents skip instructions deep in the file and confabulate when asked why.
