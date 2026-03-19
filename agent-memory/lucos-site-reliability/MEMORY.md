@@ -175,6 +175,9 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #31 (sync re-scans entire library): closed/completed. Root cause was `triggerImmediateSync()` using plain `WorkManager.enqueue()` with no uniqueness constraint, allowing duplicate concurrent sync workers. Fix: use `WorkManager.enqueueUniqueWork()` with a named key.
 - Issue #30 (missing EXIF DateTimeOriginal): closed/completed. Investigation confirmed upload path does NOT strip EXIF — photos genuinely lack the field on device (screenshots, WhatsApp, etc). Resolution: use file last-modified time as fallback date when EXIF is absent.
 
+## GitHub App Limitations
+- **`@dependabot` commands require push access** — no agent app has push access, so `@dependabot rebase`, `@dependabot recreate`, etc. are silently ignored. When a Dependabot PR needs rebasing (e.g. `mergeable_state: unstable` with "Base branch was modified"), escalate to lucas42 to run the command manually. Do NOT attempt to post `@dependabot` commands.
+
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
 - Pass body text inline using `-f body="..."` — no need to write payload files.
