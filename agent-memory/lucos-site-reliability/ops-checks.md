@@ -28,7 +28,7 @@ lucos_contacts_web: 2026-03-17
 lucos_creds: 2026-03-11
 lucos_creds_configy_sync: 2026-03-17
 lucos_creds_ui: 2026-03-17
-lucos_dns_sync: 2026-03-10
+lucos_dns_sync: 2026-03-19
 lucos_eolas_app: 2026-03-17
 lucos_eolas_db: 2026-03-18
 lucos_eolas_web: 2026-03-18
@@ -37,9 +37,9 @@ lucos_locations_otfrontend: 2026-03-13
 lucos_locations_otrecorder: 2026-03-13
 lucos_mail_smtp: 2026-03-10
 lucos_photos_api: 2026-03-13
-lucos_arachne_ingestor: 2026-03-10
-lucos_arachne_search: 2026-03-10
-lucos_arachne_triplestore: 2026-03-10
+lucos_arachne_ingestor: 2026-03-19
+lucos_arachne_search: 2026-03-19
+lucos_arachne_triplestore: 2026-03-19
 lucos_mail_docs: 2026-03-12
 lucos_photos_postgres: 2026-03-15
 lucos_photos_redis: 2026-03-12
@@ -57,7 +57,11 @@ root: 2026-03-11
 router: 2026-03-10
 semweb: 2026-03-11
 time: 2026-03-16
-lucos_arachne_mcp: 2026-03-10
+lucos_arachne_mcp: 2026-03-19
+
+## SSH Hostname Note
+
+Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config uses `*.s.l42.eu` pattern. `ssh avalon` fails with host key verification error.
 
 ## Notes
 

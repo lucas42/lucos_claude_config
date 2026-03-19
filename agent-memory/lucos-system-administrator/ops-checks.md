@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-18
+container_status: 2026-03-19
 resource_checks: 2026-03-17
 syslog_review: 2026-03-17
 software_updates: 2026-03-17
@@ -465,6 +465,15 @@ sandbox_drift: 2026-03-17
 
 **Issues commented on**:
 - lucos_agent_coding_sandbox#24: updated xwing package list
+
+### 2026-03-19 (container status only; all weekly checks last ran 2026-03-17 — not due; monthly checks last ran 2026-03-12 — not due)
+
+**Container status**:
+- avalon crashed/stopped: clean; avalon unhealthy: none
+- salvare: clean; no unhealthy containers
+- xwing: `lucos_media_import_test` Exited (0) 5 days ago — one-shot test container, not a concern; no unhealthy containers
+
+---
 
 ### 2026-03-18 (container status only; all weekly checks last ran 2026-03-17 — not due; monthly checks last ran 2026-03-12 — not due)
 
