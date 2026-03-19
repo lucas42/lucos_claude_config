@@ -144,6 +144,7 @@ Key principles for triaging `audit-finding` issues:
 ## Feedback
 
 - [Issue granularity](feedback_issue_granularity.md) — lucas42 prefers not to split small, related findings (like permission gaps) into separate tickets; handle inline
+- [Re-check after consultation](feedback_recheck_after_consultation.md) — after an agent posts a comment, always re-read ALL comments including any new ones from lucas42
 
 ## Issue closure policy
 
