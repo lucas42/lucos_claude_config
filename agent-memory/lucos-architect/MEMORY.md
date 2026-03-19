@@ -52,7 +52,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - ARM builds now use `build-multiplatform` orb job (docker buildx + QEMU). pici retired, repo archived (2026-03-17). No more remote SSH builds.
 - ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media
 - **Docker volume restore gotcha**: `docker run` with a new volume does NOT apply Docker Compose labels. lucos_backups depends on these labels. Volume restores must use `docker compose` to create the volume first, or manually apply labels. Documented in lucos_backups#64.
-- **2026-03-17 incident** (docs/incidents/ in lucos repo): EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash on all 3 hosts. Five-stage cascade. Key systemic lesson: "idempotent" functions that delete-and-recreate must distinguish between ML-generated and human-curated data.
+- **2026-03-17 incident**: EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash. Lesson: "idempotent" delete-and-recreate must distinguish ML-generated vs human-curated data.
+- **2026-03-19 incident**: Bulk CI push (~30 repos) -> lucos_creds partial .env (missing PORT) -> Docker Compose silently starts containers without host port bindings -> 502 for ~2h. Lessons: (1) Docker Compose silently drops port bindings when env var is missing -- use `${PORT:?}` syntax or deploy-time validation. (2) Internal healthchecks cannot detect missing host port bindings -- need external post-deploy smoke test. (3) lucos_creds under concurrent SFTP load may serve partial files. Issues filed: lucos#55 (deploy validation), lucos_creds#112 (SFTP concurrency).
 
 ## Claude Code setup review (Mar 2026)
 
@@ -87,7 +88,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_monitoring
 - Erlang OTP, in-memory state, email notifications. `/api/status` endpoint proposed (#26).
-- Flappiness threshold (#74): recommended per-check `failThreshold` field in `/_info` check objects. Default 1. No recovery threshold. Independent from existing `unknown_count` mechanism. Needs `/_info` spec update. Awaiting lucas42 decision.
+- Flappiness threshold (#74): recommended per-check `failThreshold` in `/_info` (default 1, no recovery threshold). lucas42 raised concern about two parallel retry mechanisms (`unknown_count` + `failThreshold`). Architect argued they are complementary (data quality vs signal quality). Recommended Option 3: keep `unknown` for internal checks, `failThreshold` for external. Awaiting lucas42 decision.
 
 ### lucos_root
 - Static site, Apache. /_info 3-tier schema accepted (lucos#35). Spec doc: `docs/info-endpoint-spec.md` in lucos repo (PR #41). CLAUDE.md updated. Follow-up: monitoring title ticket, per-service compliance tickets.
@@ -105,11 +106,13 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Greenfield redesign (#22): Go + SQLite, convention auditing. Tickets #23-#30. Audit lifecycle (#30) awaiting approval.
 - Convention quality guide (#50): design posted. Key proposal: add `Rationale` and `Guidance` fields to Convention struct so generated issues explain why + how to fix. Awaiting lucas42 decision on scope (docs only vs struct changes).
 - Auto-merge holistic checking (#64): design posted. Recommended reusable workflows (central repo) + thin per-repo caller stubs. Option A for configy metadata (add `UnsupervisedAgentCode bool` to `RepoContext`). 6 conventions proposed. Awaiting lucas42 decision on reusable workflow location.
-- Rate limit (#66): GitHub Search API has 30 req/min limit (separate from 5,000/hr primary). `EnsureIssueExists` uses Search API 2x per failing convention/repo. Fix: switch to Issues List API (`/repos/{owner}/{repo}/issues?labels=audit-finding`). Also: add rate-limit backoff + fix misleading "completed successfully" on partial failures.
+- Rate limit (#66): GitHub Search API 30 req/min limit. Fix: switch to Issues List API. Also: rate-limit backoff + fix misleading "completed successfully" on partial failures.
+- Blast radius (#159): lucas42 rejected per-convention cap (too reactive, interferes with deliberate changes). Revised design: dry-run sweep in CI on PRs, diff against production `/api/status`, post as PR comment for reviewer. Needs: `--dry-run` CLI mode, `diff` subcommand, GitHub Actions workflow. ADR-0003. Awaiting lucas42 decision.
 
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.
-- Scoped permissions (#87): agent-approved. `|` delimiter in `CLIENT_KEYS` (`client:env=key|scope1,scope2`). No scope-aware flag needed. No scope = no permissions on migrated systems. Loganne audit for scope changes.
+- Scoped permissions (#87): agent-approved. `|` delimiter in `CLIENT_KEYS` (`client:env=key|scope1,scope2`). No scope = no permissions on migrated systems.
+- SFTP concurrency concern (#112): bulk CI pushes (~30 simultaneous) may cause partial .env files. PORT now built-in (#109, closed). General concurrency investigation open.
 
 ### lucos_media_weightings
 - Python, cron-based. Weighting explosion (#39): agent-approved. Soft cap on multiplier product: `cap * (1 - e^(-raw/cap))`, cap=100 (lucas42 chose to match highest individual multiplier). Collection size is separate problem.
