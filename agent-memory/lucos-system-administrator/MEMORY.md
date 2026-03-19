@@ -164,6 +164,9 @@ Containers without `restart: always` will stay down after a host reboot or a `do
 Before filing a new issue for an ongoing condition (crash-loops, service down, etc.), search open issues in the same repo first. Duplicate issues create noise and wasted triage work. Examples:
 - lucos_repos#38 was filed simultaneously with lucos_repos#39 by two different agents — issue-manager closed #38 as a duplicate.
 - lucos_repos#53 (CodeQL required status check convention) was closed as duplicate of #52, which already tracked the same requirement. Always search lucos_repos open issues before raising new convention requests there.
+- lucos_deploy_orb#39 (PORT validation) was a duplicate of #40 filed by another agent at almost the same time during incident follow-up (2026-03-19).
+
+**During incident follow-ups, duplicate risk is highest** — multiple agents often respond simultaneously. Search is not sufficient if another agent filed seconds before you. When in doubt during active incidents, message teammates first to coordinate before filing.
 
 ## Docker healthcheck localhost→IPv6 false-negative pattern
 
