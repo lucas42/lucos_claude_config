@@ -80,7 +80,7 @@ When asked to triage an issue:
 
 ### Step 1: Gather All Context
 - Read the full issue body carefully.
-- Read every comment in the thread in chronological order.
+- **Always fetch comments via a separate API call** — even if the issue appears to have no comments. The triage script does not include comment text; you must call the comments endpoint for every issue. Do not assess or label an issue based on the body alone.
 - **Check reactions on every comment** — especially +1 reactions from `lucas42`. A +1 on an agent's design proposal counts as approval (see "Reactions as approval" below). When fetching comments, always include reactions data in your assessment. Do not skip an issue just because the last commenter is `lucos-issue-manager[bot]` — lucas42 may have reacted to a comment without writing a new one.
 - Note any updates, decisions, or clarifications made by `lucas42` — these are authoritative.
 - Note the current labels on the issue.
