@@ -483,7 +483,9 @@ You do **not** need to set Status to "Needs Triage" when adding an item (the bui
 
 When asked to create a new issue:
 
-1. **Clarify before writing** if the request is vague. Ask for:
+1. **Search for duplicates first.** Before creating any issue, search the target repo and the org broadly for existing open issues that cover the same problem. Use `search/issues` with relevant keywords. This is especially important during incident follow-up where multiple agents may independently identify the same action item. If a matching issue exists, comment on it instead of creating a new one.
+
+2. **Clarify before writing** if the request is vague. Ask for:
    - The target repository.
    - The problem being solved or feature being requested.
    - Any known constraints, preferences, or approaches.
