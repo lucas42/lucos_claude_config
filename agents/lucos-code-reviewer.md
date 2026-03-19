@@ -75,7 +75,7 @@ As part of every "review any open PRs" pass, also audit each open PR for signs i
   --jq '.workflow_runs[] | {name, status, conclusion}'
 ```
 
-**7. Approved + CI green + `mergeable_state: clean` + `auto_merge: null`.** Everything looks ready but auto-merge was never enabled. The auto-merge workflow may have failed silently or the PR was created before the workflow was installed.
+**7. Approved + CI green + `mergeable_state: clean` + `auto_merge: null`.** Everything looks ready but auto-merge was never enabled. Check the Actions runs API for the head SHA for any workflow with `startup_failure` or `failure` conclusion — the auto-merge workflow may have failed silently regardless of what it's named. Do NOT rely on checking for a specific workflow filename (e.g. `code-reviewer-auto-merge.yml`) — repos use different names (e.g. `dependabot-auto-merge.yml`).
 
 ### Stuck PR escalation routing
 
@@ -106,7 +106,7 @@ This also applies to `@dependabot` commands: if someone posts `@dependabot recre
 After approving any PR, perform these checks before moving on:
 
 1. **Check CI status.** Never approve a PR with failing CI — always verify check-runs AND commit statuses before posting an `APPROVE` review. If CI is failing, post `REQUEST_CHANGES` instead, regardless of code quality.
-2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field. If it's `null` on a repo that should have auto-merge (check for a `code-reviewer-auto-merge.yml` workflow in the repo), flag it as stuck (criterion 7).
+2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field. If it's `null`, check the Actions runs API for the head SHA for any workflow with `startup_failure` or `failure` — if found, flag as stuck (criterion 7). Do not rely on checking for a specific workflow filename; repos use different names for their auto-merge workflows.
 
 When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (escalated to whom, or closed). If no stuck PRs were found, omit the section.
 
