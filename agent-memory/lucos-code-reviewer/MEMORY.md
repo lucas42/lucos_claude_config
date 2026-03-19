@@ -58,10 +58,10 @@
 
 ## GitHub Actions — Dependabot Auto-Merge Workflows
 
-### `startup_failure` on auto-merge workflow — missing secrets pattern
-- When a Dependabot PR has `auto_merge: null` and the Actions runs API shows `startup_failure` on the auto-merge workflow, the most likely cause is **missing `CODE_REVIEWER_APP_ID` / `CODE_REVIEWER_PRIVATE_KEY` secrets** in the repo.
-- Confirmed in lucos_navbar (issue #46) and lucos_backups (issue #83). Both had no Actions secrets at all.
-- Escalate to `lucos-site-reliability` — they merge the PR directly via lucos-system-administrator and file an issue for the missing secrets.
+### `startup_failure` on auto-merge workflow — two distinct causes
+- **Missing secrets**: When a repo has no Actions secrets at all, the auto-merge workflow fails with `startup_failure` on all runs. Confirmed in lucos_navbar (#46) and lucos_backups (#83). Escalate to `lucos-site-reliability`.
+- **Non-Dependabot actor (expected)**: When a non-Dependabot actor (e.g. `lucos-developer[bot]`) opens a PR, the auto-merge caller workflow triggers but the job is skipped due to `if: github.actor == 'dependabot[bot]'`. A skipped reusable workflow job produces `startup_failure` on the workflow run — this is **expected behaviour**, not an error. Confirmed in lucos_repos: all `startup_failure` runs were triggered by `lucos-developer[bot]`.
+- **Distinguishing them**: If all `startup_failure` runs are triggered by non-Dependabot actors, it's expected skip behaviour. If a run triggered by `dependabot[bot]` shows `startup_failure`, that's a real problem (likely missing secrets).
 
 ### `pull_request_target` is required — `pull_request` is insufficient
 - Dependabot PRs are treated as fork PRs by GitHub, so `pull_request` issues a read-only token that cannot be elevated even with job-level `permissions`. The `startup_failure` persists after moving permissions to job level.
@@ -104,3 +104,4 @@
 - Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13, 2026-03-16) — DO NOT USE, massively overused
 - Tuatara (2026-03-04, 2026-03-05, 2026-03-06, 2026-03-07, 2026-03-14) — heavily used, avoid for now
 - Axolotl (2026-03-10, 2026-03-12, 2026-03-14, 2026-03-17) — DO NOT USE, massively overused (also technically an amphibian)
+- Texas horned lizard / Horned lizard / Phrynosoma (2026-03-05, 2026-03-17, 2026-03-19) — DO NOT USE, used three times
