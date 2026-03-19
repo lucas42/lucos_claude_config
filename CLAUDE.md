@@ -113,7 +113,7 @@ Some GitHub operations require the **repo owner** (lucas42) to perform them in t
 
 - **GitHub App permission changes** (adding permissions like `actions:write`, `contents:write`): requires the app owner to update them in the GitHub Developer Settings UI, then the repo owner to approve the new permissions on each installation. There is no API for this.
 - **`@dependabot` commands** (`recreate`, `rebase`, etc.): require push access to the repository. No agent app currently has push access.
-- **Actions workflow re-runs**: require `actions:write` permission. No agent app currently has this.
+- **Actions workflow re-runs**: require `actions:write` permission. `lucos-system-administrator` has this permission and can re-run workflows.
 - **Branch protection rule changes**: require admin access to the repository.
 
 When an agent discovers it lacks permissions for an action (e.g. a 403 response), it must **escalate immediately** with a clear explanation of what permission is missing and who can grant it — not retry, work around it, or silently drop the task.
