@@ -125,6 +125,7 @@ Key principles for triaging `audit-finding` issues:
 - **When a convention is deleted/replaced**, all open issues referencing the old convention become obsolete. Close them as completed (the goal was achieved by the replacement). The audit will not re-raise them because the old convention no longer runs.
 - **False positive audit findings on blocked issues**: If the convention genuinely doesn't apply but hasn't been fixed yet (e.g. lucos_deploy_orb can't use its own orb), mark as `agent-approved` + `status:blocked` with a reference to the fix issue. Do NOT close -- closing causes the audit to re-raise on the next sweep.
 - **Closing audit-findings as false positives**: When closing a false positive (e.g. transient API error), also raise an issue on `lucas42/lucos_repos` about the root cause, or comment on an existing issue if one covers that class of false positive. Example: lucos_backups#51 was a 502-induced false positive, led to lucos_repos#102.
+- **Batch-closing after a checker fix**: When a convention checker bug is fixed (e.g. lucos_repos#150 fixing the `contexts` vs `checks` field), close ALL blocked audit-finding issues for that convention immediately. Do NOT suggest "waiting for the next audit sweep to distinguish real from false positives" -- the audit only creates issues, never closes them, so waiting just leaves stale issues open. Close them now; any genuinely failing repos will get fresh issues on the next sweep.
 
 ## Project board sync (introduced 2026-03-12)
 
