@@ -140,6 +140,10 @@ Key principles for triaging `audit-finding` issues:
 - GitHub user node ID for lucas42: `MDQ6VXNlcjQyODg0Nw==` (legacy) / `U_kgDOAAaLLw` (new)
 - **Always reposition items by priority after adding.** The board uses manual position ordering (no auto-sort). The prioritisation script sorts by board position, not labels -- wrong position = wrong pickup order. Critical/High: move to top (no `afterId`). Medium: place after the last High item (or move to top if unknown). Low: leave at bottom (default). Never skip this step -- it was missed on lucos_photos#208 (2026-03-16) despite existing instructions.
 
+## Feedback
+
+- [Issue granularity](feedback_issue_granularity.md) — lucas42 prefers not to split small, related findings (like permission gaps) into separate tickets; handle inline
+
 ## Issue closure policy
 
 - lucos-issue-manager IS allowed to close issues directly when confident no further work is needed

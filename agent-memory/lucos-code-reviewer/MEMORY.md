@@ -41,10 +41,11 @@
 
 ## CircleCI Build Convention
 
-### `build-multiplatform` is the standard — `build-armv7l`, `build-amd64`, `build-arm64` are retired
-- As of 2026-03-17, all lucos services have migrated to `lucos/build-multiplatform` (Docker buildx + QEMU, produces a unified `linux/amd64,linux/arm64` manifest).
-- `build-armv7l`, `build-amd64`, `build-arm64`, and the pici Docker-in-Docker build host are all retired. pici repo is archived.
-- **Flag any PR that still uses arch-specific build jobs as needing migration.**
+### `build-multiplatform` is the standard for ARM-targeted services — amd64-only services stay on `build-amd64`
+- `lucos/build-multiplatform` (Docker buildx + QEMU, produces a unified `linux/amd64,linux/arm64` manifest) is the standard for services deployed to ARM architectures.
+- **amd64-only services stay on `build-amd64`** — the migration to `build-multiplatform` is NOT universal. Confirmed: lucos_monitoring stays on `build-amd64` (lucas42/lucos_monitoring#83 closed as not_planned).
+- `build-armv7l`, `build-arm64`, and the pici Docker-in-Docker build host are retired. pici repo is archived.
+- **Do NOT flag `build-amd64` as needing migration without first checking whether the service targets ARM.** Only flag if the service is confirmed to be deployed to ARM hosts.
 - When a service uses `build-multiplatform`, the `docker-compose.yml` image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
 - No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
 
@@ -92,6 +93,7 @@
 - Black mamba (2026-03-10)
 - Inland taipan (2026-03-10)
 - Malagasy leaf-tailed gecko (2026-03-10)
+- Satanic leaf-tailed gecko (2026-03-04, 2026-03-06, 2026-03-10, 2026-03-12, 2026-03-19) — DO NOT USE, massively overused
 - Pancake tortoise (2026-03-10) — COMPLETELY BANNED, massively overused
 - Panther chameleon (2026-03-10) — DO NOT USE AGAIN SOON
 - Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13, 2026-03-16) — DO NOT USE, massively overused
