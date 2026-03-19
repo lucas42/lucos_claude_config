@@ -58,6 +58,11 @@
 
 ## GitHub Actions — Dependabot Auto-Merge Workflows
 
+### `startup_failure` on auto-merge workflow — missing secrets pattern
+- When a Dependabot PR has `auto_merge: null` and the Actions runs API shows `startup_failure` on the auto-merge workflow, the most likely cause is **missing `CODE_REVIEWER_APP_ID` / `CODE_REVIEWER_PRIVATE_KEY` secrets** in the repo.
+- Confirmed in lucos_navbar (issue #46) and lucos_backups (issue #83). Both had no Actions secrets at all.
+- Escalate to `lucos-site-reliability` — they merge the PR directly via lucos-system-administrator and file an issue for the missing secrets.
+
 ### `pull_request_target` is required — `pull_request` is insufficient
 - Dependabot PRs are treated as fork PRs by GitHub, so `pull_request` issues a read-only token that cannot be elevated even with job-level `permissions`. The `startup_failure` persists after moving permissions to job level.
 - **`pull_request_target` is the correct trigger** for Dependabot auto-merge caller workflows. It runs in the base-branch context with a write token.
