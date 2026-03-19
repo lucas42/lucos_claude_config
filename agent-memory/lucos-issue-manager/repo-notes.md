@@ -95,6 +95,7 @@
 - **Purpose**: Monitoring service for lucos infrastructure; checks health of services including CircleCI build status
 - **Labels created**: `agent-approved`, `needs-refining` (already existed)
 - **Known context**: CircleCI check uses deprecated v1.1 API (#25, approved); v2 migration would improve signal quality by filtering for deploy job outcomes
+- **Build**: Stays on `build-amd64` (not migrated to `build-multiplatform`). lucas42 confirmed (2026-03-19) that `build-multiplatform` migration was only for ARM-deployed services. Most avalon services still use `build-amd64`.
 
 ## lucos (cross-cutting concerns repo)
 
