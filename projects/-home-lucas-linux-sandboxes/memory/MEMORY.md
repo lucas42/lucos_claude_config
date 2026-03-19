@@ -24,6 +24,7 @@
 - [Delegate questions to agents](feedback_delegate_not_guess.md) — when unsure about something, ask the most suitable agent rather than guessing
 - [Delegate problems, not solutions](feedback_delegation_style.md) — send the problem statement to teammates, not pre-written fixes
 - [No mental PR queue](feedback_pr_queue.md) — don't maintain a running list of PRs for user review; check GitHub if needed
+- [Labels managed by issue-manager](feedback_labels_owner.md) — label creation/management goes to lucos-issue-manager, not other personas
 
 ## Active Projects
 
