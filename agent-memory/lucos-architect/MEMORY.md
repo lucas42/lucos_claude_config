@@ -53,7 +53,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media
 - **Docker volume restore gotcha**: `docker run` with a new volume does NOT apply Docker Compose labels. lucos_backups depends on these labels. Volume restores must use `docker compose` to create the volume first, or manually apply labels. Documented in lucos_backups#64.
 - **2026-03-17 incident**: EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash. Lesson: "idempotent" delete-and-recreate must distinguish ML-generated vs human-curated data.
-- **2026-03-19 incident**: Bulk CI push (~30 repos) -> lucos_creds partial .env (missing PORT) -> Docker Compose silently starts containers without host port bindings -> 502 for ~2h. Lessons: (1) Docker Compose silently drops port bindings when env var is missing -- use `${PORT:?}` syntax or deploy-time validation. (2) Internal healthchecks cannot detect missing host port bindings -- need external post-deploy smoke test. (3) lucos_creds under concurrent SFTP load may serve partial files. Issues filed: lucos_deploy_orb#40 (deploy PORT validation -- canonical), lucos_creds#112 (SFTP concurrency). lucos#55 closed as duplicate.
+- **2026-03-19 incident**: Bulk CI push (~30 repos) -> partial .env (missing PORT) -> silent port binding loss -> 502 for ~2h. Issues: lucos_deploy_orb#40, lucos_creds#112.
+- **2026-03-20 incident**: Same bulk push -> simultaneous deploys spike avalon load to ~40 -> healthcheck cascade (28/31 erroring). eolas `collectstatic` + arachne ingestor bulk fetch are CPU hotspots. Monitoring restart wiped state, inflating error count.
+- **Systemic: bulk deployment waves** are new (agent automation). Three healthcheck failure patterns across incidents: false-healthy (03-17, 03-19), false-unhealthy (03-20). Need: rate-limited bulk pushes, build-time collectstatic, deferred ingestor fetch, monitoring restart resilience.
 
 ## Claude Code setup review (Mar 2026)
 

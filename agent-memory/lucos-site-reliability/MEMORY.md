@@ -106,6 +106,7 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.
 - Issue #91 (closed 2026-03-15): `lucos_arachne_web` Docker healthcheck IPv6 localhost fix — confirmed healthy in production.
+- Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk `GET /metadata/all/data/` fetch on every container start — 554KB, ~17 seconds, fires immediately on startup even during deployment waves. Canonical issue (#115 was filed first by SRE but closed as duplicate of #116 which had more detail).
 
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
@@ -127,6 +128,13 @@ See topic files for details. Key patterns confirmed in operation:
 - xwing is a Raspberry Pi 3 (Cortex-A53, CPU part 0xd03). **Already running 64-bit OS** (Debian 13 trixie, aarch64 kernel) — confirmed by sysadmin on 2026-03-16.
 - xwing runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media. pici is **retired** (repo archived 2026-03-17) — all services migrated to multi-platform Docker buildx via `build-multiplatform` orb job.
 - `build-multiplatform` is now the standard for arm builds. `build-armv7l`, `build-arm64`, and `:armv7l-latest` tag convention are all gone. lucos_deploy_orb#9 is complete.
+
+## Hostname → Repo Mappings (non-obvious)
+- `media-api.l42.eu` → `lucos_media_metadata_api` (NOT lucos_media_manager)
+- `media-metadata.l42.eu` → `lucos_media_manager`
+- `ceol.l42.eu` → `lucos_media_manager` (the player/queue UI)
+- `am.l42.eu` → `lucos_time`
+- Always verify via `/_info` ci.circle field when in doubt — do not guess from hostname.
 
 ## Infrastructure Patterns
 - `depends_on` only waits for container start, not service readiness — always use `pg_isready` or equivalent in entrypoints.
