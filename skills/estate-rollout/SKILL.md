@@ -1,7 +1,7 @@
 ---
 name: estate-rollout
 description: Coordinate an estate-wide change across repositories, verified by the lucos_repos dry-run diff
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Follow this process to roll out an estate-wide change across lucos repositories, using the lucos_repos dry-run diff to verify the migration at each stage. The user will describe the change to be made.
