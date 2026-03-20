@@ -89,3 +89,37 @@ Always manually review generated migration files before committing. Autogenerate
 
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
 - When creating a new repo for a PR workflow, push an empty initial commit to `main` first, then create the feature branch from it and open PR. (Orphan branches for main cause "no history in common" errors.)
+
+## GitHub Actions: dependabot-auto-merge caller pattern
+
+**`pull_request_target` + `uses:` causes `startup_failure`** on every PR regardless of `if:` guards or `secrets: inherit`. This is a fundamental GitHub Actions limitation.
+
+Correct caller pattern (confirmed via smoke test in lucas42/.github-test):
+```yaml
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  dependabot:
+    uses: lucas42/.github/.github/workflows/dependabot-auto-merge.yml@main
+```
+
+- Use `pull_request` (not `pull_request_target`)
+- Top-level `permissions:` block is required — without it GitHub reports `startup_failure`
+- No `secrets: inherit`, no `if:` guard in caller (guard lives in the reusable workflow)
+- Workflow conclusion for non-Dependabot PRs is `skipped` (not `success`) — both are passing
+
+## lucos_repos Convention Checker
+
+- `lucos-developer` app cannot update `.github/workflows/` files — lacks `workflows` permission. Use `lucos-system-administrator` for bulk workflow file updates across repos.
+- Convention convention dry-run diff: open a DRAFT PR first, wait for the audit dry-run comment, verify diff matches expectations, then mark ready for review.
+
+## lucos_loganne
+
+- Node/Express app. Routes in `src/routes/`. Tests in `__tests__/routes.js`. Run with `npm test`.
+- `getEvents(since=null)` in `routes/events.js` — defaults to `DEFAULT_VIEW_WINDOW_MS` (7 days) when `since` is null. Both websocket catch-up and `GET /events` use this default.

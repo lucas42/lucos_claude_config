@@ -3,7 +3,12 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-19
+## Last reviewed: 2026-03-20
+
+No new closures of issues raised by lucos-issue-manager since last check.
+Many issues closed BY lucos-issue-manager during this session (audit findings, duplicates) — those were our own actions.
+
+Previous batch: 2026-03-19
 
 - lucos_repos#137 (Add actor guard to dependabot auto-merge caller workflows -- completed)
 No concerning closures.
