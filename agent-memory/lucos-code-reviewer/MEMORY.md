@@ -58,21 +58,32 @@
 
 ## GitHub Actions — Dependabot Auto-Merge Workflows
 
-### `startup_failure` on auto-merge workflow — two distinct causes
+### `startup_failure` on auto-merge workflow — causes and patterns
 - **Missing secrets**: When a repo has no Actions secrets at all, the auto-merge workflow fails with `startup_failure` on all runs. Confirmed in lucos_navbar (#46) and lucos_backups (#83). Escalate to `lucos-site-reliability`.
-- **Non-Dependabot actor (expected)**: When a non-Dependabot actor (e.g. `lucos-developer[bot]`) opens a PR, the auto-merge caller workflow triggers but the job is skipped due to `if: github.actor == 'dependabot[bot]'`. A skipped reusable workflow job produces `startup_failure` on the workflow run — this is **expected behaviour**, not an error. Confirmed in lucos_repos: all `startup_failure` runs were triggered by `lucos-developer[bot]`.
-- **Distinguishing them**: If all `startup_failure` runs are triggered by non-Dependabot actors, it's expected skip behaviour. If a run triggered by `dependabot[bot]` shows `startup_failure`, that's a real problem (likely missing secrets).
+- **`pull_request_target` + `uses:` (reusable workflow)**: This combination causes `startup_failure` for non-Dependabot PRs regardless of `if:` guards or `secrets: inherit`. GitHub resolves `uses:` references and `secrets: inherit` before evaluating `if:` conditions, so the workflow fails to start. Confirmed via lucas42/.github #13/#14.
+- **Non-Dependabot actor on `pull_request` trigger (expected)**: With the correct `pull_request` + `permissions` pattern, non-Dependabot PRs trigger the workflow but the `if:` guard on the reusable workflow's internal job causes it to be skipped. Workflow concludes `skipped` — **expected, not an error**.
 
-### `pull_request_target` is required — `pull_request` is insufficient
-- Dependabot PRs are treated as fork PRs by GitHub, so `pull_request` issues a read-only token that cannot be elevated even with job-level `permissions`. The `startup_failure` persists after moving permissions to job level.
-- **`pull_request_target` is the correct trigger** for Dependabot auto-merge caller workflows. It runs in the base-branch context with a write token.
-- The security guard is in the **reusable workflow** (`github.event.pull_request.user.login == 'dependabot[bot]'`) — this checks the PR *author*, not the run actor, so it is stable against maintainer re-runs. The caller's `github.actor` check is a weaker redundant layer.
-- Safety relies on **no checkout of PR code** — the elevated token never touches untrusted content.
-- Confirmed via lucos-security review of lucos_repos PR #144.
+### Correct caller pattern — `pull_request` + `permissions` block
+- **`pull_request` is the correct trigger** (NOT `pull_request_target`) for Dependabot auto-merge caller workflows. `pull_request_target` + `uses:` causes `startup_failure`.
+- Caller template:
+  ```yaml
+  on:
+    pull_request:
+      types: [opened, synchronize, reopened]
+  permissions:
+    pull-requests: write
+    contents: write
+  jobs:
+    dependabot:
+      uses: lucas42/.github/.github/workflows/dependabot-auto-merge.yml@main
+  ```
+- No `secrets: inherit` — not needed, and causes `startup_failure` on `pull_request_target`.
+- No `if:` guard in caller — the guard lives on the job in the reusable workflow.
+- The security guard is `github.event.pull_request.user.login == 'dependabot[bot]'` in the reusable workflow — checks PR *author*, stable against maintainer re-runs.
+- Confirmed and validated via smoke test in lucas42/.github #14. Production rollout to ~33 repos still pending as of 2026-03-20.
 
-### Permissions belong in the reusable workflow, not the callers
-- The `permissions` block (`pull-requests: write, contents: write`) stays in the reusable workflow at job level (`lucas42/.github`). Callers should not repeat it.
-- Caller template: `if:` guard + `uses:` call only, no `permissions` block.
+### NOTE: Prior memory was wrong
+- Earlier note said "`pull_request_target` is required, `pull_request` is insufficient" — this was incorrect. `pull_request` with a `permissions` block gives Dependabot the write token it needs, and avoids the `startup_failure` caused by `pull_request_target` + `uses:`.
 
 ## Repo-Specific Review Rules
 
