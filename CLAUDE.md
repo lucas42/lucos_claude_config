@@ -118,6 +118,22 @@ Some GitHub operations require the **repo owner** (lucas42) to perform them in t
 
 When an agent discovers it lacks permissions for an action (e.g. a 403 response), it must **escalate immediately** with a clear explanation of what permission is missing and who can grant it — not retry, work around it, or silently drop the task.
 
+### Marking draft PRs as ready for review
+
+The REST API (`PATCH /repos/{owner}/{repo}/pulls/{number}` with `draft: false`) **does not work** — it silently ignores the `draft` field. Use the GraphQL `markPullRequestReadyForReview` mutation instead:
+
+```bash
+# First get the PR's node ID
+PR_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer \
+  repos/lucas42/{repo}/pulls/{number} --jq '.node_id')
+
+# Then mark it ready via GraphQL
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer graphql \
+  -f query="mutation { markPullRequestReadyForReview(input: {pullRequestId: \"$PR_NODE_ID\"}) { pullRequest { isDraft } } }"
+```
+
+The `pull_requests: write` permission (which developer and other apps already have) is sufficient. Do **not** use `gh-projects` for this — that PAT only has `project` scope.
+
 ### Making git commits as a persona
 
 Use the `git-as-agent` wrapper script instead of passing `-c user.name=... -c user.email=...` flags manually on every git operation. It looks up the persona's identity from `personas.json` and prepends the correct `-c` flags automatically. `--app` must be the first argument:
