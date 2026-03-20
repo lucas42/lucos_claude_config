@@ -59,7 +59,15 @@ If a PR exists that references the issue and is still **open**, the work has lik
 3. **If unsupervised (exit code 0):** the PR should auto-merge on its own. Tell the user the work is already done and the PR is awaiting auto-merge, then stop.
 4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to merge the existing PR before this issue can be closed. Provide the PR URL. Then stop — do not dispatch a teammate.
 
-If no open PR exists for the issue, continue to Step 2.
+If no open PR exists for the issue, continue to Step 1c.
+
+## Step 1c: Check for estate-wide convention changes
+
+If the issue is on the `lucos_repos` repository and involves **creating or modifying a convention** (i.e. the work will change which repos pass or fail an audit convention), this requires the estate-rollout workflow instead of a normal implementation dispatch. Convention changes need to be verified against all repos via the dry-run diff before merging, and affected repos may need migrating.
+
+Read the issue body. If it describes adding a new convention, modifying an existing convention's check logic, or changing what a convention considers passing/failing, **use the `/estate-rollout` skill** instead of continuing to Step 2. Pass the issue context to the skill so it knows what change to make.
+
+If the issue is not a convention change (e.g. it's a bug fix, API change, dashboard change, or infrastructure work — even if it's on lucos_repos), continue to Step 2 as normal.
 
 ## Step 2: Dispatch the correct teammate
 
