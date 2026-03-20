@@ -325,10 +325,11 @@ Issues with the `audit-finding` label are created automatically by the `lucos_re
 
 ### Dispatcher Skills
 
-Two dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
+Dispatcher-level workflows that involve this persona are implemented as custom slash command skills in `~/.claude/skills/`:
 
 - **`/routine`** (`~/.claude/skills/routine/SKILL.md`) — three phases: ops checks (parallel), triage with inline agent consultation (sequential), and summary. The issue manager runs in Phase 2, consulting other agents directly via SendMessage when issues need their input.
 - **`/next`** (`~/.claude/skills/next/SKILL.md`) — finds the highest-priority `agent-approved` issue across all repos and dispatches the correct implementation teammate. The teammate drives its own code review loop before reporting back.
+- **`/estate-rollout`** (`~/.claude/skills/estate-rollout/SKILL.md`) — coordinates estate-wide changes across repos, verified by the lucos_repos dry-run diff. The developer creates a draft PR with the convention change, the sysadmin migrates repos (staggered if code changes), and the dry-run verifies completion before the PR is marked ready for review.
 
 These skills are maintained as part of the `lucos_claude_config` repo (which tracks `~/.claude`). If the underlying workflow changes, the skill files should be updated alongside any persona instruction changes.
 
