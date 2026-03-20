@@ -33,6 +33,8 @@ Include these instructions based on the type of change:
 - **If the change involves code changes that trigger CI builds and production deploys** (e.g. editing workflow files, config files, source code): "Stagger the changes in batches of 5 repos with 1 minute between batches to avoid saturating the production host."
 - **If the change only affects repo configuration that does not trigger a release** (e.g. branch protection rules, GitHub settings): "No staggering needed — these changes do not trigger production deploys."
 
+Also ask the system administrator to post a comment on the draft PR summarising what was done once the migration is complete — e.g. how many repos were migrated, any failures or repos that needed special handling. This gives the code reviewer context when they review the PR later.
+
 Wait for the system administrator to report back that the migration is complete.
 
 ## Step 4: Verify the dry-run shows no remaining failures
