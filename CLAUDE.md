@@ -205,6 +205,14 @@ Do not consider an implementation task complete until the review loop has finish
 
 ---
 
+## Bulk Cross-Repo Operations
+
+When pushing commits to many repos simultaneously (e.g. rolling out a workflow change, bulk secret updates, convention fixes), **stagger them in batches of 3-5 repos with a few minutes between batches**. Do not push to all repos at once.
+
+Each push triggers a CI build and deploy. Simultaneous deploys to the same production host saturate CPU and I/O, causing Docker healthcheck cascades, port binding failures, and service outages. Both the 2026-03-19 incident (PORT missing from .env under concurrent SFTP load) and the 2026-03-20 incident (avalon load spike to 40) were caused or worsened by pushing to ~30 repos simultaneously.
+
+---
+
 ## Team Management
 
 **Never shut down teammates unprompted.** Only shut down the team when the user explicitly asks. Idle teammates cost zero tokens — tokens are only spent when an agent processes a turn. Idle notifications are normal and do not mean the user is done. Silence from the user is not permission to act.
