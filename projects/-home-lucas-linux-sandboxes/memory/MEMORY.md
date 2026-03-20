@@ -25,6 +25,7 @@
 - [Delegate problems, not solutions](feedback_delegation_style.md) — send the problem statement to teammates, not pre-written fixes
 - [No mental PR queue](feedback_pr_queue.md) — don't maintain a running list of PRs for user review; check GitHub if needed
 - [Labels managed by issue-manager](feedback_labels_owner.md) — label creation/management goes to lucos-issue-manager, not other personas
+- [Developer message queue](feedback_developer_message_queue.md) — wait for developer to acknowledge corrections before dispatching new work; messages sent in quick succession get processed out of order
 
 ## Active Projects
 
