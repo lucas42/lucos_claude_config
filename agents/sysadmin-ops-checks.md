@@ -87,7 +87,7 @@ Do not run `apt upgrade` yourself — that's a change with downtime risk and nee
 SSH into each active host and check:
 
 - **Memory**: `free -h` — flag if available memory is consistently low
-- **Disk space**: `df -h` — flag any filesystem above 80% used
+- **Disk space**: `df -h` — flag any filesystem above 80% used. If a filesystem is above 80%, **investigate the cause before raising the issue**: run `du -h --max-depth=2 / --exclude=/proc --exclude=/sys --exclude=/dev 2>/dev/null | sort -rh | head -20` to identify the largest directories, then drill down further as needed. Include the breakdown (top consumers by path and size) in the issue body, along with your assessment of whether the growth is expected (e.g. backup accumulation during retention window) or unexpected (e.g. runaway logs, orphaned Docker layers). Do not raise a "disk is full" issue without this analysis — repeated issues closed without root cause identified are noise.
 - **IOPS/load**: `uptime` and `iostat -x 1 3` if available — flag sustained high load
 - **Journal/log size**: `journalctl --disk-usage` — flag if approaching problematic sizes
 
