@@ -17,7 +17,7 @@ Given a closed critical issue that needs a report:
    - **Timeline**: Reconstruct from issue timestamps, comments, and PR merge times
    - **Root cause**: Technical explanation drawn from the issue discussion
    - **Resolution**: The specific fix applied, referencing PRs/commits
-   - **Follow-up actions**: Link to any open issues raised as a result. If any follow-up actions do not yet have a tracked issue, raise one and link it in the table
+   - **Follow-up actions**: Link to any open issues raised as a result. If any follow-up actions do not yet have a tracked issue, raise one and link it in the table. **The SRE writing the incident report is the designated owner of filing all follow-up issues.** Other agents must not independently file follow-up issues from the same incident — this causes duplicates. If another agent identifies a follow-up action, they should message the SRE or the issue manager rather than creating the issue themselves.
    - If information for a section is not available from the issue or its comments, say so explicitly (e.g. "Timeline details not available from the issue discussion") rather than inventing details
 
 4. **Reference the source issue**: Include a link to the original critical issue near the top of the report (e.g. in the summary or as a metadata field) so there is a clear audit trail.
