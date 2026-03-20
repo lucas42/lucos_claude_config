@@ -4,7 +4,7 @@ description: Coordinate an estate-wide change across repositories, verified by t
 disable-model-invocation: true
 ---
 
-Follow this process to roll out an estate-wide change across lucos repositories, using the lucos_repos dry-run diff to verify the migration at each stage. The user will describe the change to be made. Do not ask for clarification unless the target change is genuinely ambiguous — immediately begin Step 1.
+Follow this process to roll out an estate-wide change across lucos repositories, using the lucos_repos dry-run diff to verify the migration at each stage. The user will describe the change to be made.
 
 ## Step 1: Update or create the convention
 
