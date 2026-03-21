@@ -94,11 +94,17 @@ Always manually review generated migration files before committing. Autogenerate
 - Apps don't have permission to create repos via GitHub API — use `gh repo create` (regular CLI).
 - When creating a new repo for a PR workflow, push an empty initial commit to `main` first, then create the feature branch from it and open PR. (Orphan branches for main cause "no history in common" errors.)
 
-## GitHub Actions: dependabot-auto-merge caller pattern
+## GitHub Actions: caller workflow permissions for reusable workflows
 
-**`pull_request_target` + `uses:` causes `startup_failure`** on every PR regardless of `if:` guards or `secrets: inherit`. This is a fundamental GitHub Actions limitation.
+**`permissions: {}` causes `startup_failure`** on any caller that uses `uses:` to call a cross-repo reusable workflow. GitHub needs at least `contents: read` to fetch the reusable workflow definition. This applies to ALL caller workflows, not just dependabot.
 
-Correct caller pattern (confirmed via smoke test in lucas42/.github-test):
+**Minimum correct caller pattern for code-reviewer-auto-merge:**
+```yaml
+permissions:
+  contents: read
+```
+
+**Minimum correct caller pattern for dependabot-auto-merge** (confirmed via smoke test in lucas42/.github-test):
 ```yaml
 on:
   pull_request:
@@ -113,10 +119,12 @@ jobs:
     uses: lucas42/.github/.github/workflows/dependabot-auto-merge.yml@main
 ```
 
-- Use `pull_request` (not `pull_request_target`)
-- Top-level `permissions:` block is required — without it GitHub reports `startup_failure`
+- Use `pull_request` (not `pull_request_target`) for dependabot
+- Top-level `permissions:` block is required — `{}` or omitting it causes `startup_failure`
 - No `secrets: inherit`, no `if:` guard in caller (guard lives in the reusable workflow)
 - Workflow conclusion for non-Dependabot PRs is `skipped` (not `success`) — both are passing
+
+**CRITICAL: Smoke test before estate rollout.** Any change to a caller workflow template must be smoke-tested via `.github-test` PR + full `lucas42/.github` smoke test suite BEFORE the estate-wide rollout. Skipping this step caused the 2026-03-21 incident where `permissions: {}` was rolled out to 45 repos, breaking auto-merge on all of them. The full smoke test suite is triggered by opening a PR against `lucas42/.github`.
 
 ## lucos_repos Convention Checker
 
