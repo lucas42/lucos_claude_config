@@ -20,6 +20,12 @@
 
 ## Review Patterns — Common Mistakes to Avoid
 
+### Post code review immediately, then follow up if CI fails
+- **Do not wait for CI before posting your code review.** Read the diff, evaluate the code, and post your review (APPROVE or REQUEST_CHANGES) immediately based on code quality alone.
+- After posting, wait for CI to complete. If CI fails, post a second REQUEST_CHANGES review flagging the failure. If CI passes, nothing more needed.
+- **Why:** Waiting for CI before reviewing creates a window where the developer can push a new commit, making your diff stale. Posting immediately eliminates this race, and gives the author faster feedback.
+- Confirmed failure mode: lucos_configy PR #64 — read components.yaml diff, waited for CI, developer pushed scripts.yaml version in the meantime. Review was posted on a commit I hadn't examined.
+
 ### `try/except` refactors can silently drop variable assignments
 - When a PR refactors a `try/except` block (e.g. replacing bare `except:` with an explicit check), **always verify that all variable assignments inside the original `try` block are preserved** in the refactored code.
 - Missed instance: lucos_backups PR #62 dropped `project = labels[...]` (which was inside the original `try`) when consolidating the error check. The variable was still used downstream, causing `NameError` on every labelled volume. Required emergency fix in PR #63.
