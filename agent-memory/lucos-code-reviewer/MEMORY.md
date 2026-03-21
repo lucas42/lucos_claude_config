@@ -26,6 +26,11 @@
 - **Why:** Waiting for CI before reviewing creates a window where the developer can push a new commit, making your diff stale. Posting immediately eliminates this race, and gives the author faster feedback.
 - Confirmed failure mode: lucos_configy PR #64 — read components.yaml diff, waited for CI, developer pushed scripts.yaml version in the meantime. Review was posted on a commit I hadn't examined.
 
+### Be assertive — request changes for concrete fixable issues, even minor ones
+- If you spot something concrete and fixable (e.g. an implicit ordering dependency, a missing idempotent call), **request changes** — don't bury it as a parenthetical note in an approval.
+- Reserve approvals-with-notes for genuinely subjective points or things requiring significant design discussion.
+- **Why:** A note in an approval is easy to miss and may never get fixed. A REQUEST_CHANGES ensures the author addresses it before merging. Confirmed: lucos_monitoring PR #93 — the `ssl`/`inets` ordering dependency in `fetcher_circleci` was noted but not blocked on; user confirmed it should have been a REQUEST_CHANGES.
+
 ### `try/except` refactors can silently drop variable assignments
 - When a PR refactors a `try/except` block (e.g. replacing bare `except:` with an explicit check), **always verify that all variable assignments inside the original `try` block are preserved** in the refactored code.
 - Missed instance: lucos_backups PR #62 dropped `project = labels[...]` (which was inside the original `try`) when consolidating the error check. The variable was still used downstream, causing `NameError` on every labelled volume. Required emergency fix in PR #63.
