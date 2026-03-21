@@ -22,11 +22,26 @@ Check the diff comment on the PR. It should show additional failures — these a
 
 If the dry-run has not posted yet, wait and re-check periodically. If the workflow is not present (e.g. the dry-run CI hasn't been set up yet), tell the user and stop.
 
-## Step 3: Migrate affected repos
+## Step 3: Smoke test via .github-test (when applicable)
 
-Once the user confirms the diff looks correct, send a message to `lucos-system-administrator`:
+**This step is mandatory when the convention change involves a reusable workflow or workflows that call a reusable workflow** (e.g. changes to `code-reviewer-auto-merge.yml`, `codeql-analysis.yml`, or any caller template that references a workflow in `lucas42/.github`). Skip this step only if the change has no relationship to reusable workflows.
 
-> "Apply the following change across all affected repositories: {description of the per-repo change the user described}. The dry-run diff on {PR URL} shows which repos need updating."
+Before migrating any other repositories, the change must be applied to `lucas42/.github-test` first and validated against the smoke tests in `lucas42/.github`.
+
+Send a message to `lucos-system-administrator`:
+
+> "Apply the following per-repo change to `lucas42/.github-test` only: {description of the per-repo change}. After pushing, check whether the smoke tests in `lucas42/.github` pass. Report back with the result — do not proceed to other repos."
+
+Wait for the system administrator to report back.
+
+- **If the smoke tests pass**: proceed to Step 4.
+- **If the smoke tests fail**: stop and report the failure to the user. The convention change or the per-repo migration may need adjustment before it can be rolled out. Do not proceed to the estate-wide migration.
+
+## Step 4: Migrate affected repos
+
+Once the user confirms the diff looks correct (and the smoke test has passed, if applicable), send a message to `lucos-system-administrator`:
+
+> "Apply the following change across all affected repositories: {description of the per-repo change the user described}. The dry-run diff on {PR URL} shows which repos need updating. {If Step 3 was performed: 'Note: lucas42/.github-test has already been migrated during the smoke test step — skip it in this batch.'}"
 
 Include these instructions based on the type of change:
 
@@ -37,7 +52,7 @@ Also ask the system administrator to post a comment on the draft PR summarising 
 
 Wait for the system administrator to report back that the migration is complete.
 
-## Step 4: Verify the dry-run shows no remaining failures
+## Step 5: Verify the dry-run shows no remaining failures
 
 After the migration is complete, the dry-run needs to be re-run on the same draft PR. The system administrator or developer should push an empty commit or re-trigger the workflow to get a fresh diff.
 
@@ -45,7 +60,7 @@ Check the updated diff comment. It should now show no additional failures from t
 
 If unexpected failures remain, report them to the user and stop — the migration may be incomplete or some repos may need special handling.
 
-## Step 5: Mark the PR as ready for review
+## Step 6: Mark the PR as ready for review
 
 Once the dry-run confirms the migration is complete, send a message to `lucos-developer`:
 
@@ -53,6 +68,6 @@ Once the dry-run confirms the migration is complete, send a message to `lucos-de
 
 Wait for the developer to complete the review loop and report back.
 
-## Step 6: Report to user
+## Step 7: Report to user
 
 Summarise the outcome: how many repos were migrated, the PR URL, and whether the review loop completed successfully.
