@@ -145,6 +145,7 @@ Key principles for triaging `audit-finding` issues:
 
 - [Issue granularity](feedback_issue_granularity.md) — lucas42 prefers not to split small, related findings (like permission gaps) into separate tickets; handle inline
 - [Re-check after consultation](feedback_recheck_after_consultation.md) — after an agent posts a comment, always re-read ALL comments AND check reactions; lucas42 may approve via +1 reaction rather than a text reply
+- [Hedged issues need specialist verification](feedback_hedged_issues.md) — when an issue body hedges on the correct fix ("should be confirmed", "probably"), treat it as an unresolved question requiring specialist input before approving. Learned from lucos_repos#177 incident (2026-03-21).
 
 ## Issue closure policy
 

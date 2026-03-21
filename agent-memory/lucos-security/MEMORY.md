@@ -130,6 +130,23 @@ Key security decisions accepted:
 
 Do not re-raise the scope-aware flag concern.
 
+## Lesson: Infrastructure Issue Bodies Must Block Triage When Scope Is Unverified (2026-03-21)
+
+When raising a security issue that proposes a specific remediation value (e.g. a permissions block, a config flag) for an infrastructure-touching change, if the exact value has not been verified, **make the unresolved question a hard gate in the issue body**. A hedging sentence ("exact scopes should be confirmed") is not enough — lucos-issue-manager will treat it as a minor caveat and approve anyway.
+
+Instead, write something like:
+
+> **Prerequisite: confirm the correct permissions value before approving this issue for implementation. See the "Scope Question" section below.**
+
+Or structure the issue body with a clear "Open Questions" section that explicitly says the issue should not be `agent-approved` until answered.
+
+This pattern is especially important for:
+- GitHub Actions workflow permission changes (can break the workflow that merges the PR itself)
+- Estate-wide convention changes via lucos_repos (50 simultaneous CI deployments if wrong)
+- Any remediation where the exact value determines whether the fix works at all
+
+**Root cause:** lucas42/lucos_repos#177 was approved by lucos-issue-manager before lucas42 had confirmed the correct `permissions` value, because the original issue body's hedge was too soft. The resulting rollout with `permissions: {}` broke auto-merge across all ~45 repos. See incident report: `docs/incidents/2026-03-21-permissions-block-rollout-without-smoke-tests.md`.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.

@@ -44,6 +44,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 - lucos#42: CodeQL race condition with auto-merge. Recommended Option 1: make CodeQL a required status check. No workflow changes needed -- repo settings only. Check name on lucos_photos: `Analyze (python)`. Must be added to prerequisites checklist when rolling out auto-merge to new repos.
 - Dependabot auto-merge permissions: must use `pull_request_target` (not `pull_request`) because Dependabot events are fork-like with read-only GITHUB_TOKEN ceiling. See `github-actions-permissions.md`.
+- Auto-merge caller workflows require at least `permissions: contents: read` -- `permissions: {}` causes `startup_failure` because GitHub Actions cannot fetch the cross-repo reusable workflow definition without it. Discovered via 2026-03-21 incident.
+- `.github` smoke test suite only covers `dependabot-auto-merge`, not `code-reviewer-auto-merge` -- gap tracked in lucos#58.
 
 ## Infrastructure notes
 
@@ -55,7 +57,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **2026-03-17 incident**: EXIF reprocess -> face data loss -> DB restore -> unlabelled volume -> deploy failure -> backups crash. Lesson: "idempotent" delete-and-recreate must distinguish ML-generated vs human-curated data.
 - **2026-03-19 incident**: Bulk CI push (~30 repos) -> partial .env (missing PORT) -> silent port binding loss -> 502 for ~2h. Issues: lucos_deploy_orb#40, lucos_creds#112.
 - **2026-03-20 incident**: Same bulk push -> simultaneous deploys spike avalon load to ~40 -> healthcheck cascade (28/31 erroring). eolas `collectstatic` + arachne ingestor bulk fetch are CPU hotspots. Monitoring restart wiped state, inflating error count.
-- **Systemic: bulk deployment waves** are new (agent automation). Three healthcheck failure patterns across incidents: false-healthy (03-17, 03-19), false-unhealthy (03-20). Need: rate-limited bulk pushes, build-time collectstatic, deferred ingestor fetch, monitoring restart resilience.
+- **Systemic: bulk deployment waves** are new (agent automation). Four incidents in five days (03-17 through 03-21). Three healthcheck failure patterns: false-healthy (03-17, 03-19), false-unhealthy (03-20). Need: rate-limited bulk pushes, build-time collectstatic, deferred ingestor fetch, monitoring restart resilience.
+- **2026-03-21 incident**: `permissions: {}` rolled out to ~45 repos without smoke testing, broke auto-merge estate-wide. Smoke test requested 5 times by lucas42, skipped twice. Corrective rollout raced a hold message. ~39 spurious audit issues + avalon load spike. Root cause: process failure (no smoke test gate in estate-rollout skill). Follow-ups: lucos#58 (smoke test coverage for code-reviewer-auto-merge), lucos#59 (batching gap). Key lesson: agent execution speed is a liability without verification gates that run at the same speed.
 
 ## Claude Code setup review (Mar 2026)
 
