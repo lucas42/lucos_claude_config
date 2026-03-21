@@ -3,12 +3,22 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-20
+## Last reviewed: 2026-03-21
 
-No new closures of issues raised by lucos-issue-manager since last check.
-Many issues closed BY lucos-issue-manager during this session (audit findings, duplicates) — those were our own actions.
+New closures since last review:
+- vue-leaflet-antimeridian#14 (Configure CI to use lucos_deploy_orb npm release job -- completed)
+- lucos_media_manager#168 (LongPollControllerV3Test flaky -- completed)
+- lucos_deploy_orb#40 (Validate .env contains PORT -- completed)
+- .github#15 (Roll out dependabot-auto-merge caller fix -- completed)
+- .github#13 (Fix dependabot-auto-merge startup_failure -- completed)
+- .github#9 (Add smoke tests for shared workflows -- completed)
+- lucos_deploy_orb#37 (Change deploy prune step to -af -- completed)
+- lucos_repos#159 (Mitigate blast radius of false positive audit findings -- completed)
+- lucos_configy#61 (Reclassify lukeblaney_cv as a script -- completed)
+- lucos_repos#114 (Audit conventions should exclude non-lucos repos -- not_planned, split into specific issues)
+No concerning closures.
 
-Previous batch: 2026-03-19
+Previous batch: 2026-03-20
 
 - lucos_repos#137 (Add actor guard to dependabot auto-merge caller workflows -- completed)
 No concerning closures.

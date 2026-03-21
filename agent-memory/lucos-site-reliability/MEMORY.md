@@ -118,6 +118,11 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_deploy_orb — Known Issues
 - "Prune dangling Docker images" step timeout (issue #12) resolved 2026-03-05. lucos_repos pipeline self-healed; lucos_arachne and lucos_photos workflows manually retried via CircleCI v2 API.
+- Issue #42 (open, agent-approved): "Notify Loganne" step causes CI pipeline to fail on transient loganne outages — step should be non-blocking so loganne blips don't permanently mark CI red.
+- Issue #43 (open, agent-approved): root cause tracking for 2026-03-20 stale CI failures in scheduler/time/scheduled-scripts/search-component repos.
+
+## lucos_dns — Known Issues
+- Issue #28 (open, agent-approved): DNS resolution failure for `salvare-v4.s.l42.eu` from CircleCI runners during 2026-03-20 incident — caused lucos_media_linuxplayer deploy to fail.
 
 ## lucos_contacts — Known Issues & Patterns
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` when Docker healthchecks use `wget http://127.0.0.1:<port>/_info`. `wget` sends `Host: 127.0.0.1:<port>` which Django rejects by default. Fixed in PR #536 (2026-03-11). This is a general pattern — any Django service with an IP-based healthcheck needs the IP in `ALLOWED_HOSTS`.
