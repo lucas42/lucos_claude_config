@@ -71,6 +71,7 @@ The script returns a JSON object with two arrays: `code_scanning` (CodeQL findin
 - If no issue exists, raise one. Include the rule ID, severity, affected file/line, and a plain-English explanation of what an attacker could do with it.
 - **Raise one issue per CodeQL alert.** Do not bundle multiple CodeQL findings into a single issue.
 - Apply the advisory routing decision: most CodeQL findings are not immediately exploitable without other access, so they go as normal public issues. Only escalate to a private advisory if the finding is immediately exploitable by a network-accessible attacker with no prior access (and not yet fixed).
+- **If an alert's state is `fixed`:** close its tracking issue as `completed` if it is still open. A fixed alert means the vulnerability has been resolved in code — the issue should not remain open.
 - **If an alert's tracking issue has been closed as not_planned (risk accepted):** dismiss the alert in GitHub using the API with `dismissed_reason: "won't fix"` and a `dismissed_comment` referencing the issue. This prevents the alert from reappearing in future ops check runs. Use:
   ```bash
   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security "repos/lucas42/{repo}/code-scanning/alerts/{number}" \
