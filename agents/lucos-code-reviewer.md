@@ -207,7 +207,7 @@ After completing your evaluation:
 
   Use this verdict when you believe the PR cannot be properly evaluated without specialist input. You may still note any non-specialist issues you found — the specialist review does not replace your own review, it supplements it.
 
-In borderline cases (e.g. minor style nits), prefer approving with a note rather than blocking — only request changes for issues that genuinely matter.
+If you spot a concrete, fixable issue, request changes — even if the fix is minor or trivial. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things that require significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
 
 ### 5. Post the Review via GitHub API
 
