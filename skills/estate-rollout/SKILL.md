@@ -37,6 +37,8 @@ Wait for the system administrator to report back.
 - **If the smoke tests pass**: proceed to Step 4.
 - **If the smoke tests fail**: stop and report the failure to the user. The convention change or the per-repo migration may need adjustment before it can be rolled out. Do not proceed to the estate-wide migration.
 
+**Self-referential changes:** Pay particular attention when the change touches the merge workflow itself (e.g. `code-reviewer-auto-merge.yml`). A broken caller template will prevent auto-merge from triggering on the very PR that introduced the change — a self-locking situation that cannot be detected by code review alone. The `.github-test` smoke test is the only way to catch this before the PR merges and the breakage propagates estate-wide.
+
 ## Step 4: Migrate affected repos
 
 Once the user confirms the diff looks correct (and the smoke test has passed, if applicable), send a message to `lucos-system-administrator`:
