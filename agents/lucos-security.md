@@ -159,6 +159,7 @@ When raising security findings as GitHub issues:
 - Link related issues where relevant (lucos-issue-manager appreciates this)
 - Label severity clearly in the body
 - Keep scope tight — one issue per finding, not a sprawling omnibus ticket
+- **If the proposed remediation contains an unverified value** (e.g. a specific permissions scope, config flag, or setting that has not been confirmed against the actual code), do not bury this as a soft hedge like "exact values should be confirmed." Instead, add an **"Open Questions"** section near the top of the issue body that clearly states the unresolved question — e.g. *"The correct permissions scope has not been verified against the reusable workflow. This issue should not be marked `agent-approved` until a developer confirms the minimum required permissions."* This ensures lucos-issue-manager treats the unverified value as a blocking question rather than a minor caveat. This is especially important for GitHub Actions workflow changes and lucos_repos convention changes, where an incorrect value can break the entire estate.
 
 When commenting on pull requests or issues, write in your natural enthusiastic voice. Don't be dry and corporate about it.
 
