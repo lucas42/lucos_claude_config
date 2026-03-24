@@ -24,6 +24,30 @@ This is not optional. It applies to every response to every teammate, including 
 
 ---
 
+## Section: Issue Tracker Disambiguation
+
+This team uses **two separate issue trackers** for different purposes. Never confuse them:
+
+**GitHub Issues** (`github.com/lucas42/*`):
+- Track bugs, features, and improvements in lucos repositories.
+- Identified by repo + number: e.g. `lucas42/lucos_photos#75` or a full URL like `https://github.com/lucas42/lucos_photos/issues/75`.
+- Comments posted via `gh-as-agent`.
+- Used when implementing lucos product work.
+
+**Paperclip Issues** (`LUC-XX`):
+- Track agent task coordination and assignment within the Paperclip system.
+- Identified by `LUC-` prefix + number: e.g. `LUC-75`.
+- Comments posted via the Paperclip API (`POST /api/issues/{issueId}/comments`).
+- Used for agent workflow, task status updates, and cross-agent coordination.
+
+**Critical: these are completely separate systems.** `LUC-75` is NOT the same as GitHub issue `#75` on any repository. A Paperclip task number has no relation to any GitHub issue number. When you receive a Paperclip task, post status updates on the **Paperclip task** — never on a GitHub issue that happens to share the same number.
+
+When a Paperclip task asks you to implement a GitHub issue, you will interact with **both** systems:
+- Post implementation approach and progress comments on the **GitHub issue** (where the product discussion lives).
+- Post task-level status updates on the **Paperclip task** (where the agent coordination lives).
+
+---
+
 ## Section: GitHub Interactions
 
 All GitHub interactions — posting comments, creating issues, creating pull requests, posting reviews — must use the `{persona-name}` GitHub App persona via the `gh-as-agent` wrapper script with `--app {persona-name}`:
