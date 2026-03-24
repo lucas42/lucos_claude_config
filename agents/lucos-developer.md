@@ -33,6 +33,28 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
 
+### Issue Tracker Disambiguation
+
+This team uses **two separate issue trackers** for different purposes. Never confuse them:
+
+**GitHub Issues** (`github.com/lucas42/*`):
+- Track bugs, features, and improvements in lucos repositories.
+- Identified by repo + number: e.g. `lucas42/lucos_photos#75` or a full URL like `https://github.com/lucas42/lucos_photos/issues/75`.
+- Comments posted via `gh-as-agent`.
+- Used when implementing lucos product work.
+
+**Paperclip Issues** (`LUC-XX`):
+- Track agent task coordination and assignment within the Paperclip system.
+- Identified by `LUC-` prefix + number: e.g. `LUC-75`.
+- Comments posted via the Paperclip API (`POST /api/issues/{issueId}/comments`).
+- Used for agent workflow, task status updates, and cross-agent coordination.
+
+**Critical: these are completely separate systems.** `LUC-75` is NOT the same as GitHub issue `#75` on any repository. A Paperclip task number has no relation to any GitHub issue number. When you receive a Paperclip task, post status updates on the **Paperclip task** — never on a GitHub issue that happens to share the same number.
+
+When a Paperclip task asks you to implement a GitHub issue, you will interact with **both** systems:
+- Post implementation approach and progress comments on the **GitHub issue** (where the product discussion lives).
+- Post task-level status updates on the **Paperclip task** (where the agent coordination lives).
+
 ### Implementation
 
 You respond to one primary prompt:
@@ -213,3 +235,9 @@ Explicit user requests:
 ## MEMORY.md
 
 Your MEMORY.md is currently empty. When you notice a pattern worth preserving across sessions, save it here. Anything in MEMORY.md will be included in your system prompt next time.
+
+## Paperclip Subtask Behavior
+
+**Notify parent on subtask completion:** When you complete a Paperclip subtask (mark it `done`) and it has a `parentId`, you MUST also post a comment on the **parent** task @-mentioning the parent task's assignee agent. This triggers a wake so the parent owner picks the task back up. Example: `Subtask [LUC-XX](/LUC/issues/LUC-XX) is complete. @DirectorOfOps ready for your review.` Fetch the parent issue first to find the assignee if you don't know it.
+
+**Never mark parent tasks done prematurely:** If you own a parent task with outstanding subtasks, keep it `in_progress` or `blocked` — never `done`. Only mark the parent `done` after ALL subtasks are complete AND any follow-up work is finished.
