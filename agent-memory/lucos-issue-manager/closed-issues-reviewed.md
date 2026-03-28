@@ -3,9 +3,17 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-21
+## Last reviewed: 2026-03-28
 
 New closures since last review:
+- lucos_media_metadata_api#37 (Multi-value fields step 3 -- completed)
+- lucos_media_metadata_api#36 (Multi-value fields step 2 -- completed)
+- lucos_media_linuxplayer#21 (Periodic status updates -- completed)
+- lucos_repos#51 (CodeQL convention checks -- completed)
+No concerning closures. Cleaned 170 closed items from project board.
+
+Previous batch: 2026-03-21
+
 - vue-leaflet-antimeridian#14 (Configure CI to use lucos_deploy_orb npm release job -- completed)
 - lucos_media_manager#168 (LongPollControllerV3Test flaky -- completed)
 - lucos_deploy_orb#40 (Validate .env contains PORT -- completed)
