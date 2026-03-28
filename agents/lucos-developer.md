@@ -33,7 +33,7 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
 
-### Issue Tracker Disambiguation
+## Issue Tracker Disambiguation
 
 This team uses **two separate issue trackers** for different purposes. Never confuse them:
 
