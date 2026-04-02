@@ -369,7 +369,13 @@ Work through each issue in the returned list using the triage process above. If 
 
 ### Unblocking check
 
-During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue, verify that **all** of its dependencies are resolved -- not just the one that triggered the check. Read the full issue body and comments, identify every issue referenced as a dependency or prerequisite, and confirm each one is closed. Only remove `status:blocked` when every dependency has been completed.
+During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue:
+
+1. **Read the full issue body AND all comments** -- dependencies are often added in comments by lucas42 after the initial filing. The issue body may be incomplete.
+2. Identify every issue referenced as a dependency or prerequisite across both the body and comments.
+3. Check that **every** dependency is closed -- not just the one that triggered the check.
+4. If the issue body is missing dependencies that were added in comments, **update the issue body** to include them before changing any labels. The body should be the canonical list of dependencies.
+5. Only remove `status:blocked` when every dependency has been completed.
 
 **Special case -- false positive audit findings:** When unblocking an `audit-finding` issue whose blocker was a fix to the convention checker itself, close the issue as completed instead of just removing `status:blocked`.
 
