@@ -115,6 +115,16 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Auto-merge holistic checking (#64): design posted. Recommended reusable workflows (central repo) + thin per-repo caller stubs. Option A for configy metadata (add `UnsupervisedAgentCode bool` to `RepoContext`). 6 conventions proposed. Awaiting lucas42 decision on reusable workflow location.
 - Rate limit (#66): GitHub Search API 30 req/min limit. Fix: switch to Issues List API. Also: rate-limit backoff + fix misleading "completed successfully" on partial failures.
 - Blast radius (#159): lucas42 rejected per-convention cap (too reactive, interferes with deliberate changes). Revised design: dry-run sweep in CI on PRs, diff against production `/api/status`, post as PR comment for reviewer. Needs: `--dry-run` CLI mode, `diff` subcommand, GitHub Actions workflow. ADR-0003. Awaiting lucas42 decision.
+- ADR-0004 (#248, PR #251 merged): auto-close audit-finding issues when conventions pass. Amends ADR-0002. Close on first pass with comment; no consecutive-pass threshold. Implementation pending.
+- Dependabot PR monitoring (#250): recommended extending PR dashboard + /_info check (not a convention). Stale = >48h open. Awaiting lucas42 decision.
+
+### lucas42/.github
+- Reusable workflow repo. Contains dependabot-auto-merge, code-reviewer-auto-merge, convention-check (reusable) + auto-merge, smoke-test (local).
+- Structure confusion: no naming distinction between reusable and local workflows. Filed #36 (reusable- prefix).
+- Dependabot auto-merge broken estate-wide (#34): callers pinned to broken SHA d514cd6 (secrets in if: condition). Fix on main (68508cf) but never re-rolled-out.
+- Tag-based versioning (#35): enable Dependabot to propagate workflow updates. No tags/releases currently exist.
+- Smoke test gate (#38): estate rollouts should require smoke test pass on target ref.
+- Stale branches (#37): 15 branches from merged PRs never deleted.
 
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.
