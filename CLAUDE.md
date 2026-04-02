@@ -189,13 +189,14 @@ Pull requests must be created using `gh-as-agent`, exactly like issue comments a
 
 ### 4. Tag commits and pull requests with the issue
 
-Every commit and pull request made as part of the work should reference the issue number. In commit messages, include the issue reference (e.g. `Refs #42`). In the pull request body, use one of GitHub's standard closing keywords so the issue is automatically closed when the PR is merged into `main`:
+Every commit and pull request made as part of the work should reference the issue number. In commit messages, include the issue reference (e.g. `Refs #42`).
 
-```
-Closes #42
-```
+**Only use closing keywords (`Closes #42`, `Fixes #42`, etc.) in the PR body when the PR actually completes and should close the referenced issue.** Do not include a closing keyword if:
+- The PR is a prerequisite or partial step toward an issue (use `Refs #42` instead)
+- There is no issue being directly resolved by the PR
+- The issue should remain open after the PR merges (e.g. further work is needed)
 
-The full list of supported keywords is: `close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`, `resolved` — followed by the issue reference (e.g. `Fixes #42` or `Resolves lucas42/lucos_example#42`).
+The full list of closing keywords is: `close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`, `resolved` — followed by the issue reference (e.g. `Fixes #42` or `Resolves lucas42/lucos_example#42`). These trigger automatic issue closure on merge, so using them incorrectly will close issues prematurely.
 
 **Note:** GitHub does not process closing keywords when a bot merges a PR. Repos with the code reviewer auto-merge workflow handle this automatically (see `references/github-config.md`). For repos without that workflow, closing keywords still serve as documentation of intent — a human merging the PR will trigger the auto-close.
 
