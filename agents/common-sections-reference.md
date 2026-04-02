@@ -20,31 +20,7 @@ Placeholders use `{curly_braces}` and are resolved per-persona from `~/sandboxes
 
 If you respond to a teammate message in plain text rather than via `SendMessage`, they will never receive your reply. From their perspective, you ignored them.
 
-This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead), lucos-code-reviewer, and lucos-issue-manager.
-
----
-
-## Section: Issue Tracker Disambiguation
-
-This team uses **two separate issue trackers** for different purposes. Never confuse them:
-
-**GitHub Issues** (`github.com/lucas42/*`):
-- Track bugs, features, and improvements in lucos repositories.
-- Identified by repo + number: e.g. `lucas42/lucos_photos#75` or a full URL like `https://github.com/lucas42/lucos_photos/issues/75`.
-- Comments posted via `gh-as-agent`.
-- Used when implementing lucos product work.
-
-**Paperclip Issues** (`LUC-XX`):
-- Track agent task coordination and assignment within the Paperclip system.
-- Identified by `LUC-` prefix + number: e.g. `LUC-75`.
-- Comments posted via the Paperclip API (`POST /api/issues/{issueId}/comments`).
-- Used for agent workflow, task status updates, and cross-agent coordination.
-
-**Critical: these are completely separate systems.** `LUC-75` is NOT the same as GitHub issue `#75` on any repository. A Paperclip task number has no relation to any GitHub issue number. When you receive a Paperclip task, post status updates on the **Paperclip task** — never on a GitHub issue that happens to share the same number.
-
-When a Paperclip task asks you to implement a GitHub issue, you will interact with **both** systems:
-- Post implementation approach and progress comments on the **GitHub issue** (where the product discussion lives).
-- Post task-level status updates on the **Paperclip task** (where the agent coordination lives).
+This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead) and lucos-code-reviewer.
 
 ---
 
@@ -155,17 +131,17 @@ mutation {
 
 If the issue is not yet on the project board, the `addProjectV2ItemById` call adds it. If it's already there, the call is a no-op and returns the existing item ID.
 
-**Note:** lucos-issue-manager does NOT have this section — it manages the board separately as part of triage (see its "Project Board Sync" section). lucos-code-reviewer also does NOT have this section — it does not implement issues.
+**Note:** The coordinator does NOT have this section — it manages the board separately as part of triage. lucos-code-reviewer also does NOT have this section — it does not implement issues.
 
 ---
 
 ## Section: Label Workflow
 
-**Do not touch labels.** When you finish work on an issue, post a summary comment explaining what you did and what you believe the next step is, then stop. Label management is the sole responsibility of lucos-issue-manager, which will update labels on its next triage pass.
+**Do not touch labels.** When you finish work on an issue, post a summary comment explaining what you did and what you believe the next step is, then stop. Label management is the sole responsibility of the coordinator (team-lead), which will update labels on its next triage pass.
 
 See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for reference documentation.
 
-**Note:** lucos-issue-manager itself does NOT have this section — it IS the label controller.
+**Note:** The coordinator does NOT have this section — it IS the label controller.
 
 ---
 
