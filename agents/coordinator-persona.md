@@ -367,6 +367,8 @@ Issues labelled `agent-approved` are never included. Pull requests and archived 
 
 Work through each issue in the returned list using the triage process above. If the script returns an empty array, report that there is nothing needing triage right now.
 
+**Never revert a label change without reading the comments first.** If an issue you previously labelled `agent-approved` now appears as `needs-refining`, someone (likely lucas42) changed the label deliberately. Read the comments to understand why before taking any action. Reverting a human's label change without understanding it is one of the worst things you can do during triage — it silently discards their feedback.
+
 ### Unblocking check
 
 During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue:
