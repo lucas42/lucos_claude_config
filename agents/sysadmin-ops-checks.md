@@ -131,10 +131,10 @@ Note: `lucos_backups` runs as a single container on avalon and handles all hosts
 
 ### Check 7: Certificate Expiry
 
-TLS termination happens in the `router` container, which runs on the production hosts. Note: on both avalon and xwing the container is named `router` (not `lucos_router_nginx`). Check certificate expiry for all domains served:
+TLS termination happens in the `lucos_router` container, which runs on the production hosts. Note: on both avalon and xwing the container is named `lucos_router`. Check certificate expiry for all domains served:
 
 ```bash
-ssh <host> "docker exec router sh -c 'for f in /etc/letsencrypt/live/*/cert.pem; do echo \"=== \$f ===\"; openssl x509 -noout -dates -in \$f; done'"
+ssh <host> "docker exec lucos_router sh -c 'for f in /etc/letsencrypt/live/*/cert.pem; do echo \"=== \$f ===\"; openssl x509 -noout -dates -in \$f; done'"
 ```
 
 **Renewal context**: certbot renews certificates when they are under 30 days from expiry. lucos_monitoring fires an alert when certificates are under 20 days from expiry. Do not raise issues for certificates expiring in more than 30 days — that is the normal operating window before certbot has triggered.
@@ -142,6 +142,8 @@ ssh <host> "docker exec router sh -c 'for f in /etc/letsencrypt/live/*/cert.pem;
 - **Under 20 days**: urgent — monitoring should have fired; something is seriously wrong
 - **20–30 days**: warning — certbot should have renewed by now but hasn't; investigate
 - **Over 30 days**: normal — do not raise an issue; certbot will handle it in due course
+
+Raise cert issues on `lucas42/lucos_router`, not `lucos_agent_coding_sandbox`.
 
 ---
 
