@@ -96,6 +96,16 @@
 ### NOTE: Prior memory was wrong
 - Earlier note said "`pull_request_target` is required, `pull_request` is insufficient" — this was incorrect. `pull_request` with a `permissions` block gives Dependabot the write token it needs, and avoids the `startup_failure` caused by `pull_request_target` + `uses:`.
 
+## Auto-Merge and Supervised vs Unsupervised Repos
+
+### `unsupervisedAgentCode` controls whether bot approval triggers merge
+- The `code-reviewer-auto-merge.yml` workflow fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
+- If `true`: bot (`lucos-code-reviewer[bot]`) approval triggers `gh pr merge --auto --merge`.
+- If `false`: only human (`lucas42`) approval triggers auto-merge. Bot review is still posted but doesn't enable auto-merge.
+- **Most lucos repos are supervised (`unsupervisedAgentCode: false`)**. As of 2026-04-02, only `lucos_agent_coding_sandbox` is confirmed unsupervised.
+- This explains why many approved Dependabot/sysadmin PRs remain open: they're in supervised repos awaiting human approval. This is expected — not a stuck PR.
+- Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
@@ -128,3 +138,4 @@
 - Axolotl (2026-03-10, 2026-03-12, 2026-03-14, 2026-03-17) — DO NOT USE, massively overused (also technically an amphibian)
 - Texas horned lizard / Horned lizard / Phrynosoma (2026-03-05, 2026-03-17, 2026-03-19) — DO NOT USE, used three times
 - Spiny softshell turtle / Apalone spinifera (2026-03-05, 2026-03-06, 2026-03-23) — DO NOT USE, used multiple times
+- Bog turtle (2026-03-05, 2026-03-21, 2026-04-02) — used 3 times, avoid for now
