@@ -3,9 +3,18 @@
 Tracking which closed issues (raised by lucos-issue-manager) have been reviewed for learnings.
 Only recording the most recent batch reviewed each session to avoid re-checking.
 
-## Last reviewed: 2026-03-28
+## Last reviewed: 2026-04-02
 
 New closures since last review:
+- lucos_media_metadata_api#38 (Multi-value fields step 4 -- completed)
+- lucos_media_metadata_api#39 (Multi-value fields step 5 -- completed)
+- lucos_media_metadata_api#40 (Multi-value fields step 6 -- completed)
+- lucos_media_metadata_api#41 (Multi-value fields step 7 -- completed)
+No concerning closures. Multi-value fields migration progressing well (steps 1-7 now done).
+Also closed .github#28 (share secrets between lucos_creds and GitHub Actions) -- resolved by Option B (OIDC) via lucos_repos#227.
+
+Previous batch: 2026-03-28
+
 - lucos_media_metadata_api#37 (Multi-value fields step 3 -- completed)
 - lucos_media_metadata_api#36 (Multi-value fields step 2 -- completed)
 - lucos_media_linuxplayer#21 (Periodic status updates -- completed)
