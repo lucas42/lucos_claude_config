@@ -6,8 +6,7 @@
 
 ## User Preferences
 
-- **Workflow changes** (issue lifecycle, dispatch workflows, agent prompts, label conventions, process documentation) should be routed to the `lucos-issue-manager` teammate via SendMessage, not handled directly by the dispatcher. This includes edits to `~/.claude/skills/routine/SKILL.md` and similar workflow files.
-- **All changes to `~/.claude` files** (persona files, skills, workflow docs — anything tracked in `lucos_claude_config`) must be delegated to a teammate from the start. The dispatcher should never edit these files directly then hand off to a teammate just for the commit. The teammate doing the work needs full context of the changes, so it should make the edits itself. **Route claude config changes to `lucos-issue-manager` by default** — only split the work if there's a related script to create/update, in which case `lucos-system-administrator` handles the script and `lucos-issue-manager` handles the rest.
+- **Workflow and config changes**: The team-lead (coordinator) can now edit `~/.claude` workflow files directly (persona files, skills, routine docs). Infrastructure scripts go to `lucos-system-administrator`. The `lucos-issue-manager` teammate no longer exists — its role is absorbed into the coordinator (loaded via `/team` skill).
 - **Repository secrets and settings** (e.g. setting GitHub secrets, enabling auto-merge) must be done via the `lucos-system-administrator` persona, as it's the only one with permissions for these changes.
 - **ADRs after system design**: Always create an ADR after completing a full system design or re-design. Route to `lucos-architect` persona.
 - **Don't paraphrase agent output in ad-hoc conversations.** When relaying what a persona said back to the user, show the agent's full response verbatim. Only summarise during pre-defined skills (e.g. `/routine`, `/next`). The user wants to see exactly what the persona said, in its own words.
@@ -24,7 +23,7 @@
 - [Delegate questions to agents](feedback_delegate_not_guess.md) — when unsure about something, ask the most suitable agent rather than guessing
 - [Delegate problems, not solutions](feedback_delegation_style.md) — send the problem statement to teammates, not pre-written fixes
 - [No mental PR queue](feedback_pr_queue.md) — don't maintain a running list of PRs for user review; check GitHub if needed
-- [Labels managed by issue-manager](feedback_labels_owner.md) — label creation/management goes to lucos-issue-manager, not other personas
+- [Labels managed by coordinator](feedback_labels_owner.md) — label creation/management is the coordinator's responsibility, not other personas
 - [Developer message queue](feedback_developer_message_queue.md) — wait for developer to acknowledge corrections before dispatching new work; messages sent in quick succession get processed out of order
 
 ## Active Projects
