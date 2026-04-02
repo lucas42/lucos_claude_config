@@ -503,3 +503,40 @@ certificate_expiry: 2026-04-02
 - xwing: clean; no crashed/stopped or unhealthy containers
 
 **No issues raised.** All hosts healthy.
+
+### 2026-04-02 (checks 1–5 + cert spot-check; checks 6–8 not yet due)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: clean
+- xwing: clean
+
+**Resources**:
+- avalon: 2.8Gi available of 7.6Gi. Swap 945Mi/4.5Gi (21%). Disk 12%. Load 2.98/2.29/1.81 — slightly elevated but acceptable for number of services.
+- salvare: 3.3Gi available of 3.7Gi. Disk 51% (28G used of 58G) — significantly recovered from 95% in March. Load 0.02 (very low). 107 days uptime.
+- xwing: 455Mi available of 906Mi. Swap 178Mi/905Mi (20%). Disk 56% (63G used of 117G). Load 3.51/3.32/3.26 — elevated and persistent on a low-resource machine. 56 days uptime.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- avalon: no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no security-tagged packages on any host):
+- avalon: Docker CE 29.3.0 → 29.3.1, containerd 2.2.1 → 2.2.2, buildx 0.31.1 → 0.33.0, compose 5.1.0 → 5.1.1. Routine.
+- xwing: Docker CE 29.1.3 → 29.3.1, libc6, openssl, kernel 6.12.47 → 6.12.75 — tracked in lucos_agent_coding_sandbox#24. Commented with updated package list.
+- salvare: Docker CE 29.3.0 → 29.3.1, libssl3, openssl, kernel 6.12.47 → 6.12.75, raspi-utils. Routine.
+
+**Sandbox drift**: 1 snowflake — `~/.tmux.conf` with `set -g mouse on` not in repo. Fixed: added to setup-repos.sh in PR #50. origin/main has 6 merged commits not in feature branch — all CI/provisioning changes, no live VM actions needed.
+
+**Certificate check** (spot-check due to upcoming expiries):
+- xwing: all 4 domains (nas, private, staticmedia, xwing.s.l42.eu) expire Jun 5 2026 (64 days). Fine.
+- avalon: vast majority renewed in Mar 2026, expire Jun 2026. 
+- **phys.l42.eu: expires Apr 21 (18 days) — DNS NXDOMAIN, certbot cannot renew. Issue raised: lucos_agent_coding_sandbox#51.**
+- Several near-renewal: comhra.l42.eu (May 3), configy.l42.eu (May 2), locations.l42.eu (May 6) — all within normal certbot window (30–34 days), no action needed.
+
+**Corrections to notes**:
+- Router container is `lucos_router` on both avalon and xwing (not `router` as previously noted).
+
+**Issues raised**:
+- lucos_agent_coding_sandbox#51: phys.l42.eu cert expires Apr 21, DNS NXDOMAIN, certbot can't renew
+
+**Issues commented on**:
+- lucos_agent_coding_sandbox#24: updated package status for all three hosts
