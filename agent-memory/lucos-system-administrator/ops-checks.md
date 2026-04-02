@@ -5,14 +5,14 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-03-21
-resource_checks: 2026-03-20
-syslog_review: 2026-03-20
-software_updates: 2026-03-20
-sandbox_drift: 2026-03-20
+container_status: 2026-04-02
+resource_checks: 2026-04-02
+syslog_review: 2026-04-02
+software_updates: 2026-04-02
+sandbox_drift: 2026-04-02
 docker_image_staleness: 2026-03-12
 backup_verification: 2026-03-12
-certificate_expiry: 2026-03-12
+certificate_expiry: 2026-04-02
 ```
 
 ## Known Limitations
@@ -20,6 +20,7 @@ certificate_expiry: 2026-03-12
 - Journal logs on xwing and salvare are inaccessible without sudo (no sudo available in non-interactive SSH). Syslog review only covers avalon fully.
 - Docker image staleness query needs single-quoted heredoc style — shell escaping is tricky over SSH.
 - Short hostnames (`avalon`, `salvare`, `xwing`) do not resolve via DNS — always use full domain names (`avalon.s.l42.eu`, `salvare.s.l42.eu`, `xwing.s.l42.eu`) for SSH.
+- The router container is named **`lucos_router`** on both avalon and xwing (not `router` as previously noted — that was wrong).
 - `~/.ssh/known_hosts` is cleared between VM sessions on the current live VM — must run `ssh-keyscan -H avalon.s.l42.eu salvare.s.l42.eu xwing.s.l42.eu >> ~/.ssh/known_hosts` at start of each session. Fixed in lucos_agent_coding_sandbox#36 (merged 2026-03-18) — resolves on next VM rebuild from lima.yaml.
 
 ## Run Log
