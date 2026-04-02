@@ -95,6 +95,38 @@ mutation {
 }'
 ```
 
+### Finding an issue's project item ID (for deletion or repositioning)
+
+```bash
+ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query='
+query {
+  node(id: "ISSUE_NODE_ID") {
+    ... on Issue {
+      projectItems(first: 5) {
+        nodes {
+          id
+          project { id }
+        }
+      }
+    }
+  }
+}' --jq '.data.node.projectItems.nodes[] | select(.project.id == "PVT_kwHOAAaLL84BRh5d") | .id')
+```
+
+### Removing an item from the project board
+
+```bash
+~/sandboxes/lucos_agent/gh-projects graphql -f query='
+mutation {
+  deleteProjectV2Item(input: {
+    projectId: "PVT_kwHOAAaLL84BRh5d"
+    itemId: "PROJECT_ITEM_ID"
+  }) {
+    deletedItemId
+  }
+}'
+```
+
 ### What the built-in workflows handle
 
 - **Item added to project** -> sets Status to "Needs Triage"
