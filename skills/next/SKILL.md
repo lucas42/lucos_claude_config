@@ -8,7 +8,7 @@ Follow this process. Do not ask for clarification — immediately begin Step 1.
 
 ## Ad-hoc dispatch
 
-If the user gives a specific issue URL to implement (rather than asking for the next issue from the queue), skip Step 1 and go straight to Step 1a with that issue. In parallel with dispatching the developer in Step 2, send a message to the `lucos-issue-manager` teammate asking it to: set the issue to `priority:high`, ensure it's on the project board, and move it to the top of the Ready column. If the user is explicitly asking for an issue to be picked up, it's clearly high priority to them.
+If the user gives a specific issue URL to implement (rather than asking for the next issue from the queue), skip Step 1 and go straight to Step 1a with that issue. In parallel with dispatching the developer in Step 2, update the issue yourself: set it to `priority:high`, ensure it's on the project board, and move it to the top of the Ready column. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns. If the user is explicitly asking for an issue to be picked up, it's clearly high priority to them.
 
 ## Step 1: Find the next issue
 
@@ -96,7 +96,7 @@ If a PR was created and approved:
    - **If there ARE dependent issues to unblock:**
      - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
      - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
-     - Once the issue is closed, send a message to the `lucos-issue-manager` teammate asking it to check issues that were blocked by the now-closed issue. Remind it to verify that **all** dependencies of each blocked issue are resolved before removing `status:blocked` — not just the one that was just closed.
+     - Once the issue is closed, check the blocked issues yourself. Read `~/.claude/references/triage-reference-data.md` for API patterns. For each blocked issue, verify that **all** dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
    - **If there are NO dependent issues:** verify that CI checks have started on the PR before moving on. Check the PR's status checks:
      ```bash
      ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'

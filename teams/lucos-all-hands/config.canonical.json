@@ -44,17 +44,6 @@
       "backendType": "tmux"
     },
     {
-      "agentId": "lucos-issue-manager@lucos-all-hands",
-      "name": "lucos-issue-manager",
-      "agentType": "lucos-issue-manager",
-      "model": "opus",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "purple",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
-    },
-    {
       "agentId": "lucos-security@lucos-all-hands",
       "name": "lucos-security",
       "agentType": "lucos-security",

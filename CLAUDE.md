@@ -59,8 +59,6 @@ Canonical identity data for all personas (App ID, Installation ID, bot user ID, 
 
 Each persona must use its own dedicated GitHub App. The `--app` flag is **required** — there is no default. The correct app slug is passed as `--app <slug>` to both `get-token` and `gh-as-agent`. Omitting `--app` will result in an error.
 
-**Important:** Git and GitHub API calls must be made within a persona context. The dispatcher itself cannot make git commits or GitHub API calls — any task requiring these must be handed off to the appropriate teammate via SendMessage.
-
 ### Setup
 
 The `get-token` script lives in `~/sandboxes/lucos_agent/`. It requires a `.env` file in that directory (containing keys for all apps), pulled from lucos_creds:
@@ -226,43 +224,6 @@ Do not consider an implementation task complete until the review loop has finish
 When pushing commits to many repos simultaneously (e.g. rolling out a workflow change, bulk secret updates, convention fixes), **stagger them in batches of 3-5 repos with a few minutes between batches**. Do not push to all repos at once.
 
 Each push triggers a CI build and deploy. Simultaneous deploys to the same production host saturate CPU and I/O, causing Docker healthcheck cascades, port binding failures, and service outages. Both the 2026-03-19 incident (PORT missing from .env under concurrent SFTP load) and the 2026-03-20 incident (avalon load spike to 40) were caused or worsened by pushing to ~30 repos simultaneously.
-
----
-
-## Team Management
-
-**Never shut down teammates unprompted.** Only shut down the team when the user explicitly asks. Idle teammates cost zero tokens — tokens are only spent when an agent processes a turn. Idle notifications are normal and do not mean the user is done. Silence from the user is not permission to act.
-
-**Delegate the problem, not the solution.** When sending work to a teammate, describe what went wrong or what needs to change and why — do not prescribe the exact fix. Let the teammate decide the approach. They have domain expertise and will produce a better result when given the problem statement rather than a pre-written patch to apply.
-
-When shutting down a team, send shutdown requests to all teammates and **wait for every teammate to confirm shutdown** before calling TeamDelete. Never delete a team while shutdown requests are still pending — that orphans processes.
-
----
-
-## Maintaining This Environment
-
-### Version-controlled `~/.claude` changes
-
-`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. Whenever changes need to be made to files under `~/.claude`, the dispatcher must **never** edit those files directly — all changes must be delegated to the appropriate teammate from the start via SendMessage. The teammate should make both the file edits and the commit, so it has full context of what changed and why.
-
-Route to the appropriate teammate based on the type of change:
-- **`lucos-issue-manager`**: workflow and process changes — persona instruction files, skills, routine documentation, issue lifecycle docs
-- **`lucos-system-administrator`**: infrastructure and environment changes — `CLAUDE.md` itself, ops check files, environment config
-
-Always commit to `main` and push. Do not create or use feature branches.
-
-### VM environment changes
-
-`lucos_agent_coding_sandbox` (at `~/sandboxes/lucos_agent_coding_sandbox`) is responsible for provisioning the VM this environment runs in. Whenever changes are made to the broader VM environment — e.g. SSH config, installed packages, system-level configuration — those changes must also be reflected in `lucos_agent_coding_sandbox` so the VM can be reproduced from scratch. Update the relevant files (e.g. `lima.yaml`, `setup-repos.sh`, `ssh/`) and commit and push the changes to that repo.
-
-### Requesting missing tools
-
-If you discover that a tool needed to complete a task is not installed in this environment (e.g. a language runtime, build tool, or CLI), raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` requesting it be added. Include:
-- What tool is missing and what version (if relevant)
-- Which task or project revealed the gap
-- Why having it locally matters (e.g. faster feedback than waiting for CI)
-
-Do this proactively — don't silently work around missing tools without flagging them.
 
 ---
 
