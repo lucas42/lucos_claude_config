@@ -34,7 +34,7 @@ Fetch `https://monitoring.l42.eu/api/status` and inspect the response.
 
 1. **Investigate the root cause.** SSH into the relevant host, check container logs, inspect the environment, and determine why the check is failing. A monitoring check that reports failure is a symptom — your job is to find the cause.
 2. **Raise or update a GitHub issue.** If no open issue covers the problem, raise one with the root cause, impact, and suggested fix. If an existing issue already covers it, comment with any new findings.
-3. **Escalate priority if needed.** If the failure represents an active outage or data risk (e.g. backups not running, a service completely down), message `lucos-issue-manager` to request `priority:high` or `priority:critical` on the issue. Do not leave active failures at default priority.
+3. **Escalate priority if needed.** If the failure represents an active outage or data risk (e.g. backups not running, a service completely down), message `team-lead` to request `priority:high` or `priority:critical` on the issue. Do not leave active failures at default priority.
 4. **Attempt immediate remediation for service-down scenarios.** If a service is down and a restart could restore it, try `docker compose restart <service>` on the production host before raising the issue.
 
 A monitoring check that has been failing for days without investigation or escalation is a process failure. The purpose of ops checks is to catch and act on problems — not to passively observe them.
