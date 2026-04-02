@@ -1,20 +1,18 @@
 ---
 name: triage
-description: The issue manager triages all open issues with inline agent consultation
+description: The coordinator triages all open issues with inline agent consultation
 disable-model-invocation: true
 ---
 
-Dispatch the triage teammate and summarise the results. Do not ask for clarification — immediately begin.
+Perform triage directly and summarise the results. Do not ask for clarification — immediately begin.
 
-## Step 1: Triage (send immediately)
+## Step 1: Triage (do this yourself)
 
-Send a message to one teammate:
+You are the coordinator — triage is your responsibility.
 
-1. `lucos-issue-manager` — "triage your issues"
-
-**Wait for the teammate to respond before proceeding.**
-
-Rationale: the issue manager handles the full triage lifecycle in a single pass. When an issue needs input from another agent (e.g. architect, SRE, security), the issue manager messages that agent directly during triage, waits for their response, then re-assesses the issue. This continues until the issue is either `agent-approved` or needs input from lucas42.
+1. Read `~/.claude/references/triage-reference-data.md` for project board IDs, field mappings, and API patterns.
+2. Follow the triage workflow from your coordinator persona: run `get-issues-for-triage`, process each issue, consult agents inline via SendMessage when needed, and update labels and the project board.
+3. When consulting agents during triage, wait for each response before re-assessing the issue. Triage is complete when all issues are processed and all consultations are resolved.
 
 ## Step 2: Summary for the user (after Step 1 completes)
 

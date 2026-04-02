@@ -1,6 +1,6 @@
 ---
 name: routine
-description: All agents run ops checks, then the issue manager triages with inline agent consultation
+description: All agents run ops checks, then the coordinator triages with inline agent consultation
 disable-model-invocation: true
 ---
 
@@ -21,15 +21,11 @@ Rationale: ops checks run first so that any issues they raise are available for 
 
 ## Phase 2: Triage (sequential — after Phase 1 completes)
 
-Once Phase 1 is done, send a message to one teammate:
+Once Phase 1 is done, perform triage directly. You are the coordinator — triage is your responsibility, not a teammate's.
 
-5. `lucos-issue-manager` — "triage your issues"
-
-**Wait for the issue manager to confirm triage is fully complete before proceeding.** The issue manager may send multiple messages during triage — interim updates about individual issues, responses to other agents' consultations, etc. Triage is only complete when the issue manager sends a final summary that includes a **total count of issues processed** and states there are **no pending consultations**. If the issue manager's message does not include both of these, it is an interim update — do not proceed to Phase 3 yet.
-
-If you are unsure whether triage is complete (e.g. the issue manager sent a substantive update but didn't explicitly confirm completion), ask: "Is triage fully complete, or are there more issues to process?"
-
-Rationale: the issue manager now handles the full triage lifecycle in a single pass. When an issue needs input from another agent (e.g. architect, SRE, security), the issue manager messages that agent directly during triage, waits for their response, then re-assesses the issue. This continues until the issue is either `agent-approved` or needs input from lucas42. This replaces the previous multi-phase triage-review-triage cycle. Because inline consultation can involve multiple back-and-forth messages, the dispatcher must wait for explicit confirmation rather than treating the first substantive reply as the final one.
+1. Read `~/.claude/references/triage-reference-data.md` for project board IDs, field mappings, and API patterns.
+2. Follow the triage workflow from your coordinator persona: run `get-issues-for-triage`, process each issue, consult agents inline via SendMessage when needed, and update labels and the project board.
+3. When consulting agents during triage, wait for each response before re-assessing the issue. Do not proceed to Phase 3 until all issues are processed and all consultations are complete.
 
 ## Phase 3: Summary for the user (after Phase 2 completes)
 

@@ -16,7 +16,7 @@ cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
 
 If the team exists and has members listed, send a test message to one teammate (e.g. the first member) and **wait for an actual reply in the conversation**. Do NOT proceed until you have received a response message from the teammate — a successful `SendMessage` delivery confirmation is not enough. If no reply arrives within 15 seconds, the team is stale.
 
-If the teammate replies, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (report the roster). Reuse the existing team.
+If the teammate replies, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (load coordinator persona). Reuse the existing team.
 
 If the team file doesn't exist, or exists but no teammate replies (stale from a previous session), clean up and proceed:
 
@@ -26,10 +26,10 @@ rm -rf ~/.claude/teams/lucos-all-hands ~/.claude/tasks/lucos-all-hands
 
 ## Step 2: Discover personas
 
-Run this command to list all persona files, excluding non-persona files:
+Run this command to list all persona files, excluding non-persona files and the coordinator persona (which is loaded by the lead, not spawned as a teammate):
 
 ```bash
-ls ~/.claude/agents/lucos-*.md | grep -v -e 'common-sections' -e 'ops-checks' -e 'circleci-api'
+ls ~/.claude/agents/lucos-*.md | grep -v -e 'common-sections' -e 'ops-checks' -e 'circleci-api' -e 'issue-manager'
 ```
 
 For each file returned, derive the **teammate name** from the filename without the `.md` suffix (e.g. `lucos-developer`).
@@ -44,12 +44,12 @@ Use the TeamCreate tool to create a team named `lucos-all-hands`.
 
 For **each** persona discovered in Step 2, spawn a teammate using TeamCreate with these parameters:
 - `team_name`: `lucos-all-hands`
-- `name`: the teammate name (e.g. `lucos-developer`, `lucos-issue-manager`, `lucos-architect`)
+- `name`: the teammate name (e.g. `lucos-developer`, `lucos-architect`)
 - `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
 
 Spawn **all** teammates in parallel — make all TeamCreate calls in the same response.
 
-Do **not** hardcode the list of personas. Use whatever files the glob returned in Step 1. If a new persona file is added to `~/.claude/agents/` in future, it will automatically be included.
+Do **not** hardcode the list of personas. Use whatever files the glob returned in Step 2. If a new persona file is added to `~/.claude/agents/` in future, it will automatically be included.
 
 ## Step 5: Update the canonical team config
 
@@ -85,9 +85,19 @@ cd ~/.claude && git add teams/lucos-all-hands/config.canonical.json && \
 
 If `config.canonical.json` has no changes (the roster hasn't changed since the last run), git will report nothing to commit — that's fine, skip the push.
 
-## Step 6: Report the roster
+## Step 6: Load coordinator persona
 
-After all teammates have been spawned, report the team roster to the user. List each teammate by name and confirm the team is ready.
+Read the coordinator persona file and output its contents:
+
+```bash
+cat ~/.claude/agents/coordinator-persona.md
+```
+
+Output the contents verbatim. These instructions define your coordinator role for the remainder of this session. You are now operating as the team coordinator with the lucos-issue-manager persona for GitHub and git identity.
+
+## Step 7: Report the roster
+
+After loading the coordinator persona, report the team roster to the user. List each teammate by name and confirm the team is ready.
 
 ## Shutting down the team
 
