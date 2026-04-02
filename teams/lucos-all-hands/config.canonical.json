@@ -1,6 +1,6 @@
 {
   "name": "lucos-all-hands",
-  "description": "All lucos persona agents for collaborative work",
+  "description": "Lucos project team with all personas",
   "leadAgentId": "team-lead@lucos-all-hands",
   "members": [
     {
@@ -49,6 +49,17 @@
       "agentType": "lucos-security",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "purple",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-site-reliability@lucos-all-hands",
+      "name": "lucos-site-reliability",
+      "agentType": "lucos-site-reliability",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "orange",
       "planModeRequired": false,
       "subscriptions": [],
@@ -60,11 +71,10 @@
       "agentType": "lucos-system-administrator",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "cyan",
+      "color": "pink",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "tmux",
-      "mode": "bypassPermissions"
+      "backendType": "tmux"
     }
   ]
 }
