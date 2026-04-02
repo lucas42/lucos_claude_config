@@ -1,6 +1,6 @@
 {
   "name": "lucos-all-hands",
-  "description": "All lucos personas for collaborative work",
+  "description": "All lucos persona agents for collaborative work",
   "leadAgentId": "team-lead@lucos-all-hands",
   "members": [
     {
@@ -19,7 +19,7 @@
       "color": "blue",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux"
     },
     {
       "agentId": "lucos-code-reviewer@lucos-all-hands",
@@ -30,7 +30,7 @@
       "color": "green",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux"
     },
     {
       "agentId": "lucos-developer@lucos-all-hands",
@@ -41,7 +41,7 @@
       "color": "yellow",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux"
     },
     {
       "agentId": "lucos-issue-manager@lucos-all-hands",
@@ -52,7 +52,7 @@
       "color": "purple",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux"
     },
     {
       "agentId": "lucos-security@lucos-all-hands",
@@ -63,18 +63,7 @@
       "color": "orange",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
-    },
-    {
-      "agentId": "lucos-site-reliability@lucos-all-hands",
-      "name": "lucos-site-reliability",
-      "agentType": "lucos-site-reliability",
-      "model": "sonnet",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "pink",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux"
     },
     {
       "agentId": "lucos-system-administrator@lucos-all-hands",
@@ -85,7 +74,8 @@
       "color": "cyan",
       "planModeRequired": false,
       "subscriptions": [],
-      "backendType": "in-process"
+      "backendType": "tmux",
+      "mode": "bypassPermissions"
     }
   ]
 }
