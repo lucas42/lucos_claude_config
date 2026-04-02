@@ -22,23 +22,7 @@ Use `~/sandboxes/lucos_agent/git-as-agent --app <persona-name>` for all commit-w
 
 The correct key for bypassing permission prompts is `permissions.defaultMode`, NOT the top-level `dangerouslySkipPermissions`. The latter is silently ignored.
 
-```json
-{
-  "permissions": {
-    "defaultMode": "bypassPermissions"
-  }
-}
-```
-
-`bypassPermissions` is appropriate for this VM (isolated Lima sandbox, no host mounts, trivial recovery). Config lives in `~/.claude/settings.json`, tracked in `lucos_claude_config`. The `setup-repos.sh` in `lucos_agent_coding_sandbox` clones that repo into `~/.claude` so any fresh VM gets the correct setting automatically.
-
-Wildcard allow rules (useful reference if ever dropping back to `default` mode):
-- `Bash(git *)` — all git commands
-- `Bash(gh *)` — all gh commands
-- `Bash(docker *)` — all docker commands
-- `Bash` — all bash (no parens = matches everything, equivalent to bypassPermissions for Bash only)
-
-The `settings.local.json` at `/home/lucas.linux/sandboxes/.claude/settings.local.json` accumulated ~55 hyper-specific entries because the bypass setting was broken. Cleared to empty allow array (2026-02-28).
+Also requires `"teammateMode": "tmux"` — in-process teammates hardcode `permissionMode: "default"` and ignore `bypassPermissions`. Tmux teammates inherit the parent session's mode. Must be run inside a tmux session (`.bashrc` auto-attaches on login). See `bypass-permissions-tmux.md` for full details and troubleshooting.
 
 ## GitHub App permissions: lucos-system-administrator
 
@@ -138,10 +122,6 @@ Confirmed 2026-03-06: restructured the SRE persona file mid-conversation but the
 ## Persona ops-checks restructure (2026-03-06)
 
 Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks.md` files in `~/.claude/agents/`. Changes committed to `lucos_claude_config`. Requires a fresh Claude session to pick up persona file changes (see caching note above).
-
-## lucos-architect MEMORY.md length issue
-
-As of 2026-03-06, lucos-architect's MEMORY.md is 203 lines — 3 over the 200-line truncation limit — causing the User-Agent ADR convention entry to be lost. This still needs fixing: move older notes to a topic file to bring the main file under 200 lines.
 
 ## lucos_arachne one-shot containers (confirmed 2026-03-06)
 
