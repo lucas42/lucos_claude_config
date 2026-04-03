@@ -5,7 +5,7 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-02
+container_status: 2026-04-03
 resource_checks: 2026-04-02
 syslog_review: 2026-04-02
 software_updates: 2026-04-02
@@ -540,3 +540,12 @@ certificate_expiry: 2026-04-02
 
 **Issues commented on**:
 - lucos_agent_coding_sandbox#24: updated package status for all three hosts
+
+### 2026-04-03 (container status only; all weekly/monthly checks ran 2026-04-02 — not due)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: **UNREACHABLE** — salvare.s.l42.eu resolves only to an IPv6 AAAA record (2a01:4b00:8598:5a00:f669:f6da:e174:624b); this VM has no IPv6 routing. Cannot verify container status. Flagged to dispatcher.
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Coverage gap**: salvare has been IPv6-only in DNS for some time, but previous ops check runs reported it as "clean". Either (a) the environment previously had IPv6 connectivity and lost it, or (b) those reports were false positives. Either way, salvare container status is currently unverifiable from this VM. No issue raised — flagged to dispatcher to determine correct action.
