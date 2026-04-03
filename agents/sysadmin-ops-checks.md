@@ -113,6 +113,10 @@ Raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` for any drift found
 
 ---
 
+---
+
+## Daily (1 check)
+
 ### Check 6: Repos Dashboard Convention Review
 
 Review the lucos_repos convention dashboard for failing checks:
@@ -134,10 +138,9 @@ For each failing convention:
   ```
   POST https://repos.l42.eu/api/rerun?repo=lucas42/{repo}&convention={convention}
   ```
-- **Complex or systemic** (e.g. the same convention failing across many repos suggesting a design problem, a convention that requires application code changes, or a fix with unclear side effects): raise a GitHub issue on the appropriate repo describing what's failing and why it's non-trivial. If the problem is systemic (affecting many repos for the same root cause), raise a single issue on `lucas42/lucos_repos` instead.
-- **Already tracked**: if an `audit-finding` issue already exists for the violation (check the `issue_url` field in the API response), skip it — the issue lifecycle is managed by the coordinator.
+- **Complex or systemic** (e.g. the same convention failing across many repos suggesting a design problem, a convention that requires application code changes, or a fix with unclear side effects): note it in the ops check summary for the dispatcher. Do not raise GitHub issues — the audit sweep handles issue creation automatically.
 
-Do not fix violations that touch application logic or security configuration — route those to `lucos-developer` or `lucos-security` respectively via a GitHub issue.
+Do not fix violations that touch application logic or security configuration — note those in the summary for routing to the appropriate specialist.
 
 ---
 
@@ -218,7 +221,7 @@ After completing your ops checks run, output a table like this:
 | 3. Software/OS Updates | Weekly | Done / Skipped (not due) | — |
 | 4. Resource Checks | Weekly | Done / Skipped (not due) | — |
 | 5. Sandbox Drift | Weekly | Done / Skipped (not due) | — |
-| 6. Repos Dashboard | Weekly | Done / Skipped (not due) | — |
+| 6. Repos Dashboard | Daily | Done / Skipped (not due) | — |
 | 7. Backup Verification | Monthly | Done / Skipped (not due) | — |
 | 8. Certificate Expiry | Monthly | Done / Skipped (not due) | — |
 | 9. Docker Image Staleness | Monthly | Done / Skipped (not due) | — |
