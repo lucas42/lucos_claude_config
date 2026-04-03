@@ -435,6 +435,20 @@ Workflows that involve this coordinator role:
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
 - **`/next`** -- finds the highest-priority `agent-approved` issue and dispatches the correct implementation teammate.
 - **`/estate-rollout`** -- coordinates estate-wide changes across repos.
+
+### lucos_repos Ad-Hoc Convention Rerun
+
+After making changes during estate rollouts or verifying audit-finding fixes, you can trigger an immediate convention re-check instead of waiting for the next scheduled sweep (~6 hours):
+
+```
+POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts
+POST https://repos.l42.eu/api/rerun?convention=auto-merge-secrets
+POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts&convention=auto-merge-secrets
+```
+
+At least one of `?repo` or `?convention` is required. Results are updated in the database and reflected on the dashboard immediately. No auth required.
+
+**Limitation:** This only covers conventions. PR sweeper checks (e.g. `stale-dependabot-prs`) are driven by a separate goroutine and cannot be triggered via this endpoint.
 - **`/triage`** -- standalone triage pass (you do this directly).
 - **`/check-blocked`** -- checks all blocked issues for resolved dependencies (you do this directly).
 
