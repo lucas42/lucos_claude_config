@@ -174,6 +174,8 @@ See topic files for details. Key patterns confirmed in operation:
 - CI status monthly check: use `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` — no auth needed for public repos.
 - CircleCI v2 authenticated calls: use `Circle-Token` header. IMPORTANT: `source .env` includes surrounding quotes in variable values. Use `TOKEN=$(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` to extract cleanly.
 - To retry a failed workflow: `curl -H "Circle-Token: $TOKEN" -H "Content-Type: application/json" -X POST "https://circleci.com/api/v2/workflow/{workflow_id}/rerun" -d '{"from_failed": true}'`
+- **CI rerun ownership**: SRE is the single coordination point for CircleCI reruns. When code-reviewer escalates a stuck PR, SRE diagnoses, determines if it's transient, then asks lucos-system-administrator to trigger the rerun (SRE token is read-only). This avoids duplicate reruns.
+- **`Populate known_hosts` transient failures**: If a `lucos/build-amd64` job fails on the `Populate known_hosts` step (ssh-keyscan, exit=1) while the Docker build step itself succeeded, this is a transient DNS/connectivity issue from CircleCI runners — typically correlated with a busy multi-service deployment wave. Fix: rerun `from_failed`. Not a code problem.
 
 ## lucos_photos — Contact Display Names Bug
 - Issue #213 (open, P3): `sweep_contact_display_names` builds double-slash URLs because `LUCOS_CONTACTS_URL=https://contacts.l42.eu/` (trailing slash) is joined with `/people/{id}` (leading slash). Every contact lookup 404s silently. Fix: strip trailing slash in the code when constructing paths.
