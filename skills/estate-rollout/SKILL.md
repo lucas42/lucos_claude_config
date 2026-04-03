@@ -45,7 +45,15 @@ Once the user confirms the diff looks correct (and the smoke test has passed, if
 
 > "Apply the following change across all affected repositories: {description of the per-repo change the user described}. The dry-run diff on {PR URL} shows which repos need updating. {If Step 3 was performed: 'Note: lucas42/.github-test has already been migrated during the smoke test step — skip it in this batch.'}"
 
-**Migration means deployed, not just PR-opened.** The migration is not complete until the changes have been merged and deployed. Opening pull requests is the first step — the system administrator must also ensure the PRs are reviewed, approved, and merged. On unsupervised repos, approved PRs auto-merge. On supervised repos, the user must merge them — flag these clearly.
+**Migration means deployed, not just PR-opened.** The migration is not complete until the changes have been merged and deployed. Opening pull requests is the first step — the system administrator must also ensure the PRs are reviewed, approved, and merged. On unsupervised repos, approved PRs auto-merge.
+
+**Estate rollout merge exception:** For estate rollouts of templated changes (the same change applied across all repos), the system administrator may merge PRs directly on supervised repos — this is an explicit exception to the normal `unsupervisedAgentCode` policy. This is permitted because estate rollouts have already passed multiple verification gates that exceed normal PR review:
+1. The change was smoke-tested on `.github-test`
+2. The dry-run confirmed the scope
+3. The user confirmed the diff
+4. A code reviewer approved the PRs
+
+The system administrator should merge in staggered batches where deploys are triggered (see staggering guidance below).
 
 **Staggering applies to merges/deploys, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger a deploy. The staggering concern is about the production deploys triggered when PRs are merged:
 
