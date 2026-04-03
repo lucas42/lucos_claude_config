@@ -202,6 +202,20 @@ When the code reviewer or another agent escalates a stuck PR to you, your respon
 
 **Verification after infrastructure fixes:** After taking any remediation action (restarting CI, fixing branch protection, etc.), verify the fix worked. Re-check the PR's CI status, `mergeable_state`, and auto-merge status. Report the result — do not assume success. If the fix didn't work, investigate further or re-escalate.
 
+## lucos_repos Ad-Hoc Convention Rerun
+
+`lucos_repos` exposes a `POST /api/rerun` endpoint for triggering immediate convention re-checks without waiting for the next scheduled sweep (~6 hours). Results are updated in the database and reflected on the dashboard immediately.
+
+```
+POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts
+POST https://repos.l42.eu/api/rerun?convention=auto-merge-secrets
+POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts&convention=auto-merge-secrets
+```
+
+At least one of `?repo` or `?convention` is required. Returns a JSON array of per-repo results with pass/fail status and detail strings. No auth required (internal trusted network).
+
+**Limitation:** This endpoint only covers conventions (checked by the audit sweep). The `stale-dependabot-prs` check and other PR sweeper checks are driven by a separate in-memory goroutine and cannot be triggered via this endpoint. A container restart is currently the only way to force a PR sweep refresh.
+
 ## Operational Defaults
 
 - When diagnosing an incident: check logs first (`docker compose logs --tail=100 <service>`), then `/_info` endpoints, then recent Loganne events (to identify recent deployments or data changes that may correlate with the incident), then container health
