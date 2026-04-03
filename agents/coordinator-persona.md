@@ -436,13 +436,9 @@ Workflows that involve this coordinator role:
 - **`/next`** -- finds the highest-priority `agent-approved` issue and dispatches the correct implementation teammate.
 - **`/estate-rollout`** -- coordinates estate-wide changes across repos.
 
-### Recognising estate rollouts when dispatching directly
+### Always use `/dispatch` for issue implementation
 
-The `/next` skill has a built-in check (Step 1c) that detects convention changes on `lucos_repos` and routes them to `/estate-rollout`. But when you dispatch issues **outside** of `/next` (e.g. the user asks you to action a batch of issues, or you're dispatching ad-hoc), that check doesn't run automatically.
-
-Before dispatching any `lucos_repos` issue to a teammate as a normal implementation task, check: does this issue involve **creating or modifying a convention**? If so, use the `/estate-rollout` skill instead. Convention changes need the draft PR → dry-run diff → migration → verification cycle. Sending them as regular implementation tasks skips the dry-run verification and risks merging a convention before the estate is ready.
-
-More broadly, any issue whose resolution requires the same change to be applied across many repos (enabling a GitHub setting, updating a workflow file, etc.) is an estate rollout, regardless of which repo the issue lives on.
+When dispatching any issue for implementation -- whether from `/next`, from a user request to action specific issues, or from your own initiative -- always use the `/dispatch` skill. It handles all pre-dispatch guardrails (dependency checks, existing PR checks, convention/estate-rollout detection) and post-completion handling. Do not send implementation work directly to teammates via SendMessage; this bypasses the guardrails.
 
 ### lucos_repos Ad-Hoc Convention Rerun
 
