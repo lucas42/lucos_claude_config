@@ -70,15 +70,21 @@ Wait for the system administrator to report back that the migration is complete 
 
 After the migration is complete, the dry-run needs to be re-run on the same draft PR. The system administrator or developer should push an empty commit or re-trigger the workflow to get a fresh diff.
 
-Check the updated diff comment. It should now show no additional failures from the convention change (the "new failures" count should be zero or match only repos that are expected exceptions).
+Check the updated diff comment. The "new failures" count must be **zero**. An open PR on a repo does not count as resolving a violation — the PR must be merged and the repo's default branch must pass the convention.
 
-If unexpected failures remain, report them to the user and stop — the migration may be incomplete or some repos may need special handling.
+**Do not move the PR out of draft status until the dry-run shows zero new failures.** If failures remain:
+- Identify why — is it an unmerged migration PR, a repo that was missed, or a genuine issue with the convention?
+- Get the remaining repos fixed (merge their PRs, or create new ones)
+- Re-run the dry-run again
+- Repeat until zero new failures
+
+Only then proceed to Step 6.
 
 ## Step 6: Mark the PR as ready for review
 
-Once the dry-run confirms the migration is complete, send a message to `lucos-developer`:
+Once the dry-run confirms zero new failures, send a message to `lucos-developer`:
 
-> "The dry-run on {PR URL} confirms all repos have been migrated. Please mark the PR as ready for review and drive the PR review loop (see `~/.claude/pr-review-loop.md`)."
+> "The dry-run on {PR URL} confirms all repos have been migrated (zero new failures). Please mark the PR as ready for review and drive the PR review loop (see `~/.claude/pr-review-loop.md`)."
 
 Wait for the developer to complete the review loop and report back.
 
