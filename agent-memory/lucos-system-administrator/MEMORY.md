@@ -196,3 +196,4 @@ When adding healthchecks, verify the probe tool is installed in the **final** im
 7. Trigger a CircleCI redeploy (not `docker start`) to bring containers back up properly under compose
 
 Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.compose.version`, `com.docker.compose.volume`. Volumes without these labels crash lucos_backups tracking for the entire host. Confirmed incident: 2026-03-17 EXIF reprocess cascade.
+
