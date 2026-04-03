@@ -45,14 +45,16 @@ Once the user confirms the diff looks correct (and the smoke test has passed, if
 
 > "Apply the following change across all affected repositories: {description of the per-repo change the user described}. The dry-run diff on {PR URL} shows which repos need updating. {If Step 3 was performed: 'Note: lucas42/.github-test has already been migrated during the smoke test step — skip it in this batch.'}"
 
-Include these instructions based on the type of change:
+**Migration means deployed, not just PR-opened.** The migration is not complete until the changes have been merged and deployed. Opening pull requests is the first step — the system administrator must also ensure the PRs are reviewed, approved, and merged. On unsupervised repos, approved PRs auto-merge. On supervised repos, the user must merge them — flag these clearly.
 
-- **If the change involves code changes that trigger CI builds and production deploys** (e.g. editing workflow files, config files, source code): "Stagger the changes in batches of 5 repos with 1 minute between batches to avoid saturating the production host."
-- **If the change only affects repo configuration that does not trigger a release** (e.g. branch protection rules, GitHub settings): "No staggering needed — these changes do not trigger production deploys."
+**Staggering applies to merges/deploys, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger a deploy. The staggering concern is about the production deploys triggered when PRs are merged:
+
+- **If merges trigger CI builds and production deploys** (e.g. application code, workflow files, config files): "Stagger the **merges** in batches of 5 repos with a few minutes between batches to avoid saturating the production host. PRs can be created all at once."
+- **If merges do not trigger production deploys** (e.g. documentation-only changes): "No staggering needed."
 
 Also ask the system administrator to post a comment on the draft PR summarising what was done once the migration is complete — e.g. how many repos were migrated, any failures or repos that needed special handling. This gives the code reviewer context when they review the PR later.
 
-Wait for the system administrator to report back that the migration is complete.
+Wait for the system administrator to report back that the migration is complete (PRs merged and deployed, not just opened).
 
 ## Step 5: Verify the dry-run shows no remaining failures
 
