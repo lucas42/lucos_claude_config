@@ -1,6 +1,6 @@
 # Sysadmin Ops Checks
 
-**8 checks total — you MUST run all 8. See the completion manifest at the bottom.**
+**9 checks total — you MUST run all 9. See the completion manifest at the bottom.**
 
 Check `ops-checks.md` in your agent memory at the start of each run to determine which checks are due. Update it after each check. If a check is skipped because it is not yet due, note this explicitly in your output so the dispatcher can see what was and wasn't run.
 
@@ -113,9 +113,37 @@ Raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` for any drift found
 
 ---
 
+### Check 6: Repos Dashboard Convention Review
+
+Review the lucos_repos convention dashboard for failing checks:
+
+```bash
+curl -s https://repos.l42.eu/api/status | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for repo in data:
+    for name, check in repo.get('checks', {}).items():
+        if check.get('status') == 'fail':
+            print(f\"{repo['repo']}  {name}  {check.get('detail', '')}\")
+" | sort
+```
+
+For each failing convention:
+
+- **Trivial to fix** (e.g. a missing config file, a simple workflow update, a label that needs adding): fix it directly — commit, push, then verify the fix using the ad-hoc rerun endpoint:
+  ```
+  POST https://repos.l42.eu/api/rerun?repo=lucas42/{repo}&convention={convention}
+  ```
+- **Complex or systemic** (e.g. the same convention failing across many repos suggesting a design problem, a convention that requires application code changes, or a fix with unclear side effects): raise a GitHub issue on the appropriate repo describing what's failing and why it's non-trivial. If the problem is systemic (affecting many repos for the same root cause), raise a single issue on `lucas42/lucos_repos` instead.
+- **Already tracked**: if an `audit-finding` issue already exists for the violation (check the `issue_url` field in the API response), skip it — the issue lifecycle is managed by the coordinator.
+
+Do not fix violations that touch application logic or security configuration — route those to `lucos-developer` or `lucos-security` respectively via a GitHub issue.
+
+---
+
 ## Monthly (3 checks)
 
-### Check 6: Backup Verification
+### Check 7: Backup Verification
 
 SSH into each active host and verify that lucos_backups is actually completing runs, not just that volumes exist:
 
@@ -129,7 +157,7 @@ Note: `lucos_backups` runs as a single container on avalon and handles all hosts
 
 ---
 
-### Check 7: Certificate Expiry
+### Check 8: Certificate Expiry
 
 TLS termination happens in the `lucos_router` container, which runs on the production hosts. Note: on both avalon and xwing the container is named `lucos_router`. Check certificate expiry for all domains served:
 
@@ -147,7 +175,7 @@ Raise cert issues on `lucas42/lucos_router`, not `lucos_agent_coding_sandbox`.
 
 ---
 
-### Check 8: Docker Image Staleness
+### Check 9: Docker Image Staleness
 
 SSH into each active host and check when running containers were last built:
 
@@ -169,6 +197,7 @@ syslog_review: YYYY-MM-DD
 software_updates: YYYY-MM-DD
 resource_checks: YYYY-MM-DD
 sandbox_drift: YYYY-MM-DD
+repos_dashboard: YYYY-MM-DD
 backup_verification: YYYY-MM-DD
 certificate_expiry: YYYY-MM-DD
 docker_image_staleness: YYYY-MM-DD
@@ -189,8 +218,9 @@ After completing your ops checks run, output a table like this:
 | 3. Software/OS Updates | Weekly | Done / Skipped (not due) | — |
 | 4. Resource Checks | Weekly | Done / Skipped (not due) | — |
 | 5. Sandbox Drift | Weekly | Done / Skipped (not due) | — |
-| 6. Backup Verification | Monthly | Done / Skipped (not due) | — |
-| 7. Certificate Expiry | Monthly | Done / Skipped (not due) | — |
-| 8. Docker Image Staleness | Monthly | Done / Skipped (not due) | — |
+| 6. Repos Dashboard | Weekly | Done / Skipped (not due) | — |
+| 7. Backup Verification | Monthly | Done / Skipped (not due) | — |
+| 8. Certificate Expiry | Monthly | Done / Skipped (not due) | — |
+| 9. Docker Image Staleness | Monthly | Done / Skipped (not due) | — |
 
-**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 8 checks were considered.
+**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 9 checks were considered.
