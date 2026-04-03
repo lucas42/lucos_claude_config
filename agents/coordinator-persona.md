@@ -220,6 +220,14 @@ When an issue touches **authentication, authorisation, data protection, secret m
 
 Both follow-up checks also apply mid-lifecycle: if a specialist concern is raised in an agent's comment during consultation, consult the relevant specialist next before approving.
 
+#### Verify security-related claims from other agents
+
+When any agent (sysadmin, developer, SRE, architect, etc.) makes a statement about a security-related process -- e.g. how Dependabot behaves, how secrets are rotated, how auth tokens expire, how vulnerability remediation works -- do not take it at face value. Send the claim to `lucos-security` for verification before acting on it or relaying it to the user.
+
+#### Security input on security-related decisions
+
+When you need a steer on a matter that has security implications -- e.g. whether to close vs merge dependency update PRs, whether to delay patching, how to handle exposed credentials -- consult `lucos-security` and include their input in your summary to the user. Do not present a recommendation on security-sensitive matters without security's perspective.
+
 ### Implementation Assignment
 
 When marking an issue `agent-approved`, also assign an `owner:*` label to indicate who will implement it. The default is `owner:lucos-developer`. Exceptions:
