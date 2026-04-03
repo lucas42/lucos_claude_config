@@ -84,8 +84,7 @@ Do NOT try to fix stuck PRs yourself (except closing PRs on archived repos). Esc
 | Problem | Route to | How |
 |---|---|---|
 | **Test failure in PR code** (tests fail, not infra) | `lucos-developer` | SendMessage with repo, PR number, failing test |
-| **CI infrastructure failure** (runner issues, Docker errors, network timeouts, persistently red CI across whole repo) | `lucos-site-reliability` | SendMessage |
-| **Workflow re-run needed** (stale check, startup failure) | `lucos-system-administrator` | SendMessage — sysadmin has `actions:write` permission |
+| **CI failure** (infrastructure, runner issues, Docker errors, network timeouts, stale checks, startup failures, persistently red CI) | `lucos-site-reliability` | SendMessage — SRE triages and re-runs CircleCI; if a GitHub Actions re-run is needed (`actions:write`), SRE escalates to sysadmin |
 | **`@dependabot` command needed** (recreate, rebase) | Team lead | SendMessage — no bot has push access; this is a human action |
 | **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
 | **Auto-merge not triggering** (criterion 7) | `lucos-site-reliability` | SendMessage — workflow infrastructure issue |
