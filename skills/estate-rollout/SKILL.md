@@ -53,6 +53,8 @@ Once the user confirms the diff looks correct (and the smoke test has passed, if
 3. The user confirmed the diff
 4. A code reviewer approved the PRs
 
+The system administrator must verify that CI checks (tests, builds, and other required workflows) are passing before merging each PR. If CI is still running, enable auto-merge on the PR rather than waiting — but check back to confirm it actually merged before declaring the migration complete.
+
 The system administrator should merge in staggered batches where deploys are triggered (see staggering guidance below).
 
 **Staggering applies to merges/deploys, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger a deploy. The staggering concern is about the production deploys triggered when PRs are merged:
