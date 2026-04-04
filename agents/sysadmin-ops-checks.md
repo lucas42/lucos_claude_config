@@ -125,10 +125,10 @@ Review the lucos_repos convention dashboard for failing checks:
 curl -s https://repos.l42.eu/api/status | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
-for repo in data:
-    for name, check in repo.get('checks', {}).items():
-        if check.get('status') == 'fail':
-            print(f\"{repo['repo']}  {name}  {check.get('detail', '')}\")
+for repo_name, checks in data['repos'].items():
+    for conv_name, check in checks.items():
+        if isinstance(check, dict) and check.get('pass') == False:
+            print(f\"{repo_name}  {conv_name}  {check.get('detail', '')}\")
 " | sort
 ```
 
