@@ -88,6 +88,10 @@ Once the dry-run confirms zero new failures, send a message to `lucos-developer`
 
 Wait for the developer to complete the review loop and report back.
 
-## Step 7: Report to user
+## Step 7: Close the originating issue
 
-Summarise the outcome: how many repos were migrated, the PR URL, and whether the review loop completed successfully.
+If this estate rollout was triggered by a specific GitHub issue (passed in as context at Step 1), check whether the convention PR merging completes the issue's requirements. If so, post a closing comment summarising what was done (convention added, N repos migrated, PR merged) and close the issue. If the issue has remaining work beyond the convention + migration, leave it open and note what's left.
+
+## Step 8: Report to user
+
+Summarise the outcome: how many repos were migrated, the PR URL, whether the review loop completed successfully, and whether the originating issue was closed.
