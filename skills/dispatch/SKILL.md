@@ -1,7 +1,7 @@
 ---
 name: dispatch
 description: Guardrailed dispatch of a single GitHub issue to the correct implementation teammate
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Follow this process. The issue URL is provided as an argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). Do not ask for clarification -- immediately begin.
