@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## Estate rollout repo discovery
+
+Use GitHub API (Contents API or code search), NOT local `grep -rl` against `~/sandboxes/`. Local clones are stale and incomplete — 6 repos were missed in the #34 rollout this way. See `estate-rollout-discovery.md`.
+
 ## GitHub App commit attribution (avatar display)
 
 For commits to show a GitHub App's custom avatar, the git committer email must use the **bot user ID**, not the App ID. These are different numbers. Using App ID gives a grey ghost avatar.
