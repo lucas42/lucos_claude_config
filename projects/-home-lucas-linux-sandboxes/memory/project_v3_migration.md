@@ -8,14 +8,18 @@ Media API v2→v3 track format migration is in progress but parked as of 2026-04
 
 **Current state:**
 - lucos_media_manager (ceol): dual-format support already merged (PR #182)
-- lucos_media_weightings: dual-format support in PR #119 (under review)
-- arachne: not affected (ignores track payload, fetches fresh data)
+- lucos_media_weightings: dual-format support merged (PRs #119, #121). Remove v2 compat tracked in #120 (blocked on #85).
+- arachne: not affected by payload format (ignores track payload, fetches fresh data). Auth scheme fixed to Bearer (#221). Content-type validation added (#221). v3 RDF content negotiation added to metadata API (#88).
 - lucos_media_metadata_api#85: source migration to v3 — not yet started
 
-**Related issues still open:**
-- Arachne redirect to non-existent `/v3/tracks/` endpoint (causes 400s from Fuseki) — needs either a v3 RDF route or redirect fix. No issue raised yet.
-- `media-api.l42.eu` returning 502 externally while `/_info` is healthy — separate issue, not yet raised.
+**Webhook alert cleared:** All 307 failures resolved as of 2026-04-06. Fixes shipped: loganne retry endpoint (#335), arachne URL encoding (#218) + auth/content-type (#221), metadata API v3 RDF content negotiation (#88) + IRI encoding (#93), weightings dual-format (#119, #121).
 
-**Why:** Owner wants to focus on clearing the immediate webhook alert first. The broader v3 migration and arachne redirect issues are out of scope for now.
+**Remaining open issues:**
+- lucos_media_metadata_api#85 — migrate loganne events to v3 format (not started)
+- lucos_media_weightings#120 — remove v2 backwards compat (blocked on #85)
+- lucos_media_metadata_api#89 — flaky TestLoganneEvent test (P3)
+- lucos_media_metadata_api#90 — auth panic on malformed Bearer header (P3)
 
-**How to apply:** Don't dispatch v3 migration work unless the owner brings it back in scope. The remaining webhook alert clearance depends on PR #119 (weightings) only.
+**Why:** Owner wants to pick up the broader v3 migration later.
+
+**How to apply:** Don't dispatch v3 migration work unless the owner brings it back in scope.
