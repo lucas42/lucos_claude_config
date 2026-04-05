@@ -75,8 +75,10 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Django app, calendar ICS endpoint. Recommended 1-month lookback (#523), Facebook import as separate repo (#7).
 - No JSON API yet. Only HTML + RDF (content negotiation). `serializePerson()` returns dict but only used for templates. JSON endpoint filed as #529 (extends content negotiation on `/people/all`).
 
-### lucos_media_manager
-- Java, long-polling. Flaky test (#79): race condition fix. Device list cleanup (#112): lazy filtering via `lastSeen`.
+### lucos_media_manager (ceol.l42.eu)
+- Java, long-polling. Domain: `ceol.l42.eu`. **Not** lucos_media_metadata_manager (which is the PHP frontend at media-metadata.l42.eu).
+- Flaky test (#79): race condition fix. Device list cleanup (#112): lazy filtering via `lastSeen`.
+- Receives loganne webhooks for trackUpdated, trackDeleted, collection events. CustomGson deserialiser has dual v2/v3 format support (PR #182 merged).
 
 ### lucos_media_metadata_manager
 - PHP front-end. Recommended client-side Typesense via arachne (#51). Dedicated `tracks` collection (arachne#47).
