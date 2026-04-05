@@ -47,7 +47,7 @@ If a PR exists that references the issue and is still **open**, the work has lik
 1. **Determine the repository name** from the issue URL.
 2. **Check whether the repository has unsupervised agent code enabled** by running `~/sandboxes/lucos_agent/check-unsupervised <repo-name>`.
 3. **If unsupervised (exit code 0):** the PR should auto-merge on its own. Tell the user the work is already done and the PR is awaiting auto-merge, then stop.
-4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to merge the existing PR before this issue can be closed. Provide the PR URL. Then stop -- do not dispatch a teammate.
+4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to review and approve the existing PR — once approved, it will auto-merge. Provide the PR URL. Then stop -- do not dispatch a teammate.
 
 If no open PR exists for the issue, continue.
 
@@ -109,4 +109,4 @@ If a PR was created and approved:
      - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
 4. **If not unsupervised (exit code 1) or error (exit code 2):**
-   - Tell the user they need to review and merge the pull request themselves. Provide the full PR URL so they can easily navigate to it.
+   - Tell the user the PR needs their review and approval. Once approved, it will auto-merge. Provide the full PR URL so they can easily navigate to it.

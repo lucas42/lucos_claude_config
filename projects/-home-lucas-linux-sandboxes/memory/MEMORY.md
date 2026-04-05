@@ -32,6 +32,7 @@
 - [Don't suggest team shutdown](feedback_dont_suggest_shutdown.md) — stop asking; just wait for the next instruction
 - [Auto-commit ~/.claude changes](feedback_claude_config_commits.md) — commit and push changes to ~/.claude without asking
 - [Developer rebase issues](feedback_developer_rebase.md) — developer doesn't reliably rebase; verify results or use alternative approaches
+- [Auto-merge on approval](feedback_auto_merge_workflow.md) — PRs auto-merge when approved; don't ask user to manually merge
 
 ## Active Projects
 
