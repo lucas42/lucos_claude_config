@@ -11,10 +11,10 @@
       "subscriptions": []
     },
     {
-      "agentId": "lucos-architect@lucos-all-hands",
-      "name": "lucos-architect",
-      "agentType": "lucos-architect",
-      "model": "opus",
+      "agentId": "lucos-developer@lucos-all-hands",
+      "name": "lucos-developer",
+      "agentType": "lucos-developer",
+      "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "blue",
       "planModeRequired": false,
@@ -33,12 +33,23 @@
       "backendType": "tmux"
     },
     {
-      "agentId": "lucos-developer@lucos-all-hands",
-      "name": "lucos-developer",
-      "agentType": "lucos-developer",
-      "model": "sonnet",
+      "agentId": "lucos-architect@lucos-all-hands",
+      "name": "lucos-architect",
+      "agentType": "lucos-architect",
+      "model": "opus",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "yellow",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-system-administrator@lucos-all-hands",
+      "name": "lucos-system-administrator",
+      "agentType": "lucos-system-administrator",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "purple",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -49,7 +60,7 @@
       "agentType": "lucos-security",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "purple",
+      "color": "orange",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -58,17 +69,6 @@
       "agentId": "lucos-site-reliability@lucos-all-hands",
       "name": "lucos-site-reliability",
       "agentType": "lucos-site-reliability",
-      "model": "sonnet",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "orange",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
-    },
-    {
-      "agentId": "lucos-system-administrator@lucos-all-hands",
-      "name": "lucos-system-administrator",
-      "agentType": "lucos-system-administrator",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "pink",
