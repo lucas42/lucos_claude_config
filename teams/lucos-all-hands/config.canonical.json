@@ -16,7 +16,7 @@
       "agentType": "lucos-architect",
       "model": "opus",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "yellow",
+      "color": "blue",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -38,7 +38,7 @@
       "agentType": "lucos-developer",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "blue",
+      "color": "yellow",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -49,7 +49,7 @@
       "agentType": "lucos-security",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "orange",
+      "color": "purple",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -60,7 +60,7 @@
       "agentType": "lucos-site-reliability",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "pink",
+      "color": "orange",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
@@ -71,7 +71,7 @@
       "agentType": "lucos-system-administrator",
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "cyan",
+      "color": "pink",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
