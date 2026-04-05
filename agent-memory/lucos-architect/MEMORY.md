@@ -151,9 +151,11 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Shared `lucos_router_letsencrypt` volume (external) provides TLS certs.
 
 ### lucos_docker_health (lucos#45)
-- Proposed new service: monitors Docker container healthchecks.
-- **Revised design (lucas42 proposal, agreed):** Push model via `lucos_schedule_tracker` instead of `/_info` polling. Go binary reads Docker socket (`:ro`), POSTs to schedule_tracker `/report-status` every 60s. `system` field: `lucos_docker_health_{hostname}`. Per-host granularity (unhealthy container names in `message`). Same image all hosts, different `SYSTEM` env var. No new domains/configy/router needed. Security: `:ro` socket, read-only API calls, non-root, minimal image.
-- Awaiting lucas42 decision on next step (ADR vs implementation tickets).
+- Go binary, push model via schedule_tracker. Deployed to all 3 hosts (avalon, xwing, salvare). ADR-0001 merged.
+- Runs as root (distroless base). Non-root impractical: Docker socket GID varies per host (994/985), distroless has no `/etc/group`. Socket access is root-equivalent regardless of UID — distroless (no shell/package manager) is the real security layer.
+- Heartbeat healthcheck pattern: `--healthcheck` flag on same binary checks `/tmp/heartbeat` file age. Works on distroless (exec form, no shell). Good pattern for push-only services.
+- **Reviewed 2026-04-05** (PR #50). Issues raised: #43 (Dependabot missing gomod), #44 (binary not in .gitignore), #45 (no CodeQL). GitHub reports 2 existing Dependabot vulns (1 high, 1 moderate) confirming #43.
+- High implementation churn: 38 issues for ~180 lines. Docker socket permissions needed 3 rounds (#33/#34, #37, #38). Pattern to watch for agent-implemented services.
 
 ### lucos_media_metadata_api
 - Go + SQLite, multi-value fields (#34): design agreed, tickets #35-#42. Predicate registry (#37) awaiting confirmation.
