@@ -12,7 +12,7 @@ Format: `{bot_user_id}+{bot_name}@users.noreply.github.com`
 
 **Canonical source of truth**: `~/sandboxes/lucos_agent/personas.json` — contains all per-persona identity data (`bot_user_id`, `bot_name`, `app_id`, `installation_id`, `pem_var`). Do not duplicate this data in memory files.
 
-Note: the lucos-code-reviewer commit email uses the login `lucos-code-reviewer[bot]` (lowercase) even though the display name is `lucOS Code Reviewer[bot]` (mixed case).
+Note: `bot_name` must be the login slug (e.g. `lucos-code-reviewer[bot]`), not the display name — `git-as-agent` uses it verbatim in the email. `lucOS Code Reviewer[bot]` (spaces, mixed case) was incorrectly set as `bot_name` and caused a grey ghost avatar — fixed 2026-04-05.
 
 Get user ID via: `curl -s 'https://api.github.com/users/lucos-agent%5Bbot%5D' | jq .id`
 

@@ -164,7 +164,7 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-code-reviewer rebase main
 ```
 
-`git-as-agent` looks up the persona's `bot_name` and `bot_user_id` from `~/sandboxes/lucos_agent/personas.json` and prepends the correct `-c user.name=... -c user.email=...` flags automatically. Note: for this persona, the `bot_name` is `lucOS Code Reviewer[bot]` (mixed case display name) but the email uses `lucos-code-reviewer[bot]` (lowercase login) — `git-as-agent` handles this correctly from `personas.json`.
+`git-as-agent` looks up the persona's `bot_name` and `bot_user_id` from `~/sandboxes/lucos_agent/personas.json` and prepends the correct `-c user.name=... -c user.email=...` flags automatically. All remaining arguments are passed through to `git`.
 
 **Critical**: The `-c` flags set both the author and the committer. When git amends a commit, it preserves the original author but sets a **new committer** using the current identity — which without the wrapper will be the global git config (`lucos-agent[bot]`). This produces a commit where author and committer differ, which is incorrect.
 
