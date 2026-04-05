@@ -8,4 +8,4 @@ Commit and push changes to `~/.claude` (lucos_claude_config) without asking. Jus
 
 **Why:** The user considers this repo low-risk — it's agent configuration, not application code. Asking for permission each time slows things down unnecessarily.
 
-**How to apply:** After making edits to files in `~/.claude`, commit and push to main directly. No confirmation needed.
+**How to apply:** After making edits to files in `~/.claude`, commit using `git-as-agent --app lucos-issue-manager` (not raw `git`) and push to main directly. No confirmation needed.

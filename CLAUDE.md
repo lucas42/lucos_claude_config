@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) for all projects in 
 
 Do not add `Co-Authored-By` trailers to git commits. The bot identity on each commit already makes authorship clear.
 
+**Always use `git-as-agent`** (not raw `git`) for all git operations — commits, rebases, cherry-picks, etc. This ensures commits are attributed to the correct bot identity. See [`references/github-workflow.md`](references/github-workflow.md) for details.
+
 ## Learning from Mistakes
 
 When you fail to follow an instruction, do not apologise. Instead, suggest a concrete improvement to the instructions or environment that would prevent the same mistake from happening again. There is nothing wrong with making mistakes — but we should always learn from them.
