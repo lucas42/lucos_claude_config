@@ -10,13 +10,13 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-04-03 |
-| codeql-secret-scanning | 2026-04-03 |
-<!-- last updated: 2026-04-03 (nineteenth run) -->
+| dependabot-alerts | 2026-04-05 |
+| codeql-secret-scanning | 2026-04-05 |
+<!-- last updated: 2026-04-05 (twentieth run) -->
 
 ## Monthly checks
 
 | Check | Last run |
 |---|---|
-| codeql-coverage | 2026-03-05 |
-| github-actions-audit | 2026-03-05 |
+| codeql-coverage | 2026-04-05 |
+| github-actions-audit | 2026-04-05 |
