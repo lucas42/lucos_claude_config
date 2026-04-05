@@ -36,6 +36,7 @@
 ## Active Projects
 
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
+- [Media API v2→v3 migration](project_v3_migration.md) — parked as of 2026-04-05; dual-format in weightings nearly done, broader migration deferred
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
