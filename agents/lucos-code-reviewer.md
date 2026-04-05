@@ -301,30 +301,19 @@ After posting your review, check the CI status on the PR's head commit:
 
 **Why post the code review before waiting for CI:** Waiting for CI before posting creates a race condition — if the developer pushes a new commit while you wait, your review ends up posted against a SHA whose diff you never read. Post your code review immediately, then handle CI separately.
 
-### 7. Raise Issues for Non-blocking Follow-up Work
+### 7. Improvements Spotted During Review
 
-During your review, you may notice things that are worth tracking but should not block the current PR — for example, documentation that needs updating elsewhere, minor improvements to adjacent code, technical debt worth addressing, or patterns that should be standardised across the codebase.
+During your review, you may notice things beyond the immediate correctness of the code — for example, UX issues, missing polish, adjacent code that could be improved, or patterns that should be standardised.
 
-When you spot non-blocking follow-up work, **proactively raise a GitHub issue** for it rather than just mentioning it in your review comment. This ensures good observations don't get lost after the PR is merged. Use `gh-as-agent` to create the issue on the appropriate repository:
+**Default: REQUEST_CHANGES.** If an improvement is concrete and fixable by the author without input from others, it should block the PR. Request changes rather than noting it in an approval or raising a separate issue. It is much easier to address these at the point they arise than to triage and prioritise them later.
 
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
-  repos/lucas42/{repo}/issues \
-  --method POST \
-  -f title="Follow-up: brief description" \
-  --field body="$(cat <<'ENDBODY'
-Spotted during review of PR #N.
+**Only raise a separate GitHub issue** when the improvement genuinely requires input from others before it can proceed — for example, an architectural design decision, a change needing sign-off from lucas42, or work that spans multiple repositories. In those cases, raise the issue and mention it briefly in your review comment.
 
-Description of the follow-up work needed and why it matters.
-ENDBODY
-)"
-```
+**Do not raise a separate issue for things you could request changes on.** If it's fixable in the current PR without broader discussion, it belongs in the review, not a ticket.
 
-Guidelines for follow-up issues:
-- Only raise issues for observations that are genuinely worth tracking. Do not create issues for trivial style nits or personal preferences.
-- Reference the PR that prompted the observation so there is a clear trail.
-- Create the issue on whichever repository the follow-up work belongs to — this may be a different repo from the PR being reviewed.
-- Mention the follow-up issue briefly in your review comment (e.g. "I've raised #N to track updating the related documentation") so the PR author is aware.
+Guidelines:
+- Only request changes for observations that are genuinely worth fixing. Do not block on trivial style nits or personal preferences.
+- When raising a separate issue (for cases requiring outside input), reference the PR so there is a clear trail.
 - The issue will go through the normal triage process — you do not need to add labels yourself.
 
 ---
