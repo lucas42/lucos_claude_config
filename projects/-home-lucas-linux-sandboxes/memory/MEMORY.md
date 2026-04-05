@@ -30,6 +30,7 @@
 - [Never revert label changes blindly](feedback_never_revert_labels.md) — always read comments before changing labels back; someone changed them deliberately
 - [Estate rollouts should use PRs](feedback_estate_rollout_prs.md) — prefer PRs over direct pushes; exceptions for trivial version-bump-style changes
 - [Don't suggest team shutdown](feedback_dont_suggest_shutdown.md) — stop asking; just wait for the next instruction
+- [Auto-commit ~/.claude changes](feedback_claude_config_commits.md) — commit and push changes to ~/.claude without asking
 
 ## Active Projects
 
