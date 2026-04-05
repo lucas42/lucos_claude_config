@@ -47,7 +47,15 @@ For **each** persona discovered in Step 2, spawn a teammate using TeamCreate wit
 - `name`: the teammate name (e.g. `lucos-developer`, `lucos-architect`)
 - `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
 
-Spawn **all** teammates in parallel — make all TeamCreate calls in the same response.
+### Spawn order (colour workaround)
+
+Claude Code assigns teammate colours from a fixed palette in spawn order (blue, green, yellow, purple, orange, pink, cyan, red, ...) and ignores the `color` frontmatter field. To ensure each teammate gets the colour defined in its agent file, **spawn teammates sequentially in this order**:
+
+1. Read each agent file's `color` frontmatter value.
+2. Sort the agents by their intended colour's position in the palette: blue=1, green=2, yellow=3, purple=4, orange=5, pink=6, cyan=7, red=8.
+3. Spawn them one at a time in that order. Each spawn must complete before the next begins.
+
+If a new persona is added whose colour already appears in the list, or whose colour is unknown, spawn it last (after all known-colour agents).
 
 Do **not** hardcode the list of personas. Use whatever files the glob returned in Step 2. If a new persona file is added to `~/.claude/agents/` in future, it will automatically be included.
 
