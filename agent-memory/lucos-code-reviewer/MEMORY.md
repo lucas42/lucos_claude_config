@@ -96,14 +96,25 @@
 ### NOTE: Prior memory was wrong
 - Earlier note said "`pull_request_target` is required, `pull_request` is insufficient" — this was incorrect. `pull_request` with a `permissions` block gives Dependabot the write token it needs, and avoids the `startup_failure` caused by `pull_request_target` + `uses:`.
 
-## Auto-Merge and Supervised vs Unsupervised Repos
+## Auto-Merge: Two Separate Workflows
 
-### `unsupervisedAgentCode` controls whether bot approval triggers merge
-- The `code-reviewer-auto-merge.yml` workflow fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
-- If `true`: bot (`lucos-code-reviewer[bot]`) approval triggers `gh pr merge --auto --merge`.
-- If `false`: only human (`lucas42`) approval triggers auto-merge. Bot review is still posted but doesn't enable auto-merge.
+There are two distinct auto-merge workflows — do not conflate them:
+
+### 1. `dependabot-auto-merge.yml` — for Dependabot PRs
+- Triggers on Dependabot PRs and runs `gh pr merge --auto --merge`.
+- Does **NOT** check `unsupervisedAgentCode`. Dependabot PRs auto-merge on all repos that have this workflow, regardless of supervised/unsupervised status.
+- If an approved Dependabot PR is not merging, the problem is a workflow issue (startup failure, missing workflow file, etc.) — NOT the supervised flag.
+
+### 2. `code-reviewer-auto-merge.yml` — for agent-authored PRs
+- Triggers on PR reviews from `lucos-code-reviewer[bot]`.
+- Fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
+- If `true`: bot approval triggers `gh pr merge --auto --merge`.
+- If `false`: bot review is posted but doesn't enable auto-merge — human approval needed.
 - **Most lucos repos are supervised (`unsupervisedAgentCode: false`)**. As of 2026-04-02, only `lucos_agent_coding_sandbox` is confirmed unsupervised.
-- This explains why many approved Dependabot/sysadmin PRs remain open: they're in supervised repos awaiting human approval. This is expected — not a stuck PR.
+
+### Key distinction
+- `unsupervisedAgentCode` only affects **agent-authored PRs** (via code-reviewer-auto-merge). It has NO bearing on Dependabot PRs.
+- If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 - Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
 
 ## Repo-Specific Review Rules
