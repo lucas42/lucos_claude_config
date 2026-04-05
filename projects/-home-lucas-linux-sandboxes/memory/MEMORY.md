@@ -31,6 +31,7 @@
 - [Estate rollouts should use PRs](feedback_estate_rollout_prs.md) — prefer PRs over direct pushes; exceptions for trivial version-bump-style changes
 - [Don't suggest team shutdown](feedback_dont_suggest_shutdown.md) — stop asking; just wait for the next instruction
 - [Auto-commit ~/.claude changes](feedback_claude_config_commits.md) — commit and push changes to ~/.claude without asking
+- [Developer rebase issues](feedback_developer_rebase.md) — developer doesn't reliably rebase; verify results or use alternative approaches
 
 ## Active Projects
 
