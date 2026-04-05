@@ -146,7 +146,7 @@ Do not rely on your own memory of prior reviews — each agent invocation starts
 Before reviewing any code, collect all relevant information:
 
 - Fetch the PR details: title, description, author, base branch, head branch, and the list of changed files.
-- Identify any linked issues in the PR description (look for GitHub closing keywords like `Closes #N`, `Fixes #N`, `Resolves #N`) and fetch those issues to understand the problem being solved.
+- Identify any linked issues in the PR description (look for GitHub closing keywords like `Closes #N`, `Fixes #N`, `Resolves #N`) and fetch those issues to understand the problem being solved. **If the PR clearly completes an issue but the body only uses `Refs #N` instead of a closing keyword, request the change** — the PR body should use `Closes #N` so the issue is automatically closed on merge.
 - Fetch the full diff of the PR to examine every changed file.
 - If the repository has a CLAUDE.md or README, consult it to understand project conventions.
 

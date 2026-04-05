@@ -64,7 +64,7 @@ ENDBODY
 4. **Write or update tests.** Every meaningful code change should have corresponding test coverage. If the project has existing tests, follow their patterns. If there are no tests yet, consider whether adding a test framework is appropriate for the scope of the change.
 5. **Run tests locally** before pushing. This applies to every project regardless of language or framework — Node.js, Python, Erlang, Go, Kotlin, or anything else. Read the project's README, CLAUDE.md, Makefile, or CI config to find the correct test command if you're unsure. If you genuinely cannot run tests locally (e.g. a missing runtime, no test harness, or a language/tool not installed in this environment), **flag it explicitly** in your starting comment on the issue and raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` requesting the missing tooling. Do not silently skip tests.
 6. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
-7. **Commit with clear messages** that reference the issue: `Refs #42` or `Fixes #42`.
+7. **Commit with clear messages** that reference the issue (e.g. `Refs #42`). Use `Refs` in commits; save closing keywords (`Closes`, `Fixes`) for the **PR body** — see the example below and `references/github-workflow.md` for when to use each.
 8. **Push and create a pull request** using `gh-as-agent`:
 
 ```bash
