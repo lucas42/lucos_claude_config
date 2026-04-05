@@ -54,6 +54,15 @@ This script returns a list of all open pull requests across unarchived `lucas42`
 
 If the script returns no results, simply report that there are no open PRs awaiting review.
 
+### Understanding the two auto-merge workflows
+
+There are two separate auto-merge workflows — do not conflate them:
+
+- **`dependabot-auto-merge.yml`** — merges Dependabot PRs. Does **NOT** check `unsupervisedAgentCode`. Dependabot PRs should auto-merge on any repo that has this workflow, regardless of supervised/unsupervised status.
+- **`code-reviewer-auto-merge.yml`** — merges PRs approved by `lucos-code-reviewer[bot]`. This one **does** check `unsupervisedAgentCode` — on supervised repos, bot approval alone won't trigger merge.
+
+The `unsupervisedAgentCode` flag is irrelevant to Dependabot PRs. If an approved Dependabot PR is not merging, investigate the dependabot-auto-merge workflow (startup failure, missing file, etc.) — do not attribute it to the supervised flag.
+
 ### Stuck PR Audit
 
 As part of every "review any open PRs" pass, also audit each open PR for signs it is stuck — i.e. it cannot make progress without intervention, and no one is actively working on it. A PR is stuck if any of the following are true:
