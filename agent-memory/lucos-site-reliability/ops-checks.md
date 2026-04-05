@@ -2,9 +2,9 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-03-14
-info_endpoint_quality: 2026-03-14
-external_deps: 2026-03-14
+ci_status: 2026-04-05
+info_endpoint_quality: 2026-04-05
+external_deps: 2026-04-05
 
 ## Container Log Review History
 
@@ -41,22 +41,22 @@ lucos_arachne_ingestor: 2026-03-19
 lucos_arachne_search: 2026-03-19
 lucos_arachne_triplestore: 2026-03-19
 lucos_mail_docs: 2026-03-21
-lucos_photos_postgres: 2026-03-15
+lucos_photos_postgres: 2026-04-05
 lucos_photos_redis: 2026-03-21
-lucos_scenes: 2026-03-15
+lucos_scenes: 2026-04-05
 lukeblaney_co_uk: 2026-03-21
 lucos_media_manager: 2026-03-21
 lucos_media_metadata_api: 2026-03-21
 lucos_monitoring: 2026-03-18
-lucos_media_seinn: 2026-03-15
-tfluke: 2026-03-15
+lucos_media_seinn: 2026-04-05
+tfluke: 2026-04-05
 lucos_media_metadata_api_exporter: 2026-03-19
 lucos_media_metadata_manager: 2026-03-20
 lucos_notes: 2026-03-19
 lucos_root: 2026-03-20
 lucos_router: 2026-03-19
 semweb: 2026-03-20
-lucos_time: 2026-03-16
+lucos_time: 2026-04-05
 lucos_arachne_mcp: 2026-03-19
 lukeblaney_blog: 2026-04-02
 
