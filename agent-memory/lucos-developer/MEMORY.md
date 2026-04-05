@@ -137,3 +137,7 @@ jobs:
 
 - Node/Express app. Routes in `src/routes/`. Tests in `__tests__/routes.js`. Run with `npm test`.
 - `getEvents(since=null)` in `routes/events.js` — defaults to `DEFAULT_VIEW_WINDOW_MS` (7 days) when `since` is null. Both websocket catch-up and `GET /events` use this default.
+
+## PR Process
+
+- [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
