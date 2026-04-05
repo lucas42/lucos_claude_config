@@ -94,23 +94,24 @@ See topic files for details. Key patterns confirmed in operation:
 - `ValidationError is not defined` in `src/server/v3.js:19` firing on every request to that route handler. Service still responds but route is broken. Issue raised as lucos_media_seinn#176 (P2, 2026-03-05). Likely related to issue #175 (CodeQL security fixes in same file).
 
 ## lucos_repos — Known Issues
-- Issue #39 (TLS x509 failure, P1): closed/resolved. Incident report written (lucos/pull/40).
-- Issue #46 (P2, 2026-03-06): closed/completed. Root cause was calling `/orgs/lucas42/repos` — `lucas42` is a user account not an org. Fix: changed to `/users/lucas42/repos`. Note: the original diagnosis of "GitHub App permission scope issue" was wrong — it was a plain wrong API path.
+- Issue #39 (TLS x509 failure): closed/resolved. Incident report written (lucos/pull/40).
+- Issue #46: closed — wrong API path (`/orgs/` vs `/users/` for a user account).
 
 ## lucos_comhra — Known Issues
-- Issue #3 (P2, 2026-03-06): containers missing `restart: always`. Closed/completed — lucos-developer added `restart: always` to both `llm` and `agent` services.
+- Issue #3: closed — added `restart: always` to `llm` and `agent` services.
 
 ## lucos_media_metadata_manager — Known Issues
-- Issue #58 (P3, 2026-03-10): PHP warnings `Undefined array key` for optional POST fields (`offence`, `about`, `mentions`) in `updatetrack.php` lines 22-23. Non-fatal but indicates missing `isset()` / null coalescing for optional form fields. Fix: use `$_POST["fieldname"] ?? null`.
+- Issue #58 (P3, 2026-03-10): PHP warnings for missing isset() on optional POST fields in updatetrack.php.
 
 ## lucos_arachne — Known Issues
-- Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. All three exited (code 255, likely host restart) and stayed down. `web`+`explore` have `restart: always` so they recovered. `/search` returned 502; `/_info` was healthy — monitoring blind to the outage. Manually restarted containers to restore service.
-- Issue #91 (closed 2026-03-15): `lucos_arachne_web` Docker healthcheck IPv6 localhost fix — confirmed healthy in production.
-- Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk `GET /metadata/all/data/` fetch on every container start — 554KB, ~17 seconds, fires immediately on startup even during deployment waves. Canonical issue (#115 was filed first by SRE but closed as duplicate of #116 which had more detail).
+- Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
+- Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
+- **Triplestore 400 root cause (2026-04-05)**: 265+ `trackUpdated` webhook failures. Loganne event URL is `media-metadata.l42.eu/tracks/ID` → redirects to `media-api.l42.eu/v3/tracks/ID`. `lucos_media_metadata_api` has no `/v3/tracks` route, so the response is non-RDF (JSON or error). Fuseki rejects non-RDF data with 400. PR #218 (URL encoding fix) was a red herring — the encoding wasn't the root cause. Fix needs: v3 RDF endpoint OR redirect target changed to `/v2/tracks/`.
+- **Loganne retry-webhooks endpoint** requires `Authorization: Bearer $KEY_LUCOS_LOGANNE` header (returns 302→auth otherwise).
 
 ## lucos_backups — Known Issues
-- lucos_backups#34 (closed/completed 2026-03-06): prune/tracking job timing out on xwing — `find + du -sh {} \;` per-file too slow (1,373 files). Fix: switched to `find -printf %s` to avoid per-file `du` spawns. lucos_backups#43 was a duplicate raised by SRE during ops check, closed as not_planned.
-- lucos_backups#57 / PR #56 (2026-03-12): P1 outage — lucos-loganne-pythonclient and lucos-schedule-tracker-pythonclient both call `sys.exit()` at import time if `SYSTEM` env var is not set. The old local loganne.py hardcoded the system name and needed no env vars. Migrating to the PyPI clients without adding `SYSTEM` to docker-compose `environment:` passthrough caused immediate crash loop on startup. Fix: add `SYSTEM`, `ENVIRONMENT`, `APP_ORIGIN` to environment block. **General lesson**: when switching from a hand-rolled util to a PyPI client that reads env vars at import time, always audit the new import-time requirements against the docker-compose environment passthrough.
+- lucos_backups#34 (closed): prune job timing out on xwing — `du -sh {} \;` per-file too slow. Fix: `find -printf %s`.
+- lucos_backups#57 / PR #56 (P1 2026-03-12): PyPI clients `lucos-loganne-pythonclient` and `lucos-schedule-tracker-pythonclient` call `sys.exit()` at import if `SYSTEM` env var missing. Crash loop on startup. Fix: add `SYSTEM`, `ENVIRONMENT`, `APP_ORIGIN` to docker-compose environment. **General lesson**: when switching from hand-rolled utils to PyPI clients, audit new import-time env var requirements first.
 - **Lesson**: Before raising an issue during ops checks, search recently closed issues for the same repo/symptom. The monitoring alert that triggered #43 was still live because the fix for #34 hadn't deployed yet — the alert being red does not guarantee no issue exists.
 
 ## lucos_time — Known Issues
@@ -166,7 +167,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Incident reports for lucos_repos#39 and lucos_arachne#60 written 2026-03-06 via lucos/pull/40.
 - Claude Code caches persona files at conversation start — mid-session changes to persona files are NOT picked up in the same session. If the persona file is updated mid-session, the new instructions won't be visible until the next conversation.
 
-## /_info Schema Compliance
+## _info Schema Compliance
 - lucos/issues/35 (/_info missing fields): closed/completed 2026-03-06. Resolution: lucos-architect wrote the formal spec doc in `docs/`. Per-service compliance tickets are follow-up work (filed separately). Do NOT re-raise #35.
 - Services still missing `checks` (known gap, per-service tickets pending): lucos_scenes, lucos_eolas, lucos_configy, lucos_private, lukeblaney.co.uk, semweb.lukeblaney.co.uk.
 - Many older services also missing `title` — follow-up tickets from lucos-architect.
