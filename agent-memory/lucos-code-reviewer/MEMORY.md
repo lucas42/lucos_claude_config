@@ -154,3 +154,4 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Texas horned lizard / Horned lizard / Phrynosoma (2026-03-05, 2026-03-17, 2026-03-19) — DO NOT USE, used three times
 - Spiny softshell turtle / Apalone spinifera (2026-03-05, 2026-03-06, 2026-03-23) — DO NOT USE, used multiple times
 - Bog turtle (2026-03-05, 2026-03-21, 2026-04-02) — used 3 times, avoid for now
+- Eastern hognose snake (2026-04-05)
