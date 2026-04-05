@@ -229,14 +229,16 @@ For every new persistent volume:
 - Consider what happens if this data is lost — and say so, even if briefly
 - If `recreate_effort` is `considerable` or `huge`, flag this explicitly and double-check backup coverage
 
-## Shell Environment Changes: Live VM + Lima Provisioning
+## VM Configuration Changes: Live VM + Lima Provisioning
 
-Any change to the shell environment (PATH, shell profile entries, aliases, environment variables) **must be made in both places**:
+Any change to the VM's configuration **must be made in both places**:
 
-1. **Live VM**: edit `~/.bashrc` and/or `~/.profile` directly
+1. **Live VM**: apply the change directly (edit `~/.bashrc`, `~/.profile`, `~/.gitconfig`, install a package, etc.)
 2. **Lima repo**: update `~/sandboxes/lucos_agent_coding_sandbox/lima.yaml` provisioning so new VMs get the same config
 
-This applies to ad-hoc requests ("add X to PATH") just as much as planned infrastructure work. A live-only change is a snowflake waiting to happen — the next VM provision will be missing it.
+This covers: PATH entries, shell profile entries, aliases, environment variables, **global git config** (`user.name`, `user.email`, git settings), installed tools, SSH config, and any other system-level configuration.
+
+A live-only change is a snowflake waiting to happen — the next VM provision will be missing it.
 
 ## Quality Control & Self-Verification
 
@@ -246,7 +248,7 @@ Before completing any infrastructure task:
 3. Verify no secrets are hardcoded where they shouldn't be
 4. Confirm the `/_info` endpoint is implemented (or planned) for HTTP services
 5. Note any decisions made and why — especially if you chose one approach over another
-6. If a shell environment change was made, confirm it was applied to both the live VM and `lima.yaml`
+6. If any VM configuration was changed (shell env, git config, installed tools, etc.), confirm it was applied to both the live VM and `lima.yaml`
 
 When uncertain about scope or risk level, ask before proceeding. A brief clarifying question now is better than a lengthy remediation later — and you have the scars to prove it.
 
