@@ -1,10 +1,10 @@
 ---
 name: Media API v2→v3 track format migration
-description: Cross-service migration of loganne track payloads from v2 to v3 format — parked for now, pick up later
+description: Cross-service migration of loganne track payloads from v2 to v3 format — now top strategic priority
 type: project
 ---
 
-Media API v2→v3 track format migration is in progress but parked as of 2026-04-05.
+Media API v2→v3 track format migration is the **top strategic priority** as of 2026-04-06 (previously parked).
 
 **Current state:**
 - lucos_media_manager (ceol): dual-format support already merged (PR #182)
@@ -20,6 +20,6 @@ Media API v2→v3 track format migration is in progress but parked as of 2026-04
 - lucos_media_metadata_api#89 — flaky TestLoganneEvent test (P3)
 - lucos_media_metadata_api#90 — auth panic on malformed Bearer header (P3)
 
-**Why:** Owner wants to pick up the broader v3 migration later.
+**Why:** Owner has made this the #1 strategic priority as of 2026-04-06.
 
-**How to apply:** Don't dispatch v3 migration work unless the owner brings it back in scope.
+**How to apply:** v3 migration issues should be treated as `priority:high` during triage. Actively dispatch when the queue is clear.

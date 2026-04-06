@@ -117,6 +117,23 @@ There are two distinct auto-merge workflows — do not conflate them:
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 - Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
 
+## Fetching GitHub Actions Logs
+
+### `audit-dry-run` is advisory, not a required status check
+- `audit-dry-run` in `lucos_repos` is **not** a required status check — auto-merge does not wait for it. It is purely informational for the reviewer.
+- A failing `audit-dry-run` does not block merge and does not warrant a REQUEST_CHANGES review on its own. Investigate the failure, but do not treat it as a hard gate.
+- Confirmed: PRs #291 and #292 merged correctly despite `audit-dry-run` failing (rate limit hit during the sweep).
+
+### Always use `gh-as-agent` for job logs — never raw curl
+- **Use the job-level logs endpoint** via `gh-as-agent` to read actual log text:
+  ```bash
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+    "repos/lucas42/{repo}/actions/jobs/{job_id}/logs"
+  ```
+  This returns plain text, pipe through `grep` to find the relevant error.
+- **Never use raw `curl`** to fetch GitHub Actions logs. `get-app-token` does not exist in this environment. An unauthenticated request may follow redirects to a cached/stale zip artifact with completely wrong content and wrong timestamps — exactly what happened when diagnosing lucos_repos PR #291 (reported `auto-merge-secrets` 403s from 2026-03-20; real failure was a rate limit at `fetchRepos` on 2026-04-06).
+- To get the job ID for a failing check-run: `gh-as-agent ... "repos/.../actions/runs/{run_id}/jobs?per_page=10" --jq '.jobs[] | {id, name, conclusion}'`
+
 ## Repo-Specific Review Rules
 
 ### lucos_repos
