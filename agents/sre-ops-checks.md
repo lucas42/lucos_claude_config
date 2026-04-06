@@ -41,6 +41,14 @@ Fetch `https://monitoring.l42.eu/api/status` and inspect the response.
 
 A monitoring check that has been failing for days without investigation or escalation is a process failure. The purpose of ops checks is to catch and act on problems — not to passively observe them.
 
+**Never dismiss failures as "transient" without detail.** When reporting unhealthy or unknown systems, always include:
+- The specific system names that are alerting
+- The root cause of each failure (not just "transient" or "rate limit")
+- What will cause the alert to clear (e.g. "the next audit sweep will re-populate the cache", "the rate limit resets at HH:MM")
+- When that is expected to happen (a concrete time or timeframe, not "should self-heal")
+
+"Transient" is not an explanation — it's a prediction that the problem will go away on its own. State what the problem is, why you believe it will resolve, and when. If you don't know when, that's worth saying explicitly.
+
 ---
 
 ### Check 2: Loganne Alert History
