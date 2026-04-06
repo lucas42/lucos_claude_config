@@ -96,6 +96,7 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_repos — Known Issues
 - Issue #39 (TLS x509 failure): closed/resolved. Incident report written (lucos/pull/40).
 - Issue #46: closed — wrong API path (`/orgs/` vs `/users/` for a user account).
+- Issue #285 (filed then corrected 2026-04-06): 403s on lucos_media_seinn during audit sweep. Original diagnosis (installation scope) was WRONG. Actual cause: GitHub secondary rate limits return HTTP 403 — indistinguishable from permission errors in convention check helpers. `handleRateLimitError` only wired in `fetchReposPage`, not convention checks. Triggered by deployment wave high API load. **Lesson: public repo file contents never 403 for auth reasons; 403 on public repo = transient rate limit, not permissions.**
 
 ## lucos_comhra — Known Issues
 - Issue #3: closed — added `restart: always` to `llm` and `agent` services.
