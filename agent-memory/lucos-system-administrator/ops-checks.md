@@ -580,3 +580,5 @@ certificate_expiry: 2026-04-06
 - Nearest avalon expiry: creds.l42.eu May 18 2026 (42 days) — fine.
 - All xwing certs: Jun 5 2026 (60 days) — fine.
 - No certs within 30-day renewal window. All clear.
+
+**Salvare connectivity restored** (confirmed 2026-04-06): IPv6 routing was restored by lucas42. Salvare now reachable via SSH at salvare.s.l42.eu. All containers up, no issues. No longer a coverage gap.
