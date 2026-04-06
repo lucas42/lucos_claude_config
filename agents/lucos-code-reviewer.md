@@ -88,15 +88,16 @@ As part of every "review any open PRs" pass, also audit each open PR for signs i
 
 ### Stuck PR escalation routing
 
-Do NOT try to fix stuck PRs yourself (except closing PRs on archived repos). Escalate based on the type of problem:
+Before escalating, **always try self-service fixes first**. Asking a human to intervene should be a last resort. The most common self-service fix is re-running a failed workflow — ask `lucos-system-administrator` to re-run it (they have `actions:write` access). Only escalate to the team lead for human action if the re-run fails or the problem genuinely requires human credentials (e.g. Dependabot commands that no bot can post).
 
-| Problem | Route to | How |
+| Problem | First action | Escalate to (if first action fails) |
 |---|---|---|
-| **Test failure in PR code** (tests fail, not infra) | `lucos-developer` | SendMessage with repo, PR number, failing test |
-| **CI failure** (infrastructure, runner issues, Docker errors, network timeouts, stale checks, startup failures, persistently red CI) | `lucos-site-reliability` | SendMessage — SRE triages and re-runs CircleCI; if a GitHub Actions re-run is needed (`actions:write`), SRE escalates to sysadmin |
-| **`@dependabot` command needed** (recreate, rebase) | Team lead | SendMessage — no bot has push access; this is a human action |
+| **Test failure in PR code** (tests fail, not infra) | N/A — escalate directly | `lucos-developer` — SendMessage with repo, PR number, failing test |
+| **CI failure** (infrastructure, runner issues, Docker errors, network timeouts, stale checks, startup failures, persistently red CI) | Ask `lucos-system-administrator` to re-run the failing workflow | `lucos-site-reliability` — SendMessage if re-run fails or problem recurs |
+| **Auto-merge workflow failed** (race condition, base branch modified, startup failure) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | Team lead — only if re-run fails with the same error and a `@dependabot rebase` or human action is genuinely needed |
+| **`@dependabot` command needed** (recreate, rebase) after re-run has failed | Team lead | SendMessage — no bot has push access; this is a human action |
 | **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
-| **Auto-merge not triggering** (criterion 7) | `lucos-site-reliability` | SendMessage — workflow infrastructure issue |
+| **Auto-merge not triggering** (criterion 7) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | `lucos-site-reliability` — if re-run succeeds but auto-merge still not set |
 | **Archived repo** | Close directly | Post a comment explaining why, then close |
 
 ### Post-escalation verification
