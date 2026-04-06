@@ -10,9 +10,9 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-04-05 |
-| codeql-secret-scanning | 2026-04-05 |
-<!-- last updated: 2026-04-05 (twentieth run) -->
+| dependabot-alerts | 2026-04-06 |
+| codeql-secret-scanning | 2026-04-06 |
+<!-- last updated: 2026-04-06 (twenty-first run) -->
 
 ## Monthly checks
 

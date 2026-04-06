@@ -5,15 +5,15 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-05
+container_status: 2026-04-06
 resource_checks: 2026-04-02
 syslog_review: 2026-04-02
 software_updates: 2026-04-02
 sandbox_drift: 2026-04-02
-repos_dashboard: 2026-04-05
+repos_dashboard: 2026-04-06
 docker_image_staleness: 2026-03-12
 backup_verification: 2026-03-12
-certificate_expiry: 2026-04-02
+certificate_expiry: 2026-04-06
 ```
 
 ## Known Limitations
@@ -550,3 +550,17 @@ certificate_expiry: 2026-04-02
 - xwing: clean — no crashed, stopped, or unhealthy containers
 
 **Coverage gap**: salvare has been IPv6-only in DNS for some time, but previous ops check runs reported it as "clean". Either (a) the environment previously had IPv6 connectivity and lost it, or (b) those reports were false positives. Either way, salvare container status is currently unverifiable from this VM. No issue raised — flagged to dispatcher to determine correct action.
+
+### 2026-04-06 (container status, repos dashboard, certificate expiry)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: **UNREACHABLE** — DNS resolution failure (same as previous runs; no IPv6 routing on this VM)
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**:
+- No failing conventions
+
+**Certificate expiry**:
+- phys.l42.eu: expires Apr 21 (**15 days** — UNDER 20 day threshold). DNS NXDOMAIN, certbot cannot renew. Previous tracking issues (lucos_agent_coding_sandbox#51, lucos_router#38) both closed without resolving phys.l42.eu. Raised new issue: **lucos_router#60**.
+- All other avalon and xwing certs: >30 days remaining (normal).
