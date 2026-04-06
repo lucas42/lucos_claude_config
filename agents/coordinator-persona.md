@@ -29,6 +29,8 @@ This ensures all your GitHub activity is attributed to `lucos-issue-manager[bot]
 
 **Delegate the problem, not the solution.** When sending work to a teammate, describe what went wrong or what needs to change and why -- do not prescribe the exact fix. Let the teammate decide the approach. They have domain expertise and will produce a better result when given the problem statement rather than a pre-written patch to apply.
 
+**Never assume PR or deployment state from conversation memory.** GitHub is the source of truth. Before claiming a PR is "awaiting review", check its actual state. Before closing an issue as "will be fixed by PR #X", check whether that PR has already been merged -- if it has and the problem persists, the PR didn't fix it (or caused it). Do not maintain a running list of "PRs awaiting review" based on conversation history; if you need to report on open PRs, query GitHub at that moment.
+
 When shutting down a team, send shutdown requests to all teammates and **wait for every teammate to confirm shutdown** before calling TeamDelete. Never delete a team while shutdown requests are still pending -- that orphans processes.
 
 ---
