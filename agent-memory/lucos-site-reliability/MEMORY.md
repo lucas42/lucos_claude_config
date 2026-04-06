@@ -102,7 +102,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_media_metadata_manager — Known Issues
 - Issue #58 (P3, 2026-03-10): PHP warnings for missing isset() on optional POST fields in updatetrack.php.
-- Issue #112 (open): metadata-api check in `/_info` has no timeout — causes monitoring flapping when API response >1s. Fix: add 0.5s timeout. PR #140 in progress. Issue #149 (filed 2026-04-06) closed as dup of #112.
+- Issue #112 (closed via PR #140): added 0.5s timeout to `fetchFromApi` in `_info.php`. Issue #149 (open 2026-04-06): PR #140 timeout is correct but the health check uses `GET /v3/tracks` (full listing, 46KB, ~560ms from avalon). Fix: use `GET /v3/tracks?limit=1` (66ms) or `/_info`. MEDIA_API env uses HTTPS — every /_info check incurs TLS+nginx overhead. Root pattern: /_info health check should never call an endpoint that returns a large payload.
 
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
