@@ -117,6 +117,13 @@ There are two distinct auto-merge workflows — do not conflate them:
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 - Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
 
+## gh-as-agent Body Field Gotchas
+
+### `@` in review body text — wrap in backticks or avoid
+- **`gh-as-agent ... --field body="..."`** treats any `@word` prefix as "read from file". Even when using a heredoc (so the value is already substituted by bash), if the final body string starts with `@`, gh interprets it as a file path and fails with "no such file or directory".
+- Confirmed failure: tfluke#332 — body starting with `@types/node patch bump` triggered this. Fix: wrap the `@types/node` in backticks (`\`@types/node\``).
+- **Always wrap package names starting with `@` in backticks** in review body text to avoid this issue.
+
 ## Fetching GitHub Actions Logs
 
 ### `audit-dry-run` is advisory, not a required status check
@@ -172,3 +179,6 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Spiny softshell turtle / Apalone spinifera (2026-03-05, 2026-03-06, 2026-03-23) — DO NOT USE, used multiple times
 - Bog turtle (2026-03-05, 2026-03-21, 2026-04-02) — used 3 times, avoid for now
 - Eastern hognose snake (2026-04-05)
+- Sungazer lizard / Smaug giganteus (2026-04-06)
+- Puff adder / Bitis arietans (2026-04-06)
+- Timber rattlesnake / Crotalus horridus (2026-04-06)

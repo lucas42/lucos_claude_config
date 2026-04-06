@@ -564,3 +564,19 @@ certificate_expiry: 2026-04-06
 **Certificate expiry**:
 - phys.l42.eu: expires Apr 21 (**15 days** — UNDER 20 day threshold). DNS NXDOMAIN, certbot cannot renew. Previous tracking issues (lucos_agent_coding_sandbox#51, lucos_router#38) both closed without resolving phys.l42.eu. Raised new issue: **lucos_router#60**.
 - All other avalon and xwing certs: >30 days remaining (normal).
+
+### 2026-04-06 (SECOND RUN — container status, repos dashboard, certificate spot-check)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: unreachable (known IPv6 issue)
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**:
+- One failing convention: lucos_arachne `circleci-jobs-in-required-checks` — was a stale cache false positive. Triggered rerun; convention passed immediately. Closed auto-raised issue #233 with explanation.
+
+**Certificate spot-check**:
+- phys.l42.eu cert: **no longer in router container** — previously tracked issue lucos_router#60 is closed. Fully resolved.
+- Nearest avalon expiry: creds.l42.eu May 18 2026 (42 days) — fine.
+- All xwing certs: Jun 5 2026 (60 days) — fine.
+- No certs within 30-day renewal window. All clear.

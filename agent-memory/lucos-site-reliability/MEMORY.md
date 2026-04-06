@@ -69,7 +69,7 @@ See topic files for details. Key patterns confirmed in operation:
 - lucos_deploy_orb/issues/12 (prune step timeout): closed/completed. Fix was to add a timeout wrapper or `|| true` so a stuck prune never marks a successful deploy as failed.
 - lucos_repos/issues/39 (TLS x509 failure): closed/completed. Fix was to rebuild Docker image from up-to-date base with `ca-certificates` — stale CA bundle in the container was the root cause.
 - lucos/issues/37 (Bearer scheme migration): closed. Decision: adopt `Authorization: Bearer <token>` as the estate-wide standard for new API key auth. Existing `key` scheme services to migrate over time. lucos_loganne#210 (Bearer auth for GET /events) was the first to adopt this — closed/completed.
-- lucos_creds/issues/82 (SSH connection uses unresolvable container name): closed/completed. Fix: add `hostname: lucos-creds` to the `lucos_creds` service in docker-compose and a `Host lucos_creds` + `HostName lucos-creds` block in `ui/ssh-config`. Root cause: Alpine's musl libc DNS resolver rejects hostnames with underscores (RFC non-compliant). Hyphenated alias resolves fine.
+- lucos_creds/issues/82 (SSH connection): closed/completed — hostname fix applied. BUT issue #199 (open 2026-04-06): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds` being confirmed set. Docker DNS may not register hostname as alias on all network configs. Investigate network isolation or use explicit `networks:` alias instead.
 - **Infrastructure pattern**: Docker service names with underscores may fail DNS resolution in Alpine containers (musl libc). Workaround: set `hostname:` with a hyphenated name in docker-compose and map it in SSH config / application config.
 
 ## lucos_monitoring — Known Issues
@@ -96,6 +96,7 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_repos — Known Issues
 - Issue #39 (TLS x509 failure): closed/resolved. Incident report written (lucos/pull/40).
 - Issue #46: closed — wrong API path (`/orgs/` vs `/users/` for a user account).
+- **AUDIT_APP_ID shared quota**: the production sweep and CI `audit-dry-run` share the same GitHub App installation token. Burst lucos_repos feature work (multiple PRs + prod restarts) exhausts the quota and causes both to fail. Not worth tracking as an issue (unusual); just wait for the rate limit to reset (~10-15 min) and re-trigger the dry-run via `lucos-system-administrator`.
 - Issue #285 (filed then corrected 2026-04-06): 403s on lucos_media_seinn during audit sweep. Original diagnosis (installation scope) was WRONG. Actual cause: GitHub secondary rate limits return HTTP 403 — indistinguishable from permission errors in convention check helpers. `handleRateLimitError` only wired in `fetchReposPage`, not convention checks. Triggered by deployment wave high API load. **Lesson: public repo file contents never 403 for auth reasons; 403 on public repo = transient rate limit, not permissions.**
 
 ## lucos_comhra — Known Issues
@@ -103,7 +104,7 @@ See topic files for details. Key patterns confirmed in operation:
 
 ## lucos_media_metadata_manager — Known Issues
 - Issue #58 (P3, 2026-03-10): PHP warnings for missing isset() on optional POST fields in updatetrack.php.
-- Issue #112 (closed via PR #140): added 0.5s timeout to `fetchFromApi` in `_info.php`. Issue #149 (open 2026-04-06): PR #140 timeout is correct but the health check uses `GET /v3/tracks` (full listing, 46KB, ~560ms from avalon). Fix: use `GET /v3/tracks?limit=1` (66ms) or `/_info`. MEDIA_API env uses HTTPS — every /_info check incurs TLS+nginx overhead. Root pattern: /_info health check should never call an endpoint that returns a large payload.
+- Issue #112 (closed via PR #140): added 0.5s timeout to `fetchFromApi` in `_info.php`. Issue #149 (closed/completed 2026-04-06): health check was using `GET /v3/tracks` (full listing, 46KB, ~560ms) which exceeded the 0.5s timeout. Fix: changed to `GET /v3/tracks?limit=1` (66ms). Root pattern: /_info health check should never call an endpoint that returns a large payload. Also: issue #58 (PHP isset() warnings) also affects bulkupdatetracks.php line 32 — noted in comment 2026-04-06.
 
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
