@@ -147,6 +147,12 @@ For each failing convention:
   POST https://repos.l42.eu/api/rerun?repo=lucas42/{repo}
   ```
   If a new failure appears, fix it in the same pass rather than leaving it for the next 6-hour sweep.
+  
+  **Note:** `/api/rerun` updates convention results but does **not** satisfy the `last-audit-completed` monitoring check. If monitoring is alerting on a failed sweep (e.g. after a rate limit error), trigger a full sweep instead:
+  ```
+  POST https://repos.l42.eu/api/sweep
+  ```
+  No query parameters. Returns 202; sweep runs in the background. Returns 409 if already in progress. The sweep waits for rate limits to reset (up to 5 min) rather than aborting.
 - **Complex or systemic** (e.g. the same convention failing across many repos suggesting a design problem, a convention that requires application code changes, or a fix with unclear side effects): note it in the ops check summary for the dispatcher. Do not raise GitHub issues — the audit sweep handles issue creation automatically.
 
 Do not fix violations that touch application logic or security configuration — note those in the summary for routing to the appropriate specialist.
