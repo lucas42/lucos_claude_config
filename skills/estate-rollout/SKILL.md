@@ -68,20 +68,17 @@ Wait for the system administrator to report back that the migration is complete 
 
 ## Step 5: Verify the dry-run shows no remaining failures
 
-After the migration is complete, the dry-run needs to be re-run on the same draft PR. Send a message to `lucos-system-administrator` asking them to re-trigger the audit dry-run workflow via the GitHub API:
+After the migration is complete, the dry-run needs to be re-run on the same draft PR. Send a message to `lucos-system-administrator` asking them to trigger the audit dry-run workflow via `workflow_dispatch`:
 
 ```bash
-# Find the most recent audit-dry-run workflow run for the PR's head SHA
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
-  repos/lucas42/lucos_repos/actions/workflows/audit-dry-run.yml/runs?head_sha={head_sha} \
-  --jq '.workflow_runs[0].id'
-
-# Re-run it
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
-  repos/lucas42/lucos_repos/actions/runs/{run_id}/rerun --method POST
+  repos/lucas42/lucos_repos/actions/workflows/audit-dry-run.yml/dispatches \
+  --method POST \
+  -f ref="{pr_branch_name}" \
+  -f inputs[pr_number]="{pr_number}"
 ```
 
-Only `lucos-system-administrator` has `actions:write` permission for this. Do not push empty commits to re-trigger — use the API rerun instead to keep commit history clean.
+Only `lucos-system-administrator` has `actions:write` permission for this. Do not push empty commits to re-trigger — use `workflow_dispatch` instead to keep commit history clean.
 
 Check the updated diff comment. The "new failures" count must be **zero**. An open PR on a repo does not count as resolving a violation — the PR must be merged and the repo's default branch must pass the convention.
 
