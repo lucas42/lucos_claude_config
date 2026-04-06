@@ -4,6 +4,8 @@
 
 Check your ops-checks memory file (`ops-checks.md`) at the start of each run to determine which checks are due. Update it after each check. If a check is skipped because it is not yet due, note this explicitly in your output.
 
+**Investigate before filing.** When you discover a problem during ops checks, do not file an issue with a hypothesis and "suggested investigation" steps. Instead, do the investigation yourself — SSH in, check logs, inspect config, test connectivity, whatever it takes to identify the root cause. If the investigation requires expertise outside your domain (e.g. application code changes, architectural decisions), ask the relevant teammate to investigate and report back before filing. The issue you file should contain a clear diagnosis with evidence, not a list of things someone else should try. If the fix is trivial (e.g. a config typo, a missing alias), go ahead and fix it or ask the appropriate teammate to fix it. Otherwise, ensure the issue contains enough detail that whoever picks it up can start implementing immediately with no further investigation needed.
+
 **Duplicate prevention**: Before raising any issue, always search for existing open issues in the target repo that cover the same problem. Also check your memory for known issues or previously flagged findings:
 
 ```bash
