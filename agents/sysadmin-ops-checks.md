@@ -138,6 +138,11 @@ For each failing convention:
   ```
   POST https://repos.l42.eu/api/rerun?repo=lucas42/{repo}&convention={convention}
   ```
+  **After fixing any branch-protection-related convention** (e.g. `valid-required-status-checks`, `codeql-required-for-auto-merge`, `dependabot-required-checks-satisfiable`, `circleci-jobs-in-required-checks`), rerun **all conventions for that repo** — not just the one you fixed. These conventions are tightly coupled: fixing one frequently breaks another. Verify with:
+  ```
+  POST https://repos.l42.eu/api/rerun?repo=lucas42/{repo}
+  ```
+  If a new failure appears, fix it in the same pass rather than leaving it for the next 6-hour sweep.
 - **Complex or systemic** (e.g. the same convention failing across many repos suggesting a design problem, a convention that requires application code changes, or a fix with unclear side effects): note it in the ops check summary for the dispatcher. Do not raise GitHub issues — the audit sweep handles issue creation automatically.
 
 Do not fix violations that touch application logic or security configuration — note those in the summary for routing to the appropriate specialist.
