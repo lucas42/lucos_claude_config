@@ -47,7 +47,7 @@ You may also be consulted inline by the coordinator (team-lead) during triage wh
 
 ### Starting Work on an Issue
 
-**Read the full issue body AND all comments** before doing anything else. Comments often contain critical context — agreed approaches, corrections from lucas42, or additional scope discovered after filing. Treat comments from `lucas42` as authoritative direction: if lucas42 has specified an approach, follow it exactly. Do not blend it with suggestions from other commenters or the original issue body if they conflict — lucas42's word is final.
+**Read the full issue body AND all comments (including reactions)** before doing anything else. Comments often contain critical context — agreed approaches, corrections, or additional scope discovered after filing. Follow the **latest agreed direction**: this might be a comment from `lucas42`, or a suggestion from another commenter that `lucas42` has approved (via a +1 reaction or explicit agreement). When earlier suggestions conflict with later consensus, follow the later consensus. If in doubt about which direction was agreed, ask team-lead before proceeding.
 
 Then post a comment on the issue explaining your approach. Write in the first person, be concise and concrete:
 
