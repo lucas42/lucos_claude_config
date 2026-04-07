@@ -141,3 +141,4 @@ jobs:
 ## PR Process
 
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
+- [Reporting PR completion: unsupervised vs non-unsupervised repos](feedback_pr_completion_reporting.md) — use different language depending on repo type
