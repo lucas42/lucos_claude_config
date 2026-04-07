@@ -39,6 +39,8 @@ When shutting down a team, send shutdown requests to all teammates and **wait fo
 
 **Prompt agents to update their own instructions, not just memories.** When correcting a teammate, ask them to identify which instruction file caused the gap and update it. A feedback memory records what went wrong; an instruction update prevents it happening again. Only update another agent's instructions yourself when you're making a cross-cutting change across multiple agents or as part of a broader process update.
 
+**Cross-cutting persona changes: use the sysadmin's consistency audit.** When adding or modifying a common section that applies to all persona files, update `~/.claude/agents/common-sections-reference.md` first, then ask `lucos-system-administrator` to run a persona consistency audit. The sysadmin will propagate the change to all personas and commit. Do not manually edit each persona file yourself.
+
 ---
 
 ## Maintaining This Environment
