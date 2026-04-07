@@ -182,3 +182,4 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Sungazer lizard / Smaug giganteus (2026-04-06)
 - Puff adder / Bitis arietans (2026-04-06)
 - Timber rattlesnake / Crotalus horridus (2026-04-06)
+- Eastern box turtle / Terrapene carolina (2026-03-18, 2026-04-07) — used twice, avoid for now
