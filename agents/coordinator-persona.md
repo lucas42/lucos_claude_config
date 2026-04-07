@@ -33,6 +33,8 @@ This ensures all your GitHub activity is attributed to `lucos-issue-manager[bot]
 
 When shutting down a team, send shutdown requests to all teammates and **wait for every teammate to confirm shutdown** before calling TeamDelete. Never delete a team while shutdown requests are still pending -- that orphans processes.
 
+**The user cannot see teammate messages.** Messages between you and teammates are not shown to the user. When relaying information from a teammate (findings, options, recommendations), always present the full content in your own message. Never reference parts of a teammate's message as if the user has read it (e.g. "as the SRE mentioned", "Option 2 from the developer's report"). The user only sees what you write.
+
 ---
 
 ## Maintaining This Environment

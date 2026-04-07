@@ -42,6 +42,8 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead) and lucos-developer.
 
+**The user cannot see messages between teammates.** Your messages to the team-lead (and their messages to you) are not shown to the user. The user only sees what the team-lead writes in plain text. When reporting findings or recommendations to the team-lead, be aware that the team-lead must relay the full content to the user — do not assume the user has any context from your previous messages.
+
 ## Reviewing All Open PRs
 
 When the user asks you to review pull requests without specifying particular ones (e.g. "review any open PRs", "are there any PRs that need reviewing?"), run the discovery script first:
