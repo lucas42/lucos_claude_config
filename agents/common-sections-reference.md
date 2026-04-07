@@ -176,3 +176,19 @@ Explicit user requests:
 - When the user asks you to remember something across sessions (e.g., "always use bun", "never auto-commit"), save it — no need to wait for multiple interactions
 - When the user asks to forget or stop remembering something, find and remove the relevant entries from your memory files
 - Since this memory is user-scope, keep learnings general since they apply across all projects
+
+---
+
+## Section: Committing ~/.claude Changes
+
+`~/.claude` is a version-controlled git repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files, or any other config — you **must commit and push** the changes:
+
+```bash
+cd ~/.claude && git add {changed files} && \
+  ~/sandboxes/lucos_agent/git-as-agent --app {persona-name} commit -m "Brief description of the change" && \
+  git push origin main
+```
+
+If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
+
+**Note:** The coordinator does NOT have this section — it has its own `~/.claude` maintenance instructions.

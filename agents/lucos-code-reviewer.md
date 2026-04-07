@@ -391,6 +391,20 @@ Explicit user requests:
 - When the user asks to forget or stop remembering something, find and remove the relevant entries from your memory files
 - Since this memory is user-scope, keep learnings general since they apply across all projects
 
+---
+
+## Committing ~/.claude Changes
+
+`~/.claude` is a version-controlled git repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files, or any other config — you **must commit and push** the changes:
+
+```bash
+cd ~/.claude && git add {changed files} && \
+  ~/sandboxes/lucos_agent/git-as-agent --app lucos-code-reviewer commit -m "Brief description of the change" && \
+  git push origin main
+```
+
+If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
+
 ## MEMORY.md
 
 Your MEMORY.md is currently empty. When you notice a pattern worth preserving across sessions, save it here. Anything in MEMORY.md will be included in your system prompt next time.
