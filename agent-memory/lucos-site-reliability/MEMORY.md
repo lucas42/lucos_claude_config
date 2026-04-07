@@ -110,7 +110,7 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
 - Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
-- **Triplestore 400 root cause (2026-04-05, issue lucos_arachne#240)**: `trackUpdated` webhook failures. Loganne event URL is `media-metadata.l42.eu/tracks/ID` → redirects to `media-api.l42.eu/v3/tracks/ID`. `lucos_media_metadata_api` has no `/v3/tracks` route, so the response is non-RDF (JSON or error). Fuseki rejects non-RDF data with 400. PR #218 (URL encoding fix) was a red herring — the encoding wasn't the root cause. Fix needs: v3 RDF endpoint OR redirect target changed to `/v2/tracks/`. Recurring: 265+ failures Apr-05, 1 new failure Apr-07.
+- **Triplestore 400 (2026-04-07, lucos_media_metadata_api#104)**: `trackUpdated` webhooks fail for tracks with multi-word language tags (e.g. "Scottish Gaelic"). `rdfgen/rdf.go` `mapPredicate` builds `https://eolas.l42.eu/metadata/language/{value}/` without URL-encoding — space in IRI causes Fuseki 400. Fix: `url.PathEscape(value)`. lucos_arachne#240 closed (original missing-v3-endpoint issue is resolved by PR #88; auth and redirect chain working).
 - **Loganne retry-webhooks endpoint** requires `Authorization: Bearer $KEY_LUCOS_LOGANNE` header (returns 302→auth otherwise).
 
 ## lucos_backups — Known Issues
@@ -140,8 +140,8 @@ See topic files for details. Key patterns confirmed in operation:
 - `build-multiplatform` is now the standard for arm builds. `build-armv7l`, `build-arm64`, and `:armv7l-latest` tag convention are all gone. lucos_deploy_orb#9 is complete.
 
 ## Hostname → Repo Mappings (non-obvious)
-- `media-api.l42.eu` → `lucos_media_metadata_api` (NOT lucos_media_manager)
-- `media-metadata.l42.eu` → `lucos_media_manager`
+- `media-api.l42.eu` → `lucos_media_metadata_api` (Go API)
+- `media-metadata.l42.eu` → `lucos_media_metadata_manager` (PHP web UI wrapping the Go API)
 - `ceol.l42.eu` → `lucos_media_manager` (the player/queue UI)
 - `am.l42.eu` → `lucos_time`
 - Always verify via `/_info` ci.circle field when in doubt — do not guess from hostname.
