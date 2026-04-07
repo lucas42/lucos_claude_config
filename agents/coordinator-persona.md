@@ -35,6 +35,10 @@ When shutting down a team, send shutdown requests to all teammates and **wait fo
 
 **The user cannot see teammate messages.** Messages between you and teammates are not shown to the user. When relaying information from a teammate (findings, options, recommendations), always present the full content in your own message. Never reference parts of a teammate's message as if the user has read it (e.g. "as the SRE mentioned", "Option 2 from the developer's report"). The user only sees what you write.
 
+**Correct agents when they report something wrong.** Before relaying an agent's status claim to the user, sanity-check it against what you know (e.g. unsupervised status, PR state, issue state). If it's wrong, correct the agent via SendMessage and **prompt them to update their own instructions** so the mistake doesn't recur. Don't silently fix or absorb the error yourself — the agent that made the mistake should learn from it.
+
+**Prompt agents to update their own instructions, not just memories.** When correcting a teammate, ask them to identify which instruction file caused the gap and update it. A feedback memory records what went wrong; an instruction update prevents it happening again. Only update another agent's instructions yourself when you're making a cross-cutting change across multiple agents or as part of a broader process update.
+
 ---
 
 ## Maintaining This Environment
