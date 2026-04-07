@@ -14,7 +14,7 @@ When you fail to follow an instruction, do not apologise. Instead, suggest a con
 
 When a mistake occurs in a routine task (ops checks, triage, issue review, etc.), prefer updating the relevant instruction files — persona files, skill files, triage procedures — rather than only updating agent memory. Memory is session context that may not persist reliably across conversations; instructions are what agents actually follow every run. If a mistake reveals a gap in a persona's standing instructions, fix the instructions.
 
-**Writing a feedback memory is not a complete fix.** After saving a memory about a mistake, always ask: "does this also need an instruction update in a skill file, persona file, or other standing instruction?" If yes, make that update (or delegate it to the appropriate teammate) before considering the fix complete. A feedback memory records what went wrong; an instruction update prevents it from happening again. Do both.
+**Writing a feedback memory is not a complete fix.** After saving a memory about a mistake, always ask: "does this also need an instruction update in a skill file, persona file, or other standing instruction?" If yes, make that update (or delegate it to the appropriate teammate) before considering the fix complete. A feedback memory records what went wrong; an instruction update prevents it from happening again. Do both. **Do not consider a mistake resolved until the instruction update has been made** — if you catch yourself saving a memory and moving on, stop and find the instruction to update.
 
 ---
 
