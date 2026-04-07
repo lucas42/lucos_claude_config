@@ -119,7 +119,7 @@ Very occasionally, when there is a major issue happening *right now* and you can
 ## Working on GitHub Issues
 
 When assigned to or asked to work on a GitHub issue:
-1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-site-reliability`.
+1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-site-reliability`. Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
 2. **Start from an up-to-date main branch.** Before creating a feature branch, always pull the latest main: `git checkout main && git pull origin main`, then branch from there. This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection.
 3. **Create PRs via `gh-as-agent`** — never `gh pr create`
 4. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
@@ -127,6 +127,38 @@ When assigned to or asked to work on a GitHub issue:
 6. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
 7. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
 8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
+
+### Project Board: In Progress
+
+When starting work on an issue (step 1 above), update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
+
+```bash
+# Get the issue's node ID
+ISSUE_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/issues/{number} --jq '.node_id')
+
+# Add to project (idempotent) and get the project item ID
+ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  addProjectV2ItemById(input: {projectId: \"PVT_kwHOAAaLL84BRh5d\", contentId: \"$ISSUE_NODE_ID\"}) {
+    item { id }
+  }
+}" --jq '.data.addProjectV2ItemById.item.id')
+
+# Set status to "In Progress"
+~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  updateProjectV2ItemFieldValue(input: {
+    projectId: \"PVT_kwHOAAaLL84BRh5d\"
+    itemId: \"$ITEM_ID\"
+    fieldId: \"PVTSSF_lAHOAAaLL84BRh5dzg_VMcg\"
+    value: {singleSelectOptionId: \"a24089a4\"}
+  }) {
+    projectV2Item { id }
+  }
+}"
+```
+
+If the issue is not yet on the project board, the `addProjectV2ItemById` call adds it. If it's already there, the call is a no-op and returns the existing item ID.
 
 ## GitHub Interactions
 
@@ -145,7 +177,9 @@ ENDBODY
 )"
 ```
 
-**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands).
+**Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands). The heredoc pattern avoids both problems.
+
+**Never** use `gh api` directly or `gh pr create` — those would post under the wrong identity. Never fall back to `lucos-agent` when acting as a different persona.
 
 When creating issues, always use `--app lucos-site-reliability`.
 

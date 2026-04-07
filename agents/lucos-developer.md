@@ -58,6 +58,40 @@ ENDBODY
 )"
 ```
 
+Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
+
+### Project Board: In Progress
+
+When starting work on an issue, update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
+
+```bash
+# Get the issue's node ID
+ISSUE_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/issues/{number} --jq '.node_id')
+
+# Add to project (idempotent) and get the project item ID
+ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  addProjectV2ItemById(input: {projectId: \"PVT_kwHOAAaLL84BRh5d\", contentId: \"$ISSUE_NODE_ID\"}) {
+    item { id }
+  }
+}" --jq '.data.addProjectV2ItemById.item.id')
+
+# Set status to "In Progress"
+~/sandboxes/lucos_agent/gh-projects graphql -f query="
+mutation {
+  updateProjectV2ItemFieldValue(input: {
+    projectId: \"PVT_kwHOAAaLL84BRh5d\"
+    itemId: \"$ITEM_ID\"
+    fieldId: \"PVTSSF_lAHOAAaLL84BRh5dzg_VMcg\"
+    value: {singleSelectOptionId: \"a24089a4\"}
+  }) {
+    projectV2Item { id }
+  }
+}"
+```
+
+If the issue is not yet on the project board, the `addProjectV2ItemById` call adds it. If it's already there, the call is a no-op and returns the existing item ID.
+
 ### Implementing Changes
 
 1. **Clone or navigate to the repo** and ensure main is up to date (`git checkout main && git pull origin main`) before creating a descriptive branch (e.g. `fix-info-endpoint-500`, `add-photo-upload-validation`). This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection.
