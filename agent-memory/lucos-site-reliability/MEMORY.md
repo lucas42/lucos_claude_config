@@ -110,7 +110,7 @@ See topic files for details. Key patterns confirmed in operation:
 ## lucos_arachne — Known Issues
 - Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
 - Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
-- **Triplestore 400 root cause (2026-04-05)**: 265+ `trackUpdated` webhook failures. Loganne event URL is `media-metadata.l42.eu/tracks/ID` → redirects to `media-api.l42.eu/v3/tracks/ID`. `lucos_media_metadata_api` has no `/v3/tracks` route, so the response is non-RDF (JSON or error). Fuseki rejects non-RDF data with 400. PR #218 (URL encoding fix) was a red herring — the encoding wasn't the root cause. Fix needs: v3 RDF endpoint OR redirect target changed to `/v2/tracks/`.
+- **Triplestore 400 root cause (2026-04-05, issue lucos_arachne#240)**: `trackUpdated` webhook failures. Loganne event URL is `media-metadata.l42.eu/tracks/ID` → redirects to `media-api.l42.eu/v3/tracks/ID`. `lucos_media_metadata_api` has no `/v3/tracks` route, so the response is non-RDF (JSON or error). Fuseki rejects non-RDF data with 400. PR #218 (URL encoding fix) was a red herring — the encoding wasn't the root cause. Fix needs: v3 RDF endpoint OR redirect target changed to `/v2/tracks/`. Recurring: 265+ failures Apr-05, 1 new failure Apr-07.
 - **Loganne retry-webhooks endpoint** requires `Authorization: Bearer $KEY_LUCOS_LOGANNE` header (returns 302→auth otherwise).
 
 ## lucos_backups — Known Issues
