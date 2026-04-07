@@ -117,7 +117,10 @@ This also applies to `@dependabot` commands: if someone posts `@dependabot recre
 After approving any PR, perform these checks before moving on:
 
 1. **Check CI status.** Never approve a PR with failing CI — always verify check-runs AND commit statuses before posting an `APPROVE` review. If CI is failing, post `REQUEST_CHANGES` instead, regardless of code quality.
-2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field. If it's `null`, check the Actions runs API for the head SHA for any workflow with `startup_failure` or `failure` — if found, flag as stuck (criterion 7). Do not rely on checking for a specific workflow filename; repos use different names for their auto-merge workflows.
+2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field.
+   - **If `auto_merge` is non-null:** auto-merge is enabled and the PR will merge when CI passes. Report this as "auto-merge enabled".
+   - **If `auto_merge` is null:** first check `unsupervisedAgentCode` for the repo: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`. If `false`, auto-merge not being enabled is **expected behaviour** — the repo is supervised and requires lucas42's approval to merge. Report this as "awaiting lucas42 approval" rather than "auto-merge triggered". Only flag as stuck (criterion 7) if `unsupervisedAgentCode` is `true` but `auto_merge` is still null — then check the Actions runs API for any workflow with `startup_failure` or `failure`.
+   - **Never report "auto-merge triggered" or "auto-merge succeeded" based solely on the workflow check-run having `conclusion: success`.** The workflow succeeding on a supervised repo means it ran and correctly did nothing. The only reliable signal is `auto_merge` being non-null on the PR itself.
 
 When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (escalated to whom, or closed). If no stuck PRs were found, omit the section.
 

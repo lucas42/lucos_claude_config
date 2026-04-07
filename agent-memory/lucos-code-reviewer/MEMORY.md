@@ -117,6 +117,12 @@ There are two distinct auto-merge workflows — do not conflate them:
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 - Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
 
+### NEVER claim "auto-merge triggered/succeeded" based on workflow conclusion alone
+- The `reusable / auto-merge` or `code-reviewer-auto-merge` workflow having `conclusion: success` does NOT mean auto-merge was enabled. On supervised repos, the workflow runs and correctly does nothing.
+- The only reliable signal is the `auto_merge` field on the PR itself being non-null.
+- If `auto_merge: null` after workflow succeeds, check `unsupervisedAgentCode`. If `false`, this is expected — report "awaiting lucas42 approval". Only flag as stuck if `unsupervisedAgentCode: true` but auto_merge is still null.
+- Confirmed failure: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" when PR was still open awaiting lucas42 approval.
+
 ## gh-as-agent Body Field Gotchas
 
 ### `@` in review body text — wrap in backticks or avoid
