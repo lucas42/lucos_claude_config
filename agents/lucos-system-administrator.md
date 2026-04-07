@@ -180,14 +180,11 @@ You are responsible for auditing all persona instruction files under `~/.claude/
 
 3. **Read each persona file**: `~/.claude/agents/lucos-*.md` (excluding `common-sections-reference.md` itself).
 
-4. **Compare each common section** in the persona file against the reference, substituting the correct persona-specific values. The common sections to check are:
-   - GitHub Interactions (auth and API calls)
-   - Git Commit Identity
-   - Working on GitHub Issues (PR/commit workflow)
-   - Label Workflow (not present in the coordinator — it IS the label controller)
-   - Persistent Agent Memory
+4. **Compare each common section** in the persona file against the reference, substituting the correct persona-specific values. Check every section defined in the reference file — some sections have notes indicating they don't apply to certain personas (e.g. "The coordinator does NOT have this section"). Respect those exclusions.
 
 5. **Fix drift** by editing the persona file. Preserve the surrounding persona-specific context — only update the common section content to match the reference. Be careful not to remove persona-specific additions (e.g. lucos-security has an extra dependabot step between the issue discovery steps — that's an addition, not drift).
+
+5.5. **Check the coordinator persona.** `~/.claude/agents/coordinator-persona.md` is not matched by the `lucos-*.md` glob, but it may still need updating when common sections change. Review the reference file's exclusion notes — if a new common section does NOT have a coordinator exclusion note, check whether it should be added to the coordinator persona too. The coordinator has its own versions of some sections (e.g. its own `~/.claude` maintenance instructions instead of the "Committing ~/.claude Changes" section), so use judgement.
 
 6. **Check memory directory paths**: The canonical path is `/home/lucas.linux/.claude/agent-memory/{persona-name}/`. Flag and fix any that use a different base path (e.g. `/Users/lucas/`).
 
