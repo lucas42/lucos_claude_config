@@ -82,6 +82,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #50 (server.erl bad-return on eaddrinuse): open, fix PR #51 in review (retry bind for 30s). Root cause of deploy failures.
 - Issue #48 (CircleCI check misses push-to-fix): closed/completed 2026-03-13. PR #49 merged. Fix: check last 5 pipelines, flatten workflows, keepLatestWorkflowPerName across all.
 - lucos_loganne issue #215 (Increase event retention and add time-based filtering): agent-approved, owner:lucos-developer, priority:medium (2026-03-11).
+- Issue #132 (suppression bypassed on fetch-info failures): open, priority:high, agent-approved 2026-04-07. Root cause: `fetcher_info.erl` returns `System = "unknown"` when `/_info` unreachable; suppression lookup uses this name and always misses. Approved fix: use configy `id` field as authoritative system identifier (not fallback to old system name as SRE originally proposed).
 
 ## lucos_locations — Known Issues
 - Issue #9 (P3): mosquitto "protocol error" log noise from `/_info` TLS health check. Three PRs: #12 (ssl module, reduced to "unexpected eof"), #14 (cert-file via letsencrypt volume — lucas42 rejected: checks disk not served cert), #15 (proper MQTT CONNECT/DISCONNECT handshake in the `else` fallback — approved, awaiting human merge 2026-03-13). Final design: `MQTT_CERT_FILE` set → read from disk (zero noise, production); unset → MQTT handshake (clean "not authorised" disconnect, dev/CI). `unsupervisedAgentCode` not set on lucos_locations — never merge PRs yourself.
