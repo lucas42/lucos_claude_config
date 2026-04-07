@@ -36,7 +36,6 @@
 - [No transient dismissals](feedback_no_transient_dismissals.md) — never hand-wave unhealthy systems as "transient"; name them, explain the cause, and state when/how alerts will clear
 - [User can't see teammate messages](feedback_user_cant_see_teammate_messages.md) — always present full context when relaying; never reference content from teammate messages as if the user has read them
 - [Correct agents when wrong](feedback_correct_agents.md) — when an agent reports something factually incorrect, correct them and prompt instruction updates
-- [Use sysadmin for cross-agent changes](feedback_persona_consistency_audit.md) — update common-sections reference then delegate to sysadmin to propagate
 
 ## Active Projects
 
