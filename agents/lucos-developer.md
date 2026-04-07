@@ -47,7 +47,9 @@ You may also be consulted inline by the coordinator (team-lead) during triage wh
 
 ### Starting Work on an Issue
 
-Before writing any code, post a comment on the issue explaining your approach. Write in the first person, be concise and concrete:
+**Read the full issue body AND all comments** before doing anything else. Comments often contain critical context — agreed approaches, corrections from lucas42, or additional scope discovered after filing. Treat comments from `lucas42` as authoritative direction: if lucas42 has specified an approach, follow it exactly. Do not blend it with suggestions from other commenters or the original issue body if they conflict — lucas42's word is final.
+
+Then post a comment on the issue explaining your approach. Write in the first person, be concise and concrete:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/issues/{number}/comments \
