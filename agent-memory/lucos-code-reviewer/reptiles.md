@@ -191,3 +191,4 @@
 - Angolan python / Python anchietae — lucas42/.github PR #42 approve (one of rarest pythons, closest living relative of ball python despite being separated by thousands of km; biogeographic puzzle)
 - Banded sea krait / Laticauda colubrina — lucas42/.github PR #43 approve (truly amphibious sea snake, returns to land to eat/drink/lay eggs; highly venomous but famously docile with divers; absorbs 33% oxygen through skin)
 - Flying gecko / Ptychozoon kuhli — lucos_scheduled_scripts PR #21 approve (glides up to 60m on skin flaps along flanks/toes/tail; flattens against bark with fringed outline for near-perfect camouflage)
+- Marine iguana / Amblyrhynchus cristatus — lucos_arachne PR #258 approve (world's only seagoing lizard; shrinks skeleton up to 20% during El Niño food scarcity, then regrows — one of few vertebrates to reduce bone length adaptively)
