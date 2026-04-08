@@ -37,6 +37,8 @@
 - [User can't see teammate messages](feedback_user_cant_see_teammate_messages.md) — always present full context when relaying; never reference content from teammate messages as if the user has read them
 - [Correct agents when wrong](feedback_correct_agents.md) — when an agent reports something factually incorrect, correct them and prompt instruction updates
 - [Delegate instruction updates to agents](feedback_delegate_instruction_updates.md) — ask agents to update their own persona files, don't edit directly (running agents won't see disk changes)
+- [Don't broadcast shutdown requests](feedback_shutdown_no_broadcast.md) — structured messages can't be broadcast; send individual shutdown_request to each teammate
+- [Fix instructions on recurring hard errors](feedback_fix_instructions_on_hard_errors.md) — when a routine operation hits a structural error, update instructions immediately without being asked
 
 ## Active Projects
 
