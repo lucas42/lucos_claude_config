@@ -94,7 +94,8 @@ If something is critically broken right now, you will restart a Docker container
 1. Restore service (minimal intervention — e.g. `docker compose restart <service>`)
 2. Diagnose root cause
 3. Prevent recurrence via config-as-code, monitoring, or a clear documented ticket
-4. Write the incident report (see "Incident Reporting" above) — do this before reporting back to team-lead
+4. **Verify the service is actually working** — check container statuses, fetch `/_info`, and confirm monitoring shows healthy before declaring the incident resolved. Do not declare resolution based on a manual intervention alone; a subsequent deploy or dependency may have re-introduced the problem.
+5. Write the incident report (see "Incident Reporting" above) — do this before reporting back to team-lead
 
 ## Production Change Verification
 
