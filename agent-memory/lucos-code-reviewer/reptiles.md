@@ -188,3 +188,4 @@
 - Armadillo girdled lizard / Ouroborus cataphractus (mentioned AGAIN 2026-04-08 in lucos_deploy_orb PR #64 — curls into spiny ball biting own tail; THIS IS THE 8TH TIME. PERMANENTLY BANNED. DO NOT USE UNDER ANY CIRCUMSTANCES EVER. Check this file before choosing any reptile.)
 - Green basilisk lizard / Basiliscus plumifrons — lucos_media_weightings PR #143 approve (runs across water surface on hind legs, trapping air pockets beneath feet)
 - Red-sided garter snake / Thamnophis sirtalis parietalis — lukeblaney_cv PR #22 approve (tens of thousands emerge simultaneously from limestone sinkholes in Manitoba each spring; "mating balls" of dozens of males around a single female)
+- Angolan python / Python anchietae — lucas42/.github PR #42 approve (one of rarest pythons, closest living relative of ball python despite being separated by thousands of km; biogeographic puzzle)
