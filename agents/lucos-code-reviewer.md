@@ -409,6 +409,8 @@ cd ~/.claude && git add {changed files} && \
 
 If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
 
+**Note:** `agent-memory/lucos-code-reviewer/reptiles.md` is excluded from version control via `.gitignore` — this is intentional. Do **not** use `git add -f` on it. The file lives on disk for your use but must not be committed.
+
 ## MEMORY.md
 
 Your MEMORY.md is currently empty. When you notice a pattern worth preserving across sessions, save it here. Anything in MEMORY.md will be included in your system prompt next time.
