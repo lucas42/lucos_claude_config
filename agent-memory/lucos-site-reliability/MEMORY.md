@@ -98,7 +98,11 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #39 (TLS x509 failure): closed/resolved. Incident report written (lucos/pull/40).
 - Issue #46: closed — wrong API path (`/orgs/` vs `/users/` for a user account).
 - **AUDIT_APP_ID shared quota**: the production sweep and CI `audit-dry-run` share the same GitHub App installation token. Burst lucos_repos feature work (multiple PRs + prod restarts) exhausts the quota and causes both to fail. Not worth tracking as an issue (unusual); just wait for the rate limit to reset (~10-15 min) and re-trigger the dry-run via `lucos-system-administrator`.
+- **last-audit-completed alert pattern**: the audit sweep only runs on container startup or via `POST /api/sweep`. If the sweep fails (e.g. configy momentarily down during a deploy wave), no automatic retry occurs — alert stays red until the next container restart or a manual sweep trigger. When alert fires, trigger `POST https://repos.l42.eu/api/sweep` immediately. Sweep takes 5-15 min (rate limit waits). Alert clears ~1 min after sweep completes.
 - Issue #285 (filed then corrected 2026-04-06): 403s on lucos_media_seinn during audit sweep. Original diagnosis (installation scope) was WRONG. Actual cause: GitHub secondary rate limits return HTTP 403 — indistinguishable from permission errors in convention check helpers. `handleRateLimitError` only wired in `fetchReposPage`, not convention checks. Triggered by deployment wave high API load. **Lesson: public repo file contents never 403 for auth reasons; 403 on public repo = transient rate limit, not permissions.**
+
+## lucos_docker_health — Known Issues
+- Issue #58 (open, P3, 2026-04-08): Docker socket `context deadline exceeded` flood during deploy waves — 80+ warnings in 2min when old containers are stopped/removed and the checker still tries to inspect them. Container recovers cleanly; this is log noise only.
 
 ## lucos_comhra — Known Issues
 - Issue #3: closed — added `restart: always` to `llm` and `agent` services.
@@ -108,8 +112,9 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #112 (closed via PR #140): added 0.5s timeout to `fetchFromApi` in `_info.php`. Issue #149 (closed/completed 2026-04-06): health check was using `GET /v3/tracks` (full listing, 46KB, ~560ms) which exceeded the 0.5s timeout. Fix: changed to `GET /v3/tracks?limit=1` (66ms). Root pattern: /_info health check should never call an endpoint that returns a large payload. Also: issue #58 (PHP isset() warnings) also affects bulkupdatetracks.php line 32 — noted in comment 2026-04-06.
 
 ## lucos_arachne — Known Issues
-- Issue #62 (P2, 2026-03-06): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Closed — restarted manually.
+- Issue #62 (open, priority:low): `search`, `triplestore`, `ingestor` containers missing `restart: always`. Triplestore went down again 2026-04-07, causing Loganne webhook-error-rate alerts. #241 (duplicate) closed. Fix still needed in docker-compose.yml.
 - Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
+- Issue #250 (open, 2026-04-08): ingestor fails to fetch contacts data — `contacts.l42.eu/people/all` requires auth, returns redirect to login. Contacts not ingested into triplestore/search.
 - **Triplestore 400 (2026-04-07, lucos_media_metadata_api#104)**: `trackUpdated` webhooks fail for tracks with multi-word language tags (e.g. "Scottish Gaelic"). `rdfgen/rdf.go` `mapPredicate` builds `https://eolas.l42.eu/metadata/language/{value}/` without URL-encoding — space in IRI causes Fuseki 400. Fix: `url.PathEscape(value)`. lucos_arachne#240 closed (original missing-v3-endpoint issue is resolved by PR #88; auth and redirect chain working).
 - **Loganne retry-webhooks endpoint** requires `Authorization: Bearer $KEY_LUCOS_LOGANNE` header (returns 302→auth otherwise).
 
