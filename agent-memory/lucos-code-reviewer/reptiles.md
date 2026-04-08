@@ -190,3 +190,4 @@
 - Red-sided garter snake / Thamnophis sirtalis parietalis — lukeblaney_cv PR #22 approve (tens of thousands emerge simultaneously from limestone sinkholes in Manitoba each spring; "mating balls" of dozens of males around a single female)
 - Angolan python / Python anchietae — lucas42/.github PR #42 approve (one of rarest pythons, closest living relative of ball python despite being separated by thousands of km; biogeographic puzzle)
 - Banded sea krait / Laticauda colubrina — lucas42/.github PR #43 approve (truly amphibious sea snake, returns to land to eat/drink/lay eggs; highly venomous but famously docile with divers; absorbs 33% oxygen through skin)
+- Flying gecko / Ptychozoon kuhli — lucos_scheduled_scripts PR #21 approve (glides up to 60m on skin flaps along flanks/toes/tail; flattens against bark with fringed outline for near-perfect camouflage)
