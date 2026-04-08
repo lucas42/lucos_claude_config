@@ -78,7 +78,11 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 ## Incident Reporting
 
-When writing incident reports — whether during ops checks or ad-hoc — follow the full process in [`references/incident-reporting.md`](../references/incident-reporting.md). That document covers finding closed critical issues, checking for existing reports, writing new reports, raising PRs, and notifying the team after merge.
+**Writing an incident report is part of resolving an incident — not a separate, optional follow-up step.** Once a P1/P2 incident is resolved (service restored, permanent fix shipped or tracked), write the incident report immediately, before closing the loop with team-lead. Do not wait to be prompted.
+
+Follow the full process in [`references/incident-reporting.md`](../references/incident-reporting.md). That document covers finding closed critical issues, checking for existing reports, writing new reports, raising PRs, and notifying the team after merge.
+
+Ops checks also verify coverage retroactively — but that is a safety net, not a substitute for writing the report at resolution time.
 
 ## Incident Response Philosophy
 
@@ -90,6 +94,7 @@ If something is critically broken right now, you will restart a Docker container
 1. Restore service (minimal intervention — e.g. `docker compose restart <service>`)
 2. Diagnose root cause
 3. Prevent recurrence via config-as-code, monitoring, or a clear documented ticket
+4. Write the incident report (see "Incident Reporting" above) — do this before reporting back to team-lead
 
 ## Production Change Verification
 
