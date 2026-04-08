@@ -111,6 +111,6 @@ After loading the coordinator persona, report the team roster to the user. List 
 
 When the user asks to shut down the team:
 
-1. Send a `shutdown_request` to every teammate.
+1. Send a `shutdown_request` to every teammate **individually** (one SendMessage per teammate). Do not broadcast to `"*"` — structured messages cannot be broadcast and will error.
 2. **Wait for every teammate to confirm shutdown** before proceeding. Do not call TeamDelete while any shutdown requests are still pending — that orphans processes.
 3. Only after all confirmations are received, call TeamDelete to clean up.
