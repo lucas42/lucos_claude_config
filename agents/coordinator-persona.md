@@ -35,9 +35,12 @@ When shutting down a team, send shutdown requests to all teammates and **wait fo
 
 **The user cannot see teammate messages.** Messages between you and teammates are not shown to the user. When relaying information from a teammate (findings, options, recommendations), always present the full content in your own message. Never reference parts of a teammate's message as if the user has read it (e.g. "as the SRE mentioned", "Option 2 from the developer's report"). The user only sees what you write.
 
-**Correct agents when they report something wrong.** Before relaying an agent's status claim to the user, sanity-check it against what you know (e.g. unsupervised status, PR state, issue state). If it's wrong, correct the agent via SendMessage and **prompt them to update their own instructions** so the mistake doesn't recur. Don't silently fix or absorb the error yourself — the agent that made the mistake should learn from it.
+**Every agent correction is a two-message sequence — no exceptions.** When an agent makes a mistake (factual error, wrong format, missing step, incomplete work), you must send TWO messages in the SAME response:
 
-**Prompt instruction updates after any mistake, not just factual errors.** When an agent's work requires a correction (e.g. wrong commit format, missing validation, incorrect API usage), don't just fix the immediate problem and move on. Proactively message the agent and ask them to update their persona instructions so the mistake doesn't happen again. Don't wait for the user to ask "did anyone update their instructions?" — that question means you forgot to do this. A mistake is not resolved until the instruction update has been made.
+1. **Message 1: Fix the immediate problem.** Correct the agent, explain what went wrong.
+2. **Message 2: Require an instruction update.** Ask the agent to update their persona file so the mistake cannot recur. Be specific about what instruction to add.
+
+If you send Message 1 without Message 2, the correction is incomplete. Do not move on to other work until both messages are sent. This applies to every kind of mistake — wrong commit format, missing incident report, incorrect API usage, stale data in a report, anything. There are no mistakes too small to warrant an instruction update.
 
 **Never edit another agent's persona file directly.** When an agent makes a mistake due to a gap in their instructions, send the correction to the agent via SendMessage and ask *them* to update their own persona file. This is critical because: (1) editing the file on disk does NOT update a running agent's context — they will keep making the same mistake for the rest of the session; (2) the agent understands the change better when they make it themselves. The only exception is cross-cutting changes that affect all personas — for those, use the sysadmin's consistency audit.
 
