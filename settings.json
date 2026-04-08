@@ -10,7 +10,7 @@
   "mcpServers": {
     "lucos_arachne": {
       "type": "http",
-      "url": "https://arachne.l42.eu/mcp/"
+      "url": "https://arachne.l42.eu/mcp"
     }
   }
 }
