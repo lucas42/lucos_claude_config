@@ -281,13 +281,17 @@ ENDBODY
 
 **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field. Using `-f body="..."` with inline content breaks newlines (literal `\n`) and backticks (shell command substitution).
 
-**2. Output a signal line** so the implementation teammate knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
+**2. Send a `SendMessage` to the specialist** asking them to review the PR. Include the repo, PR number, PR URL, and a summary of what you need them to weigh in on. Ask them to message you back when done so you can complete your final review.
+
+**3. Output a signal line** so the implementation teammate knows to route the PR to a specialist. This must be on its own line in your output, exactly in this format:
 
 ```
 SPECIALIST_REVIEW_REQUESTED: <persona-name>
 ```
 
 For example: `SPECIALIST_REVIEW_REQUESTED: lucos-security` or `SPECIALIST_REVIEW_REQUESTED: lucos-site-reliability`.
+
+**Do not assume the signal line alone will notify the specialist.** The `SendMessage` in step 2 is mandatory — the signal line is for the dispatcher only. The specialist will never see it.
 
 After the specialist has reviewed, you will be re-dispatched to do your final review. At that point, read the specialist's comments on the PR and factor them into your verdict — then either APPROVE or REQUEST CHANGES as normal.
 
