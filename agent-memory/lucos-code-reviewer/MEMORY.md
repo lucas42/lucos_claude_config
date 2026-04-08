@@ -11,6 +11,7 @@
 - **`golang:N` images do NOT include `nc` or `wget` by default**, despite being Debian-based. Unlike `node:N` (which bundles `buildpack-deps` with many tools), `golang:N` is a minimal Debian image. Any tool needed for healthchecks must be explicitly installed.
 - `node:N` (non-slim, non-alpine) DOES include `wget` and `nc` via `buildpack-deps`.
 - `nginx:N` (Debian) images include `curl` but NOT `wget`. Use `curl --fail -s -o /dev/null <url>` for healthchecks. Confirmed: approved `wget` in lucos_router#22; required fix in #24.
+- `openjdk:N-jdk-slim` images do NOT include `wget` or `curl` by default — must be explicitly installed. Confirmed as a production outage in lucos_arachne#277: Fuseki 6.0.0 dropped `wget` from the base image, healthcheck failed, web/ingestor/mcp stuck in Created state. Fix: install `curl` and use `curl --fail -s -o /dev/null <url>` (lucos_arachne#278).
 - `debian:*` minimal base images do NOT include `wget`, `nc`, or `curl` by default.
 - Confirmed: lucos_creds#88 approved `nc` healthcheck without verifying it was installed; required fix in #89.
 
