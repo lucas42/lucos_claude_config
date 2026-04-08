@@ -104,8 +104,10 @@ When asked to triage an issue:
 
 ### Step 3: Take Action
 
-**If there any agreed changes that need to be made to the issue:**
-1. Check that the changes have been suggested by, or approved by, user `lucas42`
+**Always reconcile the issue body with its comments.** Before taking any triage action, check whether the comments contain information that materially changes the issue — e.g. revised approach, new constraints, discovered prior art, refined scope, corrected assumptions, or dependency changes. If they do, update the issue body to incorporate that information so the body is the canonical, self-contained description of the work. The implementing agent reads the body, not the full comment history — if the body is stale, they'll implement the wrong thing.
+
+**If there are agreed changes that need to be made to the issue:**
+1. Check that the changes have been suggested by, or approved by, user `lucas42` or by a consulted agent whose input is uncontroversial
 2. Update the issue body with any clarifications, improvements or alterations agreed on in the comments:
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
