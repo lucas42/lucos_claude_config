@@ -199,3 +199,6 @@
 - Mata mata turtle / Chelus fimbriata — lucos PR #75 approve (catches fish entirely through suction; mouth opening creates vortex pulling prey in whole; never chews; shell/skin textured to mimic dead leaves and bark for riverbed camouflage)
 - American alligator / Alligator mississippiensis — lucos_arachne PR #286 approve (listed as endangered 1967, recovered and delisted by 1987 — one of first major ESA success stories; "gator holes" retain water in dry seasons providing habitat for dozens of other species, making it a keystone species)
 - Green basilisk lizard / Basiliscus plumifrons — lucos_search_component PR #112 approve (runs across water on hind legs; nickname 'Jesus Christ lizard'; slaps water with fringed feet trapping air pockets; juveniles can cover ~4.5m before sinking)
+- Frilled-neck lizard / Chlamydosaurus kingii — lucos_arachne PR #288 approve (runs bipedally at up to 30km/h; neck frill is a bluff display to appear larger; almost always enough to deter predators)
+- Woma python / Aspidites ramsayi — lucos_eolas PR #149 approve (no heat-sensing pit organs; hunts by scent/vibration; kills prey by pressing against burrow walls; immune to venom of snakes it eats)
+- Indian star tortoise / Geochelone elegans — lucos_media_manager PR #204 approve (more active during monsoon rains; star scute geometry helps right itself when flipped)
