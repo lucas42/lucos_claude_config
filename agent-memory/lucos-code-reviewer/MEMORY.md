@@ -189,3 +189,5 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Puff adder / Bitis arietans (2026-04-06)
 - Timber rattlesnake / Crotalus horridus (2026-04-06)
 - Eastern box turtle / Terrapene carolina (2026-03-18, 2026-04-07) — used twice, avoid for now
+- Armadillo girdled lizard / Ouroborus cataphractus (8 uses across 2026-03-04 to 2026-04-08) — PERMANENTLY BANNED, used in EVERY session
+- Reticulated python (*Malayopython reticulatus*) (2026-04-08) — lucos_search_component PR #107
