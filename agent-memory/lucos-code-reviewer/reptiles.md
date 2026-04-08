@@ -198,3 +198,4 @@
 - Spiny-tailed monitor / Varanus acanthurus — lucos_arachne PR #262 approve (can distinguish between individual humans by scent alone, remembering specific people across encounters)
 - Mata mata turtle / Chelus fimbriata — lucos PR #75 approve (catches fish entirely through suction; mouth opening creates vortex pulling prey in whole; never chews; shell/skin textured to mimic dead leaves and bark for riverbed camouflage)
 - American alligator / Alligator mississippiensis — lucos_arachne PR #286 approve (listed as endangered 1967, recovered and delisted by 1987 — one of first major ESA success stories; "gator holes" retain water in dry seasons providing habitat for dozens of other species, making it a keystone species)
+- Green basilisk lizard / Basiliscus plumifrons — lucos_search_component PR #112 approve (runs across water on hind legs; nickname 'Jesus Christ lizard'; slaps water with fringed feet trapping air pockets; juveniles can cover ~4.5m before sinking)
