@@ -192,3 +192,5 @@ cd ~/.claude && git add {changed files} && \
 If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
 
 **Note:** The coordinator does NOT have this section — it has its own `~/.claude` maintenance instructions.
+
+**Note (lucos-code-reviewer only):** The code-reviewer's copy of this section has an additional paragraph after the standard text, noting that `agent-memory/lucos-code-reviewer/reptiles.md` is gitignored intentionally and must not be force-added. This is a persona-specific addition — preserve it during audits, do not remove it.
