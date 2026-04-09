@@ -220,3 +220,5 @@
 - Chinese water dragon / Physignathus cocincinus — lucos_media_metadata_api PR #134 approve (holds breath up to 25 min submerged; slows heart rate; unusual aquatic breath-holding for an agamid)
 - Children's python / Antaresia childreni — lucos_repos PR #305 approve (named after zoologist John George Children, not children-friendly; hunts microbats in flight from cave ledges at dusk)
 - Eyelash palm pit viper / Bothriechis schlegelii — lucos_loganne PR #371 re-approve (superciliary scales look like eyelashes; unique among pit vipers; extremely polychromatic — green, yellow, brown, pink with no correlation to habitat)
+- False gharial / Tomistoma schlegelii — lucos_loganne PR #373 approve (narrow snout like gharial but takes large prey — deer, macaques, proboscis monkeys; 'false' reflects convergent shape, not lesser capability)
+- Reticulated python / Malayopython reticulatus — lucos_repos PR #307 approve [DUPLICATE — also used 2026-04-08; do not use again soon] (world's longest snake; longest individual 7.5m+; ambush predator; can take prey as large as deer)
