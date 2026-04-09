@@ -217,3 +217,5 @@
 - African spurred tortoise / Centrochelys sulcata — lucos_contacts PR #618 re-approve (world's largest mainland tortoise >90kg; burrows 3m deep to escape midday heat; months without water)
 - Mangrove monitor / Varanus indicus — lucos_photos PR #286 re-approve (genuinely cobalt blue tongue for threat display; excellent swimmer, crosses sea between mangrove islands)
 - African fat-tailed gecko / Hemitheconyx caudicinctus — lucos_deploy_orb PR #65 approve (eublepharid with movable eyelids; tail swells to nearly head-width when fat reserves are full)
+- Chinese water dragon / Physignathus cocincinus — lucos_media_metadata_api PR #134 approve (holds breath up to 25 min submerged; slows heart rate; unusual aquatic breath-holding for an agamid)
+- Children's python / Antaresia childreni — lucos_repos PR #305 approve (named after zoologist John George Children, not children-friendly; hunts microbats in flight from cave ledges at dusk)
