@@ -119,7 +119,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
 - Issue #250 (open, 2026-04-08): ingestor fails to fetch contacts data — `contacts.l42.eu/people/all` requires auth, returns redirect to login. Contacts not ingested into triplestore/search.
 - **Triplestore 400 (2026-04-07, lucos_media_metadata_api#104)**: `trackUpdated` webhooks fail for tracks with multi-word language tags (e.g. "Scottish Gaelic"). `rdfgen/rdf.go` `mapPredicate` builds `https://eolas.l42.eu/metadata/language/{value}/` without URL-encoding — space in IRI causes Fuseki 400. Fix: `url.PathEscape(value)`. lucos_arachne#240 closed (original missing-v3-endpoint issue is resolved by PR #88; auth and redirect chain working).
-- **Loganne webhook retry**: per-event endpoint is `POST /events/:uuid/retry-webhooks` — see "Loganne Webhook Retry Operations" section for full retry procedure. No bulk endpoint exists.
+- **Loganne webhook retry**: auto-retry fires after ~30s; bulk endpoint `POST /events/retry-webhooks` for backlogs — see "Loganne Webhook Retry Operations" section.
 
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed): prune job timing out on xwing — `du -sh {} \;` per-file too slow. Fix: `find -printf %s`.
@@ -209,10 +209,12 @@ See topic files for details. Key patterns confirmed in operation:
 - **`@dependabot` commands require push access** — no agent app has push access, so `@dependabot rebase`, `@dependabot recreate`, etc. are silently ignored. When a Dependabot PR needs rebasing (e.g. `mergeable_state: unstable` with "Base branch was modified"), escalate to lucas42 to run the command manually. Do NOT attempt to post `@dependabot` commands.
 
 ## Loganne Webhook Retry Operations
-- Retry endpoint: `POST /events/:uuid/retry-webhooks` with `Authorization: Bearer $KEY_LUCOS_LOGANNE`
+- **Automatic retry** (as of lucos_loganne PR #371): on initial webhook failure, a single retry fires automatically after ~30 seconds. If that also fails, the failure is permanent. Transient deploy-window failures should now self-heal without intervention.
+- **Bulk retry endpoint**: `POST /events/retry-webhooks` with `Authorization: Bearer $KEY_LUCOS_LOGANNE` — retries all events with failed webhooks, oldest first. Rate-limited. Use this after a longer outage to clear a backlog.
+- **Per-event retry**: `POST /events/:uuid/retry-webhooks` with `Authorization: Bearer $KEY_LUCOS_LOGANNE`. Still available for targeted retries.
 - The events API defaults to a **7-day window** (`DEFAULT_VIEW_WINDOW_MS`). The `webhook-error-count` metric counts across **all 10000 events** in memory.
 - To surface failures older than 7 days, use `?since=2026-01-01` (or another early date): `GET /events?since=2026-01-01`
-- Always use the `since` parameter when doing a full retry sweep — failures can accumulate in the older portion of the event window and be missed by the default view.
+- If `webhook-error-rate` fires during ops checks, wait ~60s before manually intervening — the auto-retry will likely clear it. Only use bulk retry if failures persist after that window.
 
 ## GitHub API
 - Always use `--app lucos-site-reliability` with `gh-as-agent`.
