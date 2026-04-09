@@ -40,6 +40,8 @@
 - [Don't broadcast shutdown requests](feedback_shutdown_no_broadcast.md) — structured messages can't be broadcast; send individual shutdown_request to each teammate
 - [Fix instructions on recurring hard errors](feedback_fix_instructions_on_hard_errors.md) — when a routine operation hits a structural error, update instructions immediately without being asked
 - [Act on identified gaps immediately](feedback_act_on_identified_gaps.md) — when you identify an instruction update is needed, make it in the same response; don't just note it as a good idea
+- [Check PR state before reporting](feedback_check_pr_state.md) — always query GitHub for actual state before presenting status summaries
+- [No "execution failure" excuse](feedback_no_execution_failure_excuse.md) — unfollowed instructions are bad instructions; always improve the instruction
 
 ## Active Projects
 

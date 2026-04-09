@@ -206,3 +206,5 @@
 - Sidewinder rattlesnake / Crotalus cerastes — lucos_contacts_googlesync_import PR #119 approve (sidewinding gait; only two contact points with sand; minimises heat transfer and energy loss)
 - Olive sea snake / Aipysurus laevis — lucos_contacts_gphotos_import PR #33 approve (photoreceptors in skin across entire body; detects light changes without eyes; avoids ambush while sheltering)
 - Malagasy giant chameleon / Furcifer oustaleti — lucos_media_metadata_api PR #129 approve (largest chameleon, up to 68cm; colour shifts for social signalling and thermoregulation, not camouflage; resting colour already cryptic)
+- King cobra / Ophiophagus hannah — lucos PR #77 approve (only snake species that builds a nest; female guards eggs throughout incubation; longest venomous snake; uniquely specialises in eating other snakes)
+- Gopher tortoise / Gopherus polyphemus — lucos_arachne PR #290 approve (keystone species; burrows up to 3m deep x 9m long; shelter for 360+ other species; removal cascades into ecosystem-wide habitat loss)
