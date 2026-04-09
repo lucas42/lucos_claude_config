@@ -81,6 +81,20 @@ See `~/.claude/references/docker-conventions.md` for canonical Docker convention
 - **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
 - **`php:*-apache` images include `curl` but NOT `wget`** — use `curl -sf http://127.0.0.1/` for healthchecks, no Dockerfile install step needed. `-f` treats HTTP errors as failures (wget doesn't do this by default).
 
+## Python test stubs (sys.modules injection)
+
+When stubbing modules via `sys.modules` before importing a server module in tests:
+- **Always pop stubs after import** (`sys.modules.pop(mod_name, None)`) if other test files in the same pytest session import the real module — stale stubs cause `ImportError` on real module attributes.
+- **waitress**: must stub `waitress` with `stub.serve = lambda *a, **kw: None` for WSGI servers using waitress.
+- **Pattern** (for pytest files): save stub names list before import, pop after import.
+
+## Java Mockito — Phase-dependent auth mocks
+
+When refactoring auth checks in Java controllers, ALL mock-creating helpers must be updated:
+- `compareRequestResponse` — mock helper, needs auth setup
+- `checkNotAllowed` — separate mock helper, easy to miss
+If switching from `hasAuthorizationHeader() && !isAuthorised()` (Phase 1) to `!isAuthorised()` (Phase 3), add `when(request.isAuthorised()).thenReturn(true)` to BOTH helpers.
+
 ## Never Merge PRs (recurring failure — critical)
 
 **STOP. Do not call the merge endpoint.** `pr-review-loop.md` step 2 is explicit: "do not merge. Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents." `unsupervisedAgentCode = YES` means auto-merge handles it — it does NOT mean I should merge. After approval: report back, done.
