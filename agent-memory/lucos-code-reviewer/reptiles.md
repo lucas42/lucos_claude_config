@@ -260,3 +260,7 @@
 - Woma python / Aspidites ramsayi — lucos_media_weightings PR #150 approve (lacks heat-sensing pit organs entirely; hunts by chemical tracking; constricts prey against burrow walls in tight spaces)
 - Marine iguana / Amblyrhynchus cristatus — lucos_loganne PR #378 approve (only marine lizard; slows heart rate 50% while diving; sneezes out accumulated salt through nasal glands)
 - Mata mata turtle / Chelus fimbriata — lucos_loganne PR #379 approve (looks like dead leaves; suction-feeds by snapping mouth open to create vacuum; cannot chew, only swallow)
+
+## 2026-04-09 (loading indicator review)
+
+- Diamondback terrapin / Malaclemys terrapin — lucos_media_metadata_manager PR #191 approve (only North American turtle adapted exclusively to brackish water; salt-excreting glands around eyes; tolerates fresh water to full seawater)
