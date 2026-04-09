@@ -42,6 +42,7 @@
 - [Act on identified gaps immediately](feedback_act_on_identified_gaps.md) — when you identify an instruction update is needed, make it in the same response; don't just note it as a good idea
 - [Check PR state before reporting](feedback_check_pr_state.md) — always query GitHub for actual state before presenting status summaries
 - [No "execution failure" excuse](feedback_no_execution_failure_excuse.md) — unfollowed instructions are bad instructions; always improve the instruction
+- [Merged is not deployed](feedback_merged_not_deployed.md) — don't say "deployed" or "live" when a PR has just been merged; deployment takes time
 
 ## Active Projects
 
