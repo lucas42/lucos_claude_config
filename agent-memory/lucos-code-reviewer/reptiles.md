@@ -211,7 +211,7 @@
 - Emerald tree boa / Corallus caninus — lucos_arachne PR #292 approve (convergent evolution with green tree python; independently evolved identical body shape, colouring, resting posture, and juvenile colour change)
 - European glass lizard / Pseudopus apodus — lukeblaney_co_uk PR #35 approve (legless lizard; distinguished from snakes by movable eyelids, ear openings, vestigial hind limb stubs; can shed tail)
 
-## 2026-04-09
+## 2026-04-09 (continued)
 
 - Gharial / Gavialis gangeticus — lucos_creds PR #218 approve (needle-thin 110-tooth snout for snatching fish; males develop bulbous ghara on snout tip for vocalisation and bubble-blowing during courtship)
 - African spurred tortoise / Centrochelys sulcata — lucos_contacts PR #618 re-approve (world's largest mainland tortoise >90kg; burrows 3m deep to escape midday heat; months without water)
@@ -235,3 +235,7 @@
 - Common wall lizard / Podarcis muralis — lucos_agent_coding_sandbox PR #56 approve (native to southern Europe; feral populations in UK cities, parts of Canada and US from escaped pets; thriving far outside natural range)
 - Rough-scaled python / Morelia carinata — lucas42/.github PR #44 approve (formally described 1976; endemic to tiny Kimberley region of northwest Australia; one of world's rarest pythons; more genetically divergent than appearance suggests)
 - Southern alligator lizard / Elgaria multicarinata — lucos_agent PR #38 approve (gives birth to live young, unusual for skink-adjacent species; females consume birth membranes after delivery to recoup nutrients)
+
+## 2026-04-09 (User-Agent batch)
+
+- Grand Cayman blue iguana / Cyclura lewisi — lucos_arachne PR #300 approve (reduced to <15 wild individuals by 2002; captive-breeding programme brought population to ~1,000; one of conservation's quieter success stories)
