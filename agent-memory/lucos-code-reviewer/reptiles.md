@@ -214,3 +214,5 @@
 ## 2026-04-09
 
 - Gharial / Gavialis gangeticus — lucos_creds PR #218 approve (needle-thin 110-tooth snout for snatching fish; males develop bulbous ghara on snout tip for vocalisation and bubble-blowing during courtship)
+- African spurred tortoise / Centrochelys sulcata — lucos_contacts PR #618 re-approve (world's largest mainland tortoise >90kg; burrows 3m deep to escape midday heat; months without water)
+- Mangrove monitor / Varanus indicus — lucos_photos PR #286 re-approve (genuinely cobalt blue tongue for threat display; excellent swimmer, crosses sea between mangrove islands)
