@@ -14,9 +14,15 @@ Before creating a new team, check whether `lucos-all-hands` already exists with 
 cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
 ```
 
-If the team exists and has members listed, send a test message to one teammate (e.g. the first member) and **wait for an actual reply in the conversation**. Do NOT proceed until you have received a response message from the teammate — a successful `SendMessage` delivery confirmation is not enough. If no reply arrives within 15 seconds, the team is stale.
+If the team exists and has members listed, send a test message to one teammate (e.g. the first member), then immediately run a short sleep to give the teammate time to respond:
 
-If the teammate replies, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (load coordinator persona). Reuse the existing team.
+```bash
+sleep 8
+```
+
+After the sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (load coordinator persona). Reuse the existing team.
+
+If no teammate reply appeared after the sleep, the team is stale. Do NOT wait any longer or ask the user — proceed directly to cleanup:
 
 If the team file doesn't exist, or exists but no teammate replies (stale from a previous session), clean up and proceed:
 
