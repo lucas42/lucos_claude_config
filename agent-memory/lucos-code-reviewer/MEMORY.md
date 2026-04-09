@@ -111,7 +111,7 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
 - If `true`: bot approval triggers `gh pr merge --auto --merge`.
 - If `false`: bot review is posted but doesn't enable auto-merge — human approval needed.
-- **Most lucos repos are supervised (`unsupervisedAgentCode: false`)**. As of 2026-04-02, only `lucos_agent_coding_sandbox` is confirmed unsupervised.
+- **Most lucos repos are supervised (`unsupervisedAgentCode: false`)**. Confirmed unsupervised as of 2026-04-09: `lucos_agent_coding_sandbox`, `lucos_repos`. Always check configy rather than assuming.
 
 ### Key distinction
 - `unsupervisedAgentCode` only affects **agent-authored PRs** (via code-reviewer-auto-merge). It has NO bearing on Dependabot PRs.
