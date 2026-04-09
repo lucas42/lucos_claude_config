@@ -222,3 +222,5 @@
 - Eyelash palm pit viper / Bothriechis schlegelii — lucos_loganne PR #371 re-approve (superciliary scales look like eyelashes; unique among pit vipers; extremely polychromatic — green, yellow, brown, pink with no correlation to habitat)
 - False gharial / Tomistoma schlegelii — lucos_loganne PR #373 approve (narrow snout like gharial but takes large prey — deer, macaques, proboscis monkeys; 'false' reflects convergent shape, not lesser capability)
 - Reticulated python / Malayopython reticulatus — lucos_repos PR #307 approve [DUPLICATE — also used 2026-04-08; do not use again soon] (world's longest snake; longest individual 7.5m+; ambush predator; can take prey as large as deer)
+- Painted turtle / Chrysemys picta — lucos_deploy_orb PR #66 approve (survives winter buried in mud at pond bottoms; absorbs oxygen through skin for months without surfacing to breathe)
+- Ringneck snake / Diadophis punctatus — lucos_monitoring PR #140 approve (rear-fanged, mildly venomous but harmless to humans; threat display is tail-coil to flash bright orange-red underside; most widespread snake in North America but rarely seen, lives under logs)
