@@ -6,14 +6,5 @@
     "defaultMode": "bypassPermissions"
   },
   "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "tmux",
-  "mcpServers": {
-    "arachne": {
-      "type": "http",
-      "url": "https://arachne.l42.eu/mcp",
-      "headers": {
-        "Authorization": "Bearer ${KEY_LUCOS_ARACHNE}"
-      }
-    }
-  }
+  "teammateMode": "tmux"
 }
