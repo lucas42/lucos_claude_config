@@ -251,3 +251,10 @@
 - Cottonmouth / water moccasin / Agkistrodon piscivorus — lucos_loganne PR #377 approve (only semi-aquatic venomous snake in North America; holds ground rather than fleeing; white mouth lining gives name)
 - Gaboon viper / Bitis gabonica — lucos_media_weightings PR #149 approve (longest fangs of any snake up to 5cm; patient ambush predator; rarely strikes defensively; stunning leaf-litter camouflage)
 - European pond turtle / Emys orbicularis — lucos_arachne PR #301 approve (one of Europe's only native freshwater turtles; confirmed 120+ years old; declining due to habitat loss and sex-ratio skew from warming nesting sites)
+
+## 2026-04-09 (webhook auth Phase 3 batch)
+
+- Frilled-neck lizard / Chlamydosaurus kingii — lucos_arachne PR #302 approve (bipedal sprint up to 30 km/h; frill is a bluff display that collapses the moment it turns to flee)
+- Lace monitor / Varanus varius — lucos_photos PR #297 approve (forked blue tongue like a snake; actively pursues prey over long distances; raids chicken coops, scales trees for eggs)
+- Jackson's chameleon / Trioceros jacksonii — lucos_monitoring PR #145 approve (males carry three horns — one rostral, two orbital; viviparous, gives birth to live young after 5–6 month gestation)
+- Woma python / Aspidites ramsayi — lucos_media_weightings PR #150 approve (lacks heat-sensing pit organs entirely; hunts by chemical tracking; constricts prey against burrow walls in tight spaces)
