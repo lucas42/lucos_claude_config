@@ -10,7 +10,7 @@ external_deps: 2026-04-05
 
 lucos_comhra_agent: 2026-03-20
 lucos_comhra_llm: 2026-03-20
-lucos_schedule_tracker: 2026-03-19
+lucos_schedule_tracker: 2026-04-09
 lucos_media_weightings: 2026-04-07
 lucos_photos_worker: 2026-04-07
 lucos_arachne_explore: 2026-04-06
@@ -28,14 +28,14 @@ lucos_contacts_web: 2026-04-06
 lucos_creds: 2026-03-20
 lucos_creds_configy_sync: 2026-04-06
 lucos_creds_ui: 2026-04-06
-lucos_dns_sync: 2026-03-19
+lucos_dns_sync: 2026-04-09
 lucos_eolas_app: 2026-04-06
 lucos_eolas_db: 2026-04-07
 lucos_eolas_web: 2026-04-07
 lucos_locations_mosquitto: 2026-04-02
 lucos_locations_otfrontend: 2026-04-02
 lucos_locations_otrecorder: 2026-04-02
-lucos_mail_smtp: 2026-03-19
+lucos_mail_smtp: 2026-04-09
 lucos_photos_api: 2026-04-02
 lucos_arachne_ingestor: 2026-04-08
 lucos_arachne_search: 2026-04-08
@@ -52,12 +52,12 @@ lucos_media_seinn: 2026-04-05
 tfluke: 2026-04-05
 lucos_media_metadata_api_exporter: 2026-04-08
 lucos_media_metadata_manager: 2026-03-20
-lucos_notes: 2026-03-19
+lucos_notes: 2026-04-09
 lucos_root: 2026-03-20
 lucos_router: 2026-04-08
 semweb: 2026-03-20
 lucos_time: 2026-04-05
-lucos_arachne_mcp: 2026-03-19
+lucos_arachne_mcp: 2026-04-09
 lukeblaney_blog: 2026-04-02
 lucos_docker_health_app: 2026-04-08
 
