@@ -119,7 +119,7 @@ See topic files for details. Key patterns confirmed in operation:
 - Issue #116 (open, P3, 2026-03-20): ingestor makes blocking bulk fetch on every container start (554KB, ~17s). Canonical issue.
 - Issue #250 (open, 2026-04-08): ingestor fails to fetch contacts data — `contacts.l42.eu/people/all` requires auth, returns redirect to login. Contacts not ingested into triplestore/search.
 - **Triplestore 400 (2026-04-07, lucos_media_metadata_api#104)**: `trackUpdated` webhooks fail for tracks with multi-word language tags (e.g. "Scottish Gaelic"). `rdfgen/rdf.go` `mapPredicate` builds `https://eolas.l42.eu/metadata/language/{value}/` without URL-encoding — space in IRI causes Fuseki 400. Fix: `url.PathEscape(value)`. lucos_arachne#240 closed (original missing-v3-endpoint issue is resolved by PR #88; auth and redirect chain working).
-- **Loganne retry-webhooks endpoint** requires `Authorization: Bearer $KEY_LUCOS_LOGANNE` header (returns 302→auth otherwise).
+- **Loganne webhook retry**: per-event endpoint is `POST /events/:uuid/retry-webhooks` — see "Loganne Webhook Retry Operations" section for full retry procedure. No bulk endpoint exists.
 
 ## lucos_backups — Known Issues
 - lucos_backups#34 (closed): prune job timing out on xwing — `du -sh {} \;` per-file too slow. Fix: `find -printf %s`.
