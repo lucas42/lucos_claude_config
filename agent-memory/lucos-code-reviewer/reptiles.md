@@ -208,3 +208,4 @@
 - Malagasy giant chameleon / Furcifer oustaleti — lucos_media_metadata_api PR #129 approve (largest chameleon, up to 68cm; colour shifts for social signalling and thermoregulation, not camouflage; resting colour already cryptic)
 - King cobra / Ophiophagus hannah — lucos PR #77 approve (only snake species that builds a nest; female guards eggs throughout incubation; longest venomous snake; uniquely specialises in eating other snakes)
 - Gopher tortoise / Gopherus polyphemus — lucos_arachne PR #290 approve (keystone species; burrows up to 3m deep x 9m long; shelter for 360+ other species; removal cascades into ecosystem-wide habitat loss)
+- Emerald tree boa / Corallus caninus — lucos_arachne PR #292 approve (convergent evolution with green tree python; independently evolved identical body shape, colouring, resting posture, and juvenile colour change)
