@@ -27,7 +27,7 @@ Each host runs `lucos_router` — a Dockerised Nginx reverse proxy that:
 
 Each service binds its `$PORT` to the host's network interfaces. The router container reaches those services via the Docker bridge gateway.
 
-**Key consequence:** the router is the intended entry point for all HTTP/HTTPS traffic. However, service ports are also bound to the host's external interface — whether they are directly reachable from the internet depends on the host's firewall configuration, which is managed separately and should not be assumed as a security control.
+**Key consequence:** the router is the intended entry point for all HTTP/HTTPS traffic, but **there is no host-level firewall**. Service ports are directly reachable from the public internet. For example, `http://178.32.218.44:8019/_info` (loganne) returns a 200 response — any internet client can reach it directly without going through nginx. The router provides TLS and domain routing, not access control. **Application-level auth (`CLIENT_KEYS`) is the only real protection for any service endpoint.**
 
 ---
 
