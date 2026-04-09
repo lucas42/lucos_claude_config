@@ -277,6 +277,8 @@ At least one of `?repo` or `?convention` is required. Returns a JSON array of pe
 
 - When diagnosing an incident: check logs first (`docker compose logs --tail=100 <service>`), then `/_info` endpoints, then recent Loganne events (to identify recent deployments or data changes that may correlate with the incident), then container health
 
+- **When investigating missing env vars in a container**: check *both* lucos_creds *and* `docker-compose.yml`. A credential can exist in lucos_creds but never reach the container if `docker-compose.yml` doesn't pass it through in the `environment:` block. The correct diagnostic sequence is: (1) check container env (`docker inspect <name> --format '{{range .Config.Env}}{{println .}}{{end}}'`), (2) if absent, check docker-compose.yml in the GitHub repo to see if it's wired up, (3) only if missing from both should you conclude it's absent from lucos_creds.
+
   Fetch recent Loganne events with:
   ```bash
   source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
