@@ -202,3 +202,7 @@
 - Frilled-neck lizard / Chlamydosaurus kingii — lucos_arachne PR #288 approve (runs bipedally at up to 30km/h; neck frill is a bluff display to appear larger; almost always enough to deter predators)
 - Woma python / Aspidites ramsayi — lucos_eolas PR #149 approve (no heat-sensing pit organs; hunts by scent/vibration; kills prey by pressing against burrow walls; immune to venom of snakes it eats)
 - Indian star tortoise / Geochelone elegans — lucos_media_manager PR #204 approve (more active during monsoon rains; star scute geometry helps right itself when flipped)
+- Shingleback skink / bobtail / Tiliqua rugosa — lucos_photos PR #284 approve (forms long-term pair bonds, reuniting for 20+ years; stubby tail mimics head to fool predators)
+- Sidewinder rattlesnake / Crotalus cerastes — lucos_contacts_googlesync_import PR #119 approve (sidewinding gait; only two contact points with sand; minimises heat transfer and energy loss)
+- Olive sea snake / Aipysurus laevis — lucos_contacts_gphotos_import PR #33 approve (photoreceptors in skin across entire body; detects light changes without eyes; avoids ambush while sheltering)
+- Malagasy giant chameleon / Furcifer oustaleti — lucos_media_metadata_api PR #129 approve (largest chameleon, up to 68cm; colour shifts for social signalling and thermoregulation, not camouflage; resting colour already cryptic)
