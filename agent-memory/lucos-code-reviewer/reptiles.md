@@ -228,3 +228,4 @@
 - Broad-headed skink / Plestiodon laticeps — lucos_deploy_orb PR #66 re-approve (largest native North American skink; males develop large bright orange-red head in breeding season for territorial display; unusually arboreal for a skink)
 - Rubber boa / Charina bottae — lucos_docker_health PR #59 approve (North America's most cold-tolerant snake, active at 6°C; presents blunt head-shaped tail to predators while protecting real head; wild adults show tail scars from this)
 - California kingsnake / Lampropeltis californiae — lucos_photos PR #291 approve (immune to rattlesnake venom; actively hunts rattlesnakes; mimics coral snake colouration in some parts of range)
+- Boa constrictor / Boa imperator — lucos_photos PR #293 approve (kills by cardiac arrest not asphyxiation; detects heartbeat and tightens between beats preventing blood pressure from building; under a minute)
