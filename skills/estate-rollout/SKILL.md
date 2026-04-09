@@ -59,7 +59,7 @@ The system administrator should merge in staggered batches where deploys are tri
 
 **Staggering applies to merges/deploys, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger a deploy. The staggering concern is about the production deploys triggered when PRs are merged:
 
-- **If merges trigger CI builds and production deploys** (e.g. application code, workflow files, config files): "Stagger the **merges** in batches of 5 repos with a few minutes between batches to avoid saturating the production host. PRs can be created all at once."
+- **If merges trigger CI builds and production deploys** (e.g. application code, workflow files, config files): "Stagger the **merges** in batches of 5 repos with **5 minutes between batches** to avoid saturating the production host. PRs can be created all at once." (The 5-minute gap is based on measured build+deploy times: most services complete in 2–4 minutes; 5 minutes ensures the previous batch has cleared before the next begins.)
 - **If merges do not trigger production deploys** (e.g. documentation-only changes): "No staggering needed."
 
 Also ask the system administrator to post a comment on the draft PR summarising what was done once the migration is complete — e.g. how many repos were migrated, any failures or repos that needed special handling. This gives the code reviewer context when they review the PR later.
