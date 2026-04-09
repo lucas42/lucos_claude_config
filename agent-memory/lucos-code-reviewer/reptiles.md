@@ -258,3 +258,4 @@
 - Lace monitor / Varanus varius — lucos_photos PR #297 approve (forked blue tongue like a snake; actively pursues prey over long distances; raids chicken coops, scales trees for eggs)
 - Jackson's chameleon / Trioceros jacksonii — lucos_monitoring PR #145 approve (males carry three horns — one rostral, two orbital; viviparous, gives birth to live young after 5–6 month gestation)
 - Woma python / Aspidites ramsayi — lucos_media_weightings PR #150 approve (lacks heat-sensing pit organs entirely; hunts by chemical tracking; constricts prey against burrow walls in tight spaces)
+- Marine iguana / Amblyrhynchus cristatus — lucos_loganne PR #378 approve (only marine lizard; slows heart rate 50% while diving; sneezes out accumulated salt through nasal glands)
