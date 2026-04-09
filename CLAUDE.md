@@ -74,4 +74,5 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 | [`references/github-config.md`](references/github-config.md) | CodeQL, Dependabot, auto-merge workflow, PEM key formatting |
 | [`references/ssh-production.md`](references/ssh-production.md) | SSH conventions, host list, safety warnings, read-only commands |
 | [`references/monitoring-loganne.md`](references/monitoring-loganne.md) | Monitoring API schema, Loganne read/write, planned maintenance events |
+| [`references/network-topology.md`](references/network-topology.md) | Production host layout, routing, inter-service comms, **no internal trusted network** |
 | [`python-testing.md`](python-testing.md) | FastAPI + SQLAlchemy testing patterns and gotchas |
