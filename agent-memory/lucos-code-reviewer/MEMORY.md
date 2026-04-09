@@ -27,6 +27,11 @@
 - **Why:** Waiting for CI before reviewing creates a window where the developer can push a new commit, making your diff stale. Posting immediately eliminates this race, and gives the author faster feedback.
 - Confirmed failure mode: lucos_configy PR #64 — read components.yaml diff, waited for CI, developer pushed scripts.yaml version in the meantime. Review was posted on a commit I hadn't examined.
 
+### Always read the full function when reviewing error handling near changed lines
+- **Before raising a concern about missing error handling (e.g. a missing guard in a catch block), read the full function from the actual file** — not just the diff. Unchanged lines (like `if (err.name === 'AbortError') return;`) won't appear in the diff but directly affect the correctness of new code.
+- If new code manipulates DOM state inside async/cancellable operations, fetch the full surrounding function to verify existing guards are present.
+- Confirmed failure: lucos_media_metadata_manager PR #191 — raised a false REQUEST_CHANGES about a missing AbortError check; the check was at line 294 in the existing code, invisible in the diff.
+
 ### Be assertive — request changes for concrete fixable issues, even minor ones
 - If you spot something concrete and fixable (e.g. an implicit ordering dependency, a missing idempotent call), **request changes** — don't bury it as a parenthetical note in an approval.
 - Reserve approvals-with-notes for genuinely subjective points or things requiring significant design discussion.
