@@ -4,7 +4,7 @@ description: Guardrailed dispatch of a single GitHub issue to the correct implem
 disable-model-invocation: false
 ---
 
-Follow this process. The issue URL is provided as an argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). Do not ask for clarification -- immediately begin.
+Follow this process. The issue URL is provided as the first argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). An optional `owner:{name}` argument may follow (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`). If provided, use that owner for dispatch in Step 5 without querying labels or the project board. Do not ask for clarification -- immediately begin.
 
 ## Step 1: Parse the issue URL and fetch issue data
 
@@ -63,7 +63,9 @@ If the issue is not an estate rollout (e.g. it's a bug fix, API change, dashboar
 
 ## Step 5: Dispatch to the correct teammate
 
-Read the owner label from the issue's labels:
+If an `owner:{name}` argument was provided (see top of this file), use that directly — skip the lookup below.
+
+Otherwise, look up the owner from the **project board** (the source of truth for issue ownership). Query the issue's project board item to find the Owner field. If the issue is not on the project board, fall back to checking issue labels for `owner:*` labels:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} --jq '[.labels[].name | select(startswith("owner:"))] | first'

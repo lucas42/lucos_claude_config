@@ -28,12 +28,16 @@ If the script reports no implementable issues, tell the user there is nothing re
 
 ## Step 2: Dispatch the issue
 
-Use the `/dispatch` skill with the issue URL from Step 1 (or from the user's ad-hoc request):
+Use the `/dispatch` skill with the issue URL and the owner from Step 1:
 
 ```
-/dispatch {issue_url}
+/dispatch {issue_url} owner:{owner}
 ```
 
-The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner label, and handles post-completion (CI verification, auto-merge, unblocking dependents).
+For example: `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`
+
+For ad-hoc dispatch (where the user gives you a URL directly), omit the owner -- `/dispatch` will look it up from the project board.
+
+The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner, and handles post-completion (CI verification, auto-merge, unblocking dependents).
 
 Wait for `/dispatch` to complete and report its outcome.
