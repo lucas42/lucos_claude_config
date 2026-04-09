@@ -239,3 +239,13 @@
 ## 2026-04-09 (User-Agent batch)
 
 - Grand Cayman blue iguana / Cyclura lewisi — lucos_arachne PR #300 approve (reduced to <15 wild individuals by 2002; captive-breeding programme brought population to ~1,000; one of conservation's quieter success stories)
+## 2026-04-09 (webhook auth migration Phase 1 batch 2)
+
+- Banded sea krait / Laticauda colubrina — lucos_photos PR #296 approve (amphibious; comes ashore to digest, drink fresh water, and lay eggs; evolutionary bridge between terrestrial and marine)
+- Mexican mole lizard / Bipes biporus — lucos_monitoring PR #144 approve (two front limbs only; burrows with hardened skull; endemic to Baja California peninsula)
+
+## 2026-04-09 (webhook auth re-reviews)
+
+- Cottonmouth / water moccasin / Agkistrodon piscivorus — lucos_loganne PR #377 approve (only semi-aquatic venomous snake in North America; stands ground rather than fleeing; white mouth lining gives the name)
+- Eastern indigo snake / Drymarchon couperi — lucos_media_manager PR #209 approve (longest native non-venomous snake in North America; immune to rattlesnake venom; actively hunts them; uses gopher tortoise burrows; federally threatened)
+- Cottonmouth / water moccasin / Agkistrodon piscivorus — lucos_loganne PR #377 approve (only semi-aquatic venomous snake in North America; holds ground rather than fleeing; white mouth lining gives name)
