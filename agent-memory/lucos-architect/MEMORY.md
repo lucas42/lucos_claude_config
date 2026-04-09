@@ -131,8 +131,13 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_creds
 - Go server, AES-GCM. SSH key .env quoting (#61). See `project-details.md`.
+- **CLIENT_KEYS is fully automated**: built from linked credential relationships, not manually editable. To add a token, create a linked credential (client → server); lucos_creds auto-populates the server's CLIENT_KEYS and gives the client a `KEY_<SERVER>` env var. Rotation is per-pair and automatic.
 - Scoped permissions (#87): agent-approved. `|` delimiter in `CLIENT_KEYS` (`client:env=key|scope1,scope2`). No scope = no permissions on migrated systems.
 - SFTP concurrency concern (#112): bulk CI pushes (~30 simultaneous) may cause partial .env files. PORT now built-in (#109, closed). General concurrency investigation open.
+
+### lucos_loganne
+- Node.js, static webhook config (`webhooks-config.json`: event type → URL[]). 5 consumer hosts.
+- Webhook auth (#374): per-consumer linked credentials agreed (v2 design). Loganne as client of each consumer. `consumerTokens` hostname→tokenVar map in config. 3-phase zero-downtime migration. 2 consumers need CLIENT_KEYS support added (media_weightings, arachne ingestor).
 
 ### lucos_media_weightings
 - Python, cron-based. Weighting explosion (#39): agent-approved. Soft cap on multiplier product: `cap * (1 - e^(-raw/cap))`, cap=100 (lucas42 chose to match highest individual multiplier). Collection size is separate problem.
