@@ -210,3 +210,7 @@
 - Gopher tortoise / Gopherus polyphemus — lucos_arachne PR #290 approve (keystone species; burrows up to 3m deep x 9m long; shelter for 360+ other species; removal cascades into ecosystem-wide habitat loss)
 - Emerald tree boa / Corallus caninus — lucos_arachne PR #292 approve (convergent evolution with green tree python; independently evolved identical body shape, colouring, resting posture, and juvenile colour change)
 - European glass lizard / Pseudopus apodus — lukeblaney_co_uk PR #35 approve (legless lizard; distinguished from snakes by movable eyelids, ear openings, vestigial hind limb stubs; can shed tail)
+
+## 2026-04-09
+
+- Gharial / Gavialis gangeticus — lucos_creds PR #218 approve (needle-thin 110-tooth snout for snatching fish; males develop bulbous ghara on snout tip for vocalisation and bubble-blowing during courtship)
