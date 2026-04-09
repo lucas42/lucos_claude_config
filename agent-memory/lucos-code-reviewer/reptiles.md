@@ -266,3 +266,4 @@
 - Diamondback terrapin / Malaclemys terrapin — lucos_media_metadata_manager PR #191 approve (only North American turtle adapted exclusively to brackish water; salt-excreting glands around eyes; tolerates fresh water to full seawater)
 - Tentacled snake / Erpeton tentaculatum — lucos_time PR #189 approve (only snake with two fleshy snout protrusions; exploits fish escape reflex with a J-stroke twitch, causing fish to dart into its mouth)
 - Burmese python / Python bivittatus — lucos_router PR #67 approve (one of the world's largest snakes, exceeding 5m; invasive in the Florida Everglades; has significantly reduced native mammal populations)
+- Alligator snapping turtle / Macrochelys temminckii — lucos#79 approve (worm-like tongue lure; lies motionless, mouth open; can exceed 100 kg; one of the world's heaviest freshwater turtles)
