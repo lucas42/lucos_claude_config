@@ -275,3 +275,7 @@
 ## 2026-04-09 (lucos_configy archival PR)
 
 - West African dwarf crocodile / Osteolaemus tetraspis — lucos_configy PR #132 approve (world's smallest crocodilian ~1.5m; largely nocturnal; spends much time on land in burrows and forest undergrowth rather than open water)
+
+## 2026-04-09 (lucos_arachne bnode fix)
+
+- Chinese water dragon / Physignathus cocincinus — lucos_arachne PR #307 approve (DUPLICATE — also used 2026-04-08 in lucos_media_metadata_api PR #134; same breath-holding/heart-rate fact; DO NOT USE AGAIN SOON)
