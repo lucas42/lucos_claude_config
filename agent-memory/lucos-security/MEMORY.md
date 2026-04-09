@@ -80,6 +80,10 @@ vue-leaflet-antimeridian uses Vue 2 (via vue2-leaflet peerDep). Vue 2 is EOL and
 
 Do not raise this alert again. If the alert resurfaces, reference the accepted risk decision in #4.
 
+## Fixed: Unauthenticated MCP Endpoint in lucos_arachne (Merged 2026-04-09)
+
+`lucos_arachne`'s MCP server was publicly accessible with no auth, exposing the full knowledge graph (contacts, media metadata, etc.) to anyone who knew the URL. Fixed in PR #292 (closes #291): Bearer token auth via `CLIENT_KEYS` added to incoming MCP requests, consistent with the `lucos_photos` auth pattern. `/_info` kept unauthenticated for monitoring. `CLIENT_KEYS` added to the `mcp` container's env block in `docker-compose.yml`. Do not re-raise.
+
 ## Fixed: DOMPurify XSS in lucos_arachne (Merged 2026-03-05)
 
 DOMPurify 3.3.2 released 2026-03-05 fixes raw-text/jsdom parsing bypass (GHSA-v2wj-7wpq-c8vv). Added `dompurify >= 3.3.2` override to `explore/package.json` and regenerated `explore/package-lock.json`. PR lucas42/lucos_arachne#52 merged. DOMPurify 3.3.2 confirmed in lock file. Dependabot alert #15 remained technically open on 2026-03-05 (likely GitHub lag). No further action needed unless it persists beyond a few days.
