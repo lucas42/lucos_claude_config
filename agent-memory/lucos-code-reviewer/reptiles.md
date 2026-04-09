@@ -249,3 +249,5 @@
 - Cottonmouth / water moccasin / Agkistrodon piscivorus — lucos_loganne PR #377 approve (only semi-aquatic venomous snake in North America; stands ground rather than fleeing; white mouth lining gives the name)
 - Eastern indigo snake / Drymarchon couperi — lucos_media_manager PR #209 approve (longest native non-venomous snake in North America; immune to rattlesnake venom; actively hunts them; uses gopher tortoise burrows; federally threatened)
 - Cottonmouth / water moccasin / Agkistrodon piscivorus — lucos_loganne PR #377 approve (only semi-aquatic venomous snake in North America; holds ground rather than fleeing; white mouth lining gives name)
+- Gaboon viper / Bitis gabonica — lucos_media_weightings PR #149 approve (longest fangs of any snake up to 5cm; patient ambush predator; rarely strikes defensively; stunning leaf-litter camouflage)
+- European pond turtle / Emys orbicularis — lucos_arachne PR #301 approve (one of Europe's only native freshwater turtles; confirmed 120+ years old; declining due to habitat loss and sex-ratio skew from warming nesting sites)
