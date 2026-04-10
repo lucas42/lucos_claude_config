@@ -202,6 +202,10 @@ When adding healthchecks, verify the probe tool is installed in the **final** im
 Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.compose.version`, `com.docker.compose.volume`. Volumes without these labels crash lucos_backups tracking for the entire host. Confirmed incident: 2026-03-17 EXIF reprocess cascade.
 
 
+## lucos_creds CircleCI env vars: manual rotation required
+
+`KEY_LUCOS_MONITORING` and `LUCOS_DEPLOY_ENV_BASE64` are set as CircleCI project env vars on `lucas42/lucos_creds` (set 2026-04-10, lucos_creds#152). Both are **outside** automatic credential rotation — manual update needed when either changes. See `lucos-creds-circleci-env-vars.md`.
+
 ## Investigations: read source before theorising
 
 Don't speculate about convention/tool internals without reading the source. See `feedback_read_before_theorising.md`.
