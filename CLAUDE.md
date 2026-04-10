@@ -77,4 +77,8 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 | [`references/ssh-production.md`](references/ssh-production.md) | SSH conventions, host list, safety warnings, read-only commands |
 | [`references/monitoring-loganne.md`](references/monitoring-loganne.md) | Monitoring API schema, Loganne read/write, planned maintenance events |
 | [`references/network-topology.md`](references/network-topology.md) | Production host layout, routing, inter-service comms, **no internal trusted network** |
+| [`references/triage-procedure.md`](references/triage-procedure.md) | Full coordinator triage procedure: steps 1–3, specialist routing, implementation assignment, priority labels |
+| [`references/audit-finding-handling.md`](references/audit-finding-handling.md) | Audit-finding issue lifecycle: when to close, re-raise rule, false-positive handling |
+| [`references/lucos-repos-api.md`](references/lucos-repos-api.md) | `lucos_repos` API: `/api/sweep` (full audit) and `/api/rerun` (ad-hoc convention recheck) |
+| [`references/issue-creation.md`](references/issue-creation.md) | How to create a new GitHub issue: duplicate check, writing, `gh-as-agent` command, project board |
 | [`python-testing.md`](python-testing.md) | FastAPI + SQLAlchemy testing patterns and gotchas |
