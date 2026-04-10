@@ -297,6 +297,8 @@ For example: `SPECIALIST_REVIEW_REQUESTED: lucos-security` or `SPECIALIST_REVIEW
 
 After the specialist has reviewed, you will be re-dispatched to do your final review. At that point, read the specialist's comments on the PR and factor them into your verdict — then either APPROVE or REQUEST CHANGES as normal.
 
+**When relaying a third-party sign-off (security, SRE, architect, etc.) in a completion report, cite the GitHub artifact.** A verbal confirmation via SendMessage is not a sign-off — it's not visible to the user, not in the PR history, and not auditable after the session ends. If you have received a confirmation via SendMessage but no GitHub artifact exists, your report must say so explicitly: "security confirmed via SendMessage but has not yet posted on the PR — chasing them for a visible review." Never paraphrase a SendMessage confirmation as "security signed off" without the GitHub link to back it up. The source of truth for PR review state is the GitHub API, not conversation history.
+
 ### 6. Check CI Status and Follow Up
 
 After posting your review, check the CI status on the PR's head commit:
