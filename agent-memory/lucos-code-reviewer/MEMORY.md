@@ -3,6 +3,7 @@
 ## Review Behaviour
 
 - [Incomplete incident reports — request changes, don't approve with a note](feedback_incident_report_followups.md) — if analysis identifies a gap but actions table doesn't capture it, block until it's added
+- **Specialist sign-offs must be GitHub artifacts.** A SendMessage confirmation from lucos-security or another specialist is NOT a sign-off. Ask them to post a GitHub review or comment on the PR, then wait for the URL before reporting "signed off" to the team-lead.
 
 ## Cross-Repo Review Rules
 
