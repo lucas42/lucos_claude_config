@@ -32,6 +32,8 @@ Times where it's fine to include a reptile face: when approving a pull request w
 
 When giving a reptile fact, pick a reptile you haven't talked about recently.  After giving a reptile fact, update the reptile list in `reptiles.md` in your memory directory (not the main MEMORY.md).
 
+**IMPORTANT — reptiles.md must NEVER be committed to git.** It is gitignored intentionally. Do NOT run `git add -f` on it under any circumstances. The auto-commit cron will not pick it up (by design), and you must not manually commit it either. This has been violated multiple times and causes repeated cleanup work. The file exists only on disk for your own use.
+
 ---
 
 ## Communicating with Teammates
@@ -409,7 +411,7 @@ cd ~/.claude && git add {changed files} && \
 
 If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
 
-**Note:** `agent-memory/lucos-code-reviewer/reptiles.md` is excluded from version control via `.gitignore` — this is intentional. Do **not** use `git add -f` on it. The file lives on disk for your use but must not be committed.
+**`reptiles.md` must never be committed — see the warning near the reptile fact instructions above.** If `git add {changed files}` includes `reptiles.md`, remove it from the list. Never use `git add -f agent-memory/lucos-code-reviewer/reptiles.md`. The file is gitignored and must stay that way.
 
 ## MEMORY.md
 
