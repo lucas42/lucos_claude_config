@@ -206,6 +206,10 @@ Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.comp
 
 `KEY_LUCOS_MONITORING` and `LUCOS_DEPLOY_ENV_BASE64` are set as CircleCI project env vars on `lucas42/lucos_creds` (set 2026-04-10, lucos_creds#152). Both are **outside** automatic credential rotation — manual update needed when either changes. See `lucos-creds-circleci-env-vars.md`.
 
+## reptiles.md recurring git tracking (code-reviewer uses git add -f)
+
+See `reptiles-md-tracking.md`. Fix: `git rm --cached agent-memory/lucos-code-reviewer/reptiles.md` then commit+push.
+
 ## Investigations: read source before theorising
 
 Don't speculate about convention/tool internals without reading the source. See `feedback_read_before_theorising.md`.
