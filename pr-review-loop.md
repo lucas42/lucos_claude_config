@@ -44,6 +44,8 @@ If the code reviewer **requested changes** and this is iteration **5**, stop the
 
 Address the code review feedback yourself -- you are the implementation teammate who created the PR. Push the fixes, increment the iteration count, and go back to step 1.
 
+**Important: this also applies when you push changes to an already-approved PR** (e.g. a rework requested by the coordinator). Pushing a new commit to a PR dismisses any prior approval and resets `review_decision` to null. After every push — including reworks — you must go back to step 1 before reporting back to the coordinator. Check that `review_decision` is not null and `mergeable_state` is not `blocked` on the new head commit before declaring the loop complete. Reporting "done" on a PR with `review_decision: null` is a failure to complete the loop.
+
 ### Step 4: Specialist review
 
 The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the teammate name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line — the persona name is also the teammate name (e.g. `lucos-security`).
