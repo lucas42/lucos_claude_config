@@ -289,3 +289,4 @@
 - Caiman lizard / Dracaena guianensis — lucos_media_metadata_api PR #142 approve (specialises in apple snails; molar-like rear teeth crack shells; spits out fragments, swallows flesh; up to 1.2m)
 - Prehensile-tailed skink / Corucia zebrata — lucos_comhra PR #38 approve (world's largest skink up to 70cm; lives in stable family groups; fully herbivorous; arboreal with prehensile tail)
 - Crested gecko / Correlophus ciliatus — lucos_comhra PR #44 approve (thought extinct for >100 years; rediscovered after 1994 cyclone in New Caledonia; can shed tail but never regrows it; now one of most popular captive reptiles)
+- Tentacled snake / Erpeton tentaculatum — lucos_monitoring PR #149 approve [DUPLICATE — also used 2026-04-09 for lucos_time PR #189; do not use again]
