@@ -91,12 +91,14 @@ If a PR was created and approved:
    ```
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
-3. **If unsupervised (exit code 0):**
-   - First, check whether any open issues are blocked by the issue this PR closes. Search in the **issue's repo** (from the original issue URL dispatched in Step 5), not the PR's repo -- these may differ when a PR in one repo closes an issue in another. Look for open issues with `status:blocked` that reference the closing issue number in their body or comments.
-   - **If there ARE dependent issues to unblock:**
-     - Wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes.
-     - If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop.
-     - Once the issue is closed, check the blocked issues yourself. Read `~/.claude/references/triage-reference-data.md` for API patterns. For each blocked issue, verify that **all** dependencies are resolved before removing `status:blocked` -- not just the one that was just closed.
+3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Search the **entire org** for open issues with `status:blocked` that reference the closing issue number in their body or comments. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), so a repo-scoped search is insufficient:
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager "search/issues?q=org:lucas42+is:open+label:status:blocked+{issue_number}+in:body"
+   ```
+   For each result, read the full issue body and comments to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed. Read `~/.claude/references/triage-reference-data.md` for API patterns to update the project board status from Blocked to Ready.
+
+4. **If unsupervised (exit code 0):**
+   - **If there are dependent issues to unblock (from step 3):** wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes. If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop. Once the issue is closed, perform the unblocking from step 3.
    - **If there are NO dependent issues:** verify that CI checks have started on the PR before moving on. Check the PR's status checks:
      ```bash
      ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'
@@ -110,5 +112,6 @@ If a PR was created and approved:
        If `mergeable_state` is `"behind"`, the branch needs rebasing before auto-merge can fire. Send the PR back to the **developer who created it** and ask them to rebase onto main and force-push. Wait for the developer to confirm the rebase is done before declaring the task complete.
      - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
-4. **If not unsupervised (exit code 1) or error (exit code 2):**
+5. **If not unsupervised (exit code 1) or error (exit code 2):**
    - Tell the user the PR needs their review and approval. Once approved, it will auto-merge. Provide the full PR URL so they can easily navigate to it.
+   - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
