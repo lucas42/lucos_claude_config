@@ -79,7 +79,7 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 ## Section: Working on GitHub Issues (PR/Commit Workflow)
 
 When assigned to or asked to work on a GitHub issue:
-1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `{persona-name}`. Also update the project board status to "In Progress" (see "Project Board: In Progress" below).
+1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `{persona-name}`.
 2. **Start from an up-to-date main branch.** Before creating a feature branch, always pull the latest main: `git checkout main && git pull origin main`, then branch from there. This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
 3. **Create PRs via `gh-as-agent`** — never `gh pr create`
 4. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
@@ -98,42 +98,6 @@ Some personas add persona-specific guidance below the 7-step list (e.g. lucos-ar
 This section appears in all implementation personas (developer, architect, sysadmin, SRE, security) near the top, after the prompts listing and inline consultation paragraph. The exact examples in parentheses vary per persona (e.g. "a drive-by bug" for developer, "a monitoring gap" for SRE). This variation is NOT drift.
 
 **Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. {persona-specific examples}), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
-
----
-
-## Section: Project Board: In Progress
-
-When starting work on an issue (step 1 of the "Working on GitHub Issues" workflow), update the **lucOS Issue Prioritisation** project board to set the issue's status to "In Progress". Use `~/sandboxes/lucos_agent/gh-projects` (not `gh-as-agent`) for project board API calls.
-
-```bash
-# Get the issue's node ID
-ISSUE_NODE_ID=$(~/sandboxes/lucos_agent/gh-as-agent --app {persona-name} repos/lucas42/{repo}/issues/{number} --jq '.node_id')
-
-# Add to project (idempotent) and get the project item ID
-ITEM_ID=$(~/sandboxes/lucos_agent/gh-projects graphql -f query="
-mutation {
-  addProjectV2ItemById(input: {projectId: \"PVT_kwHOAAaLL84BRh5d\", contentId: \"$ISSUE_NODE_ID\"}) {
-    item { id }
-  }
-}" --jq '.data.addProjectV2ItemById.item.id')
-
-# Set status to "In Progress"
-~/sandboxes/lucos_agent/gh-projects graphql -f query="
-mutation {
-  updateProjectV2ItemFieldValue(input: {
-    projectId: \"PVT_kwHOAAaLL84BRh5d\"
-    itemId: \"$ITEM_ID\"
-    fieldId: \"PVTSSF_lAHOAAaLL84BRh5dzg_VMcg\"
-    value: {singleSelectOptionId: \"a24089a4\"}
-  }) {
-    projectV2Item { id }
-  }
-}"
-```
-
-If the issue is not yet on the project board, the `addProjectV2ItemById` call adds it. If it's already there, the call is a no-op and returns the existing item ID.
-
-**Note:** The coordinator does NOT have this section — it manages the board separately as part of triage. lucos-code-reviewer also does NOT have this section — it does not implement issues.
 
 ---
 
