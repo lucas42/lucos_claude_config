@@ -284,3 +284,5 @@
 
 - Saltwater crocodile / Crocodylus porosus — lucos_media_metadata_manager PR #192 approve (world's largest living reptile; large males exceed 6m and 1,000 kg; tracked crossing 590 km of open sea in 25 days)
 - Aldabra giant tortoise / Aldabrachelys gigantea — lucos_media_metadata_api PR #141 approve (Jonathan, born ~1832, still alive on Saint Helena; oldest known living land animal; up to 250 kg; wallows in mud to cool down)
+- Caiman lizard / Dracaena guianensis — lucos_media_metadata_api PR #142 approve (specialises in apple snails; molar-like rear teeth crack shells; spits out fragments, swallows flesh; up to 1.2m)
+- Prehensile-tailed skink / Corucia zebrata — lucos_comhra PR #38 approve (world's largest skink up to 70cm; lives in stable family groups; fully herbivorous; arboreal with prehensile tail)
