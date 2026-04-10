@@ -87,6 +87,8 @@ When assigned to or asked to work on a GitHub issue:
 6. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword
 7. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
 
+**Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
+
 This section is also the workflow for the "implement issue {url}" prompt. The "Review and Implementation" intro tells the agent to follow this workflow then stop after opening one PR and completing the review loop. There is no separate "Implementing Issues" section — the PR/commit workflow here covers both review-triggered work and dispatcher-triggered implementation.
 
 Some personas add persona-specific guidance below the 7-step list (e.g. lucos-architect notes that its implementation work is typically ADRs). These additions are NOT drift.

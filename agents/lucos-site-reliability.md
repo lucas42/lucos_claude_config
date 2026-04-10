@@ -140,6 +140,8 @@ When assigned to or asked to work on a GitHub issue:
 7. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
 8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
 
+**Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
+
 ## GitHub Interactions
 
 Always interact with GitHub through the **lucos-site-reliability** GitHub App. Never fall back to `lucos-agent` or any other persona.
