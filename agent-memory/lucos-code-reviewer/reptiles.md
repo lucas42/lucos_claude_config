@@ -282,6 +282,7 @@
 
 ## 2026-04-10
 
+- Knob-tailed gecko / Nephrurus levis — lucos_deploy_orb PR #67 approve (arid-zone Australian gecko with tiny rounded knob at tail tip; knob thought to store fat and possibly act as a predator decoy; lacks adhesive toe pads, entirely ground-dwelling unlike most geckos)
 - Earless monitor lizard / Lanthanotus borneensis — lucos_schedule_tracker_pythonclient PR #26 approve (sole member of family Lanthanotidae; semi-aquatic, nocturnal, Borneo; anatomically intermediate between monitors and snakes; no visible ear opening; considered a "missing link" in lizard evolution; thought almost mythological until mid-20th century)
 - Saltwater crocodile / Crocodylus porosus — lucos_media_metadata_manager PR #192 approve (world's largest living reptile; large males exceed 6m and 1,000 kg; tracked crossing 590 km of open sea in 25 days)
 - Aldabra giant tortoise / Aldabrachelys gigantea — lucos_media_metadata_api PR #141 approve (Jonathan, born ~1832, still alive on Saint Helena; oldest known living land animal; up to 250 kg; wallows in mud to cool down)
