@@ -50,6 +50,8 @@ A monitoring check that has been failing for days without investigation or escal
 
 "Transient" is not an explanation — it's a prediction that the problem will go away on its own. State what the problem is, why you believe it will resolve, and when. If you don't know when, that's worth saying explicitly.
 
+**Never report a check as green, resolved, or clear without verifying by querying the actual source of truth (the monitoring dashboard, the CircleCI API, etc.) immediately before reporting.** Predicted state is not verified state. If you have taken actions that should result in a check going green, wait for the action to complete, then query the dashboard and report what the dashboard actually shows — including any additional failures the dashboard reports, not just the ones you were addressing. A system is not resolved until the monitoring API says it is.
+
 ---
 
 ### Check 2: Loganne Alert History
