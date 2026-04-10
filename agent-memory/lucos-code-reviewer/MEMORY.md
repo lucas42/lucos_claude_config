@@ -1,5 +1,9 @@
 # Persistent Memory — lucOS Code Reviewer
 
+## Review Behaviour
+
+- [Incomplete incident reports — request changes, don't approve with a note](feedback_incident_report_followups.md) — if analysis identifies a gap but actions table doesn't capture it, block until it's added
+
 ## Cross-Repo Review Rules
 
 ### Docker Healthchecks — `localhost` vs `127.0.0.1`
