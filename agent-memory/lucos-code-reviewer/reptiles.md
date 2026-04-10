@@ -279,3 +279,8 @@
 ## 2026-04-09 (lucos_arachne bnode fix)
 
 - Chinese water dragon / Physignathus cocincinus — lucos_arachne PR #307 approve (DUPLICATE — also used 2026-04-08 in lucos_media_metadata_api PR #134; same breath-holding/heart-rate fact; DO NOT USE AGAIN SOON)
+
+## 2026-04-10
+
+- Saltwater crocodile / Crocodylus porosus — lucos_media_metadata_manager PR #192 approve (world's largest living reptile; large males exceed 6m and 1,000 kg; tracked crossing 590 km of open sea in 25 days)
+- Aldabra giant tortoise / Aldabrachelys gigantea — lucos_media_metadata_api PR #141 approve (Jonathan, born ~1832, still alive on Saint Helena; oldest known living land animal; up to 250 kg; wallows in mud to cool down)
