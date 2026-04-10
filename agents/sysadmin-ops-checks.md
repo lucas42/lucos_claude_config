@@ -157,6 +157,15 @@ For each failing convention:
 
 Do not fix violations that touch application logic or security configuration — note those in the summary for routing to the appropriate specialist.
 
+**Investigating CircleCI required check coherence:** If you manually inspect a `required-status-checks-coherent` result and find "no CircleCI check runs" on recent commits/PR SHAs, check whether there are any open PRs on that repo. If there are **no open PRs**, checking PR-head SHAs will always return zero results — that's not evidence the check is stale, it just means no PR branches have been pushed recently. Instead, check the commit SHA statuses on recent main branch commits:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
+  "repos/lucas42/{repo}/commits/main/statuses" --jq '[.[] | .context] | unique'
+```
+If the check name appears there consistently, it's working. The convention tool checks commit SHAs (not PR SHAs), which is why it may correctly report pass even when you see no PR-head runs. Trust the convention tool over an absence of PR-head runs when there are no open PRs.
+
+Also note: CircleCI strips the orb prefix from job names when constructing GitHub status context names. A job defined as `lucos/build-multiplatform` in the config is reported as `ci/circleci: build-multiplatform` to GitHub — this is correct, not a mismatch.
+
 ---
 
 ## Monthly (3 checks)
