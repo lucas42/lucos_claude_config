@@ -43,7 +43,20 @@ Container names match the service name in `docker-compose.yml`.
 - Issue #199 (open, priority:low): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds`. Docker DNS may not register hostname as alias on all network configs.
 - Issue #152 (priority:high): **Circular deployment dependency** — creds SSH service (port 2202) restarts 7+ times during deploy waves, causing estate-wide CI failures via the `Populate known_hosts` step. Each creds deploy takes itself offline. Recurring pattern: 2026-04-09 and 2026-04-10. Self-heals as repos trigger new CI runs after creds stabilises.
 
+## Monitoring API Structure
+
+**`/api/status` response**: `systems` is a **dict keyed by URL/name** (not a list). `checks` within each system is also a **dict keyed by check name** (not a list). Check for failures with `check.get('ok') == False` (not just falsy — missing `ok` means passing). Correct pattern:
+
+```python
+data = json.load(...)
+for url, s in data['systems'].items():
+    for cname, c in s.get('checks', {}).items():
+        if c.get('ok') == False:
+            print(url, cname, c.get('value',''))
+```
+
 ## lucos_monitoring — Known Issues
+- Issue #148 (open, priority:low, owner:lucos-site-reliability): CircleCI check errors on repos with 0 active pipelines (`.github` has no CI config; `vue-leaflet-antimeridian` has config but project not activated). Fix: return neutral/unknown when 0 pipelines instead of erroring.
 - CircleCI check: v2 workflow-level API via #30/#32. Fix #48 (closed): check last 5 pipelines, flatten workflows, keepLatestWorkflowPerName to avoid race condition.
 - **Erlang OTP ssl startup**: `ensure_all_started(inets)` does NOT start ssl. Use `application:ensure_all_started([ssl, inets])` — walks full dependency chain. Closed as #52/#54.
 - lucos_arachne ingestor unhandled webhook types → 404, events dropped silently. Issue lucos_arachne#53.
@@ -88,6 +101,7 @@ Container names match the service name in `docker-compose.yml`.
 ## lucos_backups — Known Issues
 - lucos_backups#57 / PR #56: PyPI clients call `sys.exit()` at import if `SYSTEM` env var missing. **Always audit import-time env var requirements when switching to PyPI clients.**
 - Before raising issue during ops checks, search recently closed issues — the alert being red doesn't guarantee no issue exists.
+- Issue #157 (open, priority:low, owner:lucos-site-reliability): SSH command 3s timeout too tight during heavy deploy waves — `mkdir` on avalon times out under I/O load → `host-tracking-failures` + `volume-host` both fail. Self-heals in ~1hr, or trigger immediately via `POST https://backups.l42.eu/refresh-tracking`.
 
 ## lucos_contacts — Known Issues & Patterns
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` for IP-based Docker healthchecks (`wget http://127.0.0.1:<port>/_info`). General pattern for all Django services.
