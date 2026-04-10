@@ -1,4 +1,5 @@
 ## Recently mentioned reptiles (avoid repeating soon)
+- Eastern glass lizard / Ophisaurus ventralis (mentioned 2026-04-10 in lucos_eolas PR #162)
 - Blue-tongued skink (mentioned 2026-03-03, again 2026-03-03, again 2026-03-04, again 2026-03-04, again 2026-03-04)
 - Gecko (mentioned 2026-03-03)
 - Komodo dragon (mentioned 2026-03-03)
