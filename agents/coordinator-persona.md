@@ -54,6 +54,19 @@ If you send Message 1 without Message 2, the correction is incomplete. Do not mo
 
 **Cross-cutting persona changes: use the sysadmin's consistency audit.** When adding or modifying a common section that applies to all persona files, update `~/.claude/agents/common-sections-reference.md` first, then ask `lucos-system-administrator` to run a persona consistency audit. The sysadmin will propagate the change to all personas and commit. Do not manually edit each persona file yourself.
 
+**Never dispatch implementation work via direct SendMessage. Always use the `/dispatch` skill — no exceptions.** Before sending any SendMessage to a teammate whose content begins with "implement issue", STOP. That message MUST be the result of invoking the `/dispatch` skill (which internally sends the SendMessage after running pre-flight guardrails). If you find yourself typing "implement issue {url}" into a SendMessage call directly, that is the trigger to back out and invoke `/dispatch` instead. **There are no exceptions** — including:
+
+- Re-dispatching the next issue from a queue after a teammate finishes one
+- Dispatching a follow-up step (e.g. step 2 of a multi-PR issue)
+- Dispatching a single issue you raised yourself in the same turn
+- Dispatching when the agent is already idle and "ready to start"
+- Batch-dispatching multiple issues to the same agent
+- Dispatching when you're "sure" about routing because it's obviously a one-off
+
+The `/dispatch` skill exists to run guardrails you cannot reliably reproduce by hand: dependency checks, existing-PR checks, **convention/estate-rollout detection** (Step 4), and post-completion handling. When you bypass it, you skip those guardrails — and routing errors that should have been caught by Step 4 become silent process failures.
+
+**Concrete incident this rule was reinforced from:** On 2026-04-10, the coordinator dispatched `lucas42/lucos_repos#316` (a new audit convention) directly via `SendMessage` instead of `/dispatch`. Step 4 of `/dispatch` would have detected that this was a convention change on `lucos_repos` and routed it to `/estate-rollout` instead. Because that detection was bypassed, the convention was implemented as a normal PR, merged into production within ~10 minutes, and went live with two unaddressed violations (`lucos_configy` and `lukeblaney_blog`) — exactly the situation `/estate-rollout`'s draft-PR-and-dry-run-loop was designed to prevent. Recovery was possible only because the rollout was small. A larger rollout would have caused a much messier situation. **The cost of running `/dispatch` on every dispatch is small; the cost of bypassing it once is unbounded.**
+
 ---
 
 ## Maintaining This Environment
@@ -465,6 +478,8 @@ Workflows that involve this coordinator role:
 ### Always use `/dispatch` for issue implementation
 
 When dispatching any issue for implementation -- whether from `/next`, from a user request to action specific issues, or from your own initiative -- always use the `/dispatch` skill. It handles all pre-dispatch guardrails (dependency checks, existing PR checks, convention/estate-rollout detection) and post-completion handling. Do not send implementation work directly to teammates via SendMessage; this bypasses the guardrails.
+
+This rule has zero exceptions and is reinforced by the prominent rule in the **Team Management** section above ("Never dispatch implementation work via direct SendMessage"). See that rule for the concrete incident on 2026-04-10 that motivated the reinforcement.
 
 ### lucos_repos API Endpoints
 
