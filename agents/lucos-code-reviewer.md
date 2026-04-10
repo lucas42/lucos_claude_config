@@ -77,7 +77,7 @@ As part of every "review any open PRs" pass, also audit each open PR for signs i
 
 **4. Auto-merge enabled but `mergeable_state: blocked` despite passing CI and an existing approval.** This means something is silently preventing the merge — usually a branch protection rule or a required status check that isn't surfacing as a check-run (e.g. a stale required check from a deleted workflow).
 
-**5. `mergeable_state: behind` with no rebase for >48 hours.** The PR's branch needs rebasing against main, and Dependabot or the author hasn't done it.
+**5. `mergeable_state: dirty` (actual merge conflict) with no rebase for >72 hours.** The PR has genuine conflicts with the base branch. For Dependabot PRs, Dependabot will rebase on its own scheduled cadence — do not immediately escalate. Only flag as stuck if the conflict has been unresolved for >72 hours with no activity. Note: `mergeable_state: behind` (branch is simply behind main, no conflicts) is NOT stuck — GitHub will not block merge for this reason alone, and Dependabot handles it automatically.
 
 **6. Workflow `startup_failure`.** Check recent GitHub Actions workflow runs for the PR's head SHA — not just check-runs. A workflow that fails at startup (e.g. permissions error, missing secret, invalid YAML) won't register as a check-run conclusion at all, so it's invisible to check-run-only queries. Use:
 ```bash
@@ -90,14 +90,14 @@ As part of every "review any open PRs" pass, also audit each open PR for signs i
 
 ### Stuck PR escalation routing
 
-Before escalating, **always try self-service fixes first**. Asking a human to intervene should be a last resort. The most common self-service fix is re-running a failed workflow — ask `lucos-system-administrator` to re-run it (they have `actions:write` access). Only escalate to the team lead for human action if the re-run fails or the problem genuinely requires human credentials (e.g. Dependabot commands that no bot can post).
+Before escalating, **always try self-service fixes first**. Asking a human to intervene should be a last resort. The most common self-service fix is re-running a failed workflow — ask `lucos-system-administrator` to re-run it (they have `actions:write` access). **Try re-running multiple times before concluding it needs a human** — "unstable status" and "base branch was modified" errors on the Dependabot auto-merge workflow are usually transient and clear on a subsequent re-run. Only escalate to the team lead if the re-run fails repeatedly with the same non-transient error.
 
 | Problem | First action | Escalate to (if first action fails) |
 |---|---|---|
 | **Test failure in PR code** (tests fail, not infra) | N/A — escalate directly | `lucos-developer` — SendMessage with repo, PR number, failing test |
 | **CI failure** (infrastructure, runner issues, Docker errors, network timeouts, stale checks, startup failures, persistently red CI) | Ask `lucos-system-administrator` to re-run the failing workflow | `lucos-site-reliability` — SendMessage if re-run fails or problem recurs |
-| **Auto-merge workflow failed** (race condition, base branch modified, startup failure) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | Team lead — only if re-run fails with the same error and a `@dependabot rebase` or human action is genuinely needed |
-| **`@dependabot` command needed** (recreate, rebase) after re-run has failed | Team lead | SendMessage — no bot has push access; this is a human action |
+| **Auto-merge workflow failed** (race condition, "unstable status", "base branch modified", startup failure) | Ask `lucos-system-administrator` to re-run — try multiple times; these errors are often transient | Team lead — only if re-run fails repeatedly with the same error and is clearly non-transient |
+| **`mergeable_state: dirty`** (genuine merge conflict) | Leave it — Dependabot rebases on its own schedule. Only escalate if still dirty after 72+ hours with no activity | Team lead (for `@dependabot rebase` if you need to force sooner) — **note: `@dependabot rebase` cannot be posted by GitHub Apps; requires lucas42** |
 | **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
 | **Auto-merge not triggering** (criterion 7) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | `lucos-site-reliability` — if re-run succeeds but auto-merge still not set |
 | **Archived repo** | Close directly | Post a comment explaining why, then close |
