@@ -14,15 +14,17 @@ Before creating a new team, check whether `lucos-all-hands` already exists with 
 cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
 ```
 
-If the team exists and has members listed, send a test message to one teammate (e.g. the first member), then immediately run a short sleep to give the teammate time to respond:
+If the team exists and has members listed, send a test message to one teammate (e.g. the first member), then wait briefly for a response. The Bash tool blocks standalone `sleep N` commands where N ≥ 2 — you **must** run the sleep as a background command and chain it with `&& echo done` so it completes cleanly:
 
 ```bash
-sleep 8
+sleep 8 && echo done
 ```
 
-After the sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (load coordinator persona). Reuse the existing team.
+Run this with `run_in_background: true`. You will be notified automatically when the background task completes — do not poll, re-check, or read the output file.
 
-If no teammate reply appeared after the sleep, the team is stale. Do NOT wait any longer or ask the user — proceed directly to cleanup:
+After the background sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **skip Steps 2–5 and go straight to Step 6** (load coordinator persona). Reuse the existing team.
+
+If no teammate reply appeared by the time the background sleep completes, the team is stale. Do NOT wait any longer or ask the user — proceed directly to cleanup:
 
 If the team file doesn't exist, or exists but no teammate replies (stale from a previous session), clean up and proceed:
 
