@@ -6,6 +6,8 @@ Only include languages actually present in the repo. Remove any languages copied
 
 Add a top-level `permissions: contents: read` block to all CodeQL workflows (convention tracked in `lucos_repos`; do not raise per-repo issues manually — the audit tool handles it).
 
+CodeQL supported languages (as of `codeql-action/init@v4`): C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. **PHP is NOT supported** — attempting to add `php` will fail with `Did not recognize the following languages: php`. PHP static analysis requires a separate tool (PHPStan, Psalm, etc.).
+
 Required status check name patterns:
 - Python repos: `Analyze (python)`
 - JavaScript repos: `Analyze (javascript)`
