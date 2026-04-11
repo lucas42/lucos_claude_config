@@ -150,8 +150,9 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 - **Investigation and diagnosis of production failures** (connection errors, timeouts, resource exhaustion, unexplained crashes — issues that say "investigation needed" or require checking logs, infrastructure state, or resource usage): `owner:lucos-site-reliability`. Do not default these to the developer just because a code fix might eventually be needed — the SRE is better equipped to diagnose the root cause first.
 - **Incident management** (incident response, incident reporting, post-mortems, incident tracking): `owner:lucos-site-reliability`.
 - **Purely security work** (authentication setup, vulnerability remediation with no application code): `owner:lucos-security`.
+- **Purely UX/design/accessibility work** (UX audits, accessibility reviews, information architecture, copywriting improvements — with no application code changes): `owner:lucos-ux`.
 - **Workflow and process documentation** (issue conventions, label conventions, triage process, agent workflow docs): `owner:lucos-issue-manager`.
-- **Mixed work** (infrastructure + coding, security + coding, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
+- **Mixed work** (infrastructure + coding, security + coding, UX + coding, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
 - **If unclear**: `owner:lucos-developer`.
 
 ---
