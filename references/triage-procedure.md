@@ -72,7 +72,12 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 
 **If the issue is clear and ready to work on:**
 
-**STOP — specialist consultation checkpoint.** Before applying `agent-approved`, ask: does this issue touch **authentication, authorisation, data protection, secret management, credentials, or other security topics**? Or does it touch **monitoring, logging, observability, reliability, or incident management**? If yes to either, you MUST consult the relevant specialist (security or SRE — see "Specialist Follow-up Routing" below) BEFORE applying `agent-approved`. Do not skip this step just because the proposed change "looks like a security improvement" or "is only in CI" — security/SRE consultation is about getting specialist eyes on the change, not about gating risky-looking changes only. **Concrete trip-wires** that mean you must consult security: anything that changes authentication mode (trust ↔ password, mTLS, OAuth flow), anything that adds/removes/rotates credentials or env vars holding secrets, anything touching `auth`/`login`/`session` code paths, anything that changes how a database accepts connections, anything that changes who can read or write a resource. If unsure, consult security — the cost of an unnecessary consult is small; the cost of a missed one is unbounded. **This rule was added after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.** Once the specialist has weighed in, return to this step and continue.
+**STOP — specialist consultation checkpoint.** Before applying `agent-approved`, ask:
+- Does this issue touch **authentication, authorisation, data protection, secret management, credentials, or other security topics**? → consult `lucos-security`.
+- Does it touch **monitoring, logging, observability, reliability, or incident management**? → consult `lucos-site-reliability`.
+- Will it make a **significant change to user journeys on a frontend system** — new pages, navigation changes, form flows, interaction patterns, error states, or anything that meaningfully affects how users move through a system? → consult `lucos-ux`.
+
+If yes to any of the above, you MUST consult the relevant specialist (see "Specialist Follow-up Routing" below) BEFORE applying `agent-approved`. Do not skip this step just because the proposed change "looks like a security improvement" or "is only in CI" — specialist consultation is about getting expert eyes on the change. **Concrete trip-wires** that mean you must consult security: anything that changes authentication mode (trust ↔ password, mTLS, OAuth flow), anything that adds/removes/rotates credentials or env vars holding secrets, anything touching `auth`/`login`/`session` code paths, anything that changes how a database accepts connections, anything that changes who can read or write a resource. If unsure, consult the relevant specialist — the cost of an unnecessary consult is small; the cost of a missed one is unbounded. **This rule was extended after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.** Once the specialist has weighed in, return to this step and continue.
 
 1. Add the label `agent-approved` to the issue.
 2. Remove the label `needs-refining` if it is present.
@@ -128,7 +133,11 @@ When an issue touches **monitoring, logging, observability, reliability, or inci
 
 When an issue touches **authentication, authorisation, data protection, secret management, or other security topics**, consult the primary agent first, then also consult `lucos-security` before approving. Do these sequentially so the security agent sees the primary agent's comment.
 
-Both follow-up checks also apply mid-lifecycle: if a specialist concern is raised in an agent's comment during consultation, consult the relevant specialist next before approving.
+#### UX follow-up on significant user journey changes
+
+When an issue will make a significant change to user journeys on a frontend system — new pages, navigation changes, form flows, interaction patterns, error states, copywriting on user-facing surfaces, or anything that meaningfully affects how users move through a system — consult `lucos-ux` before approving. Do this after the primary implementation agent has given their input, so lucos-ux sees the full proposed approach.
+
+All three follow-up checks also apply mid-lifecycle: if a specialist concern is raised in an agent's comment during consultation, consult the relevant specialist next before approving.
 
 #### Verify security-related claims from other agents
 
