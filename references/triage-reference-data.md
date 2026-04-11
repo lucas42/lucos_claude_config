@@ -175,6 +175,7 @@ When creating labels, always set the colour explicitly. GitHub's default is `ede
 | `owner:lucos-site-reliability` | `fef2c0` (cream) |
 | `owner:lucos-security` | `f9d0c4` (light pink) |
 | `owner:lucos-developer` | `c2e0c6` (light green) |
+| `owner:lucos-ux` | `bfeeee` (light cyan) |
 
 ### Priority labels
 

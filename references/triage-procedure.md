@@ -75,7 +75,7 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 **STOP — specialist consultation checkpoint.** Before applying `agent-approved`, ask:
 - Does this issue touch **authentication, authorisation, data protection, secret management, credentials, or other security topics**? → consult `lucos-security`.
 - Does it touch **monitoring, logging, observability, reliability, or incident management**? → consult `lucos-site-reliability`.
-- Will it make a **significant change to user journeys on a frontend system** — new pages, navigation changes, form flows, interaction patterns, error states, or anything that meaningfully affects how users move through a system? → consult `lucos-ux`.
+- Will it make a **significant change to user journeys on a frontend system** — new pages, navigation changes, form flows, interaction patterns, error states, or anything that meaningfully affects how users move through a system? → if the ticket is dominantly frontend/UX work, assign `owner:lucos-ux` directly as implementer (no consultation step needed); if the ticket also has substantial backend work, keep `owner:lucos-developer` and consult `lucos-ux` for triage input.
 
 If yes to any of the above, you MUST consult the relevant specialist (see "Specialist Follow-up Routing" below) BEFORE applying `agent-approved`. Do not skip this step just because the proposed change "looks like a security improvement" or "is only in CI" — specialist consultation is about getting expert eyes on the change. **Concrete trip-wires** that mean you must consult security: anything that changes authentication mode (trust ↔ password, mTLS, OAuth flow), anything that adds/removes/rotates credentials or env vars holding secrets, anything touching `auth`/`login`/`session` code paths, anything that changes how a database accepts connections, anything that changes who can read or write a resource. If unsure, consult the relevant specialist — the cost of an unnecessary consult is small; the cost of a missed one is unbounded. **This rule was extended after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.** Once the specialist has weighed in, return to this step and continue.
 
@@ -133,9 +133,13 @@ When an issue touches **monitoring, logging, observability, reliability, or inci
 
 When an issue touches **authentication, authorisation, data protection, secret management, or other security topics**, consult the primary agent first, then also consult `lucos-security` before approving. Do these sequentially so the security agent sees the primary agent's comment.
 
-#### UX follow-up on significant user journey changes
+#### UX follow-up on mixed frontend+backend changes
 
-When an issue will make a significant change to user journeys on a frontend system — new pages, navigation changes, form flows, interaction patterns, error states, copywriting on user-facing surfaces, or anything that meaningfully affects how users move through a system — consult `lucos-ux` before approving. Do this after the primary implementation agent has given their input, so lucos-ux sees the full proposed approach.
+When an issue is owned by `lucos-developer` (i.e. the backend work is substantial enough that developer is the right implementer) but will **also** make a significant change to user journeys on a frontend system — new pages, navigation changes, form flows, interaction patterns, error states, or copywriting on user-facing surfaces — consult `lucos-ux` for triage input before approving.
+
+**Pure frontend/UX work should NOT be routed through this path.** If the ticket is dominantly a frontend/UX concern (no substantial backend change), assign it directly to `owner:lucos-ux` as the implementer (see Implementation Assignment above). UX consultation via this follow-up is only for genuinely mixed work where the backend and frontend are both substantial.
+
+**Keep triage-phase UX input narrow.** When lucos-ux is consulted during triage, they should flag only (a) items that genuinely block implementation, (b) scope questions that need a decision from lucas42, and (c) fundamental design concerns. Detailed implementation guidance (specific HTML/CSS/copy/a11y recommendations) is implementation-phase output, not triage-phase. If a triage review from lucos-ux is going deep into implementation detail, that's a signal to either (i) accept the review but recognise it's not the kind of input a triage pass needs, or (ii) reassign the ticket to lucos-ux as implementer so the detail can be applied directly during the work.
 
 All three follow-up checks also apply mid-lifecycle: if a specialist concern is raised in an agent's comment during consultation, consult the relevant specialist next before approving.
 
@@ -159,9 +163,9 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 - **Investigation and diagnosis of production failures** (connection errors, timeouts, resource exhaustion, unexplained crashes — issues that say "investigation needed" or require checking logs, infrastructure state, or resource usage): `owner:lucos-site-reliability`. Do not default these to the developer just because a code fix might eventually be needed — the SRE is better equipped to diagnose the root cause first.
 - **Incident management** (incident response, incident reporting, post-mortems, incident tracking): `owner:lucos-site-reliability`.
 - **Purely security work** (authentication setup, vulnerability remediation with no application code): `owner:lucos-security`.
-- **Purely UX/design/accessibility work** (UX audits, accessibility reviews, information architecture, copywriting improvements — with no application code changes): `owner:lucos-ux`.
+- **Frontend and UX work** (HTML/CSS/JS changes, server-rendered templates where the logic is presentation-level, UI form flows, accessibility implementation, copywriting on user-facing surfaces, UX audits, information architecture): `owner:lucos-ux`. lucos-ux is both advisor and implementer for frontend-heavy tickets — don't route them through `lucos-developer` with UX consultation unless the backend change is also substantial.
 - **Workflow and process documentation** (issue conventions, label conventions, triage process, agent workflow docs): `owner:lucos-issue-manager`.
-- **Mixed work** (infrastructure + coding, security + coding, UX + coding, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
+- **Mixed work** (infrastructure + backend coding, security + backend coding, substantial frontend + substantial backend, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
 - **If unclear**: `owner:lucos-developer`.
 
 ---
