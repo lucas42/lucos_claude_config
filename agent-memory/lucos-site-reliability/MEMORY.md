@@ -85,6 +85,9 @@ for url, s in data['systems'].items():
 ## lucos_media_metadata_manager — Known Issues (media-metadata.l42.eu)
 - Issue #58 (P3): PHP warnings for missing isset() on optional POST fields (updatetrack.php, bulkupdatetracks.php:32).
 - Issue #149 (closed): healthcheck was calling `GET /v3/tracks` (46KB, 560ms) — exceeded 0.5s timeout. Fix: `GET /v3/tracks?limit=1`. **Pattern**: `/_info` healthchecks must never call large-payload endpoints.
+- **2026-04-11 incident**: PR #208's server-side redirect to strip `?token=` from URLs triggered a redirect loop. Root cause: PHP `setcookie()` called without `path=` option (original code, pre-2026-04-08) defaults to the request URI directory — so cookies set at `/tracks/21842` get `path=/tracks/`. The new `path=/` cookie couldn't overwrite it. Fixed by PR #212: client-side `replaceState` + expiry headers for legacy path-scoped cookies.
+- **PHP cookie path gotcha**: `setcookie()` without an explicit `path` option creates a cookie scoped to the request URI's directory, not `/`. Always specify `'path' => '/'` explicitly.
+- **Auth monitoring blind spot**: `/_info` doesn't require auth, so authentication failures are invisible to monitoring. Issue #215 raised then closed not_planned — lucas42's view: auth.l42.eu reachability is already monitored, and per-service auth health checking deferred until there's active auth service work.
 
 ## lucos_media_manager — Known Issues (ceol.l42.eu)
 - Issue #215 (open, priority:low): unhandled `java.util.NoSuchElementException` from scanner bots sending non-standard HTTP methods (STATS, etc). Noisy in logs but non-fatal.
