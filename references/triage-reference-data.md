@@ -39,14 +39,15 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 
 | Option | ID | Maps to |
 |---|---|---|
-| lucas42 | `a9a6994c` | `owner:lucas42` |
-| lucos-developer | `a9aa2c31` | `owner:lucos-developer` |
-| lucos-architect | `6dd9da80` | `owner:lucos-architect` |
-| lucos-system-administrator | `29bb2d74` | `owner:lucos-system-administrator` |
-| lucos-site-reliability | `342f9448` | `owner:lucos-site-reliability` |
-| lucos-security | `2adf0456` | `owner:lucos-security` |
-| lucos-issue-manager | `be20910b` | `owner:lucos-issue-manager` |
-| lucos-code-reviewer | `89bbc325` | `owner:lucos-code-reviewer` |
+| lucas42 | `f2527ea3` | `owner:lucas42` |
+| lucos-developer | `cc3d3c3c` | `owner:lucos-developer` |
+| lucos-architect | `59754dd6` | `owner:lucos-architect` |
+| lucos-system-administrator | `0d03da01` | `owner:lucos-system-administrator` |
+| lucos-site-reliability | `a64451c7` | `owner:lucos-site-reliability` |
+| lucos-security | `a80e9bb6` | `owner:lucos-security` |
+| lucos-issue-manager | `9e57855e` | `owner:lucos-issue-manager` |
+| lucos-code-reviewer | `7ec5f738` | `owner:lucos-code-reviewer` |
+| lucos-ux | `10276495` | `owner:lucos-ux` |
 
 ---
 
