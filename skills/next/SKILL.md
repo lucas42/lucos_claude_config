@@ -49,6 +49,6 @@ For example: `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:
 
 For ad-hoc dispatch (where the user gives you a URL directly), omit the owner -- `/dispatch` will look it up from the project board.
 
-The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner, and handles post-completion (CI verification, auto-merge, unblocking dependents).
+The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner, and handles post-completion (unblocking dependent issues, reporting status to the user). CI verification belongs to the review loop, not the dispatcher.
 
 Wait for `/dispatch` to complete and report its outcome.
