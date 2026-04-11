@@ -97,21 +97,33 @@ If a PR was created and approved:
    ```
    For each result, read the full issue body and comments to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed. Read `~/.claude/references/triage-reference-data.md` for API patterns to update the project board status from Blocked to Ready.
 
-4. **If unsupervised (exit code 0):**
-   - **If there are dependent issues to unblock (from step 3):** wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes. If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop. Once the issue is closed, perform the unblocking from step 3.
-   - **If there are NO dependent issues:** verify that CI checks have started on the PR before moving on. Check the PR's status checks:
-     ```bash
-     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'
-     ```
-     Get the head SHA from the PR details (`head.sha`).
-     - If `total_count` is 0 (no checks created at all) or any check has `conclusion: "failure"`: send the PR back to the **developer who created it** for investigation. The developer has the most context on the code and likely failure modes -- do not investigate yourself or escalate to SRE. Only if the developer identifies the failure as a pipeline/infrastructure problem (not a code/test issue) should SRE be looped in.
-     - Otherwise, CI is running or has passed. Now check whether the PR branch is behind main, which prevents auto-merge when strict branch protection is enabled:
-       ```bash
-       ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '{mergeable_state: .mergeable_state, mergeable: .mergeable}'
-       ```
-       If `mergeable_state` is `"behind"`, the branch needs rebasing before auto-merge can fire. Send the PR back to the **developer who created it** and ask them to rebase onto main and force-push. Wait for the developer to confirm the rebase is done before declaring the task complete.
-     - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
+4. **Verify CI health (always — regardless of supervised/unsupervised).** Before reporting anything to the user, confirm the PR's CI is actually green. **Check BOTH the GitHub-native check-runs API AND the legacy commit-status API** — CircleCI reports via the commit-status API and is invisible to the check-runs endpoint, so checking only one will miss failures. Get the head SHA from the PR details (`head.sha`), then run both:
 
-5. **If not unsupervised (exit code 1) or error (exit code 2):**
-   - Tell the user the PR needs their review and approval. Once approved, it will auto-merge. Provide the full PR URL so they can easily navigate to it.
-   - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
+   ```bash
+   # GitHub-native check runs (CodeQL, GitHub Actions, etc.)
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '{total_count: .total_count, checks: [.check_runs[] | {name: .name, status: .status, conclusion: .conclusion}]}'
+
+   # Legacy commit statuses (CircleCI, older integrations)
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/commits/{head_sha}/status --jq '{state: .state, statuses: [.statuses[] | {context: .context, state: .state, description: .description, target_url: .target_url}]}'
+   ```
+
+   - **If any check-run has `conclusion: "failure"` OR any commit status has `state: "failure"`:** send the PR back to the **developer who created it** for investigation. Include the specific failing check/status name and the `target_url` (e.g. the CircleCI build URL) so they can jump straight to the logs. The developer has the most context on the code and likely failure modes — do not investigate yourself or escalate to SRE. Only if the developer identifies the failure as a pipeline/infrastructure problem (not a code/test issue) should SRE be looped in. **Stop here until the developer reports back with a fix.**
+   - **If check-runs `total_count` is 0 AND commit-statuses `state` is (null/empty):** no CI has started yet. This may indicate broken CI wiring — flag it to the user and stop.
+   - **If any check is still `pending`/`in_progress`/`queued`:** CI is still running. Continue — the PR will merge (or fail) automatically once CI completes.
+   - **If all checks are green:** continue.
+
+5. **Check the branch isn't behind main.** Strict branch protection blocks auto-merge when a PR is behind:
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '{mergeable_state: .mergeable_state, mergeable: .mergeable}'
+   ```
+   If `mergeable_state` is `"behind"`, send the PR back to the **developer who created it** to rebase onto main and force-push. Wait for the developer to confirm the rebase before proceeding.
+
+6. **Report status to user:**
+   - **If unsupervised (exit code 0 from check-unsupervised):**
+     - **If there are dependent issues to unblock (from step 3):** wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes. If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop. Once the issue is closed, perform the unblocking from step 3.
+     - **If there are NO dependent issues:** the PR will auto-merge on its own and there is nothing else to do.
+   - **If not unsupervised (exit code 1) or error (exit code 2):**
+     - Tell the user the PR needs their review and approval. Once approved, it will auto-merge. Provide the full PR URL so they can easily navigate to it.
+     - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
+
+**Concrete incident (2026-04-11):** For PR lucas42/lucos_media_metadata_api#155, all GitHub check-runs were green but CircleCI `ci/circleci: test` was reporting failure via the commit-status API. The coordinator reported "awaiting your merge" to the user without checking the commit-status API, and the user had to flag the failure manually. This is why step 4 now requires checking **both** APIs.
