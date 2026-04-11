@@ -118,7 +118,21 @@ This also applies to `@dependabot` commands: if someone posts `@dependabot recre
 
 After approving any PR, perform these checks before moving on:
 
-1. **Check CI status.** Never approve a PR with failing CI — always verify check-runs AND commit statuses before posting an `APPROVE` review. If CI is failing, post `REQUEST_CHANGES` instead, regardless of code quality.
+1. **Check CI status.** Never approve a PR with failing CI — always verify **both** check-runs AND commit statuses before posting an `APPROVE` review. If CI is failing in either source, post `REQUEST_CHANGES` instead, regardless of code quality.
+
+   ```bash
+   # Check-runs (GitHub Actions)
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+     repos/lucas42/{repo}/commits/{head_sha}/check-runs \
+     --jq '.check_runs[] | {name, status, conclusion}'
+
+   # Commit statuses (legacy — used by CircleCI)
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+     repos/lucas42/{repo}/commits/{head_sha}/status \
+     --jq '{state, statuses: [.statuses[] | {context, state, description}]}'
+   ```
+
+   **CircleCI uses the commit statuses API exclusively — it does NOT appear in check-runs.** Checking only check-runs will miss CircleCI test failures entirely. This caused a broken approval on lucas42/lucos_media_metadata_api#155 (2026-04-11): `ci/circleci: test` was `state: failure` but only check-runs was queried, so the failure was invisible. lucas42 caught it after the dispatcher had already told him the PR was ready to merge.
 2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field.
    - **If `auto_merge` is non-null:** auto-merge is enabled and the PR will merge when CI passes. Report this as "auto-merge enabled".
    - **If `auto_merge` is null:** first check `unsupervisedAgentCode` for the repo: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`. If `false`, auto-merge not being enabled is **expected behaviour** — the repo is supervised and requires lucas42's approval to merge. Report this as "awaiting lucas42 approval" rather than "auto-merge triggered". Only flag as stuck (criterion 7) if `unsupervisedAgentCode` is `true` but `auto_merge` is still null — then check the Actions runs API for any workflow with `startup_failure` or `failure`.
@@ -301,19 +315,25 @@ After the specialist has reviewed, you will be re-dispatched to do your final re
 
 ### 6. Check CI Status and Follow Up
 
-After posting your review, check the CI status on the PR's head commit:
+After posting your review, check the CI status on the PR's head commit using **both** APIs — check-runs (GitHub Actions) and commit statuses (CircleCI and other external CI):
 
 ```bash
+# Check-runs (GitHub Actions)
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {name, status, conclusion}'
+
+# Commit statuses (legacy — CircleCI reports HERE, not in check-runs)
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/commits/{head_sha}/status \
+  --jq '{state, statuses: [.statuses[] | {context, state, description}]}'
 ```
 
-- **If CI has not completed yet** (any check run has `status: "in_progress"` or `status: "queued"`): poll every 60 seconds, up to 10 minutes. If CI is still running after 10 minutes, move on — you can follow up later if it fails.
-- **If CI passes:** nothing more needed.
-- **If CI fails:** post a follow-up `REQUEST_CHANGES` review flagging the specific failure(s) and asking the author to fix them. This is a separate review from the one you already posted.
-- **If no check runs exist** (some repos may not have CI configured): nothing more needed.
+- **If CI has not completed yet** (any check run has `status: "in_progress"` or `status: "queued"`, or any commit status has `state: "pending"`): poll every 60 seconds, up to 10 minutes. If CI is still running after 10 minutes, move on — you can follow up later if it fails.
+- **If CI passes in both sources:** nothing more needed.
+- **If CI fails in either source:** post a follow-up `REQUEST_CHANGES` review flagging the specific failure(s) and asking the author to fix them. This is a separate review from the one you already posted.
+- **If no checks exist** (some repos may not have CI configured): nothing more needed.
 
-**Why post the code review before waiting for CI:** Waiting for CI before posting creates a race condition — if the developer pushes a new commit while you wait, your review ends up posted against a SHA whose diff you never read. Post your code review immediately, then handle CI separately.
+**Why post the code review before waiting for CI to complete:** Waiting for in-progress CI before posting creates a race condition — if the developer pushes a new commit while you wait, your review ends up posted against a SHA whose diff you never read. Post your code review immediately, then handle CI follow-up separately. But if CI has already reported a failure, you must catch it before approving — see the pre-approval CI check in the Post-approval verification section above.
 
 ### 7. Improvements Spotted During Review
 
