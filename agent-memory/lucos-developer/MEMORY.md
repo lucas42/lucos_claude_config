@@ -147,6 +147,16 @@ jobs:
 - **Marking draft PR ready**: use `~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer graphql -f query='mutation { markPullRequestReadyForReview(input: {pullRequestId: "PR_NODE_ID"}) { pullRequest { isDraft } } }'`. The REST PATCH endpoint silently ignores `draft: false`. Do NOT use `gh-projects` for this — it only has `project` scope.
 - **Audit app permissions**: the audit app has `contents: read` but NOT `secrets` permission. Conventions must not call `GET /repos/{owner}/{repo}/actions/secrets` — use workflow file content checks instead.
 
+## lucos_media_metadata_api
+
+- **Language**: Go. API in `api/`. Tests: `cd api && /usr/local/go/bin/go test ./...`.
+- **Datastore struct** (`database.go`): holds `DB`, `Loganne`, `AppOrigin`. DBInit creates tables idempotently via `TableExists`/`ColExists` checks. Use named fields in struct literals.
+- **Tag write path (v3)**: `updateTagsV3` in `tracks_handler.go`. `nonEmpty` filter includes values with name OR uri. URI-requiring predicates validated before transaction. Album names resolved from URI before storing.
+- **`RequiresURI` predicates**: `language`, `about`, `mentions`, `album`. Store name in `value` column + URI in `uri` column. `TrackToV3` converts both fields to `{name, uri}` without any joins.
+- **Routes**: registered in `controller.go` via `FrontController`. Album endpoints at `/v3/albums` and `/v3/albums/`.
+- **Test pattern**: `clearData()` → `restartServer()` → make requests. `makeRequest` for JSON comparison, `setupRequest` for silent setup steps. `basicRequest` adds auth header.
+- **`AppOrigin` in tests**: defaults to `""` (empty string) → album URLs are `/v3/albums/{id}` (path only). Tests work fine with relative URIs.
+
 ## lucos_loganne
 
 - Node/Express app. Routes in `src/routes/`. Tests in `__tests__/routes.js`. Run with `npm test`.
