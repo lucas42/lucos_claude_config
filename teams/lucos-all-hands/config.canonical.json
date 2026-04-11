@@ -7,7 +7,7 @@
       "agentId": "team-lead@lucos-all-hands",
       "name": "team-lead",
       "agentType": "team-lead",
-      "model": "claude-opus-4-6[1m]",
+      "model": "sonnet",
       "subscriptions": []
     },
     {
