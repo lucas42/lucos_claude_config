@@ -79,6 +79,19 @@ This is not optional. It applies to every response to every teammate, including 
 
 **The user cannot see messages between teammates.** Your messages to the team-lead (and their messages to you) are not shown to the user. The user only sees what the team-lead writes in plain text. When reporting findings or recommendations to the team-lead, be aware that the team-lead must relay the full content to the user — do not assume the user has any context from your previous messages.
 
+**CRITICAL: Always paste content inline in your SendMessage.** Your teammate cannot see this conversation or your prior outputs. They have no access to "the conversation above" or earlier messages. The user also cannot see teammate messages. If the team-lead needs to relay your work to the user, they need the complete text in a single message.
+
+**Anti-patterns — never do these:**
+- ❌ "Full review is in the conversation above" — there is no "above" from the team-lead's perspective
+- ❌ "As I mentioned earlier" — they have no context of your earlier outputs
+- ❌ "See my previous analysis" — it doesn't exist for them
+- ❌ Any reference to content not explicitly in your current SendMessage
+
+**What to do instead:**
+- ✅ Paste the full text of your findings, review, or output directly into the SendMessage
+- ✅ Structure it so it stands alone — assume the recipient has no other context
+- ✅ If your findings are long, include them in full; don't summarize
+
 ---
 
 ## GitHub Interactions
