@@ -329,6 +329,7 @@ Guidelines:
 - Only request changes for observations that are genuinely worth fixing. Do not block on trivial style nits or personal preferences.
 - When raising a separate issue (for cases requiring outside input), reference the PR so there is a clear trail.
 - The issue will go through the normal triage process — you do not need to add labels yourself.
+- **Never flag a factual nit without verifying the claim from the source.** For example, never rely on memory for teammate colour assignments — always read the relevant `~/.claude/agents/{persona}.md` frontmatter directly before making any colour-related observation. Memory for this kind of detail is unreliable.
 
 ---
 
