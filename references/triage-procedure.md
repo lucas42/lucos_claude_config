@@ -163,14 +163,24 @@ When marking an issue `agent-approved`, also assign an `owner:*` label to indica
 - **Investigation and diagnosis of production failures** (connection errors, timeouts, resource exhaustion, unexplained crashes — issues that say "investigation needed" or require checking logs, infrastructure state, or resource usage): `owner:lucos-site-reliability`. Do not default these to the developer just because a code fix might eventually be needed — the SRE is better equipped to diagnose the root cause first.
 - **Incident management** (incident response, incident reporting, post-mortems, incident tracking): `owner:lucos-site-reliability`.
 - **Purely security work** (authentication setup, vulnerability remediation with no application code): `owner:lucos-security`.
-- **Frontend and UX work** (HTML/CSS/JS changes, server-rendered templates where the logic is presentation-level, UI form layouts and field interactions, accessibility implementation, copywriting on user-facing surfaces, UX audits, information architecture scoped to a UI): `owner:lucos-ux`. lucos-ux is both advisor and implementer for frontend-heavy tickets — don't route them through `lucos-developer` with UX consultation unless the backend change is also substantial.
+- **Frontend and UX work**: `owner:lucos-ux`. lucos-ux is both advisor and implementer for frontend-heavy tickets.
 
-  **Base the assignment on what the implementation requires, not on whether the user experience is affected.** A ticket can be "about UX" at the concept level while its implementation is dominantly engineering — in that case the owner is `lucos-developer` with UX consultation, NOT `lucos-ux`. Specific categories that are NOT `owner:lucos-ux` even though they may have user-visible effects:
-  - Web Platform infrastructure — service workers, IndexedDB / Cache API, fetch interception, offline plumbing
-  - Frontend JavaScript that is dominantly business logic, data sync, or state management rather than presentation
-  - Backend endpoints that serve data to a UI
+  **The rule: owner = where the dominant lines of code will live, not where the user impact lands.** A ticket is `owner:lucos-ux` only if the bulk of the work is in user-facing markup, styles, or copy. A ticket can be "about UX" at the concept level while its implementation is dominantly engineering — in that case the owner is `lucos-developer` (or another specialist) with UX consultation, NOT `lucos-ux`.
 
-  See the full Scope of Work in `agents/lucos-ux.md` for what lucos-ux does and does not implement. When unsure, default to `owner:lucos-developer` and add a UX consultation for the user-facing surface area.
+  **Patterns that ARE `owner:lucos-ux`:**
+  - **Layout and styling bug fixes.** "X overlaps Y", "footer floats wrong", wrong spacing, wrong colour, broken layout, screenshots of visual bugs. CSS work regardless of what backend language the project uses.
+  - **Server-rendered template work** in PHP / EJS / Jinja / Go templates / ERB / etc. where the controllers are thin framework boilerplate fetching data and handing it to a view. Test: "is the design question about what the user sees, or about how data flows?"
+  - **"Show a clearer error message when X fails"** tickets where the dominant concern is message wording and visual presentation, and the backend detection is a trivial property check or branch (~5–10 lines). Non-trivial detection (new model fields, async logic, retry policies) makes it a backend ticket instead.
+  - **HTML / CSS / frontend JavaScript** where the JS is presentation-level (DOM manipulation, form validation, simple interaction state) rather than business logic.
+  - **Accessibility implementation**, UI form layouts and field interactions, copywriting on user-facing surfaces, UX audits, information architecture scoped to a UI.
+
+  **Patterns that are NOT `owner:lucos-ux` even though they may have user-visible effects** — these go to `lucos-developer` (or the relevant specialist), with UX consultation on any user-facing surface area:
+  - **Admin framework customisations** — Django admin (`admin.py`), Flask-Admin, ActiveAdmin, Wagtail admin, and similar. These are "user-facing pages" but the implementation is entirely in the framework's configuration language (Python class attributes, decorators, model registrations). The framework generates the markup. UX should be consulted on field labels and destructive-action confirmation copy, but the ticket goes to whoever owns the backend language.
+  - **Web Platform infrastructure** — service workers, IndexedDB / Cache API, fetch interception, offline plumbing, WebSocket plumbing, push notifications. Engineering plumbing that enables user-facing behaviour but isn't implemented in UI code. UX should be consulted on user-visible surfaces (offline indicators, fallback messaging, permission-prompt copy).
+  - **Frontend JavaScript that is dominantly business logic**, data sync, or state management rather than presentation.
+  - **Backend endpoints that serve data to a UI.**
+
+  See the full Scope of Work in `agents/lucos-ux.md`. When unsure, default to `owner:lucos-developer` and add a UX consultation for the user-facing surface area.
 - **Workflow and process documentation** (issue conventions, label conventions, triage process, agent workflow docs): `owner:lucos-issue-manager`.
 - **Mixed work** (infrastructure + backend coding, security + backend coding, substantial frontend + substantial backend, etc.): `owner:lucos-developer`. Ensure the relevant specialist has reviewed the issue first.
 - **If unclear**: `owner:lucos-developer`.
