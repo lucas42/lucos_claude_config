@@ -98,6 +98,8 @@ Check `ops-checks.md` for `codeql-coverage` last_run date; skip if less than a m
 
 Identify repos with supported languages (Python, JavaScript/TypeScript, Java) but no CodeQL workflow. A repo with no SAST coverage is a blind spot — you won't get alerts even if vulnerable code is committed.
 
+**CodeQL supported languages (exhaustive list):** C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. Do NOT raise CodeQL coverage issues for any other language — PHP in particular is not supported. If a repo's primary language is unsupported, skip it silently.
+
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
   "/users/lucas42/repos?per_page=100" --jq '[.[] | select(.archived == false) | .name]'

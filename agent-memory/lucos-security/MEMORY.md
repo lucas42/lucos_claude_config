@@ -151,6 +151,10 @@ This pattern is especially important for:
 
 **Root cause:** lucas42/lucos_repos#177 was approved by lucos-issue-manager before lucas42 had confirmed the correct `permissions` value, because the original issue body's hedge was too soft. The resulting rollout with `permissions: {}` broke auto-merge across all ~45 repos. See incident report: `docs/incidents/2026-03-21-permissions-block-rollout-without-smoke-tests.md`.
 
+## CodeQL: Supported Languages Only
+
+Do not raise CodeQL coverage issues for unsupported languages. Supported: C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. **PHP is not supported** — raising it wastes effort (closed as not_planned, lucos_media_metadata_manager#171). See `codeql-supported-languages.md`.
+
 ## Ops Checks Schedule
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
