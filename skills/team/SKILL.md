@@ -32,7 +32,11 @@ In **selective mode**: read the existing roster (the `name` fields in the `membe
 
 > A team already exists with a different roster (`{existing members}`). To add a new teammate to the running team, use `/team add {name}`. To replace the team with a different roster, shut down the current team first.
 
-In **spawn-all mode** or **selective mode with a matching roster**: send a test message to one teammate (e.g. the first member), then wait briefly for a response. The Bash tool blocks standalone `sleep N` commands where N ≥ 2 — you **must** run the sleep as a background command:
+In **spawn-all mode**: run the persona discovery command from Step 2 now (the `ls | grep -v` command) to get the expected full roster. Compare the existing team config roster against this full list. If they differ (existing team is a subset, a superset, or any mismatch), stop immediately with this error:
+
+> A team already exists with a different roster (`{existing members}`). To add missing teammates, use `/team add {name}` for each one. To rebuild the full team, shut down the current team first.
+
+In **selective or spawn-all mode with a matching roster**: send a test message to one teammate (e.g. the first member), then wait briefly for a response. The Bash tool blocks standalone `sleep N` commands where N ≥ 2 — you **must** run the sleep as a background command:
 
 ```bash
 sleep 8 && echo done
@@ -90,6 +94,8 @@ Claude Code assigns teammate colours from a fixed palette in spawn order (blue, 
 If a new persona is added whose colour already appears in the list, or whose colour is unknown, spawn it last (after all known-colour agents).
 
 Do **not** hardcode the list of personas. Use whatever files the glob (or selective filter) produced.
+
+**Colour accuracy in selective mode:** Colours will only match the frontmatter values if the spawned set occupies the same palette positions as it would in a full spawn (i.e. spawning from the low end of the palette). For example, spawning `lucos-developer` alone gives it slot 1 (blue) — which happens to match. But spawning only `lucos-security` and `lucos-architect` gives them slots 1 and 2 (blue and green), not orange and yellow as defined in their frontmatter. This is a Claude Code limitation with no workaround for partial spawns.
 
 ## Step 5: Update the canonical team config
 
