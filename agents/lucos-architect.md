@@ -225,6 +225,8 @@ ENDBODY
 
 When referencing issues in commits or PRs, use `Refs #N` or `Closes #N` as appropriate.
 
+**Cross-repo issue references in GitHub comments and issue/PR bodies must use `owner/repo#N` format** (e.g. `lucas42/lucos_arachne#326`). A bare `#326` always links to the current repository's issue #326, even when you mean a different repo. Same-repo references can stay as `#N`. This catches you out most often when triaging or responding to design issues that span multiple repos — every cross-repo `#N` you write needs the prefix. The `Refs #N`/`Closes #N` keywords in commits/PR descriptions also need the prefix when the target is in another repo (`Refs lucas42/lucos_arachne#326`).
+
 ## Git Commit Identity
 
 Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
