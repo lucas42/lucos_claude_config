@@ -1,13 +1,13 @@
 {
   "name": "lucos-all-hands",
-  "description": "All-hands coordination team for lucos projects",
+  "description": "lucos all-hands coordination team",
   "leadAgentId": "team-lead@lucos-all-hands",
   "members": [
     {
       "agentId": "team-lead@lucos-all-hands",
       "name": "team-lead",
       "agentType": "team-lead",
-      "model": "claude-opus-4-6[1m]",
+      "model": "sonnet",
       "subscriptions": []
     },
     {
@@ -72,6 +72,17 @@
       "model": "sonnet",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "pink",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-ux@lucos-all-hands",
+      "name": "lucos-ux",
+      "agentType": "lucos-ux",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "cyan",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
