@@ -95,7 +95,13 @@ If a PR was created and approved:
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager "search/issues?q=org:lucas42+is:open+label:status:blocked+{issue_number}+in:body"
    ```
-   For each result, read the full issue body and comments to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed. Read `~/.claude/references/triage-reference-data.md` for API patterns to update the project board status from Blocked to Ready.
+   For each result, read the full issue body and comments to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
+
+   **When unblocking an issue, you MUST do both of the following — removing the label without updating the board is incomplete:**
+   1. Remove the `status:blocked` label from the issue.
+   2. Update the project board Status field from Blocked → Ready (option ID `3aaf8e5e`).
+
+   Read `~/.claude/references/triage-reference-data.md` for the full board API patterns.
 
 4. **If unsupervised (exit code 0):**
    - **If there are dependent issues to unblock (from step 3):** wait for the PR to be automatically merged and the corresponding issue to be closed. Poll periodically (e.g. every 30 seconds) for up to 10 minutes. If after 10 minutes the PR has not been merged or the issue has not been closed, flag this as a problem to the user and stop. Once the issue is closed, perform the unblocking from step 3.
