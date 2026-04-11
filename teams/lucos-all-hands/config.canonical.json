@@ -42,6 +42,17 @@
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-code-reviewer@lucos-all-hands",
+      "name": "lucos-code-reviewer",
+      "agentType": "lucos-code-reviewer",
+      "model": "haiku",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "green",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
     }
   ]
 }
