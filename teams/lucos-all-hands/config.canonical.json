@@ -53,6 +53,17 @@
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-site-reliability@lucos-all-hands",
+      "name": "lucos-site-reliability",
+      "agentType": "lucos-site-reliability",
+      "model": "haiku",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "pink",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
     }
   ]
 }
