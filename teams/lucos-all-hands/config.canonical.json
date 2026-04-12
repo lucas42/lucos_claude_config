@@ -64,6 +64,17 @@
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-system-administrator@lucos-all-hands",
+      "name": "lucos-system-administrator",
+      "agentType": "lucos-system-administrator",
+      "model": "sonnet",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "purple",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
     }
   ]
 }
