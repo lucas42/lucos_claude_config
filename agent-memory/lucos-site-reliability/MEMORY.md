@@ -39,6 +39,15 @@ Container names match the service name in `docker-compose.yml`.
 - **last-audit-completed alert**: trigger `POST https://repos.l42.eu/api/sweep` when alert fires. Takes 5-15min. `/api/rerun` does NOT satisfy the monitoring check — use `/api/sweep`.
 - Issue #285: 403 on public repos during audit = transient secondary rate limit, NOT permission error. `handleRateLimitError` must be wired into convention checks, not just `fetchReposPage`.
 
+## lucos_arachne — Known Issues & Patterns
+- Issue #319 (closed 2026-04-10): schedule-tracker notification timeout fixed by PR #320 (5s → 30s). **Do NOT confuse with the separate Typesense timeout.**
+- Issue #327 (open, P2): `connection_timeout_seconds: 2` in `searchindex.py:287` causes tracks bulk import (~18K docs) to timeout. Items upsert succeeds, tracks times out. Fix: increase to 30s.
+- Issue #250 (open): ingestor can't fetch contacts data — `contacts.l42.eu/people/all` requires auth.
+- Issue #116 (P3): ingestor makes blocking bulk fetch on container start (~17s).
+- **Do NOT recommend internal Docker URLs** between services — creates tight coupling. Use external HTTPS URLs.
+- Ingestor runs on cron: `15 04 * * *` UTC (Dockerfile). Initial ingest on container start via `startup.sh`.
+- Base image: `lucas42/lucos_scheduled_scripts:2.0.2`.
+
 ## lucos_creds — Known Issues
 - Issue #199 (open, priority:low): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds`. Docker DNS may not register hostname as alias on all network configs.
 - Issue #152 (priority:high): **Circular deployment dependency** — creds SSH service (port 2202) restarts 7+ times during deploy waves, causing estate-wide CI failures via the `Populate known_hosts` step. Each creds deploy takes itself offline. Recurring pattern: 2026-04-09 and 2026-04-10. Self-heals as repos trigger new CI runs after creds stabilises.
@@ -97,14 +106,15 @@ for url, s in data['systems'].items():
 - **Incident 2026-04-08 (outage 2)**: rename `systems_to_graphs` → `live_systems` in `triplestore.py` — updated `ingest.py` but not `server.py`. Ingestor crash-looped. Fix: PR #280 (3-line rename). **Grep entire repo before renaming shared identifiers.**
 - Issue #116 (P3): ingestor makes blocking bulk fetch on container start (~17s). Open.
 - Issue #250 (open): ingestor can't fetch contacts data — `contacts.l42.eu/people/all` requires auth.
-- Issue #319 (priority:high): `lucos_media_metadata_api` ingest completes (163K triples) but schedule-tracker notification times out (5s HTTP read via external HTTPS URL). Other ingestors succeed via internal Docker. Fix: increase timeout to 15-30s or use internal Docker URL.
+- Issue #319 (closed 2026-04-10): schedule-tracker notification timeout — fixed by PR #320 (bumped client to 1.0.21, 30s timeout). Superseded by #327 (Typesense timeout).
 - **Triplestore 400**: multi-word language tags (e.g. "Scottish Gaelic") cause Fuseki 400 — space in IRI from `mapPredicate` without URL-encoding. Fix: `url.PathEscape(value)`. Issue #104.
 - Always verify PR numbers from git log — commit messages don't include them. Look up via `gh api repos/lucas42/{repo}/commits/{sha}/pulls`.
 
 ## lucos_backups — Known Issues
 - lucos_backups#57 / PR #56: PyPI clients call `sys.exit()` at import if `SYSTEM` env var missing. **Always audit import-time env var requirements when switching to PyPI clients.**
 - Before raising issue during ops checks, search recently closed issues — the alert being red doesn't guarantee no issue exists.
-- Issue #157 (open, priority:low, owner:lucos-site-reliability): SSH command 3s timeout too tight during heavy deploy waves — `mkdir` on avalon times out under I/O load → `host-tracking-failures` + `volume-host` both fail. Self-heals in ~1hr, or trigger immediately via `POST https://backups.l42.eu/refresh-tracking`.
+- Issue #157 (closed): SSH command 3s timeout too tight during heavy deploy waves — was about avalon timeouts, self-healing.
+- Issue #159 (open, P2): IPv6 route from avalon to salvare broken — "Hop limit exceeded". salvare.s.l42.eu has AAAA only (no A record). Network-level problem, needs sysadmin investigation. `POST /refresh-tracking` won't help — underlying route is broken.
 
 ## lucos_contacts — Known Issues & Patterns
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` for IP-based Docker healthchecks (`wget http://127.0.0.1:<port>/_info`). General pattern for all Django services.
