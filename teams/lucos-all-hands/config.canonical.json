@@ -7,19 +7,8 @@
       "agentId": "team-lead@lucos-all-hands",
       "name": "team-lead",
       "agentType": "team-lead",
-      "model": "sonnet",
+      "model": "claude-opus-4-6[1m]",
       "subscriptions": []
-    },
-    {
-      "agentId": "lucos-architect@lucos-all-hands",
-      "name": "lucos-architect",
-      "agentType": "lucos-architect",
-      "model": "opus",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "yellow",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
     },
     {
       "agentId": "lucos-developer@lucos-all-hands",
@@ -33,45 +22,12 @@
       "backendType": "tmux"
     },
     {
-      "agentId": "lucos-ux@lucos-all-hands",
-      "name": "lucos-ux",
-      "agentType": "lucos-ux",
-      "model": "opus",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "cyan",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
-    },
-    {
       "agentId": "lucos-code-reviewer@lucos-all-hands",
       "name": "lucos-code-reviewer",
       "agentType": "lucos-code-reviewer",
       "model": "haiku",
       "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
       "color": "green",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
-    },
-    {
-      "agentId": "lucos-site-reliability@lucos-all-hands",
-      "name": "lucos-site-reliability",
-      "agentType": "lucos-site-reliability",
-      "model": "haiku",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "pink",
-      "planModeRequired": false,
-      "subscriptions": [],
-      "backendType": "tmux"
-    },
-    {
-      "agentId": "lucos-system-administrator@lucos-all-hands",
-      "name": "lucos-system-administrator",
-      "agentType": "lucos-system-administrator",
-      "model": "sonnet",
-      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
-      "color": "purple",
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
