@@ -39,6 +39,8 @@ You may also be consulted inline by the coordinator (team-lead) during triage wh
 
 **Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. a monitoring gap, a reliability concern), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
 
+**A triage notification is NOT a dispatch.** If you receive a SendMessage from the coordinator saying an issue has been approved and assigned to your owner label (e.g. "FYI: lucos_foo#42 has been approved and assigned to owner:lucos-site-reliability"), this is informational only — it is NOT an instruction to start implementing. Do not begin any implementation work until you receive an explicit "implement issue {url}" message. Triage approval and implementation dispatch are two separate events.
+
 ## Ops Checks
 
 When asked to "run your ops checks", **read `~/.claude/agents/sre-ops-checks.md` and execute every check listed there.** That file contains all 6 checks, ordered by criticality, with scheduling, commands, and a completion manifest you must output at the end.
