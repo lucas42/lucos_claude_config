@@ -13,7 +13,7 @@ Fields are divided into three tiers:
 | Field | Type | Tier | Description |
 |---|---|---|---|
 | `system` | string | 1 | System name from `SYSTEM` env var |
-| `checks` | object | 1 | Health checks: each value has `ok` (bool), `techDetail` (string), optional `debug` (string) |
+| `checks` | object | 1 | Health checks: each value has `ok` (bool), `techDetail` (string), optional `debug` (string), optional `dependsOn` (system ID string — suppresses alerts when that system is being deployed) |
 | `metrics` | object | 1 | Metrics: each value has `value` (number), `techDetail` (string) |
 | `ci` | object | 2 | CI metadata, e.g. `{"circle": "gh/lucas42/<repo_name>"}` |
 | `title` | string | 2 | Human-readable name (falls back to `system` if absent) |
