@@ -165,6 +165,14 @@ ENDBODY
 
 When creating issues, always use `--app lucos-site-reliability`.
 
+**Verify referenced issues are still open.** Whenever you cite another issue in a comment as tracking a root cause, related problem, or follow-up work, verify that issue is still open before posting. A closed issue cannot be "tracking" anything — citing one misleads readers into thinking follow-up exists when it doesn't. Check with:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/issues/{number} --jq '.state'
+```
+
+This applies to incident resolution comments, issue cross-references, and any comment that directs readers to another issue for context or follow-up.
+
 ## Git Commit Identity
 
 Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
