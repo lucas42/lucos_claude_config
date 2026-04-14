@@ -6,6 +6,8 @@ Check `ops-checks.md` in your agent memory at the start of each run to determine
 
 **Active hosts**: Read `~/sandboxes/lucos_configy/config/hosts.yaml` to get the list of hosts. Skip any with `active: false`.
 
+**Salvare connectivity**: `salvare.s.l42.eu` is IPv6-only (AAAA record, no A record). The agent VM does not have IPv6 (vzNAT is IPv4-only), so direct SSH to `salvare.s.l42.eu` will always fail with "No address associated with hostname". This is not a DNS incident — it is expected. Always connect to salvare via xwing as a jump host: `ssh -J xwing.s.l42.eu salvare.s.l42.eu`. Do not report a failed DNS lookup for salvare as a finding.
+
 **Always check, never assume.** Every ops check must be based on what you observe *right now*, not on what failed in a previous session. If a host was unreachable last time, try it again — the problem may have been fixed. When reporting findings, clearly distinguish between "I checked and it failed" vs "I did not check". Never report a stale assumption as a current finding.
 
 **Scope boundary**: Ops checks are observation, hygiene, and issue-raising. Active incident response belongs to lucos-site-reliability. If something is critically broken (service down, data at risk), flag it for the dispatcher to invoke SRE — do not attempt to fix it yourself.
