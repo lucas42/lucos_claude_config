@@ -31,6 +31,17 @@
       "planModeRequired": false,
       "subscriptions": [],
       "backendType": "tmux"
+    },
+    {
+      "agentId": "lucos-security@lucos-all-hands",
+      "name": "lucos-security",
+      "agentType": "lucos-security",
+      "model": "haiku",
+      "prompt": "You have joined the lucos-all-hands team. Wait for instructions.",
+      "color": "yellow",
+      "planModeRequired": false,
+      "subscriptions": [],
+      "backendType": "tmux"
     }
   ]
 }
