@@ -11,8 +11,8 @@ Follow this process. Do not ask for clarification — immediately begin.
 Examine the text provided as arguments to `/team` (everything after the `/team` command, stripped of leading/trailing whitespace):
 
 - **No arguments** → **spawn-all mode**: spawn every persona discovered in Step 2.
-- **Arguments that start with `add ` (e.g. `/team add architect`)** → **add-teammate mode**: jump directly to the [Add-Teammate Mode](#add-teammate-mode) section and follow those steps. Do not continue with Steps 1–6.
-- **Any other arguments** (e.g. `/team developer` or `/team developer,code-reviewer`) → **selective mode**: parse the argument as a comma-separated list of teammate names. Strip whitespace around each name. Prepend `lucos-` to any name that doesn't already start with it (e.g. `developer` → `lucos-developer`). If the resulting list includes `lucos-developer` but not `lucos-code-reviewer`, automatically add `lucos-code-reviewer` — the PR review loop requires it. Record this auto-addition for the Step 6 report.
+- **Arguments that start with `add ` (e.g. `/team add architect`)** → **add-teammate mode**: jump directly to the [Add-Teammate Mode](#add-teammate-mode) section and follow those steps. Do not continue with Steps 1–4.
+- **Any other arguments** (e.g. `/team developer` or `/team developer,code-reviewer`) → **selective mode**: parse the argument as a comma-separated list of teammate names. Strip whitespace around each name. Prepend `lucos-` to any name that doesn't already start with it (e.g. `developer` → `lucos-developer`). If the resulting list includes `lucos-developer` but not `lucos-code-reviewer`, automatically add `lucos-code-reviewer` — the PR review loop requires it. Record this auto-addition and mention it when the skill completes.
 
 Continue with Step 1.
 
@@ -48,7 +48,7 @@ sleep 8 && echo done
 
 Run this with `run_in_background: true`. You will be notified automatically when the background task completes — do not poll, re-check, or read the output file.
 
-After the background sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **skip Steps 2–4 and go straight to Step 5** (load coordinator persona). Reuse the existing team.
+After the background sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **stop here** and reuse the existing team.
 
 If no teammate reply appeared by the time the background sleep completes, the team is stale. Clean up and proceed:
 
@@ -87,27 +87,11 @@ For **each** persona in your list (all discovered in spawn-all, or only the sele
 - `name`: the teammate name (e.g. `lucos-developer`, `lucos-architect`)
 - `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
 
-## Step 5: Load coordinator persona
-
-Read the coordinator persona file and output its contents:
-
-```bash
-cat ~/.claude/agents/coordinator-persona.md
-```
-
-Output the contents verbatim. These instructions define your coordinator role for the remainder of this session. You are now operating as the team coordinator with the lucos-issue-manager persona for GitHub and git identity.
-
-## Step 6: Report the roster
-
-After loading the coordinator persona, report the team roster to the user. List each teammate by name and confirm the team is ready.
-
-If **selective mode** auto-added `lucos-code-reviewer` because `lucos-developer` was requested, include a note: "`lucos-code-reviewer` was automatically included because `lucos-developer` requires it for the PR review loop."
-
 ---
 
 ## Add-Teammate Mode
 
-Use this path when `/team add {name}` is called. The coordinator persona is assumed to already be loaded — do **not** re-run Steps 1–6 or reload it at the end.
+Use this path when `/team add {name}` is called. The coordinator persona is assumed to already be loaded — do **not** re-run Steps 1–4 or reload it at the end.
 
 ### A1: Normalise and validate the teammate name
 
@@ -140,7 +124,7 @@ Spawn using the Agent tool with:
 
 ### A4: Report
 
-Tell the user: "`{teammate-name}` has been added to the team." List the full current roster (all members including the newly added one).
+Tell the user: "`{teammate-name}` has been added to the team."
 
 ---
 
