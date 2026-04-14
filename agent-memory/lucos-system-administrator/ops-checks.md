@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-10
+container_status: 2026-04-14
 resource_checks: 2026-04-09
 syslog_review: 2026-04-09
 software_updates: 2026-04-09
 sandbox_drift: 2026-04-09
-repos_dashboard: 2026-04-10
+repos_dashboard: 2026-04-14
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -603,3 +603,15 @@ certificate_expiry: 2026-04-06
 - `lucos_private` — `required-status-checks-coherent` failing: "Analyze (actions)" not reported on Dependabot PRs. Auto-raised issue lucos_private#32 already exists (2026-04-09) — no action needed.
 - `lucos_static_media` — `required-status-checks-coherent` failing: same root cause. Auto-raised issue lucos_static_media#32 already exists (2026-04-09) — no action needed.
 - Both require switching from GitHub's "default setup" CodeQL to a workflow-based setup — developer task, already tracked.
+
+### 2026-04-14 (checks 1 + 6 due; all other checks not yet due)
+
+**Container status**:
+- avalon: `lucos_eolas_web` in **Created** state (never started). Created at 07:15 UTC today. `lucos_eolas_app` up 5h (healthy), `lucos_eolas_db` up 3 days. Deployment issue — container created but not started. Issue raised: lucos_eolas#171. All other containers up, no unhealthy.
+- salvare: **DNS broken** (no A/AAAA record from nslookup). Accessible via xwing jump host — containers clean. Recurring IPv6/DNS issue.
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**: No failing conventions.
+
+**Issues raised**:
+- lucos_eolas#171: lucos_eolas_web stuck in Created state
