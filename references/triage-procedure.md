@@ -87,7 +87,7 @@ If yes to any of the above, you MUST consult the relevant specialist (see "Speci
 6. **Update the project board** — add the issue, set Status/Priority/Owner fields. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
 7. **Position the item on the board by priority.** Critical/High: call `updateProjectV2ItemPosition` with no `afterId` to move to the top. Medium/Low: no repositioning needed. **This is a separate API call from setting fields — do not skip it for high-priority issues.**
 8. Do NOT leave a comment unless there is something genuinely useful to add.
-9. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved — this gives them an opportunity to read the conclusions and update their memories. No response is needed from them.
+9. **Notify agents who interacted with the issue.** Send a brief FYI message (via SendMessage) to every agent who commented on or was consulted about the issue during its lifecycle. Include the issue URL and mention it has been approved — this gives them an opportunity to read the conclusions and update their memories. No response is needed from them. **Do NOT tell the assigned owner to start implementing — triage approves issues, it does not dispatch work. Implementation is triggered separately via `/next` or `/dispatch`. The notification should be worded as an informational FYI only (e.g. "FYI: this issue has been approved and assigned to owner:X"), not as an instruction to start work.**
 
 **If the issue needs input from another agent:**
 
