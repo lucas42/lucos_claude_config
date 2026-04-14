@@ -87,6 +87,20 @@ For **each** persona in your list (all discovered in spawn-all, or only the sele
 - `name`: the teammate name (e.g. `lucos-developer`, `lucos-architect`)
 - `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
 
+### Spawn order (colour workaround)
+
+Claude Code assigns teammate colours from a fixed palette in spawn order (blue, green, yellow, purple, orange, pink, cyan, red, ...) and ignores the `color` frontmatter field. To ensure each teammate gets the colour defined in its agent file, **spawn teammates in palette order**:
+
+1. Read each agent file's `color` frontmatter value.
+2. Sort the agents by their intended colour's position in the palette: blue=1, green=2, yellow=3, purple=4, orange=5, pink=6, cyan=7, red=8.
+3. Spawn them one at a time in that order. Each spawn must complete before the next begins.
+
+If a new persona is added whose colour already appears in the list, or whose colour is unknown, spawn it last (after all known-colour agents).
+
+Do **not** hardcode the list of personas. Use whatever files the glob (or selective filter) produced.
+
+**Colour accuracy in selective mode:** Colours will only match the frontmatter values if the spawned set occupies the same palette positions as it would in a full spawn (i.e. spawning from the low end of the palette). For example, spawning `lucos-developer` alone gives it slot 1 (blue) — which happens to match. But spawning only `lucos-security` and `lucos-architect` gives them slots 1 and 2 (blue and green), not orange and yellow as defined in their frontmatter. This is a Claude Code limitation with no workaround for partial spawns.
+
 ---
 
 ## Add-Teammate Mode
