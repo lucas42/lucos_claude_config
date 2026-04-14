@@ -7,7 +7,7 @@ Full triage procedure for the coordinator. Invoked from the coordinator persona 
 ## Step 1: Gather All Context
 
 - Read the full issue body carefully.
-- **Always fetch comments via a separate API call** — even if the issue appears to have no comments. The triage script does not include comment text; you must call the comments endpoint for every issue. Do not assess or label an issue based on the body alone.
+- **HARD GATE — fetch comments before any assessment.** Call the comments endpoint for every issue, no exceptions. Do not assess, label, or close an issue until you have read its comments. The triage script does not include comment text. This rule exists because lucas42 regularly adds decisions, rejections, and revised scope in comments — if you skip this step you will act on stale information. **Concrete failure mode:** triaging `lucos_schedule_tracker#47` as `agent-approved` + `owner:lucos-developer` when lucas42 had already commented "I propose not doing this."
 - **Check reactions on every comment** — especially +1 reactions from `lucas42`. A +1 on an agent's design proposal counts as approval (see "Reactions as approval" below). When fetching comments, always include reactions data in your assessment. Do not skip an issue just because the last commenter is `lucos-issue-manager[bot]` — lucas42 may have reacted to a comment without writing a new one.
 - Note any updates, decisions, or clarifications made by `lucas42` — these are authoritative.
 - Note the current labels on the issue.
