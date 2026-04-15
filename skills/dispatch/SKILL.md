@@ -89,7 +89,7 @@ If a PR was created and approved:
    ```bash
    ~/sandboxes/lucos_agent/check-unsupervised <system-name>
    ```
-   where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error. **Always run this check yourself — never rely on the teammate's report of whether a repo is supervised or not. Teammates can be wrong.**
+   where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
 3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Search the **entire org** for open issues with `status:blocked` that reference the closing issue number in their body or comments. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), so a repo-scoped search is insufficient:
    ```bash
