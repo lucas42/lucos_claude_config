@@ -1,14 +1,11 @@
 ---
-name: Reporting PR completion: unsupervised vs non-unsupervised repos
-description: Always run check-unsupervised before reporting PR outcome; use different language depending on repo type
+name: Reporting PR completion: just say approved
+description: After PR approval, report "PR approved" + URL only — do not determine or report supervised/unsupervised status
 type: feedback
 ---
 
-Always run `~/sandboxes/lucos_agent/check-unsupervised <repo-name>` before reporting PR completion. Do not rely on the code-reviewer's language — they may say "auto-merge triggered/succeeded" regardless of repo type.
+After a PR is approved, report back to team-lead with just the PR URL and that it has been approved. Do not add "awaiting lucas42", "auto-merging", or any supervised/unsupervised language.
 
-- **Unsupervised repos** (`unsupervisedAgentCode = YES`): code-reviewer approval alone triggers auto-merge. Report: "PR approved and auto-merging."
-- **Non-unsupervised repos** (`unsupervisedAgentCode = NO`): lucas42's approval is also required before the PR can merge. Report: "PR approved by the code-reviewer and awaiting lucas42's approval."
+**Why:** Three incidents of wrong reporting on supervised/unsupervised status (lucos_monitoring#133, lucos_media_manager#194, lucos_arachne#350/#353). The coordinator always runs check-unsupervised itself — this is not the developer's job.
 
-**Why:** Three incidents of wrong reporting: lucos_monitoring#133 and lucos_media_manager#194 (reported "auto-merge" on non-unsupervised repos), and lucos_arachne#350/#353 (reported "awaiting lucas42" on an unsupervised repo). The pattern is the same both ways — assuming rather than checking. **Never assume in either direction.**
-
-**How to apply:** After receiving code-reviewer approval, immediately run `check-unsupervised` for the repo before composing the report. No exceptions. Exit code 0 = unsupervised (auto-merge handles it), 1 = not unsupervised (awaiting lucas42), 2 = treat as 1.
+**How to apply:** After code-reviewer approval, compose the report as: "PR {url} is approved." Stop there.

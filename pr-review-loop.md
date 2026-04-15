@@ -20,21 +20,7 @@ Wait for the lucos-code-reviewer to respond.
 
 If the code reviewer **approved** the PR: **do not merge.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
 
-**MANDATORY before reporting back — no exceptions, no guessing:**
-
-Run `check-unsupervised` for the repo right now:
-
-```bash
-~/sandboxes/lucos_agent/check-unsupervised <repo-name>
-```
-
-Do not skip this. Do not infer the answer from memory, context, or what the code reviewer said. Do not assume a repo is supervised just because it requires lucas42's approval on other things. Do not assume it is unsupervised just because previous PRs auto-merged. Run the command every time.
-
-- Exit code `0` (YES — unsupervised): report back with the PR URL and approval. Auto-merge will handle the rest. Do **not** say "awaiting lucas42".
-- Exit code `1` (NO — supervised): report back with the PR URL and explicitly note that this repo requires lucas42's approval and merge. The PR should be left open.
-- Exit code `2` (error / not found): treat as NO — report back noting that the repo requires human review and merge, and mention that the configy lookup failed so this should be investigated.
-
-Either way, do not wait for CI, do not poll CI status. Your job is done after reporting back.
+Report back with the PR URL and that it has been approved. Do not determine or report whether the repo is supervised or unsupervised — the coordinator handles that. Do not wait for CI, do not poll CI status. Your job is done after reporting back.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
