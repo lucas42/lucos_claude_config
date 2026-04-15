@@ -44,6 +44,7 @@
 - [No "execution failure" excuse](feedback_no_execution_failure_excuse.md) — unfollowed instructions are bad instructions; always improve the instruction
 - [Merged is not deployed](feedback_merged_not_deployed.md) — don't say "deployed" or "live" when a PR has just been merged; deployment takes time
 - [Follow archival checklist](feedback_follow_archival_checklist.md) — always use lucos/docs/repo-archival.md when decommissioning repos or systems
+- [Ordering advice is not a dispatch instruction](feedback_ordering_not_dispatch.md) — triage issues and set dependencies when teammates give ordering guidance, but don't dispatch until the user asks
 
 ## Active Projects
 

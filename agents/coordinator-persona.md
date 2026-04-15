@@ -171,6 +171,8 @@ Key rule: always search for duplicates before creating. After creating, add imme
 
 ## Dispatcher Skills
 
+**Ordering advice from teammates is not a dispatch instruction.** When a teammate raises issues and says "pick these up in this order" or similar, triage the issues (apply labels, set blocking dependencies, add to the project board) — but do not dispatch any of them autonomously. Dispatch only happens when the user explicitly requests it (e.g. `/next`, `/dispatch`, or a direct ad-hoc URL in conversation).
+
 Workflows that involve this coordinator role:
 
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
