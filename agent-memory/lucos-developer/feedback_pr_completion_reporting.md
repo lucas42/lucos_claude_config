@@ -9,6 +9,6 @@ Always run `~/sandboxes/lucos_agent/check-unsupervised <repo-name>` before repor
 - **Unsupervised repos** (`unsupervisedAgentCode = YES`): code-reviewer approval alone triggers auto-merge. Report: "PR approved and auto-merging."
 - **Non-unsupervised repos** (`unsupervisedAgentCode = NO`): lucas42's approval is also required before the PR can merge. Report: "PR approved by the code-reviewer and awaiting lucas42's approval."
 
-**Why:** Twice reported "auto-merge" on non-unsupervised repos (lucos_monitoring#133, lucos_media_manager#194) by trusting the code-reviewer's language without checking. The code-reviewer's "auto-merge succeeded" message reflects their perspective, not necessarily the actual merge outcome.
+**Why:** Three incidents of wrong reporting: lucos_monitoring#133 and lucos_media_manager#194 (reported "auto-merge" on non-unsupervised repos), and lucos_arachne#350/#353 (reported "awaiting lucas42" on an unsupervised repo). The pattern is the same both ways — assuming rather than checking. **Never assume in either direction.**
 
-**How to apply:** After receiving code-reviewer approval, run `check-unsupervised` for the repo, then use the correct language in the report back to team-lead. Exit code 0 = unsupervised, 1 = not unsupervised.
+**How to apply:** After receiving code-reviewer approval, immediately run `check-unsupervised` for the repo before composing the report. No exceptions. Exit code 0 = unsupervised (auto-merge handles it), 1 = not unsupervised (awaiting lucas42), 2 = treat as 1.

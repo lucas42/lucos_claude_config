@@ -97,9 +97,11 @@ When refactoring auth checks in Java controllers, ALL mock-creating helpers must
 - `checkNotAllowed` — separate mock helper, easy to miss
 If switching from `hasAuthorizationHeader() && !isAuthorised()` (Phase 1) to `!isAuthorised()` (Phase 3), add `when(request.isAuthorised()).thenReturn(true)` to BOTH helpers.
 
-## Never Merge PRs (recurring failure — critical)
+## Never Merge PRs + Always Run check-unsupervised (recurring failures — critical)
 
-**STOP. Do not call the merge endpoint.** `pr-review-loop.md` step 2 is explicit: "do not merge. Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents." `unsupervisedAgentCode = YES` means auto-merge handles it — it does NOT mean I should merge. After approval: report back, done.
+**STOP. Do not call the merge endpoint.** `pr-review-loop.md` step 2 is explicit: "do not merge. Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents."
+
+**ALWAYS run `~/sandboxes/lucos_agent/check-unsupervised <repo-name>` after approval, before reporting back.** Exit 0 = unsupervised (auto-merge handles it, report with PR URL). Exit 1 = supervised (report that lucas42 needs to merge). Never assume — repos like lucos_arachne look supervised but are not. Skipping this step gives the wrong merge status to team-lead every time.
 
 ## Alembic Autogenerate — Always Review Output
 
