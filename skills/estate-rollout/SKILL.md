@@ -57,10 +57,10 @@ The system administrator must verify that CI checks (tests, builds, and other re
 
 The system administrator should merge in staggered batches where deploys are triggered (see staggering guidance below).
 
-**Staggering applies to merges/deploys, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger a deploy. The staggering concern is about the production deploys triggered when PRs are merged:
+**Staggering applies to merges, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger CI. The staggering concern is about concurrent CI pipeline execution triggered when PRs are merged:
 
-- **If merges trigger CI builds and production deploys** (e.g. application code, workflow files, config files): "Merge **one PR at a time with a 60-second interval between merges**. PRs can be created all at once." This prevents CI pipelines from running concurrently, which has caused GitHub GraphQL rate limit exhaustion, Docker Hub throttling, and CircleCI concurrency failures during past estate-wide rollouts (see 2026-04-16 incident). A 60-second gap is enough for each pipeline to start and stagger its API calls before the next begins.
-- **If merges do not trigger production deploys** (e.g. documentation-only changes): "No staggering needed."
+- **If merges trigger any CI pipeline** (e.g. application code, workflow files, config files, `dependabot.yml`, or any other file that causes CircleCI or GitHub Actions to run): "Merge **one PR at a time with a 60-second interval between merges**. PRs can be created all at once." This prevents CI pipelines from running concurrently, which has caused GitHub GraphQL rate limit exhaustion, Docker Hub throttling, and CircleCI concurrency failures during past estate-wide rollouts (see 2026-04-16 incident — `dependabot.yml` changes were incorrectly treated as deploy-free and merged in bulk, triggering concurrent CI across 57 repos). A 60-second gap is enough for each pipeline to start and stagger its API calls before the next begins.
+- **If merges do not trigger any CI** (e.g. documentation-only `.md` changes, comment-only changes): "No staggering needed." When in doubt, assume staggering is needed — the cost of over-staggering is time; the cost of under-staggering is a CI incident.
 
 Also ask the system administrator to post a comment on the draft PR summarising what was done once the migration is complete — e.g. how many repos were migrated, any failures or repos that needed special handling. This gives the code reviewer context when they review the PR later.
 
