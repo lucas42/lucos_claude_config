@@ -45,6 +45,7 @@
 - [Merged is not deployed](feedback_merged_not_deployed.md) — don't say "deployed" or "live" when a PR has just been merged; deployment takes time
 - [Follow archival checklist](feedback_follow_archival_checklist.md) — always use lucos/docs/repo-archival.md when decommissioning repos or systems
 - [Ordering advice is not a dispatch instruction](feedback_ordering_not_dispatch.md) — triage issues and set dependencies when teammates give ordering guidance, but don't dispatch until the user asks
+- [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — when an agent says they've raised an issue, triage it inline; don't wait for the next triage run
 
 ## Active Projects
 
