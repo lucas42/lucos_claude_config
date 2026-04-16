@@ -29,6 +29,7 @@ Container names match the service name in `docker-compose.yml`.
 - **CircleCI re-run vs new pipeline**: `rerun from_failed` uses the ORIGINAL pipeline config (including orb version resolved at creation). If the orb has changed, you need to trigger a NEW pipeline via `POST /api/v2/project/.../pipeline` with `{"branch": "main"}` to pick up the new version.
 - **Docker Hub rate limit**: Triggering ~86 concurrent builds overwhelms Docker Hub pull limits. Free/basic accounts get 200 pulls/6hrs. Stagger builds or accept transient failures.
 - **`lucos-ci` GitHub App (as of 2026-04-16)**: Replaced the old `GITHUB_TOKEN` PAT for CI git push + release creation. Uses `generate-github-token` orb command. Must be granted access to all repos individually.
+- Issue #103 (open): SCP of `lucos_deploy_orb/deploy/.env` into `$BASH_ENV` clobbers orb-managed vars. Caused empty VERSION in Loganne deploy events. `$BASH_ENV` is re-sourced top-to-bottom in every new CircleCI shell step — whatever's last wins. Fix: filter SCP output via `grep '^KEY_LUCOS_MONITORING='` so only whitelisted keys pass through. General lesson: never slurp external files into `$BASH_ENV` wholesale.
 
 ## lucos_photos — Known Issues & Patterns
 - `pg_isready` fix tracked in open issue #39. Engine-at-import-time in open issue #40.
