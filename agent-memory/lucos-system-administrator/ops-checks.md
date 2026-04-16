@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-15
-resource_checks: 2026-04-09
-syslog_review: 2026-04-09
-software_updates: 2026-04-09
-sandbox_drift: 2026-04-09
-repos_dashboard: 2026-04-15
+container_status: 2026-04-16
+resource_checks: 2026-04-16
+syslog_review: 2026-04-16
+software_updates: 2026-04-16
+sandbox_drift: 2026-04-16
+repos_dashboard: 2026-04-16
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -616,3 +616,29 @@ certificate_expiry: 2026-04-06
 
 **Issues raised**:
 - lucos_eolas#171: lucos_eolas_web stuck in Created state
+
+### 2026-04-16 (checks 1–6 due; checks 7–9 monthly — not due)
+
+**Container status**:
+- avalon: all containers Up, none unhealthy. lucos_eolas_web recovered (Up 57 min, healthy) — #171 already closed.
+- salvare: reachable via xwing jump host — all containers clean
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- avalon: no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no security-tagged packages on any host):
+- avalon: Docker CE 29.3→29.4, containerd 2.2.1→2.2.3, buildx 0.31.1→0.33.0, compose 5.1.0→5.1.3. Routine Docker tooling bumps. No issue raised.
+- xwing: containerd 2.2.2→2.2.3, compose 5.1.2→5.1.3, libssl3/openssl (from `stable`, not `stable-security`), kernel 6.12.47→6.12.75, raspi-firmware. Issue #24 was closed — no current tracking issue. Noting for awareness. No new issue raised (no security tags).
+- salvare: Docker CE 29.3→29.4, containerd 2.2.1→2.2.2, libssl3/openssl (not security-tagged), kernel 6.12.25→6.12.75 (large jump). Routine.
+
+**Resources**:
+- avalon: 2.1Gi available of 7.6Gi. Swap 797Mi/4.5Gi (18%). Disk 14%. Load 1.33/1.63/2.26 (acceptable). Journal 82.1MB (fine).
+- xwing: 499Mi available of 906Mi. Swap 101Mi/905Mi (11%). Disk **66%** (74G/117G) — up from 56% on 2026-04-02. Watching trend; not yet at 80% threshold.
+- salvare: 3.3Gi available of 3.7Gi. Disk 51% (28G/58G) — recovered from 95% in March. Load 0.25 (healthy). Uptime 3 days.
+
+**Sandbox drift**: 1 remote commit pulled — README.md documenting salvare IPv6/jump host requirement. No live VM actions needed. Clean.
+
+**Repos dashboard**: 3 initial failures (lucos_dns, lucos_notes, lucos_time — `required-status-checks-coherent`). Root cause: stale cache from today's estate rollout merges (CI had just completed). Triggered convention reruns; all three now pass.
+
+**No new issues raised.**
