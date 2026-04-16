@@ -15,12 +15,12 @@ lucos_media_weightings: 2026-04-07
 lucos_photos_worker: 2026-04-07
 lucos_arachne_explore: 2026-04-06
 lucos_arachne_web: 2026-04-06
-lucos_backups: 2026-04-03
-lucos_authentication: 2026-04-03
+lucos_backups: 2026-04-16
+lucos_authentication: 2026-04-16
 lucos_repos_app: 2026-04-06
-lucos_dns_bind: 2026-04-03
-lucos_loganne: 2026-04-03
-lucos_configy: 2026-04-03
+lucos_dns_bind: 2026-04-16
+lucos_loganne: 2026-04-16
+lucos_configy: 2026-04-16
 lucos_contacts_app: 2026-04-06
 lucos_contacts_db: 2026-04-06
 lucos_contacts_googlesync_import: 2026-04-06

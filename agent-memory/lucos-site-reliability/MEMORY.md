@@ -23,6 +23,7 @@ Container names match the service name in `docker-compose.yml`.
 - Issue #42 (open): "Notify Loganne" step fails CI on transient loganne outages — should be non-blocking.
 - Issue #43 (open): root cause tracking for 2026-03-20 stale CI failures.
 - Issue #71 (open): `depends_on` with `condition: service_healthy` leaves containers stuck in "Created" state when `--wait-timeout` expires. Distinct from #21 (host-networked port contention). Affects bridge-networked services like lucos_eolas, lucos_contacts.
+- Issue #84 (open, P2): `Docker Tag & Push (Latest)` step tries to push upstream images (postgres, pgvector, owntracks/recorder) that weren't locally built. Affects repos with non-built services in docker-compose. Blocks deploys for lucos_eolas, lucos_contacts, lucos_photos, lucos_locations.
 
 ## lucos_photos — Known Issues & Patterns
 - `pg_isready` fix tracked in open issue #39. Engine-at-import-time in open issue #40.
