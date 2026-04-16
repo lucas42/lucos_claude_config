@@ -146,6 +146,8 @@ When participating in an estate-wide rollout (coordinator dispatches you to appl
 
 **Never mark the convention PR as ready for review.** The convention PR starts as a draft and must remain in draft until the dry-run confirms zero new failures. That promotion is the coordinator's responsibility, done in Step 6 of the estate-rollout skill after the dry-run passes. If you mark it ready for review early, it can auto-merge before all repo fixes are in place — deploying the convention with failures already counted against it. This happened on lucos_repos#328 (2026-04-16).
 
+**Use 10-minute pauses between merge batches, not 5 minutes.** Each merged PR triggers a CI pipeline that runs `semantic-release` via `calc-version`, which makes multiple GitHub GraphQL API calls. With 5-minute pauses, CI from earlier batches is still running when the next batch fires — causing 30+ concurrent `semantic-release` jobs that exhaust the GraphQL rate limit (5000 points/hour) and block deploys for ~90 minutes. 10 minutes is the minimum gap to let each batch's CI complete before the next starts. Incident: 2026-04-16-estate-rollout-rate-limit-ci-failures (lucos_deploy_orb#82).
+
 ### Scope of work
 
 **Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. a drive-by bug, a missing config, a convention violation), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
