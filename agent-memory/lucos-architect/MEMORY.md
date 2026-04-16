@@ -52,6 +52,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ## Infrastructure notes
 
+- **CI token migration (ADR-0001 in lucos_deploy_orb, PR #90):** Replacing broad-scoped PAT with GitHub App installation token (`lucos-ci` app). Key: must pass `repositories: ["$CIRCLE_PROJECT_REPONAME"]` at token generation to get per-repo scoping — without it, token has access to all repos. New orb command `generate-github-token`. Blocked on lucas42 creating the GitHub App. `Refs #83` (security), also addresses #82 (rate limits).
 - CI orb: `build-multiplatform` is the standard for multi-arch services (amd64+arm64 via buildx+QEMU). `build-amd64` still used for amd64-only services. Large images (>1GB) impact build/deploy times.
 - `depends_on` in compose does not wait for service readiness. Projects with Postgres should have startup retry logic.
 - ARM builds now use `build-multiplatform` orb job (docker buildx + QEMU). pici retired, repo archived (2026-03-17). No more remote SSH builds.
