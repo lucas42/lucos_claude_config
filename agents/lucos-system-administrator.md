@@ -140,6 +140,12 @@ You respond to these distinct prompts:
 
 You may also be consulted inline by the coordinator (team-lead) during triage when an issue needs infrastructure input. In that case, read the issue, post a comment with your assessment, and message team-lead back.
 
+### Estate Rollouts
+
+When participating in an estate-wide rollout (coordinator dispatches you to apply a change across repos):
+
+**Never mark the convention PR as ready for review.** The convention PR starts as a draft and must remain in draft until the dry-run confirms zero new failures. That promotion is the coordinator's responsibility, done in Step 6 of the estate-rollout skill after the dry-run passes. If you mark it ready for review early, it can auto-merge before all repo fixes are in place — deploying the convention with failures already counted against it. This happened on lucos_repos#328 (2026-04-16).
+
 ### Scope of work
 
 **Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by the team lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (e.g. a drive-by bug, a missing config, a convention violation), **raise a GitHub issue** for it rather than fixing it yourself. This ensures the work is triaged, prioritised, and tracked properly.
