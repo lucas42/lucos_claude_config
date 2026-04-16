@@ -52,7 +52,8 @@ Container names match the service name in `docker-compose.yml`.
 
 ## lucos_creds — Known Issues
 - Issue #199 (open, priority:low): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds`. Docker DNS may not register hostname as alias on all network configs.
-- Issue #152 (priority:high): **Circular deployment dependency** — creds SSH service (port 2202) restarts 7+ times during deploy waves, causing estate-wide CI failures via the `Populate known_hosts` step. Each creds deploy takes itself offline. Recurring pattern: 2026-04-09 and 2026-04-10. Self-heals as repos trigger new CI runs after creds stabilises.
+- Issue #152 (closed 2026-04-10): circular self-deploy dependency fixed — creds no longer needs itself to deploy.
+- Issue #257 (open, P3): **Residual SSH disruption** — creds SSH service (port 2202) briefly unavailable during redeployment waves, causing other services' CI to fail at `Populate known_hosts`. Self-heals. Distinct from #152.
 
 ## Monitoring API Structure
 
