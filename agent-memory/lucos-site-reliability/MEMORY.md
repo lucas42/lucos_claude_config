@@ -26,6 +26,9 @@ Container names match the service name in `docker-compose.yml`.
 - Issue #84 (open, P2): `Docker Tag & Push (Latest)` step tries to push upstream images (postgres, pgvector, owntracks/recorder) that weren't locally built. Affects repos with non-built services in docker-compose. Blocks deploys for lucos_eolas, lucos_contacts, lucos_photos, lucos_locations.
 - **calc-version runs on ALL branches** (not just main) — `build-amd64` has no branch filter. Version tags get pushed from branch builds. This caused a token burnout incident on 2026-04-16 when ~57 simultaneous branch builds hit GitHub's abuse detection. Fix needed: check `CIRCLE_BRANCH == main` before pushing tags.
 - **Estate-wide rollout + shared token = abuse detection risk**: GitHub flags tokens used for ~50+ simultaneous git push operations from distributed CI runners. Symptom: "Invalid username or token" error. Cooldown period unknown. Stagger estate-wide CI-triggering rollouts or use per-repo tokens.
+- **CircleCI re-run vs new pipeline**: `rerun from_failed` uses the ORIGINAL pipeline config (including orb version resolved at creation). If the orb has changed, you need to trigger a NEW pipeline via `POST /api/v2/project/.../pipeline` with `{"branch": "main"}` to pick up the new version.
+- **Docker Hub rate limit**: Triggering ~86 concurrent builds overwhelms Docker Hub pull limits. Free/basic accounts get 200 pulls/6hrs. Stagger builds or accept transient failures.
+- **`lucos-ci` GitHub App (as of 2026-04-16)**: Replaced the old `GITHUB_TOKEN` PAT for CI git push + release creation. Uses `generate-github-token` orb command. Must be granted access to all repos individually.
 
 ## lucos_photos — Known Issues & Patterns
 - `pg_isready` fix tracked in open issue #39. Engine-at-import-time in open issue #40.
