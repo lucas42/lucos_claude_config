@@ -55,7 +55,7 @@ Every project gets these automatically:
 
 ### Writing to lucos_creds
 
-**Only lucas42 can write new credentials to lucos_creds.** Agents can read `.env` files via `scp` (above) but have no write access to the creds service. Never ask `lucos-system-administrator` or any other agent to store credentials in lucos_creds — route that step back to lucas42.
+Agents have read and write access to the `development` environment in lucos_creds. For all other environments (e.g. `production`), **only lucas42 can write credentials**. Never ask any agent to store credentials in a non-development environment — route that step back to lucas42.
 
 Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build step only has access to a dummy `PORT` and will fail if other variables are referenced. Instead, construct them in application code at startup (e.g. SQLAlchemy's `URL.create()`).
 
