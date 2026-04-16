@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## Estate rollout merge pacing
+
+Use **10-minute pauses** between batches — 5 minutes causes GraphQL rate exhaustion (30+ concurrent semantic-release jobs hit the 5000pt/hour limit). Incident 2026-04-16 (lucos_deploy_orb#82). See `estate-rollout-rate-limiting.md`.
+
 ## Estate rollout repo discovery
 
 Use GitHub API (Contents API or code search), NOT local `grep -rl` against `~/sandboxes/`. Local clones are stale and incomplete — 6 repos were missed in the #34 rollout this way. See `estate-rollout-discovery.md`.
