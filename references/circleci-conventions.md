@@ -1,5 +1,11 @@
 # CircleCI Conventions
 
+## Pipeline trigger behaviour
+
+**Every push to any branch triggers a full pipeline.** CircleCI does not support file-path filtering — there is no equivalent of GitHub Actions' `paths:` filter. Any file change, regardless of type (application code, config files, `dependabot.yml`, documentation), will trigger a full build pipeline on push and a full build + deploy pipeline on merge to main.
+
+When planning estate-wide rollouts or any bulk merge operation, assume that every merge will trigger a CI pipeline. Stagger merges accordingly — see the estate-rollout skill for guidance.
+
 ## Standard configs
 
 When a project has no tests, the standard `.circleci/config.yml` is:
