@@ -53,6 +53,10 @@ Every project gets these automatically:
 - **Hardcode in `docker-compose.yml`**: non-sensitive values that never vary between environments (internal service URLs, fixed usernames, database names)
 - **lucos_creds (`.env`)**: sensitive values and anything that varies between dev and production
 
+### Writing to lucos_creds
+
+**Only lucas42 can write new credentials to lucos_creds.** Agents can read `.env` files via `scp` (above) but have no write access to the creds service. Never ask `lucos-system-administrator` or any other agent to store credentials in lucos_creds — route that step back to lucas42.
+
 Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build step only has access to a dummy `PORT` and will fail if other variables are referenced. Instead, construct them in application code at startup (e.g. SQLAlchemy's `URL.create()`).
 
 ---
