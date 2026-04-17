@@ -12,7 +12,7 @@ Check all `status:blocked` issues for resolved dependencies.
 
 1. Read `~/.claude/references/triage-reference-data.md` for the Blocked status option ID and API patterns.
 
-2. Fetch every issue in the Blocked column of the project board (Status = Blocked, option ID `d79b6b67`). Paginate if needed.
+2. Fetch every issue in the Blocked column of the project board (Status = Blocked, option ID `d79b6b67`). **You must paginate** — blocked issues may appear on any page, not just the first. Loop using `pageInfo.hasNextPage` and `endCursor` until `hasNextPage` is false. A single query is not sufficient.
 
 3. For each blocked issue:
    a. Read the full issue body and all comments to identify every issue referenced as a dependency or prerequisite (e.g. "blocked by #X", "depends on lucas42/other_repo#Y", or any issue linked as a blocker in a previous triage comment).
