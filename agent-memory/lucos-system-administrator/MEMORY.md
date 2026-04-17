@@ -214,6 +214,10 @@ Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.comp
 
 See `reptiles-md-tracking.md`. Fix: `git rm --cached agent-memory/lucos-code-reviewer/reptiles.md` then commit+push.
 
+## GitHub Actions SHA pinning — always verify via API
+
+Never write action SHAs from memory. Look up via: `curl -s "https://api.github.com/repos/{owner}/{repo}/git/refs/tags/{version}"` — then copy-paste. A transposition in `imjasonh/setup-crane@v0.4` caused a silent runtime failure (lucas42/.github#50, 2026-04-17). See `github-actions-sha-pinning.md`.
+
 ## Investigations: read source before theorising
 
 Don't speculate about convention/tool internals without reading the source. See `feedback_read_before_theorising.md`.
