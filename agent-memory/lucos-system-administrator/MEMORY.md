@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## Docker memswap_limit default
+
+`memswap_limit` unset = **2× mem_limit** (not equal). Always set explicitly when intent is to prevent swap. See `docker-memswap-default.md`.
+
 ## Estate rollout merge pacing
 
 Use **10-minute pauses** between batches — 5 minutes causes GraphQL rate exhaustion (30+ concurrent semantic-release jobs hit the 5000pt/hour limit). Incident 2026-04-16 (lucos_deploy_orb#82). See `estate-rollout-rate-limiting.md`.
