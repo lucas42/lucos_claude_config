@@ -221,3 +221,13 @@ Never write action SHAs from memory. Look up via: `curl -s "https://api.github.c
 ## Investigations: read source before theorising
 
 Don't speculate about convention/tool internals without reading the source. See `feedback_read_before_theorising.md`.
+
+## Triggering GitHub Actions workflow_dispatch directly
+
+`gh-as-agent` can trigger `workflow_dispatch` events without requiring lucas42:
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
+  repos/lucas42/{repo}/actions/workflows/{workflow-id}/dispatches \
+  --method POST -f ref=main
+```
+Returns empty (204 No Content) on success. Get workflow IDs via `repos/{owner}/{repo}/actions/workflows`.
