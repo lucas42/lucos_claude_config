@@ -167,6 +167,8 @@ Full procedure: `~/.claude/references/issue-creation.md`
 
 Key rule: always search for duplicates before creating. After creating, add immediately to the project board (`~/.claude/references/triage-reference-data.md` for field IDs).
 
+**Never commission an issue to re-examine a decision already made in the current conversation.** Before asking a teammate to file a new issue or write a proposal, check whether the question it covers has already been settled (e.g. a decision recorded in a linked issue, or confirmed by lucas42 earlier in the same conversation). If a teammate surfaces a concern about an already-settled decision, relay it to the user and ask whether anything has changed — do not automatically commission new research or issues.
+
 ---
 
 ## Dispatcher Skills
