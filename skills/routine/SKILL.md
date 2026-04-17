@@ -35,8 +35,10 @@ To find them:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
-  "search/issues?q=label:owner:lucas42+org:lucas42+is:issue+is:open+sort:created-asc&per_page=50"
+  'search/issues?q=label:"owner:lucas42"+org:lucas42+is:issue+is:open+sort:created-asc&per_page=50'
 ```
+
+Note: the label name must be quoted in the query string (`label:"owner:lucas42"` not `label:owner:lucas42`) — GitHub's search parser treats `owner:` as a search qualifier otherwise, silently returning zero results.
 
 Present the list grouped and ordered by priority, consulting `~/sandboxes/lucos/docs/priorities.md` for the priority framework:
 
