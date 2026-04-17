@@ -184,5 +184,6 @@ for url, s in data['systems'].items():
 - Always use `--app lucos-site-reliability` with `gh-as-agent`. Never `gh api` or `gh pr create`.
 - Always use `<<'ENDBODY'` heredoc for `body` field — `-f body="..."` breaks newlines and backticks.
 - Issue comments: `repos/lucas42/{repo}/issues/{n}/comments --method POST`.
+- **Comment endpoint footgun**: POSTing to `repos/.../issues/comments/{comment_id}` OVERWRITES the existing comment's body (GitHub treats it as an update). To post a NEW comment, always use the issue-scoped endpoint `/issues/{n}/comments`. To edit, use `--method PATCH repos/.../issues/comments/{comment_id}`. Got burnt on lucos_deploy_orb#105 on 2026-04-17 — had to reconstruct a lost comment.
 - The `lucos` repo has auto-merge — do not tell lucas42 to manually merge it.
 - For `gh-as-agent` body with backtick code: use `BODY=$(cat <<'ENDBODY' ... ENDBODY)` and pass as `--field body="$BODY"`.
