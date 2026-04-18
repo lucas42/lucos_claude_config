@@ -18,6 +18,8 @@ Container names match the service name in `docker-compose.yml`.
 
 **Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
 
+**Push all content before requesting review**: `lucas42/*` repos have fast auto-merge — if a reviewer approves the PR, it merges within seconds, no merge-queue delay. Pushing new commits *after* review is requested is unsafe: the approval can land and auto-merge the incomplete state before the expansion lands. 2026-04-18: PR#96 (incident report) auto-merged the narrow first version seconds after reviewer approval, before my expanded second commit landed. Had to open PR#97 to fix up. Rule: make all commits, push all of them, THEN request review.
+
 **Diagnostic pattern — proxy in front of content-addressed store**: any time a reverse proxy (nginx, gunicorn, envoy, etc.) sits in front of a content-addressed store (Docker registry, blob storage, IPFS, etc.), a *partial write / mid-stream truncation* on the proxy side surfaces as **multiple different-looking errors upstream** — because the client's integrity check fails in a different spot depending on where in the stream it got cut off. On 2026-04-17 this produced three signatures (`context deadline exceeded`, BuildKit `unexpected commit digest`, `manifest unknown`) all from one gunicorn worker saturation. When you see 2+ distinct error messages from services that talk to the same proxied blob-y dependency, suspect one root cause at the proxy layer before three separate bugs.
 
 ## lucos_deploy_orb — Known Patterns
