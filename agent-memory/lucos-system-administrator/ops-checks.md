@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-17
+container_status: 2026-04-18
 resource_checks: 2026-04-16
 syslog_review: 2026-04-16
 software_updates: 2026-04-16
 sandbox_drift: 2026-04-16
-repos_dashboard: 2026-04-17
+repos_dashboard: 2026-04-18
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -640,5 +640,16 @@ certificate_expiry: 2026-04-06
 **Sandbox drift**: 1 remote commit pulled — README.md documenting salvare IPv6/jump host requirement. No live VM actions needed. Clean.
 
 **Repos dashboard**: 3 initial failures (lucos_dns, lucos_notes, lucos_time — `required-status-checks-coherent`). Root cause: stale cache from today's estate rollout merges (CI had just completed). Triggered convention reruns; all three now pass.
+
+**No new issues raised.**
+
+### 2026-04-18 (checks 1 + 6 due; all other checks not yet due)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: clean (via xwing jump host) — no crashed, stopped, or unhealthy containers
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**: One failing convention — `lucos_docker_mirror` `required-status-checks-coherent`: "no CodeQL Analyze (X) check is required — auto-merge can complete before CodeQL finishes". Auto-raised issue lucos_docker_mirror#33 already exists (raised 2026-04-18T01:39 UTC by lucos-repo-audit) — no action needed.
 
 **No new issues raised.**
