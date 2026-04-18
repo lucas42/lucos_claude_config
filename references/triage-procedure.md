@@ -4,10 +4,25 @@ Full triage procedure for the coordinator. Invoked from the coordinator persona 
 
 ---
 
+## Inline Triage of Agent-Raised Issues
+
+When a teammate agent mentions they have raised a new GitHub issue (e.g. "I raised lucas42/lucos_foo#N"), **triage it immediately** — do not wait for the next scheduled triage run. Apply the full triage process (Steps 1–3 below) to the new issue before continuing with other work.
+
+Stop short of dispatching the issue unless the user also asks for that.
+
+---
+
 ## Step 1: Gather All Context
 
 - Read the full issue body carefully.
-- **HARD GATE — fetch comments before any assessment.** Call the comments endpoint for every issue, no exceptions. Do not assess, label, or close an issue until you have read its comments. The triage script does not include comment text. This rule exists because lucas42 regularly adds decisions, rejections, and revised scope in comments — if you skip this step you will act on stale information. **Concrete failure mode:** triaging `lucos_schedule_tracker#47` as `agent-approved` + `owner:lucos-developer` when lucas42 had already commented "I propose not doing this."
+- **HARD GATE — fetch comments before any assessment.** For every issue, you MUST make TWO separate API calls: one for the issue body and one for the comments. Do not combine them. Do not assess, label, or close an issue until you have read both. The mandatory pattern is:
+  ```bash
+  # Call 1 — issue body
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager 'repos/lucas42/{repo}/issues/{number}'
+  # Call 2 — comments (MUST be run separately, never skipped)
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager 'repos/lucas42/{repo}/issues/{number}/comments'
+  ```
+  These two calls must both complete before you form any assessment. The issue body and the comments are different endpoints — fetching the body with `--jq` does not give you the comments. The triage script does not include comment text. This rule exists because lucas42 regularly adds decisions, rejections, and revised scope in comments — if you skip this step you will act on stale information. **Concrete failure modes:** (1) triaging `lucos_schedule_tracker#47` as `agent-approved` + `owner:lucos-developer` when lucas42 had already commented "I propose not doing this"; (2) triaging `lucos_deploy_orb#124` as straightforward when the comments contained a failed PR attempt, an architect's design constraints, and lucas42's explicit rejection of the `force-latest` parameter and correction that there is now only one publish command.
 - **Check reactions on every comment** — especially +1 reactions from `lucas42`. A +1 on an agent's design proposal counts as approval (see "Reactions as approval" below). When fetching comments, always include reactions data in your assessment. Do not skip an issue just because the last commenter is `lucos-issue-manager[bot]` — lucas42 may have reacted to a comment without writing a new one.
 - Note any updates, decisions, or clarifications made by `lucas42` — these are authoritative.
 - Note the current labels on the issue.
