@@ -70,6 +70,10 @@
 - **Erlang string pitfalls**: `re:replace(..., {return, list})` returns an iolist (nested list), not a flat string. Always wrap with `lists:flatten/1` before using `++`. Similarly, `lists:join/2` returns an iolist — use `string:join/2` instead when a flat list is needed for `++` concatenation.
 - **`httpc` status matching**: status code is an integer (e.g. `200`), not a partial pattern. Use a guard: `when StatusCode >= 200, StatusCode < 300` — not `{_, 2, _}`.
 
+## CircleCI
+
+- [Heredoc << escaping](circleci_heredoc_escaping.md) — in v2.1 config, `<<` must be escaped as `\<<` in shell commands (even inside block scalars) or CI fails with "Unclosed << tag"
+
 ## Docker — Local Builds
 
 `docker` is available at `/usr/bin/docker` and the daemon is running. Always run `docker build <context>` locally before pushing Dockerfile changes — do not rely on CI to catch build failures.
