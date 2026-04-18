@@ -43,6 +43,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - User-Agent convention (lucos#19, closed): ADR-0001 in lucas42/lucos (`docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`). Set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
 - **Bearer auth migration (2026-04-08):** Estate migrating from `Authorization: key` to standard `Bearer`. Original advice (lucos#37, closed) was case-by-case; reversed after arachne#250 outage proved mixed state is untenable. Phase 1 (server dual-accept): eolas#147, media_manager#203. Phase 2 (client switch): media_metadata_api#123, photos#283, googlesync#118, gphotos#32. Phase 3 (drop key + update docs): lucos#74. media_metadata_api is Bearer-only server; contacts & photos are dual-accept; eolas & media_manager are key-only (Phase 1 targets).
 - [Ask about version churn before recommending snapshot mirrors](feedback_churn_rate_before_snapshot.md) — curated stores (GHCR mirror etc.) break under Dependabot-driven tag churn; pull-through caches don't
+- [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md) — Tier-3 offline-capability hint; never cite as a security boundary
 
 ## Auto-merge & security checks
 
