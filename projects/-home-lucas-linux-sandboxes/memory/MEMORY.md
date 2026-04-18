@@ -46,6 +46,7 @@
 - [Follow archival checklist](feedback_follow_archival_checklist.md) — always use lucos/docs/repo-archival.md when decommissioning repos or systems
 - [Ordering advice is not a dispatch instruction](feedback_ordering_not_dispatch.md) — triage issues and set dependencies when teammates give ordering guidance, but don't dispatch until the user asks
 - [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — when an agent says they've raised an issue, triage it inline; don't wait for the next triage run
+- [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — don't raise issues proposing Dependabot semver-major ignores; major bumps should flow through and CI should catch breakage
 
 ## Active Projects
 
