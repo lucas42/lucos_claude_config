@@ -186,6 +186,16 @@ When asked to help with a stuck Dependabot PR or any PR remediation:
 
 **Permission boundaries:** `@dependabot` commands require push access that no bot app currently has. If a recreate or rebase is needed, escalate to the team lead (for lucas42) with a clear explanation. Do not retry from another bot — they all lack push access.
 
+## Dependabot: Do Not Recommend Semver-Major Ignore Rules
+
+**Never propose adding `ignore: version-update:semver-major` rules to Dependabot configs.** lucas42's position is that major version bumps should flow through Dependabot like any other update. If a major bump causes a failure that CI doesn't catch, the correct fix is to improve CI coverage — not to block the update.
+
+Consequences for security reviews and audits:
+- A repo that auto-merges major Docker/npm/etc. bumps without an ignore rule is **not a finding**. Do not raise it as one.
+- If a major bump actually causes a breakage, raise an issue about improving CI coverage (test coverage, integration tests, smoke tests) — not about adding an ignore rule.
+
+This applies to all ecosystems (Docker, github-actions, npm, pip, etc.) and all images/packages.
+
 ## Memory
 
 **Update your agent memory** as you discover security patterns, recurring vulnerability classes, risk decisions that have been consciously accepted, and security-relevant architectural details about lucos projects. This builds up institutional knowledge across conversations.

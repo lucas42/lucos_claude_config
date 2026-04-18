@@ -159,13 +159,13 @@ Do not raise CodeQL coverage issues for unsupported languages. Supported: C/C++,
 
 See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
 
-## Accepted Risk: Semver-major Dependabot ignore rules for typesense and nginx (2026-04-18)
+## Policy: Never Recommend Semver-Major Dependabot Ignore Rules (2026-04-18)
 
-lucas42 closed both of these as "won't fix":
-- lucas42/lucos_arachne#382 — no semver-major ignore for `typesense/typesense` Docker image
-- lucas42/lucos_router#74 — no semver-major ignore for `nginx` Docker image
+lucas42's position: major version bumps should flow through Dependabot. If a major bump causes a failure CI doesn't catch, the fix is **better CI**, not an ignore rule. Adding ignore rules causes version lag and masks CI coverage gaps.
 
-**Preference:** lucas42 prefers to accept the risk of manual review if/when a major bump occurs, rather than adding ignore rules. Do not re-raise these specific issues or propose semver-major ignore rules for these images again.
+Do not raise issues proposing `ignore: version-update:semver-major` for any ecosystem or image. If a major bump breaks something, the issue to raise is about CI coverage improvement.
+
+Persona file updated with a standing instruction on 2026-04-18.
 
 ## Key People/Agents
 
