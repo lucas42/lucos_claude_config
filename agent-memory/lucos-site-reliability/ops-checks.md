@@ -14,7 +14,7 @@ lucos_schedule_tracker: 2026-04-09
 lucos_media_weightings: 2026-04-07
 lucos_photos_worker: 2026-04-07
 lucos_arachne_explore: 2026-04-18
-lucos_arachne_web: 2026-04-06
+lucos_arachne_web: 2026-04-19
 lucos_backups: 2026-04-16
 lucos_authentication: 2026-04-16
 lucos_repos_app: 2026-04-18
@@ -22,14 +22,14 @@ lucos_dns_bind: 2026-04-16
 lucos_loganne: 2026-04-16
 lucos_configy: 2026-04-16
 lucos_contacts_app: 2026-04-18
-lucos_contacts_db: 2026-04-06
+lucos_contacts_db: 2026-04-19
 lucos_contacts_googlesync_import: 2026-04-06
 lucos_contacts_web: 2026-04-06
 lucos_creds: 2026-04-10
-lucos_creds_configy_sync: 2026-04-06
+lucos_creds_configy_sync: 2026-04-19
 lucos_creds_ui: 2026-04-06
 lucos_dns_sync: 2026-04-09
-lucos_eolas_app: 2026-04-06
+lucos_eolas_app: 2026-04-19
 lucos_eolas_db: 2026-04-07
 lucos_eolas_web: 2026-04-07
 lucos_locations_mosquitto: 2026-04-15
@@ -63,7 +63,7 @@ lucos_docker_health_app: 2026-04-08
 
 lucos_docker_mirror_web: 2026-04-18
 lucos_docker_mirror_registry: 2026-04-18
-lucos_docker_mirror_info: new (not yet reviewed)
+lucos_docker_mirror_info: 2026-04-19
 
 ## SSH Hostname Note
 
