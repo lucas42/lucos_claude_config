@@ -14,6 +14,8 @@ Container names match the service name in `docker-compose.yml`.
 
 ## Standing Rules
 
+**Keep the docker.l42.eu mirror in the orb.** See [feedback_keep_docker_mirror.md](feedback_keep_docker_mirror.md). Mirror-side bugs (digest-404, etc.) must be fixed at the mirror layer, not by removing the BuildKit mirror config from `publish-docker.yml`. Reason: Docker Hub rate-limit exposure across estate-wide concurrent CI is worse than the mirror's bugs. Confirmed 2026-04-19 when lucas42 rejected PR lucas42/lucos_deploy_orb#143.
+
 **Read the full function before editing any part of it.** Partial edits risk removing assignments used further down (caused regression in lucos_backups PR #62).
 
 **Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
