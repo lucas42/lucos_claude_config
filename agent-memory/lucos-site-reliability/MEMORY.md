@@ -16,6 +16,8 @@ Container names match the service name in `docker-compose.yml`.
 
 **Keep the docker.l42.eu mirror in the orb.** See [feedback_keep_docker_mirror.md](feedback_keep_docker_mirror.md). Mirror-side bugs (digest-404, etc.) must be fixed at the mirror layer, not by removing the BuildKit mirror config from `publish-docker.yml`. Reason: Docker Hub rate-limit exposure across estate-wide concurrent CI is worse than the mirror's bugs. Confirmed 2026-04-19 when lucas42 rejected PR lucas42/lucos_deploy_orb#143.
 
+**Probe before requesting.** See [feedback_check_before_requesting.md](feedback_check_before_requesting.md). Never file a feature-request issue without first verifying (one curl / one grep) the feature doesn't already exist. Wasted a triage cycle on lucos_schedule_tracker#57 2026-04-19.
+
 **Read the full function before editing any part of it.** Partial edits risk removing assignments used further down (caused regression in lucos_backups PR #62).
 
 **Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
@@ -102,6 +104,9 @@ for url, s in data['systems'].items():
         if c.get('ok') == False:
             print(url, cname, c.get('value',''))
 ```
+
+## lucos_schedule_tracker — API
+- `DELETE /schedule/{system}` — idempotent, returns 204, no auth. Shipped in PR #56, 2026-04-18. Use for cleaning up stale tracked jobs when a scheduled runner stops reporting (e.g. when a metric is removed from a health-check service).
 
 ## lucos_monitoring — Known Issues
 - Issue #148 (open, priority:low, owner:lucos-site-reliability): CircleCI check errors on repos with 0 active pipelines (`.github` has no CI config; `vue-leaflet-antimeridian` has config but project not activated). Fix: return neutral/unknown when 0 pipelines instead of erroring.
