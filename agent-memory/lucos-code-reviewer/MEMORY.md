@@ -73,9 +73,15 @@
 
 ## CircleCI — `max_auto_reruns` and Exit Code Suppression
 
+### `max_auto_reruns` is valid at BOTH workflow-job level AND `run` step level
+- **`max_auto_reruns` and `auto_rerun_delay` can be set as attributes on individual `run` steps** inside an orb command — they are NOT exclusively workflow-level job attributes.
+- The existing `lucos_deploy_orb` `deploy.yml` already uses `max_auto_reruns: 5` / `auto_rerun_delay: 30s` on multiple `run` steps.
+- Do NOT tell a developer these can't go in an orb command — they can. Confirmed: lucos_deploy_orb PR #146.
+
 ### `|| true` breaks `max_auto_reruns` — never combine them
 - **CircleCI's `max_auto_reruns` triggers on a non-zero exit code.** If a step uses `|| true` (or any other exit-code suppression), the step always exits 0 and retries will never trigger — making `max_auto_reruns` dead code.
 - When reviewing a step that uses both `|| true` and `max_auto_reruns`, flag this as a bug.
+- A `|| true` on a cleanup sub-command inside the script (e.g. `git tag -d ... || true`) does NOT suppress the overall step exit code — only `|| true` at the end of the final command does.
 - Confirmed: lucos_deploy_orb PR #36 — first version used `|| true` which I approved; lucas42 caught that retries would never fire. Fixed by restoring `--fail` and increasing the delay instead.
 
 ## GitHub Actions — Dependabot Auto-Merge Workflows
