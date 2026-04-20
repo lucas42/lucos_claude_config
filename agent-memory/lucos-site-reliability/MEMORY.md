@@ -84,6 +84,9 @@ Container names match the service name in `docker-compose.yml`.
 - **Do NOT recommend internal Docker URLs** between services — creates tight coupling. Use external HTTPS URLs.
 - Ingestor runs on cron: `15 04 * * *` UTC (Dockerfile). Initial ingest on container start via `startup.sh`.
 - Base image: `lucas42/lucos_scheduled_scripts:2.0.2`.
+- **2026-04-20 TDB2 bloat incident** (report: `docs/incidents/2026-04-20-arachne-sparql-timeouts-tdb2-index-bloat.md`): PR #268's `DROP GRAPH` + re-INSERT ingestion pattern grew TDB2 indexes from <100MB to ~93GB in 40 days against 227K live quads. TDB2 B+tree tombstones are never reclaimed without explicit compaction. User-visible SPARQL timeouts, JVM swapping at 99%+ container memory. Resolution via online compaction + memory bump (PR #387). Strategic redesign in #386 (architect recommended: conditional refresh → diff-based → scheduled compaction).
+- **TDB2 online compaction command**: `POST /$/compact/arachne?deleteOld=true` via admin auth. Zero downtime, takes ~1 min for our data size, swaps `Data-0001` → `Data-0002` atomically. Use this whenever Fuseki on-disk size grows suspiciously large relative to live quad count (`SELECT (COUNT(*) AS ?n) { ?s ?p ?o }`). Sanity check: healthy ratio is <10× live quad size; 100× or more means bloat.
+- Follow-up issues from the 2026-04-20 incident: #388 (SPARQL-latency signal in /_info), #389 (scheduled compaction safety-net), #386 (strategic ingestion redesign with architect).
 
 ## lucos_creds — Known Issues
 - Issue #199 (open, priority:low): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds`. Docker DNS may not register hostname as alias on all network configs.
