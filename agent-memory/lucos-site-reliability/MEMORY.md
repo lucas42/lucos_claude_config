@@ -155,7 +155,7 @@ for url, s in data['systems'].items():
 - lucos_backups#57 / PR #56: PyPI clients call `sys.exit()` at import if `SYSTEM` env var missing. **Always audit import-time env var requirements when switching to PyPI clients.**
 - Before raising issue during ops checks, search recently closed issues — the alert being red doesn't guarantee no issue exists.
 - Issue #157 (closed): SSH command 3s timeout too tight during heavy deploy waves — was about avalon timeouts, self-healing.
-- Issue #159 (open, P2): IPv6 route from avalon to salvare broken — "Hop limit exceeded". salvare.s.l42.eu has AAAA only (no A record). Network-level problem, needs sysadmin investigation. `POST /refresh-tracking` won't help — underlying route is broken.
+- Issue #159 (closed 2026-04-12 via PR #160): IPv6 route flap from avalon to salvare — salvare has AAAA only, route from OVH occasionally unreachable. Fix routes Fabric connections via xwing ProxyJump. **PR #160 fix was incomplete — only covers `Host.__init__`'s primary connection, not the raw `ssh` / `scp` commands in `copyFileTo` and `fileExistsRemotely` (host.py:77, 82). Those still go direct and still fail on IPv6 route flaps. Tracked by lucos_backups#185 (open, P2).** Symptom on recurrence: schedule-tracker.l42.eu alerts on `lucos_backups` check with `ssh: connect to host salvare.s.l42.eu port 22: No route to host`. Backup /_info itself shows all checks OK — failure is in the cron scheduled run, not the live service. Alert clears only on next successful scheduled run (next ~03:25 UTC).
 
 ## lucos_contacts — Known Issues & Patterns
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` for IP-based Docker healthchecks (`wget http://127.0.0.1:<port>/_info`). General pattern for all Django services.
