@@ -114,6 +114,7 @@ for url, s in data['systems'].items():
 
 ## lucos_monitoring — Known Issues
 - Issue #148 (open, priority:low, owner:lucos-site-reliability): CircleCI check errors on repos with 0 active pipelines (`.github` has no CI config; `vue-leaflet-antimeridian` has config but project not activated). Fix: return neutral/unknown when 0 pipelines instead of erroring.
+- Issue #178 (open, P3): transient CircleCI workflow-fetch blip on the MOST RECENT pipeline lets a failed workflow from an OLDER pipeline win `keepLatestWorkflowPerName`, producing a false-positive `ok=false` for exactly one polling interval (~60s). Pattern: alert → recovery 60s later with no pipeline activity. `collectAllWorkflows` in `fetcher_circleci.erl` silently returns `[]` on HTTP error for each pipeline's workflow endpoint; if the most recent pipeline's fetch fails, only older pipelines contribute and an old failure can become the "latest". Fix: bail to `ok => unknown` if the most-recent pipeline's workflow fetch fails.
 - CircleCI check: v2 workflow-level API via #30/#32. Fix #48 (closed): check last 5 pipelines, flatten workflows, keepLatestWorkflowPerName to avoid race condition.
 - **Erlang OTP ssl startup**: `ensure_all_started(inets)` does NOT start ssl. Use `application:ensure_all_started([ssl, inets])` — walks full dependency chain. Closed as #52/#54.
 - lucos_arachne ingestor unhandled webhook types → 404, events dropped silently. Issue lucos_arachne#53.
