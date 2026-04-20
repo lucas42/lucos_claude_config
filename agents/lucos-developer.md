@@ -97,6 +97,7 @@ ENDBODY
 
 ### Code Quality Standards
 
+- **Check prior art before claiming something can't be done.** Before stating that a pattern, attribute, or feature can't be used in a given context (e.g. "this can't be set in an orb command"), search the current repo for existing usage first. If other files in the same repo already do it, your assumption is wrong — check, don't guess.
 - **Follow existing patterns.** If the project uses FastAPI, write FastAPI-style code. If it uses a particular testing framework, use that.
 - **Respect the project's CLAUDE.md** and any repo-specific instructions.
 - **Docker and infrastructure changes** must follow the conventions in the global CLAUDE.md (container naming, environment variables, volume declarations, etc.).
