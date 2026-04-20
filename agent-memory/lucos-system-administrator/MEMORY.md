@@ -145,6 +145,14 @@ Extracted ops checks for SRE, sysadmin, and security into separate `*-ops-checks
 
 `lucos_arachne_web` and `lucos_arachne_explore` are the persistent services that should always be `Up`.
 
+## lucos_arachne_triplestore memory limit (updated 2026-04-20)
+
+Container memory limit is **2G** (bumped from 1G via lucos_arachne#387, merged 2026-04-20). JVM max heap is **-Xmx1024m** (was -Xmx768m). Do not flag 2G as anomalous in ops checks.
+
+Root cause of the bump: TDB2 B+tree tombstones from `DROP GRAPH` + re-INSERT ingestion accumulated to ~93GB disk / ~1G RSS, exhausting the old limit. Online compaction (Fuseki `/$/compact`) resolved disk bloat (93GB → 76MB in 50s). Strategic redesign tracked in lucos_arachne#386.
+
+**TDB2 slow-cooker signal**: if disk size grows far beyond what live quad count justifies, suspect tombstone accumulation — not just "is it running". Compaction command: `POST http://localhost:3030/$/compact/ds` (or the dataset name).
+
 ## lucos_docker_health: new service (2026-03-10)
 
 A new service `lucas42/lucos_docker_health` was created to monitor Docker container healthchecks across all hosts. Design (from lucos#45): a Go binary runs periodically on each host, reads local Docker healthcheck states, and pushes results to `lucos_schedule_tracker`. Uses `system` value `lucos_docker_health_{hostname}` (e.g. `lucos_docker_health_avalon`). Status is `error` if any container is unhealthy (with message), `healthy` otherwise.
