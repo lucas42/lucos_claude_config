@@ -113,13 +113,14 @@ Use the `git-as-agent` wrapper for all commit-writing git operations — **never
 
 **Always use `git-as-agent` for every git command that writes a commit**, including:
 - `git commit -m "..."`
+- `git commit --allow-empty -m "..."` (no-op / CI trigger commits — **no exceptions**)
 - `git commit --amend`
 - `git cherry-pick`
 - `git pull --rebase`
 - `git rebase`
 - Any other operation that creates or rewrites a commit
 
-There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper.
+There is no safe "do this once" shortcut — every commit-writing operation needs the wrapper, **including commits whose only purpose is to trigger CI**. "It's just a trigger commit" is not an exception.
 
 ## Communicating with Teammates
 
