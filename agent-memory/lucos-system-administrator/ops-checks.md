@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-19
+container_status: 2026-04-20
 resource_checks: 2026-04-16
 syslog_review: 2026-04-16
 software_updates: 2026-04-16
 sandbox_drift: 2026-04-16
-repos_dashboard: 2026-04-19
+repos_dashboard: 2026-04-20
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -653,6 +653,21 @@ certificate_expiry: 2026-04-06
 **Repos dashboard**: One failing convention — `lucos_docker_mirror` `required-status-checks-coherent`: "no CodeQL Analyze (X) check is required — auto-merge can complete before CodeQL finishes". Auto-raised issue lucos_docker_mirror#33 already exists (raised 2026-04-18T01:39 UTC by lucos-repo-audit) — no action needed.
 
 **No new issues raised.**
+
+### 2026-04-20 (checks 1 + 6 due; all other checks not yet due)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: clean (via xwing jump host) — no crashed, stopped, or unhealthy containers
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard** — 2 failing conventions, both already tracked:
+- tfluke `docker-healthcheck-on-built-services` (app service missing healthcheck) — tracked in tfluke#380
+- tfluke `dockerfile-exposes-version` (Dockerfile missing ARG VERSION / ENV VERSION / image tag) — tracked in tfluke#381
+
+**No new issues raised.**
+
+---
 
 ### 2026-04-19 (checks 1 + 6 due; all other checks not yet due)
 
