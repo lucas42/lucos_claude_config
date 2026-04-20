@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## xwing/salvare: accept_ra=2 applied (2026-04-20)
+
+Docker's forwarding=1 silently disables RA acceptance. Fix applied and persisted to `/etc/sysctl.conf` on both hosts. See `xwing-ipv6-accept-ra.md` for full diagnosis pattern and SSH-to-salvare workaround.
+
 ## Docker memswap_limit default
 
 `memswap_limit` unset = **2× mem_limit** (not equal). Always set explicitly when intent is to prevent swap. See `docker-memswap-default.md`.
