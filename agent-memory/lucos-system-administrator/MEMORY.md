@@ -182,11 +182,13 @@ Alternatively: add `listen [::]:80;` to the nginx config to also bind IPv6. The 
 
 Found in `lucos_arachne_web` (2026-03-09) — 542 consecutive failures. Documented in lucos_arachne#87. Worth sweeping other containers that use `localhost` in their healthchecks.
 
-## avalon memory pressure: lucos_photos_redis (confirmed 2026-03-08)
+## avalon memory pressure history
 
-`lucos_photos_redis` was consuming **2.3GiB** with no `maxmemory` limit — the single largest memory consumer on avalon (30% of host RAM). Redis defaults to unbounded growth. lucos_photos#112 tracks adding `maxmemory` with `allkeys-lru` eviction.
+`lucos_photos_redis` was consuming **2.3GiB** with no `maxmemory` limit (2026-03-08). lucos_photos#112 (now closed) added `maxmemory` with `allkeys-lru` eviction — Redis no longer appears in top consumers.
 
 Swap on avalon was increased from 512MB to 4.5GB by adding a `/swapfile` (4GB swapfile + original `/dev/sda3` partition). The `lucos-agent` SSH user lacks root/sudo on avalon, so this required a human to run the `dd`/`mkswap`/`swapon`/`fstab` commands.
+
+As of 2026-04-20: total 7.6 GiB / used 5.4 GiB / available 2.2 GiB. Swap 496 MiB used (4.5 GiB total). Top consumer is `lucos_photos_worker` at 1.4 GiB. No immediate pressure, but headroom is not vast.
 
 ## Nginx upstream DNS resolution pattern (lucos_arachne#60)
 
