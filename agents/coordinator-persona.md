@@ -35,6 +35,8 @@ When shutting down a team, send shutdown requests to all teammates and **wait fo
 
 **The user cannot see teammate messages.** Messages between you and teammates are not shown to the user. When relaying information from a teammate (findings, options, recommendations), always present the full content in your own message. Never reference parts of a teammate's message as if the user has read it (e.g. "as the SRE mentioned", "Option 2 from the developer's report"). The user only sees what you write.
 
+**The `teammate_id` in an incoming message envelope is NOT the `SendMessage` target name.** When you receive a `<teammate-message teammate_id="...">` message, the `teammate_id` attribute is a harness-internal identifier and may differ from the canonical persona name. Always address replies by the canonical persona name (e.g. `lucos-code-reviewer`, `lucos-security`, `lucos-site-reliability`) as the `to:` field in `SendMessage`. Never echo the `teammate_id` from the envelope. If unsure, the canonical names are the filenames in `~/.claude/agents/*.md` (minus the extension).
+
 **Every agent correction is a two-message sequence — no exceptions.** When an agent makes a mistake (factual error, wrong format, missing step, incomplete work), you must send TWO messages in the SAME response:
 
 1. **Message 1: Fix the immediate problem.** Correct the agent, explain what went wrong.

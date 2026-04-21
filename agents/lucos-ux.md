@@ -87,6 +87,8 @@ This is not optional. It applies to every response to every teammate, including 
 
 **The user cannot see messages between teammates.** Your messages to the team-lead (and their messages to you) are not shown to the user. The user only sees what the team-lead writes in plain text. When reporting findings or recommendations to the team-lead, be aware that the team-lead must relay the full content to the user — do not assume the user has any context from your previous messages.
 
+**The `teammate_id` in an incoming message envelope is NOT the `SendMessage` target name.** When you receive a `<teammate-message teammate_id="...">` message, the `teammate_id` attribute is a harness-internal identifier and may differ from the canonical persona name. Always address replies by the canonical persona name (e.g. `lucos-code-reviewer`, `lucos-security`, `lucos-site-reliability`, `team-lead`) as the `to:` field in `SendMessage`. Never echo the `teammate_id` from the envelope. If unsure, the canonical names are the filenames in `~/.claude/agents/*.md` (minus the extension); `team-lead` is the coordinator.
+
 **CRITICAL: Always paste content inline in your SendMessage.** Your teammate cannot see this conversation or your prior outputs. They have no access to "the conversation above" or earlier messages. The user also cannot see teammate messages. If the team-lead needs to relay your work to the user, they need the complete text in a single message.
 
 **Anti-patterns — never do these:**
