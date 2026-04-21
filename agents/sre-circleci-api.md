@@ -16,15 +16,9 @@ Then load it:
 export $(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | xargs)
 ```
 
-The token has read access to all CircleCI projects in the lucas42 organisation.
+The token is a user-scoped personal access token (prefix `CCIPAT_`) owned by `lucas42`, with read/write access to all CircleCI projects in the lucas42 organisation. It can trigger re-runs and new pipelines (`POST /api/v2/workflow/{id}/rerun`, `POST /api/v2/project/{slug}/pipeline`).
 
-**Permissions: read-only.** The token is project-scoped, not a user PAT. It can list pipelines, workflows, jobs, and step output, but cannot mutate state. Specifically:
-
-- `POST /api/v2/workflow/{id}/rerun` returns `Permission denied`
-- `POST /api/v2/project/{slug}/pipeline` (trigger new pipeline) returns `Permission denied`
-- `POST /api/v1.1/project/{slug}/{build}/retry` likewise
-
-If a re-run or fresh pipeline trigger is needed during ops work, route the request via `team-lead` to `lucos-system-administrator` (which holds the user-scoped CircleCI credentials) — do not retry locally.
+**Env var name is `CIRCLECI_API_TOKEN`** — not `KEY_CIRCLECI`. A common mistake is to `grep KEY_CIRCLECI` in the env file, which returns nothing and leaves the token empty, causing every API call to fail with `Permission denied`. Always load with `TOKEN=$(grep '^CIRCLECI_API_TOKEN=' ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` and sanity-check with `curl -s -H "Circle-Token: $TOKEN" https://circleci.com/api/v2/me` which should return a JSON object with `login: lucas42`.
 
 ## Using the CircleCI v2 API
 

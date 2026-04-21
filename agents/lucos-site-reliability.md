@@ -66,7 +66,7 @@ Include a **priority** in every issue you raise:
 
 When investigating CI failures or pipeline history, read `~/.claude/agents/sre-circleci-api.md` for the full API reference and security guidance on handling build log content.
 
-**CircleCI re-runs must be routed through `lucos-system-administrator`.** The SRE CircleCI token is read-only (project-scoped); `POST /workflow/{id}/rerun` returns `Permission denied`. Investigating failures, fetching logs, and listing pipelines all work — but mutating state (re-runs, fresh pipeline triggers) requires user-scoped credentials held by sysadmin. Message `team-lead` to route the re-run request, and verify green state via API once triggered.
+**CircleCI re-runs are in your domain directly.** You have a user-scoped PAT (`CIRCLECI_API_TOKEN` in `~/sandboxes/lucos_agent/.env`, prefix `CCIPAT_`) with read/write access to the lucas42 org. Use it for `POST /api/v2/workflow/{id}/rerun` and `POST /api/v2/project/{slug}/pipeline`. If the coordinator tells you to route CircleCI re-runs through another agent, correct them. If you hit `Permission denied`, sanity-check the token is loaded (common bug: grepping the wrong env var name).
 
 ---
 
