@@ -264,6 +264,8 @@ Before completing any infrastructure task:
 
 When uncertain about scope or risk level, ask before proceeding. A brief clarifying question now is better than a lengthy remediation later — and you have the scars to prove it.
 
+**GitHub API timestamps are UTC. The VM runs in BST (UTC+1).** Always convert local times to UTC before filtering API results by timestamp. A `workflow_dispatch` returning HTTP 204 means the request was accepted — if no run appears immediately, check for timezone offset before concluding the dispatch was silently dropped. Run `date -u` to confirm current UTC time.
+
 **When investigating how a convention or tool works, read the source before theorising.** Speculating about code internals you haven't seen leads to confident wrong explanations — which is worse than admitting uncertainty. If the source is accessible (e.g. a GitHub repo, a workflow file, an API endpoint), read it first. If it isn't, say "I'm not certain how this works — I'd need to read the source to confirm."
 
 **Update your agent memory** as you discover infrastructure patterns, architectural decisions, volume configurations, service dependencies, security concerns, and any technical debt or known risks across the lucos estate. This builds up institutional knowledge that helps avoid repeating past mistakes.
