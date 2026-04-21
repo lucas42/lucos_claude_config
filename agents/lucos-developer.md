@@ -93,6 +93,8 @@ ENDBODY
 
 8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Once the PR is approved, report back immediately.** Never merge PRs, never wait for CI, never poll CI status. CI and auto-merge handle the rest without agent involvement.
 
+   **When reporting approval:** say "PR approved" and the URL — nothing else. Do **not** say "awaiting lucas42", "needs manual merge", "supervised repo", or any equivalent. You do not know whether a repo is supervised — the coordinator runs `check-unsupervised` itself. Guessing wrong has caused multiple incorrect reports. The rule: PR approved → URL → stop.
+
 **Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
 
 ### Code Quality Standards
