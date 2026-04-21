@@ -18,6 +18,14 @@ export $(grep CIRCLECI_API_TOKEN ~/sandboxes/lucos_agent/.env | xargs)
 
 The token has read access to all CircleCI projects in the lucas42 organisation.
 
+**Permissions: read-only.** The token is project-scoped, not a user PAT. It can list pipelines, workflows, jobs, and step output, but cannot mutate state. Specifically:
+
+- `POST /api/v2/workflow/{id}/rerun` returns `Permission denied`
+- `POST /api/v2/project/{slug}/pipeline` (trigger new pipeline) returns `Permission denied`
+- `POST /api/v1.1/project/{slug}/{build}/retry` likewise
+
+If a re-run or fresh pipeline trigger is needed during ops work, route the request via `team-lead` to `lucos-system-administrator` (which holds the user-scoped CircleCI credentials) — do not retry locally.
+
 ## Using the CircleCI v2 API
 
 Set the token as a header on all requests:
