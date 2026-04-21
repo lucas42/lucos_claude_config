@@ -1,5 +1,16 @@
 # SRE Agent Memory
 
+## Loganne — Webhook Retry API
+
+Loganne auto-retries failed webhooks only **once** (`src/webhooks.js`) then gives them up as permanent failures — so a downstream outage lasting more than ~20 seconds (e.g. a rolling monitoring redeploy) will leave events stranded in `status: failure`, which keeps `webhook-error-rate` red forever. **Restarting loganne does NOT clear them** — in-memory failure state survives restart via filesystem persistence, and there's no fresh-retry-on-boot path.
+
+The fix is the retry API (auth-required, Bearer `KEY_LUCOS_LOGANNE`):
+
+- `POST /events/retry-webhooks` — bulk retry, returns `{retriedCount: N}`. 60s global cooldown.
+- `POST /events/:uuid/retry-webhooks` — single event retry. 60s per-UUID cooldown. Returns 400 if the event has no failed hooks.
+
+Finding the stuck events: iterate `/events?limit=500` and filter on `e.webhooks.status === 'failure'`. Used 2026-04-21 to clear 3 `deploySystem → monitoring.l42.eu/suppress/clear` failures left by the morning deploy-storm gap.
+
 ## Production Host Directory Structure
 
 No persistent per-service directories on production hosts. Docker Compose files deploy transiently to `/home/circleci/project` during CI only. Use container names directly:
