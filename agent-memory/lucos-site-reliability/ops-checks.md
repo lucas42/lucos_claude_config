@@ -11,7 +11,7 @@ external_deps: 2026-04-05
 lucos_comhra_agent: 2026-04-10
 lucos_comhra_llm: 2026-04-10
 lucos_schedule_tracker: 2026-04-09
-lucos_media_weightings: 2026-04-07
+lucos_media_weightings: 2026-04-21
 lucos_photos_worker: 2026-04-20
 lucos_arachne_explore: 2026-04-18
 lucos_arachne_web: 2026-04-19
@@ -30,8 +30,8 @@ lucos_creds_configy_sync: 2026-04-19
 lucos_creds_ui: 2026-04-20
 lucos_dns_sync: 2026-04-09
 lucos_eolas_app: 2026-04-19
-lucos_eolas_db: 2026-04-07
-lucos_eolas_web: 2026-04-07
+lucos_eolas_db: 2026-04-21
+lucos_eolas_web: 2026-04-21
 lucos_locations_mosquitto: 2026-04-15
 lucos_locations_otfrontend: 2026-04-15
 lucos_locations_otrecorder: 2026-04-15
@@ -47,7 +47,7 @@ lucos_scenes: 2026-04-17
 lukeblaney_co_uk: 2026-04-14
 lucos_media_manager: 2026-04-10
 lucos_media_metadata_api: 2026-04-14
-lucos_monitoring: 2026-04-07
+lucos_monitoring: 2026-04-21
 lucos_media_seinn: 2026-04-17
 tfluke: 2026-04-17
 lucos_media_metadata_api_exporter: 2026-04-08
