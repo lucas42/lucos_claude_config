@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## GitHub API timestamps are UTC; VM is BST (UTC+1)
+
+Always convert when comparing GitHub timestamps to local time. Run `date -u` if unsure. False-alarmed about missing dispatch permissions because runs appeared "too early" — they were just UTC. See `timezone-github-api.md`.
+
 ## xwing/salvare: accept_ra=2 applied (2026-04-20)
 
 Docker's forwarding=1 silently disables RA acceptance. Fix applied and persisted to `/etc/sysctl.conf` on both hosts. See `xwing-ipv6-accept-ra.md` for full diagnosis pattern and SSH-to-salvare workaround.
