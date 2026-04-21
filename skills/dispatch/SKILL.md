@@ -75,6 +75,8 @@ Extract the teammate name by stripping the `owner:` prefix (e.g. `owner:lucos-de
 
 > "implement issue https://github.com/lucas42/lucos_photos/issues/42"
 
+**CRITICAL: use SendMessage only — do NOT spawn a new agent with the Agent tool.** Teammates persist across sessions. Using the Agent tool instead of SendMessage creates a duplicate agent running in parallel with the existing one, causing duplicated work and duplicate messages. If SendMessage fails because the teammate is not running, spawn them once using the Agent tool, then use SendMessage for all subsequent communication.
+
 Wait for the teammate to respond with the result. The teammate is responsible for driving the PR review loop (see [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md)) before reporting back.
 
 ## Step 6: Post-completion handling
