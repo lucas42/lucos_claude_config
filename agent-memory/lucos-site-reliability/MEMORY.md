@@ -29,6 +29,8 @@ Container names match the service name in `docker-compose.yml`.
 
 **Probe before requesting.** See [feedback_check_before_requesting.md](feedback_check_before_requesting.md). Never file a feature-request issue without first verifying (one curl / one grep) the feature doesn't already exist. Wasted a triage cycle on lucos_schedule_tracker#57 2026-04-19.
 
+**Use the canonical persona name for SendMessage, not the envelope's `teammate_id`.** See [feedback_teammate_id_vs_name.md](feedback_teammate_id_vs_name.md). When replying to `<teammate-message teammate_id="...">`, the `teammate_id` attribute is a harness-internal id, not the target name. Canonical names are filenames in `~/.claude/agents/*.md` (plus `team-lead`).
+
 **Read the full function before editing any part of it.** Partial edits risk removing assignments used further down (caused regression in lucos_backups PR #62).
 
 **Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
