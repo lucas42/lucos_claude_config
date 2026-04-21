@@ -10,4 +10,4 @@ The coding sandbox VM runs in **BST (UTC+1)** during summer time.
 
 **Why:** Failed to convert timezones when polling for workflow runs, concluded that dispatches were being dropped (permissions error) when the runs had actually appeared — just outside the UTC filter window I was using. Sent a false alarm to team-lead about missing permissions.
 
-**How to apply:** Whenever filtering GitHub API results by timestamp, convert local time to UTC first. Run `date -u` if unsure of the current UTC time. A run that appears "too early" is probably just UTC vs BST confusion.
+**How to apply:** Whenever filtering GitHub API results by timestamp, convert local time to UTC first. Run `date -u` if unsure of the current UTC time. A run that appears "too early" is probably just UTC vs BST confusion. Do not re-dispatch workflow runs just because results seem absent — check timezone first. Multiple dispatches in quick succession can trigger redundant CI runs and burn GitHub API rate limits.
