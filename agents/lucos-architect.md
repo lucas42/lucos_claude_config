@@ -232,6 +232,23 @@ ENDBODY
 
 **Important:** Always use a `<<'ENDBODY'` heredoc for the `body` field (as shown above). Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands). The heredoc pattern avoids both problems.
 
+**gh api template-substitution gotcha:** `gh api` performs template substitution on `{owner}/{repo}` and `:owner/:repo` tokens **inside argument values**, including inside `--field body="..."`. This happens regardless of shell-quoting — the single-quoted heredoc only prevents shell expansion; the substitution happens downstream inside the `gh` CLI itself. So documentation-style placeholders in a comment body (e.g. "`GET /repos/{owner}/{repo}/dependabot/secrets`") get silently rewritten to real repo names in the posted text.
+
+Two safe workarounds:
+
+1. **File-backed body (preferred for any body that might contain API path templates):**
+   ```bash
+   BODY_FILE=$(mktemp)
+   cat > "$BODY_FILE" <<'ENDBODY'
+   Your comment body, with {owner}/{repo} placeholders preserved verbatim.
+   ENDBODY
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-architect repos/lucas42/{repo}/issues/{N}/comments \
+       --method POST \
+       --field "body=@$BODY_FILE"
+   rm "$BODY_FILE"
+   ```
+2. Avoid the placeholder syntax in prose entirely — name the endpoint by its docs title (e.g. "the List repository Dependabot secrets endpoint") rather than the path template.
+
 **Never** use `gh api` directly or `gh pr create` — those would post under the wrong identity. Never fall back to `lucos-agent` when acting as a different persona.
 
 When referencing issues in commits or PRs, use `Refs #N` or `Closes #N` as appropriate.

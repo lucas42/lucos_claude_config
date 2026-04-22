@@ -45,11 +45,13 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Ask about version churn before recommending snapshot mirrors](feedback_churn_rate_before_snapshot.md) — curated stores (GHCR mirror etc.) break under Dependabot-driven tag churn; pull-through caches don't
 - [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md) — Tier-3 offline-capability hint; never cite as a security boundary
 - [Slow-cooker symptoms are a smell](feedback_slow_cooker_symptoms.md) — repeated defensive fixes (timeout bumps, "probably transient", threshold tweaks) on the same component are evidence of an untreated upstream cause
+- [Check for a working counter-example first](feedback_check_working_counterexample_first.md) — before concluding a mechanism is universally broken, find a passing case in the estate. One counter-example disproves any "this can never work" claim.
+- [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md) — API path placeholders in comment/issue bodies get silently rewritten. Use `--field body=@file` to avoid.
 
 ## Auto-merge & security checks
 
 - lucos#42: CodeQL race condition with auto-merge. Recommended Option 1: make CodeQL a required status check. No workflow changes needed -- repo settings only. Check name on lucos_photos: `Analyze (python)`. Must be added to prerequisites checklist when rolling out auto-merge to new repos.
-- Dependabot auto-merge permissions: must use `pull_request_target` (not `pull_request`) because Dependabot events are fork-like with read-only GITHUB_TOKEN ceiling. See `github-actions-permissions.md`.
+- Dependabot auto-merge on `pull_request` trigger works fine **if** `LUCOS_CI_APP_ID` and `LUCOS_CI_PRIVATE_KEY` are populated in the repo's Dependabot secret scope (distinct from Actions scope). Previous memory said "must use `pull_request_target`" — that was wrong; `pull_request` is the current working pattern (v1.16.0). See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md). Outdated note in `github-actions-permissions.md` needs a sweep.
 - Auto-merge caller workflows require at least `permissions: contents: read` -- `permissions: {}` causes `startup_failure` because GitHub Actions cannot fetch the cross-repo reusable workflow definition without it. Discovered via 2026-03-21 incident.
 - `.github` smoke test suite only covers `dependabot-auto-merge`, not `code-reviewer-auto-merge` -- gap tracked in lucos#58.
 
