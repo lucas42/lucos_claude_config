@@ -42,6 +42,18 @@ Use the `gh-as-agent` wrapper script instead of calling `gh api` directly. It ha
 
 All `gh api` flags and arguments are passed through directly. There is no need to generate or manage tokens manually.
 
+**Warning: `gh api` silently rewrites `{owner}`, `{repo}`, and `{owner}/{repo}` tokens inside `-f body="..."` values.** GitHub's `gh` CLI performs template substitution on these patterns — so prose like "see `repos/lucas42/lucos_foo/issues`" or "`{owner}/{repo}` pattern" will be silently mangled to real repo values. If your issue body, comment, or PR description contains any of these patterns, use a file-backed body instead:
+
+```bash
+cat > /tmp/body.md <<'EOF'
+Body text here — {owner}/{repo} patterns are safe in heredoc files.
+EOF
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues \
+    --method POST \
+    -f title="Issue title" \
+    --field body=@/tmp/body.md
+```
+
 ### GitHub Projects API calls (PAT required)
 
 GitHub Apps cannot access v2 user projects. For GitHub Projects interactions **only**, use the `gh-projects` wrapper instead of `gh-as-agent`:
