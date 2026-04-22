@@ -236,6 +236,10 @@ Labels required by lucos_backups: `com.docker.compose.project`, `com.docker.comp
 
 See `reptiles-md-tracking.md`. Fix: `git rm --cached agent-memory/lucos-code-reviewer/reptiles.md` then commit+push.
 
+## Docker daemon restarts: check live-restore first, prefer SIGHUP
+
+`systemctl restart docker` without `live-restore: true` SIGKILLs every running container — ~40 containers went down on avalon (2026-04-22), including `lucos_dns_bind`, causing 45-min DNS outage. Many daemon.json changes (including `registry-mirrors`) are hot-reloadable via `systemctl reload docker` (SIGHUP) with no container disruption. Always check first. See `docker-daemon-restart-risk.md`.
+
 ## GitHub Actions SHA pinning — always verify via API
 
 Never write action SHAs from memory. Look up via: `curl -s "https://api.github.com/repos/{owner}/{repo}/git/refs/tags/{version}"` — then copy-paste. A transposition in `imjasonh/setup-crane@v0.4` caused a silent runtime failure (lucas42/.github#50, 2026-04-17). See `github-actions-sha-pinning.md`.
