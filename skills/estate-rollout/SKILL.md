@@ -55,12 +55,7 @@ Once the user confirms the diff looks correct (and the smoke test has passed, if
 
 The system administrator must verify that CI checks (tests, builds, and other required workflows) are passing before merging each PR. If CI is still running, enable auto-merge on the PR rather than waiting — but check back to confirm it actually merged before declaring the migration complete.
 
-The system administrator should merge in staggered batches where deploys are triggered (see staggering guidance below).
-
-**Staggering applies to merges, not PR creation.** PRs can be created in any order at any speed — creating a PR does not trigger CI. The staggering concern is about concurrent CI pipeline execution triggered when PRs are merged:
-
-- **If merges trigger any CI pipeline** (e.g. application code, workflow files, config files, `dependabot.yml`, or any other file that causes CircleCI or GitHub Actions to run): "Merge **one PR at a time with a 60-second interval between merges**. PRs can be created all at once." This prevents CI pipelines from running concurrently, which has caused GitHub GraphQL rate limit exhaustion, Docker Hub throttling, and CircleCI concurrency failures during past estate-wide rollouts (see 2026-04-16 incident — `dependabot.yml` changes were incorrectly treated as deploy-free and merged in bulk, triggering concurrent CI across 57 repos). A 60-second gap is enough for each pipeline to start and stagger its API calls before the next begins.
-- **If merges do not trigger any CI** (e.g. documentation-only `.md` changes, comment-only changes): "No staggering needed." When in doubt, assume staggering is needed — the cost of over-staggering is time; the cost of under-staggering is a CI incident.
+**No merge staggering needed.** PRs can be merged as quickly as CI allows. Deploy serialization is handled automatically by the `serial-group: deploy-<host>` config in each repo's CircleCI config (rolled out 2026-04-22) — concurrent deploys to the same host queue in CircleCI rather than racing. Transient CI failures that do occur during a rollout wave are handled in Step 6 (CI verification and auto-retry).
 
 Also ask the system administrator to post a comment on the draft PR summarising what was done once the migration is complete — e.g. how many repos were migrated, any failures or repos that needed special handling. This gives the code reviewer context when they review the PR later.
 
@@ -90,18 +85,47 @@ Check the updated diff comment. The "new failures" count must be **zero**. An op
 
 Only then proceed to Step 6.
 
-## Step 6: Mark the PR as ready for review
+## Step 6: Verify CI is green across migrated repos
 
-Once the dry-run confirms zero new failures, send a message to `lucos-developer`:
+After the migration is complete, transient failures are expected during rollout waves (shared infra like loganne, creds, docker mirror, configy briefly under load). These are mechanical to recover from — poll and auto-retry rather than treating every failure as a real bug.
+
+For each repo touched by the migration, poll the CircleCI v2 API for the latest main-branch pipeline:
+
+```
+GET https://circleci.com/api/v2/project/gh/lucas42/{repo}/pipeline?branch=main
+```
+
+Fetch its workflows:
+
+```
+GET https://circleci.com/api/v2/pipeline/{pipeline_id}/workflow
+```
+
+For any workflow with `status == "failed"`, trigger a rerun from failed:
+
+```
+POST https://circleci.com/api/v2/workflow/{workflow_id}/rerun
+Body: {"from_failed": true}
+```
+
+Wait 5–10 minutes, re-poll, and re-trigger any still-failing pipelines once more. After the second retry, treat persistent failures as real bugs — raise a GitHub issue on the affected repo and continue.
+
+**The rollout is not "done" until every migrated repo's latest main-branch pipeline is green** (or persistent failures have open issues tracking them). A rollout where PRs merged but pipelines are red is incomplete.
+
+Use the CircleCI API token from the environment. See `~/.claude/references/circleci-conventions.md` for API access patterns.
+
+## Step 7: Mark the PR as ready for review
+
+Once the dry-run confirms zero new failures and CI is green, send a message to `lucos-developer`:
 
 > "The dry-run on {PR URL} confirms all repos have been migrated (zero new failures). Please mark the PR as ready for review and drive the PR review loop (see `~/.claude/pr-review-loop.md`)."
 
 Wait for the developer to complete the review loop and report back.
 
-## Step 7: Close the originating issue
+## Step 8: Close the originating issue
 
 If this estate rollout was triggered by a specific GitHub issue (passed in as context at Step 1), check whether the convention PR merging completes the issue's requirements. If so, post a closing comment summarising what was done (convention added, N repos migrated, PR merged) and close the issue. If the issue has remaining work beyond the convention + migration, leave it open and note what's left.
 
-## Step 8: Report to user
+## Step 9: Report to user
 
 Summarise the outcome: how many repos were migrated, the PR URL, whether the review loop completed successfully, and whether the originating issue was closed.
