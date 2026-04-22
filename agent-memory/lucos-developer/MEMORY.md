@@ -101,11 +101,15 @@ When refactoring auth checks in Java controllers, ALL mock-creating helpers must
 - `checkNotAllowed` — separate mock helper, easy to miss
 If switching from `hasAuthorizationHeader() && !isAuthorised()` (Phase 1) to `!isAuthorised()` (Phase 3), add `when(request.isAuthorised()).thenReturn(true)` to BOTH helpers.
 
-## Never Merge PRs — and Never Report Supervised/Unsupervised Status
+## Never Merge PRs — and Never Report Post-Approval State Without Checking
 
 **STOP. Do not call the merge endpoint.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
 
-**After approval: report "PR approved" + the PR URL. Nothing else.** Do not determine or report whether the repo is supervised or unsupervised — the coordinator runs check-unsupervised itself. Do not say "awaiting lucas42", do not say "auto-merging". Just report approved and the URL.
+**"Supervised" means agents cannot *approve* PRs — it does NOT prevent auto-merge.** Even on supervised repos (`unsupervisedAgentCode: false`), a PR will auto-merge after lucas42 approves it. Do not report "awaiting lucas42 merge" as if auto-merge won't happen.
+
+**Always query the GitHub API for actual PR state before reporting it.** Conversation memory drifts within minutes — a PR you think is open may already be merged. Never report state from memory.
+
+**After approval: report "PR approved" + the PR URL. Nothing else.** Do not say "awaiting lucas42", do not say "auto-merging". Just report approved and the URL.
 
 ## Alembic Autogenerate — Always Review Output
 
