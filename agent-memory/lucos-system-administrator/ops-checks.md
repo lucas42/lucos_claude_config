@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-21
+container_status: 2026-04-22
 resource_checks: 2026-04-16
 syslog_review: 2026-04-16
 software_updates: 2026-04-16
 sandbox_drift: 2026-04-16
-repos_dashboard: 2026-04-21
+repos_dashboard: 2026-04-22
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -682,6 +682,19 @@ certificate_expiry: 2026-04-06
 - tfluke `dockerfile-exposes-version` (Dockerfile missing ARG VERSION / ENV VERSION / image tag) — tracked in tfluke#381
 
 **No new issues raised.**
+
+### 2026-04-22 (checks 1 + 6 due; all other checks not yet due)
+
+**Container status**:
+- avalon: `lucos_media_metadata_api` Exited (2) at 07:56 UTC today. `lucos_media_metadata_api_exporter` Exited (137) ~same time. A restart attempt ran 08:02–08:03 UTC and also exited (2). Service is returning HTTP 502 in production. `lucos_media_metadata_manager` healthcheck confirms the API is down. Flagged to dispatcher for SRE invocation.
+- salvare: clean (via xwing jump host)
+- xwing: clean
+
+**Repos dashboard**:
+- **SYSTEMIC**: 20 repos showing `required-status-checks-coherent` failing with "Analyze (X) not reported on HEAD of main". This is a CodeQL check naming issue — the old check name "Analyze (language)" is in required checks but is no longer being reported by current CodeQL runs. Auto-raised issues already exist on all affected repos (created 08:13–08:18 UTC today by lucos_repos sweep). Flagged to dispatcher as a systemic estate-wide issue.
+- Non-CodeQL failures also present: `lucos_media_import` (build-multiplatform check name), `lucos_photos` (CircleCI check name). All have auto-raised issues.
+
+**Issues raised**: None (all already auto-tracked by lucos_repos). Incident flagged to dispatcher for SRE.
 
 ### 2026-04-21 (checks 1 + 6 due; all other checks not yet due)
 
