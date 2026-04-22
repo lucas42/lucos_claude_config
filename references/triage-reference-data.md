@@ -20,8 +20,8 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 | Option | ID | Maps to |
 |---|---|---|
 | Ideation | `5f521008` | `needs-refining` + `status:ideation` |
-| Needs Triage | `79f7273e` | No labels yet (set automatically when item is added) |
-| Awaiting Decision | `cf5e250d` | `needs-refining` + `status:awaiting-decision` |
+| Needs Triage | `79f7273e` | No labels yet (set automatically when item is added). Also used as a holding state for `needs-refining` + `status:needs-design` — there is no dedicated design-phase column. |
+| Awaiting Decision | `cf5e250d` | `needs-refining` + `status:awaiting-decision` — **only for items where lucas42's personal input or decision is needed**. Do NOT use for issues awaiting agent design work. |
 | Blocked | `d79b6b67` | `agent-approved` + `status:blocked` |
 | Ready | `3aaf8e5e` | `agent-approved` (no blocking status); also where issues sit while being worked on |
 | Done | `878c350f` | Set automatically when issue is closed |
