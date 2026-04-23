@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## Estate-wide incident investigation: always sweep ALL repos
+
+When investigating a provisioning or configuration incident that could affect multiple repos, query ALL repos — not a sampled subset. A partial sweep missed 3 repos (lucos_contacts_googlesync_import, lucos_loganne_pythonclient, lucos_photos_android) from the 2026-04-21 empty-secrets batch, which only surfaced when convention failures were reported separately. Use `users/lucas42/repos?per_page=100` to get the full list, then iterate every repo.
+
 ## GitHub API timestamps are UTC; VM is BST (UTC+1)
 
 Always convert when comparing GitHub timestamps to local time. Run `date -u` if unsure. False-alarmed about missing dispatch permissions because runs appeared "too early" — they were just UTC. See `timezone-github-api.md`.
