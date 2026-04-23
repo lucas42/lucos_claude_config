@@ -67,12 +67,44 @@ When a PR is stalled:
 The script returns a JSON object with two arrays: `code_scanning` (CodeQL findings) and `secret_scanning` (exposed credentials). Repos where these features are disabled are silently skipped.
 
 **For each CodeQL alert (`code_scanning`):**
-- Check whether an issue already exists in that repo tracking this alert (search by rule ID or description).
-- If no issue exists, raise one. Include the rule ID, severity, affected file/line, and a plain-English explanation of what an attacker could do with it.
+
+**Step 1 — Check for a recently closed prior issue before raising anything.**
+
+Search for closed issues in the same repo that tracked the same alert (by rule ID, alert number, or description). If you find one:
+
+- Read what fix was implemented (check the issue comments and the closing PR).
+- Check whether the CodeQL workflow ran *after* the fix was merged:
+  ```bash
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
+    "repos/lucas42/{repo}/actions/runs?event=push&per_page=3" \
+    --jq '[.workflow_runs[] | select(.name == "CodeQL") | {status, conclusion, created_at}]'
+  ```
+  Compare the most recent CodeQL run timestamp against the fix merge timestamp. If the scan ran *before* the fix merged, the alert may just be stale — **do not raise a new issue yet**; wait for the next scan or note the pending state.
+- If the scan ran *after* the fix merged and the alert is gone: do nothing. Fixed.
+- If the scan ran *after* the fix merged and the **alert persists**: read the current code at the flagged location to confirm the mitigation is in place. If it is, this is a confirmed false positive — **dismiss immediately** (see Step 3 below). Do not raise a "wait and see" issue.
+
+**Step 2 — Raise an issue only when no prior fix exists.**
+
+If there is no prior closed issue, or the prior issue was closed but the alert has genuinely re-triggered on unfixed code (no mitigation visible in the current source), raise a new issue. Include the rule ID, severity, affected file/line, and a plain-English explanation of what an attacker could do with it.
+
 - **Raise one issue per CodeQL alert.** Do not bundle multiple CodeQL findings into a single issue.
 - Apply the advisory routing decision: most CodeQL findings are not immediately exploitable without other access, so they go as normal public issues. Only escalate to a private advisory if the finding is immediately exploitable by a network-accessible attacker with no prior access (and not yet fixed).
-- **If an alert's state is `fixed`:** close its tracking issue as `completed` if it is still open. A fixed alert means the vulnerability has been resolved in code — the issue should not remain open.
-- **If an alert's tracking issue has been closed as not_planned (risk accepted):** dismiss the alert in GitHub using the API with `dismissed_reason: "won't fix"` and a `dismissed_comment` referencing the issue. This prevents the alert from reappearing in future ops check runs. Use:
+
+**Step 3 — Dismissal.**
+
+Use the correct `dismissed_reason` depending on the situation:
+
+- **False positive** (mitigation is in place; CodeQL doesn't recognise the custom sanitiser/guard):
+  ```bash
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security "repos/lucas42/{repo}/code-scanning/alerts/{number}" \
+      --method PATCH \
+      -f state="dismissed" \
+      -f dismissed_reason="false positive" \
+      -f dismissed_comment="Mitigation in place — see #{issue_number}. CodeQL does not model the custom sanitiser."
+  ```
+  Note: dismissed_comment has a **280-character limit** — keep it short.
+
+- **Risk accepted** (tracking issue closed as `not_planned` after conscious decision not to fix):
   ```bash
   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security "repos/lucas42/{repo}/code-scanning/alerts/{number}" \
       --method PATCH \
@@ -80,6 +112,8 @@ The script returns a JSON object with two arrays: `code_scanning` (CodeQL findin
       -f dismissed_reason="won't fix" \
       -f dismissed_comment="Risk accepted — see #{issue_number}."
   ```
+
+**If an alert's state is `fixed`:** close its tracking issue as `completed` if it is still open. A fixed alert means CodeQL itself detected the resolution — no manual dismissal needed.
 
 **For each secret-scanning alert (`secret_scanning`):**
 - These are always high priority. A `validity: active` token is an emergency — treat it as a potential incident and escalate immediately.
