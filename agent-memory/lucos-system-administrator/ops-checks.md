@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-22
-resource_checks: 2026-04-16
-syslog_review: 2026-04-16
-software_updates: 2026-04-16
-sandbox_drift: 2026-04-16
-repos_dashboard: 2026-04-22
+container_status: 2026-04-23
+resource_checks: 2026-04-23
+syslog_review: 2026-04-23
+software_updates: 2026-04-23
+sandbox_drift: 2026-04-23
+repos_dashboard: 2026-04-23
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
 certificate_expiry: 2026-04-06
@@ -695,6 +695,27 @@ certificate_expiry: 2026-04-06
 - Non-CodeQL failures also present: `lucos_media_import` (build-multiplatform check name), `lucos_photos` (CircleCI check name). All have auto-raised issues.
 
 **Issues raised**: None (all already auto-tracked by lucos_repos). Incident flagged to dispatcher for SRE.
+
+### 2026-04-23 (checks 1–6 due; checks 7–9 monthly — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only):
+- Two sudo failures from 2026-04-22 (lucos-agent tried `ls` on Docker volume data dir and `tee /etc/docker/daemon.json` — both from yesterday's incident investigation). Expected. No hardware errors.
+
+**Software updates**: all routine Docker tooling (CE 29.4, containerd 2.2.3, buildx 0.33, compose 5.1.3) on all hosts. No `-security`-tagged packages. No action needed.
+
+**Resources**:
+- Avalon: disk 15%, memory 2.7Gi available, swap 718Mi/4.5Gi (16%), load 3.68. Fine.
+- Xwing: disk **79%** (89G/117G) — up from 66% on 2026-04-16. /srv/backups = 61G (host/avalon/volume = 53G). Growing ~15G/week.
+- Salvare: disk **80%** (44G/58G) — up from 51% on 2026-04-16. /srv/backups = 35G (host/avalon/volume = 15G, host/xwing/one-off = 12G static Jul 2025 archives). Growing ~16G/week.
+- Issue raised: **lucos_backups#201** (backup hosts approaching disk capacity — salvare has ~5 days free at current growth rate)
+
+**Sandbox drift**: 8 remote commits behind (PRs #60–#63 — LUCOS_CI credentials migration + dependabot workflow bumps). All `.github/workflows/` changes only — no live VM action needed.
+
+**Repos dashboard**: 14 repos failing `required-status-checks-coherent` (same systemic CodeQL check naming issue from 2026-04-22 — was 20, now 14). All have auto-raised issues. Flagged for dispatcher as systemic.
+
+**Issues raised**: lucos_backups#201
 
 ### 2026-04-21 (checks 1 + 6 due; all other checks not yet due)
 
