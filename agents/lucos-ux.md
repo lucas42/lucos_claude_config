@@ -218,6 +218,21 @@ ENDBODY
 
 4. **Test in a real browser.** Type checkers and unit tests verify code correctness, not feature correctness. Run the project locally (`docker compose up` or the project's documented dev command), open the page in a browser, and actually use the change. Test the golden path AND the obvious failure modes. If the project genuinely can't be run locally (missing tooling, architectural blockers), say so explicitly in the PR description — don't claim success without verification.
 
+   **Accessing HTML routes without a browser session.** HTML routes on lucos services accept `Authorization: Bearer <token>` where the token is a value from the project's `CLIENT_KEYS` env var (found in the project's `.env` file). Use `curl -H "Authorization: Bearer <token>"` to fetch raw HTML, or pass the token via `AUTH_TOKEN` when using the UX screenshot tool (see below). Unauthenticated requests return 401; this is correct behaviour — use a real token, not an environment bypass.
+
+   **UX screenshot tool.** `~/sandboxes/lucos_agent/ux-tools/assess.mjs` uses Playwright to take full-page screenshots of one or more routes:
+
+   ```bash
+   # Unauthenticated service
+   node ~/sandboxes/lucos_agent/ux-tools/assess.mjs http://localhost:8036 /tmp/photos-ux / /photos /people
+
+   # Service requiring bearer auth (e.g. lucos_photos)
+   AUTH_TOKEN=zSicQqvD8kQNI3ObFNzJTenrmwYUihNx \
+     node ~/sandboxes/lucos_agent/ux-tools/assess.mjs http://localhost:8036 /tmp/photos-ux / /photos /people
+   ```
+
+   Screenshots are saved to the output directory (default `/tmp/ux-screenshots`) and can then be read with the `Read` tool for visual review.
+
 5. **Test accessibility specifically.** For any change that touches user-facing markup:
    - Tab through the affected area with the keyboard. Does focus go where it should, in the right order?
    - Check labels are tied to inputs (`<label for="…">`).
