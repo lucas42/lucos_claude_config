@@ -49,6 +49,22 @@ lucos_creds stores PEM keys with newlines replaced by spaces and wrapped in doub
 
 **Do not** store the space-flattened format directly as a repository secret — it will cause `InvalidCharacterError` in the `atob()` call during token generation.
 
+### Post-Provisioning Verification: Dependabot Secrets
+
+**After provisioning any Dependabot secrets (`LUCOS_CI_APP_ID`, `LUCOS_CI_PRIVATE_KEY`, etc.), you must verify that the values are non-empty — not just that the names are present.**
+
+The GitHub secrets API never exposes secret values. The `lucos_repos` convention check only verifies name presence. A secret set with an empty value (e.g. due to an unset environment variable during provisioning) will pass both checks while silently causing every Dependabot auto-merge to fall back to `GITHUB_TOKEN`. This has happened before (2026-04-21, lucos_creds and lucos_agent).
+
+**Verification procedure** (run after any Dependabot secrets provisioning):
+
+1. Wait for the next Dependabot PR to trigger the `dependabot-auto-merge.yml` workflow on each provisioned repo, **or** manually trigger a test PR.
+2. In the workflow run logs, check the "Generate GitHub App token" step:
+   - **`success`** → secret values are non-empty and valid. ✓
+   - **`skipped`** → secret values are empty. The "Check if App token secrets are available" step output `has_app_token=false`. Re-provision with correct values immediately.
+3. Do not close or report the provisioning as complete until at least one repo shows `success` (not `skipped`) on the token generation step.
+
+**Why `skipped` means empty:** The reusable workflow checks `[ -n "$APP_ID" ] && [ -n "$APP_KEY" ]` in a shell step and sets `has_app_token=false` if either is empty. The subsequent token generation step is conditional on `has_app_token == 'true'`. A name-only provisioning pass will always look clean until a real workflow run exposes it.
+
 ### Docker & Docker Compose
 - Every container must have `container_name: lucos_<project>_<role>`
 - Built containers must have `image: lucas42/lucos_<project>_<role>`
