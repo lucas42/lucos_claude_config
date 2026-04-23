@@ -83,6 +83,14 @@ source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LU
 
 Returns a JSON array of recent events across the lucos ecosystem (deploys, service activity, etc.).
 
+### Event payload shape
+
+Each event is a flat JSON object. The fields present vary by `type`, but the **wire format carries only post-event state** — there is no `existingTrack`, `previousTrack`, `oldValue`, or equivalent "before" field, even when the producing service's internal API accepts both.
+
+For example, `lucos_media_metadata_api` calls `Loganne.post(action, humanReadable, storedTrack, existingTrack)` with both arguments, but only `storedTrack` appears in the published event. If you need to diff an event against prior state, you'll have to query the producing service or the event immediately preceding it.
+
+Don't assume a field is present because the internal publisher signature takes it — check an actual event payload.
+
 ### Writing events
 
 Use the `loganne-event` script in `~/sandboxes/lucos_agent/`:
