@@ -26,6 +26,11 @@
 
 ## Review Patterns — Common Mistakes to Avoid
 
+### Verify absence of a specific thing in the raw file before requesting changes
+- **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
+- Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard which was already in the file at the HEAD SHA. Resulted in a false REQUEST_CHANGES that wasted a review round-trip.
+- Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
+
 ### Post code review immediately, then follow up if CI fails
 - **Do not wait for CI before posting your code review.** Read the diff, evaluate the code, and post your review (APPROVE or REQUEST_CHANGES) immediately based on code quality alone.
 - After posting, wait for CI to complete. If CI fails, post a second REQUEST_CHANGES review flagging the failure. If CI passes, nothing more needed.
