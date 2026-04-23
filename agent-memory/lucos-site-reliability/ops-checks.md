@@ -38,7 +38,7 @@ lucos_locations_otrecorder: 2026-04-15
 lucos_mail_smtp: 2026-04-22
 lucos_photos_api: 2026-04-15
 lucos_arachne_ingestor: 2026-04-22
-lucos_arachne_search: 2026-04-08
+lucos_arachne_search: 2026-04-23
 lucos_arachne_triplestore: 2026-04-22
 lucos_mail_docs: 2026-04-14
 lucos_photos_postgres: 2026-04-17
@@ -50,16 +50,16 @@ lucos_media_metadata_api: 2026-04-14
 lucos_monitoring: 2026-04-21
 lucos_media_seinn: 2026-04-17
 tfluke: 2026-04-17
-lucos_media_metadata_api_exporter: 2026-04-08
+lucos_media_metadata_api_exporter: 2026-04-23
 lucos_media_metadata_manager: 2026-04-10
 lucos_notes: 2026-04-09
 lucos_root: 2026-04-10
-lucos_router: 2026-04-08
+lucos_router: 2026-04-23
 semweb: 2026-04-10
 lucos_time: 2026-04-17
 lucos_arachne_mcp: 2026-04-09
 lukeblaney_blog: 2026-04-14
-lucos_docker_health_app: 2026-04-08
+lucos_docker_health_app: 2026-04-23
 
 lucos_docker_mirror_web: 2026-04-18
 lucos_docker_mirror_registry: 2026-04-18
