@@ -47,6 +47,8 @@ Container names match the service name in `docker-compose.yml`.
 
 **Read the full function before editing any part of it.** Partial edits risk removing assignments used further down (caused regression in lucos_backups PR #62).
 
+**Sandbox branch hygiene.** See [feedback_sandbox_branch_hygiene.md](feedback_sandbox_branch_hygiene.md). Sandbox repos persist git state between sessions — always `git checkout main && git reset --hard origin/main` before creating a feature branch, not just `git pull`. Branched from stale `fix-bulk-patch-tag-only-loganne` on 2026-04-24, dragging an unrelated prior-session commit into PR #203.
+
 **Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
 
 **Push all content before requesting review**: `lucas42/*` repos have fast auto-merge — if a reviewer approves the PR, it merges within seconds, no merge-queue delay. Pushing new commits *after* review is requested is unsafe: the approval can land and auto-merge the incomplete state before the expansion lands. 2026-04-18: PR#96 (incident report) auto-merged the narrow first version seconds after reviewer approval, before my expanded second commit landed. Had to open PR#97 to fix up. Rule: make all commits, push all of them, THEN request review.

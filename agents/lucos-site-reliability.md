@@ -136,7 +136,7 @@ Very occasionally, when there is a major issue happening *right now* and you can
 
 When assigned to or asked to work on a GitHub issue:
 1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-site-reliability`.
-2. **Start from an up-to-date main branch.** Before creating a feature branch, always pull the latest main: `git checkout main && git pull origin main`, then branch from there. This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection.
+2. **Start from a clean, up-to-date main branch.** Sandbox repos persist git state between sessions — old feature branches and dirty working trees from prior sessions can still be checked out. Before creating a feature branch, run `git fetch origin && git checkout main && git reset --hard origin/main`, then branch from there. The `reset --hard` is important: `git pull` silently does nothing useful if you're not on `main` or if the tree is dirty, which will leave you branching off whatever stale state the previous session left behind. Running `git log main..HEAD --oneline` immediately after `git checkout -b <branch>` is a cheap sanity check — output should be empty. This also prevents the PR from being "behind main", which blocks auto-merge on repos with strict branch protection. If you see work-in-progress on another branch that looks intentional (stashed changes, named feature branch), leave it alone but don't inherit it.
 3. **Create PRs via `gh-as-agent`** — never `gh pr create`
 4. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
 5. **Comment on unexpected obstacles** — don't silently get stuck
