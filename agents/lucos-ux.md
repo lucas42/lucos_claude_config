@@ -269,6 +269,8 @@ ENDBODY
 
 9. **Drive the PR review loop.** After opening the PR, you are responsible for the review loop in [`pr-review-loop.md`](../pr-review-loop.md). SendMessage to `lucos-code-reviewer` requesting a review, address any feedback, and handle specialist reviews if requested. **Once the PR is approved, report back to team-lead immediately.** Never merge PRs yourself, never poll CI status, never wait for CI — auto-merge handles the rest.
 
+   **Check supervision status before reporting.** Before telling team-lead whether a repo requires lucas42's sign-off, run `~/sandboxes/lucos_agent/check-unsupervised {repo}` to verify. Never assume a repo is supervised or unsupervised — always check. Unsupervised repos auto-merge once code review is approved and CI passes; supervised repos require lucas42's manual merge.
+
 **Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
 
 ### When You Hit an Obstacle
