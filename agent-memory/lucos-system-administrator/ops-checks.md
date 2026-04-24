@@ -5,15 +5,15 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-23
+container_status: 2026-04-24
 resource_checks: 2026-04-23
 syslog_review: 2026-04-23
 software_updates: 2026-04-23
 sandbox_drift: 2026-04-23
-repos_dashboard: 2026-04-23
+repos_dashboard: 2026-04-24
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-09
-certificate_expiry: 2026-04-06
+certificate_expiry: 2026-04-24
 ```
 
 ## Known Limitations
@@ -716,6 +716,21 @@ certificate_expiry: 2026-04-06
 **Repos dashboard**: 14 repos failing `required-status-checks-coherent` (same systemic CodeQL check naming issue from 2026-04-22 — was 20, now 14). All have auto-raised issues. Flagged for dispatcher as systemic.
 
 **Issues raised**: lucos_backups#201
+
+### 2026-04-24 (checks 1, 6, 8 due; all other checks not yet due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: `lucos_media_seinn` failing `required-status-checks-coherent` — "Analyze (javascript)" stale check name. Part of the ongoing systemic CodeQL naming issue (was 14 repos on 2026-04-23). Auto-raised issue #413 exists but has an "internally consistent" (passing) title — likely raised at 07:33 when the sweep ran it as passing, then state changed. Noted for dispatcher.
+
+**Certificate expiry**:
+- avalon: eolas.l42.eu and photos.l42.eu expire May 25 2026 (31 days) — just outside auto-renewal window; certbot should trigger tomorrow
+- avalon: scenes.l42.eu expires May 28 2026 (34 days) — fine
+- All other avalon certs: >40 days — fine
+- All xwing certs (nas, private, staticmedia, xwing.s.l42.eu): Jun 5 2026 (42 days) — fine
+- No certs under 30 days. No issues raised.
+
+**No new issues raised.**
 
 ### 2026-04-21 (checks 1 + 6 due; all other checks not yet due)
 
