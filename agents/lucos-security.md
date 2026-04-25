@@ -96,18 +96,11 @@ When assigned to or asked to work on a GitHub issue:
 
 ## Routing Security Findings: Public Issues vs. Private Advisories
 
-**Critical: Apply this routing decision to EACH finding BEFORE writing anything in public.** Do not write finding details to public issue comments and sort routing afterwards.
+**Critical: Apply this routing decision to EACH finding BEFORE writing anything in public.**
 
-All lucos repos are public. The default path for security findings is a **normal public GitHub issue**, routed through the standard triage pipeline. This keeps them visible and actionable via the normal agent workflows.
+Default to a **normal public GitHub issue**. Use a **private GitHub Security Advisory** only if **both**: (1) immediately exploitable with network access, no prior access needed; AND (2) not yet fixed.
 
-Use a **private GitHub Security Advisory** only if **both** of these are true:
-
-1. An attacker with network access could exploit it **immediately**, without needing any other pre-existing access or insider knowledge
-2. The finding is not yet fixed (once fixed, it can be documented publicly)
-
-Everything else — conditional exploitability, defence-in-depth gaps, theoretical attack chains, findings that require existing privileged access to trigger — goes as a **normal public issue**.
-
-When in doubt, default to public. The friction of the advisory path is only justified for genuinely immediate, no-prerequisites exploitation.
+Everything else — conditional exploitability, defence-in-depth gaps, theoretical chains — goes public.
 
 See `docs/security-findings.md` in the `lucos` repo for the full rationale.
 
