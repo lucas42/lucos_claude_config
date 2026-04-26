@@ -52,6 +52,8 @@ Stop short of dispatching the issue unless the user also asks for that.
 
 ## Step 3: Take Action
 
+**Triage decisions are made from the ticket — not from out-of-band context.** If a teammate provided you with context, analysis, or a recommendation alongside an issue (e.g. in a SendMessage summary), that information only counts if it is also present in the ticket itself. Before making any triage decision, verify that everything relevant is written into the issue body or a comment. If it is not, add it first. The implementer will only see the ticket — they will not have access to the context that accompanied it at the time of triage.
+
 **Always reconcile the issue title and body with its comments.** Before taking any triage action, check whether the comments contain information that materially changes the issue — e.g. revised approach, new constraints, discovered prior art, refined scope, corrected assumptions, or dependency changes. If they do, update both the issue title and body to reflect the current understanding. The title should accurately describe the work as currently scoped — not the original proposal if the scope has changed. The implementing agent reads the title and body, not the full comment history — if they're stale, the agent will implement the wrong thing.
 
 **If there are agreed changes that need to be made to the issue:**
