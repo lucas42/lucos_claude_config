@@ -57,6 +57,7 @@ During each triage pass, also check for `status:blocked` issues whose dependenci
 3. Check that **every** dependency is closed — not just the one that triggered the check.
 4. If the issue body is missing dependencies that were added in comments, **update the issue body** to include them before changing any labels. The body should be the canonical list of dependencies.
 5. Only remove `status:blocked` when every dependency has been completed.
+6. **Closing a dependency issue is not the same as the real-world precondition being met.** Before unblocking, verify that the underlying condition the dependency was tracking actually holds — not just that the tracking issue is closed. For example, closing "deploy secondary DNS server" does not mean the server exists. If the dependency was for physical infrastructure, a deployed service, or a third-party action (e.g. registrar update), confirm the thing actually exists before unblocking dependent work.
 
 **Special case — false positive audit findings:** When unblocking an `audit-finding` issue whose blocker was a fix to the convention checker itself, close the issue as completed instead of just removing `status:blocked`.
 
