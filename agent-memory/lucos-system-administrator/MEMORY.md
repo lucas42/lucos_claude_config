@@ -1,5 +1,9 @@
 # lucos-system-administrator Memory
 
+## Verify timeline before stating root cause
+
+When proposing root cause theories involving dates, check the chronology is internally consistent first. See `feedback_verify_timeline_before_stating.md`. When you can't produce a consistent timeline, say "I can't determine the root cause from code analysis alone" — that's the correct honest answer.
+
 ## Estate-wide incident investigation: always sweep ALL repos
 
 When investigating a provisioning or configuration incident that could affect multiple repos, query ALL repos — not a sampled subset. A partial sweep missed 3 repos (lucos_contacts_googlesync_import, lucos_loganne_pythonclient, lucos_photos_android) from the 2026-04-21 empty-secrets batch, which only surfaced when convention failures were reported separately. Use `users/lucas42/repos?per_page=100` to get the full list, then iterate every repo.
