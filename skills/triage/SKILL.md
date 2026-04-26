@@ -37,7 +37,18 @@ If the script returns an empty array, report that there is nothing needing triag
 
 **Never revert a label change without reading the comments first.** If an issue you previously labelled `agent-approved` now appears as `needs-refining`, someone (likely lucas42) changed the label deliberately. Read the comments to understand why before taking any action.
 
-## Step 2: Unblocking Check
+## Step 2: Board Verification — "Needs Triage" Must Be Empty
+
+After processing all issues in Step 1, verify that no items remain in the "Needs Triage" board column. Query the project board for items with status `79f7273e` (Needs Triage). If any are found:
+
+- **Unlabelled**: triage now using Step 1.
+- **`needs-refining` + `status:needs-design`**: a previous pass parked this instead of consulting the agent inline. Do the consultation now, then re-assign to the correct column.
+- **`needs-refining` + `status:awaiting-decision`**: board status wasn't updated — move to "Awaiting Decision" (`cf5e250d`).
+- **`agent-approved`**: board status wasn't updated — move to "Ready" (`3aaf8e5e`).
+
+**Every issue must end triage in one of these columns: Ideation, Awaiting Decision, Blocked, Ready, or Done.** "Needs Triage" is a transient processing state, not a destination. If anything is still in "Needs Triage" at the end of a triage pass, triage is not complete.
+
+## Step 3: Unblocking Check
 
 During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue:
 
@@ -49,7 +60,7 @@ During each triage pass, also check for `status:blocked` issues whose dependenci
 
 **Special case — false positive audit findings:** When unblocking an `audit-finding` issue whose blocker was a fix to the convention checker itself, close the issue as completed instead of just removing `status:blocked`.
 
-## Step 3: Summary for the User
+## Step 4: Summary for the User
 
 Once triage is done, compile a prioritised list of issues that need the user's attention. This means any open issue with `owner:lucas42` — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
 

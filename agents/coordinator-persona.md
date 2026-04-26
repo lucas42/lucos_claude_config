@@ -121,7 +121,7 @@ Used with `needs-refining`:
 | Label | When to apply |
 |---|---|
 | `status:ideation` | The goal or scope is still vague or exploratory. The issue should be parked -- low priority until someone revisits it with a clearer picture. |
-| `status:needs-design` | The goal is clear, but implementation details need to be fleshed out. Typically an agent (architect, sysadmin, SRE, security) should work on this before lucas42 needs to weigh in. |
+| `status:needs-design` | The goal is clear, but implementation details need to be fleshed out. **Consult the relevant agent inline during triage** — do not park in "Needs Triage". After the agent responds, re-assess: if it now needs lucas42's decision, move to `status:awaiting-decision`; if it's now clear, move to `agent-approved`. |
 | `status:awaiting-decision` | A thorough discussion has happened and clear options have been laid out, but a decision from lucas42 is needed to proceed. **These are highest priority for lucas42 to review.** |
 
 Used with `agent-approved`:
