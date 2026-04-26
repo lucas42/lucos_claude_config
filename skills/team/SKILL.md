@@ -127,7 +127,32 @@ cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
 
 If NO_TEAM, stop: "No running team found. Use `/team` to start a team first."
 
-Check that the requested teammate is not already in the `members` array. If they are, stop: "`{teammate-name}` is already a member of this team."
+Check whether the requested teammate is in the `members` array:
+
+- **Not in the array** → proceed to A3.
+- **In the array** → check if their process is still alive by looking up their `tmuxPaneId` and testing it:
+
+```bash
+tmux list-panes -a -F '#{pane_id}' 2>/dev/null | grep -qF "{tmuxPaneId}" && echo "ALIVE" || echo "DEAD"
+```
+
+If **ALIVE**, stop: "`{teammate-name}` is already a member of this team."
+
+If **DEAD** (crashed), the config entry is stale. Remove it before respawning:
+
+```bash
+python3 -c "
+import json
+with open('/home/lucas.linux/.claude/teams/lucos-all-hands/config.json') as f:
+    config = json.load(f)
+config['members'] = [m for m in config['members'] if m['name'] != '{teammate-name}']
+with open('/home/lucas.linux/.claude/teams/lucos-all-hands/config.json', 'w') as f:
+    json.dump(config, f, indent=2)
+print('Removed stale entry for {teammate-name}')
+"
+```
+
+Then proceed to A3.
 
 ### A3: Spawn the new teammate
 
