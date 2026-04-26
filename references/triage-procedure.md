@@ -97,10 +97,11 @@ Use `state_reason="completed"` if the issue's goal was achieved (e.g. via sub-ti
 
 If yes to any of the above, you MUST consult the relevant specialist (see "Specialist Follow-up Routing" below) BEFORE applying `agent-approved`. Do not skip this step just because the proposed change "looks like a security improvement" or "is only in CI" — specialist consultation is about getting expert eyes on the change. **Concrete trip-wires** that mean you must consult security: anything that changes authentication mode (trust ↔ password, mTLS, OAuth flow), anything that adds/removes/rotates credentials or env vars holding secrets, anything touching `auth`/`login`/`session` code paths, anything that changes how a database accepts connections, anything that changes who can read or write a resource. If unsure, consult the relevant specialist — the cost of an unnecessary consult is small; the cost of a missed one is unbounded. **This rule was extended after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.** Once the specialist has weighed in, return to this step and continue.
 
-1. Add the label `agent-approved` to the issue.
-2. Remove the label `needs-refining` if it is present.
-3. Remove any `status:*` and review-phase `owner:*` labels.
-4. Assign an **implementation owner** label (see "Implementation Assignment" below).
+1. **Update the issue body to reflect the current agreed scope and approach.** Before marking agent-approved, ensure the body describes what is to be built — incorporating any decisions, constraints, or revised approaches from the comments. The implementing agent reads the body, not the comment history. If the body is stale, the agent will implement the wrong thing. This is not optional.
+2. Add the label `agent-approved` to the issue.
+3. Remove the label `needs-refining` if it is present.
+4. Remove any `status:*` and review-phase `owner:*` labels.
+5. Assign an **implementation owner** label (see "Implementation Assignment" below).
 5. Assign a **priority** label (see "Priority Labels" below).
 6. **Update the project board** — add the issue, set Status/Priority/Owner fields. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
 7. **Position the item on the board by priority.** Critical/High: call `updateProjectV2ItemPosition` with no `afterId` to move to the top. Medium/Low: no repositioning needed. **This is a separate API call from setting fields — do not skip it for high-priority issues.**
