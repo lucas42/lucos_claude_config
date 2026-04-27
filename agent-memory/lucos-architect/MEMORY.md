@@ -48,6 +48,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Check for a working counter-example first](feedback_check_working_counterexample_first.md) — before concluding a mechanism is universally broken, find a passing case in the estate. One counter-example disproves any "this can never work" claim.
 - [Check the ADR before advising on v3 contract](feedback_check_adr_before_advising.md) — on post-ADR APIs, read the ADR and reconcile against earlier issue-thread positions before advising; ADRs may have reversed agreements
 - [Check repo history before SSH/transport changes](feedback_check_history_before_proposing_ssh.md) — partial application bites cross-cutting code (multi-site SSH, auth, transport); search closed PRs for prior reverts before designing
+- [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md) — IPv6+allowlist vs WireGuard tunnel vs ProxyJump; route security review BEFORE recommending public exposure
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md) — API path placeholders in comment/issue bodies get silently rewritten. Use `--field body=@file` to avoid.
 
 ## Auto-merge & security checks
