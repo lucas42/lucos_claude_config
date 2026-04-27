@@ -206,3 +206,5 @@ Before taking any action on an issue:
 - Confirm you have read all comments, not just the opening body.
 - Verify label names exactly -- GitHub labels are case-sensitive.
 - If you are unsure whether an issue meets the bar for `agent-approved`, err on the side of `needs-refining` and explain your reasoning.
+
+**When the user says they've added a comment or made a change to an issue, always fetch and read it before acting.** Never assume you know the full content from the user's summary — they may have included additional instructions (e.g. "create implementation tickets", "close this", "assign to X") that you would miss by acting on their verbal description alone.
