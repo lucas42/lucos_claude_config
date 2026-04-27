@@ -5,15 +5,15 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-26
+container_status: 2026-04-27
 resource_checks: 2026-04-23
 syslog_review: 2026-04-23
 software_updates: 2026-04-23
 sandbox_drift: 2026-04-23
-repos_dashboard: 2026-04-26
+repos_dashboard: 2026-04-27
 docker_image_staleness: 2026-04-09
-backup_verification: 2026-04-09
-certificate_expiry: 2026-04-24
+backup_verification: 2026-04-27
+certificate_expiry: 2026-04-27
 ```
 
 ## Known Limitations
@@ -742,6 +742,29 @@ certificate_expiry: 2026-04-24
 **Repos dashboard**: No failing conventions.
 
 **No new issues raised.**
+
+---
+
+### 2026-04-27 (checks 1 + 6 due; backup re-run (previously flagged #201); cert spot-check)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: No failing conventions. Clean.
+
+**Backup verification** (re-run: #201 was flagged 2026-04-23):
+- lucos_backups container: running correctly. Config fetch and tracking both completed today (10:03 UTC and 10:07 UTC).
+- BrokenPipeError exceptions in logs — known issue with BaseHTTPRequestHandler's connection lifecycle. Not a backup failure.
+- **CRITICAL — xwing disk 95% full**: 106G/117G used, 6.2G free. `lucos_photos_photos` backups are accumulating without pruning — 11 copies at 6.5–6.7G each (~63G of 66G total volume backup space). Next nightly backup (~04:45 UTC) will attempt to write 6.7G to a 6.2G free disk. Disk will fill.
+- Salvare: 60% (33G/58G) — recovered since #201. Not a concern.
+- **Issue raised: lucos_backups#216** — flagged to dispatcher as critical.
+
+**Certificate spot-check** (eolas/photos expected renewal from Apr 24 run):
+- eolas.l42.eu: Jul 24 2026 (88 days) — RENEWED ✓
+- photos.l42.eu: Jul 24 2026 (88 days) — RENEWED ✓
+- scenes.l42.eu: May 28 2026 (31 days) — borderline; certbot auto-renewal expected within ~1 day
+- All other certs: >30 days. All clear.
+
+**Issues raised**: lucos_backups#216 (URGENT: xwing disk 95% — photo backups will fill disk overnight)
 
 ---
 
