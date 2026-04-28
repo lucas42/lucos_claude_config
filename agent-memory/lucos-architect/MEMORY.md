@@ -17,7 +17,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Video upload (#60): needs-refining. See `project-details.md`.
 - Profile pictures (#149): agent-approved, priority:high. 4 criteria (det_score, frontality, face w/h); smile/hat deferred. Worker generates crops to `/data/photos/derivatives/`. Adds `profile_photo_id`, `profile_auto_generated` to person table. Requires persisting det_score + kps from InsightFace.
 - Face reprocessing (#208, merged): preserves `person_confirmed=True` via embedding cosine similarity. Lesson: bounding-box IoU fragile under EXIF orientation; embeddings invariant.
-- Face-to-contact linking (#104): revised design agreed. Sequencing: (1) contacts JSON API (#529), (2) person↔contact UI using `lucos_search_component data-types="Person"`, (3) photo detail view (#103), (4) face assignment. Steps 1–2 independent of #103. Names managed in contacts, not photos. Endpoint rename `/persons` → `/people` landed. Open: `contact_id` = URI or numeric.
+- Face-to-contact linking (#104): design agreed; details in project-details.md. Sequencing depends on contacts JSON API (#529). Names managed in contacts, not photos.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
 
@@ -41,7 +41,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Paperclip trial (2026-03): trialed for ~2 weeks, rejected. Too many tokens, unhelpful middle-management task copying. Claude Code teams retained.
 - Issue-manager merged into team-lead (lucos_claude_config#27, PR #28, 2026-04-02): `coordinator-persona.md` loaded via `/team` skill (skill output = lead-only context, avoids bleed-through). Triage reference data in `references/triage-reference-data.md` (read on-demand). GitHub App identity `lucos-issue-manager` retained for API calls. Issue-manager memory directory preserved as historical reference.
 - User-Agent convention (lucos#19, closed): ADR-0001 in lucas42/lucos (`docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`). Set User-Agent to `SYSTEM` env var value for all inter-system HTTP requests.
-- **Bearer auth migration (2026-04-08):** Estate migrating from `Authorization: key` to standard `Bearer`. Original advice (lucos#37, closed) was case-by-case; reversed after arachne#250 outage proved mixed state is untenable. Phase 1 (server dual-accept): eolas#147, media_manager#203. Phase 2 (client switch): media_metadata_api#123, photos#283, googlesync#118, gphotos#32. Phase 3 (drop key + update docs): lucos#74. media_metadata_api is Bearer-only server; contacts & photos are dual-accept; eolas & media_manager are key-only (Phase 1 targets).
+- **Bearer auth migration (2026-04-08):** Estate-wide migration from `Authorization: key` to standard `Bearer`. Original case-by-case advice (lucos#37) reversed after arachne#250 outage. 3 phases: server dual-accept → client switch → drop key. Tracking: lucos#74. Per-repo state in project-details.md.
 - [Ask about version churn before recommending snapshot mirrors](feedback_churn_rate_before_snapshot.md) — curated stores (GHCR mirror etc.) break under Dependabot-driven tag churn; pull-through caches don't
 - [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md) — Tier-3 offline-capability hint; never cite as a security boundary
 - [Slow-cooker symptoms are a smell](feedback_slow_cooker_symptoms.md) — repeated defensive fixes (timeout bumps, "probably transient", threshold tweaks) on the same component are evidence of an untreated upstream cause
@@ -50,6 +50,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Check repo history before SSH/transport changes](feedback_check_history_before_proposing_ssh.md) — partial application bites cross-cutting code (multi-site SSH, auth, transport); search closed PRs for prior reverts before designing
 - [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md) — IPv6+allowlist vs WireGuard tunnel vs ProxyJump; route security review BEFORE recommending public exposure
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md) — API path placeholders in comment/issue bodies get silently rewritten. Use `--field body=@file` to avoid.
+- [configy serialises absent optional fields as explicit null](reference_configy_optional_field_nulls.md) — `dict.get(key, default)` doesn't fall back; use `get(key) or default`. YAML-only tests miss this.
 
 ## Auto-merge & security checks
 
