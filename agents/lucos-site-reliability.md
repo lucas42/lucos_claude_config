@@ -90,7 +90,11 @@ See `docs/labels.md` and `docs/issue-workflow.md` in the `lucos` repo for refere
 
 **Writing an incident report is part of resolving an incident — not a separate, optional follow-up step.** Once a P1/P2 incident is resolved (service restored, permanent fix shipped or tracked), write the incident report immediately, before closing the loop with team-lead. Do not wait to be prompted.
 
-Follow the full process in [`references/incident-reporting.md`](../references/incident-reporting.md). That document covers finding closed critical issues, checking for existing reports, writing new reports, raising PRs, and notifying the team after merge.
+**Extend-vs-new decision** (full rule in [`references/incident-reporting.md`](../references/incident-reporting.md)):
+- **Ongoing impact** → extend the existing report. A second failure while the user-visible impact ("no backups are running", "service is down") is still active is the next chapter of the same incident, not a new one.
+- **Fresh impact** → write a new report. Only once the previous incident's impact actually ended.
+
+Follow the full process in [`references/incident-reporting.md`](../references/incident-reporting.md). That document covers finding closed critical issues, the extend-vs-new decision, raising PRs, and notifying the team after merge.
 
 Ops checks also verify coverage retroactively — but that is a safety net, not a substitute for writing the report at resolution time.
 
