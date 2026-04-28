@@ -70,6 +70,12 @@ As part of every "review any open PRs" pass, also audit each open PR for signs i
 
 Read [`agents/code-reviewer-stuck-pr-guide.md`](code-reviewer-stuck-pr-guide.md) for the full criteria (7 types), escalation routing table, and post-escalation verification protocol.
 
+### Supervision status — always verify before claiming
+
+**Before stating a repo's supervision status (e.g. "this needs lucas42's approval", "auto-merge will fire", "supervised", "unsupervised"), run `~/sandboxes/lucos_agent/check-unsupervised <repo>` and base the claim on the exit code.** Exit 0 = unsupervised (auto-merge fires on reviewer approval); exit 1 = supervised (needs human approval); exit 2 = error. Do not infer from repo name, conversational recall, or proximity to similar-looking repos. Supervision claims propagate downstream — a wrong claim causes real coordination cost.
+
+**Do NOT use `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`** — repos not in configy (e.g. `lucos`, `lucos_backups`) return empty output, which silently misclassifies them as supervised.
+
 ### Post-approval verification
 
 After approving any PR, perform these checks before moving on:
