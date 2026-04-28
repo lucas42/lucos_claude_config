@@ -42,8 +42,6 @@
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
 - [Media API v2→v3 migration](project_v3_migration.md) — parked as of 2026-04-05; dual-format in weightings nearly done, broader migration deferred
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
-- [Fingerprint fix running on xwing](project_fingerprint_fix.md) — fix_fingerprints.py started 2026-04-26 ~11:07 UTC, ETA ~23:00 UTC; check lucos_media_import#143 in next ops checks; monitoring alert clears after Thursday's cron
-- [lucos_media_import alert clearance plan](project_media_import_alert_plan.md) — implement #142 (deploys killing runs) first, then trigger manual re-run to clear the alert without waiting for Thursday's cron
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
