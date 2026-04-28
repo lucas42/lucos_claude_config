@@ -28,7 +28,9 @@ The pattern:
    - In the header table: `Duration | … — TBD pending verification`
    - In the summary: `Verified end-to-end with rerun — TBD pending rerun completion`
 3. **Open the PR as soon as the draft is coherent** — default mode is a normal (non-draft) PR. List the outstanding TBDs in the PR body so reviewers know what's pending and a cold reader (e.g. you in a future session) can pick up the work. Use a *draft* PR only when the substantive content (root cause, fix description) is itself still uncertain — not merely because verification is pending.
-4. As verification completes, fill in the TBDs via follow-up commits on the same branch.
+4. As verification completes, fill in the TBDs:
+   - **If the original PR is still open** (e.g. on a supervised repo where merge waits on a human): push follow-up commits to the same branch.
+   - **If the original PR has already merged** (e.g. auto-merge repos like `lucos`, where reviewer-approval triggers immediate merge): open a fresh branch off latest main, fill in the TBDs, and open a follow-up PR. Reference the original PR in the body so the audit trail is intact. Drive the review loop on the new PR per `pr-review-loop.md`.
 5. If verification surfaces a further failure mode (the incident isn't actually resolved yet), update the report via further commits to reflect the new chapter of the story. An explicit `TBD pending result` line is not a claim of success, so leaving it in place while waiting does not violate this — but once the result is known, do not retain a TBD that no longer reflects reality. The report is amendable: if anything else develops after merge, update it via a fresh PR.
 
 Sitting idle until verification completes — or holding the PR back — wastes time and delays the team-lead's ability to confirm the incident is closed out. The TBD-and-fill-in pattern keeps work flowing and durable without misrepresenting state.
