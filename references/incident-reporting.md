@@ -13,6 +13,24 @@ Before writing a new report, check whether the incident you are about to documen
 
 When in doubt, ask the team-lead before creating a fresh report — it is far easier to fold information into an existing report than to merge two later.
 
+## Don't gate drafting on long-running verification
+
+When verifying an incident's resolution takes meaningful time — multi-hour cron reruns, soak windows, estate-wide deploy propagation, post-failure data backfills, etc. — draft the report **in parallel** with the verification. Do not sit idle waiting for verification to complete before starting to write.
+
+The pattern:
+
+1. Once the fix is shipped and the verification is in flight, start drafting immediately. Almost everything that goes into the report (root cause, code-site references, fix description, timeline up to the verification trigger, the analysis sections) is already known.
+2. Leave the verification-result sections as clearly-marked TBDs. Examples:
+   - In the timeline: `2026-04-28 HH:MM | Rerun completes — TBD pending result`
+   - In the header table: `Duration | … — TBD pending verification`
+   - In the summary: `Verified end-to-end with rerun — TBD pending rerun completion`
+3. Once verification completes, fill in the TBDs — and **only then** open the PR.
+4. If verification surfaces a further failure mode (i.e. the incident isn't actually resolved yet), update the report to reflect the new chapter of the story before opening the PR. Never ship a report that pre-emptively claims success that didn't happen.
+
+Sitting idle until verification completes wastes time and delays the team-lead's ability to confirm the incident is closed out. The TBD-and-fill-in pattern keeps work flowing without misrepresenting state.
+
+This rule applies equally to fresh reports and to extending an existing one.
+
 ## Step 1: Write the incident report
 
 Given a closed critical issue that needs a report:
