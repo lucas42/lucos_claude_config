@@ -4,6 +4,15 @@ This document defines the process for writing an incident report for a specific 
 
 Use this process when you have identified a critical issue that needs a report -- whether during ops checks (Check 2: Incident Report Coverage) or when asked to write a report ad-hoc.
 
+## Extend an existing report, or write a new one?
+
+Before writing a new report, check whether the incident you are about to document is actually a *continuation* of an existing one. The rule:
+
+- **Ongoing impact** → extend the existing report. If the user-visible impact (e.g. "no backups are running", "service is down", "data is stale") has not yet been resolved, and a new failure is just the next chapter of the same story, append to the existing report rather than creating a new one. Add a new section to the timeline, document the second failure mode, and update the resolution / follow-up sections.
+- **Fresh impact** → write a new report. If the previous incident was fully resolved (impact ended, service restored to normal) and a *new* problem has since started, that is a separate incident even if the symptoms or affected systems look similar.
+
+When in doubt, ask the team-lead before creating a fresh report — it is far easier to fold information into an existing report than to merge two later.
+
 ## Step 1: Write the incident report
 
 Given a closed critical issue that needs a report:
