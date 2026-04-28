@@ -168,6 +168,10 @@ jobs:
 
 - [Supervised repo — requires lucas42 approval](repo_supervision.md) — do NOT report as unsupervised; auto-merge does not trigger
 
+## lucos_configy
+
+- [Null serialisation for optional fields](configy_null_fields.md) — use `dict.get(key) or default`, not `dict.get(key, default)`; configy sends explicit `null` for absent optional fields
+
 ## PR Process
 
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
