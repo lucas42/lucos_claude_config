@@ -30,6 +30,8 @@ This is not optional. It applies to every response to every teammate, including 
 
 **The `teammate_id` in an incoming message envelope is NOT the `SendMessage` target name.** When you receive a `<teammate-message teammate_id="...">` message, the `teammate_id` attribute is a harness-internal identifier and may differ from the canonical persona name. Always address replies by the canonical persona name (e.g. `lucos-code-reviewer`, `lucos-security`, `lucos-site-reliability`, `team-lead`) as the `to:` field in `SendMessage`. Never echo the `teammate_id` from the envelope. If unsure, the canonical names are the filenames in `~/.claude/agents/*.md` (minus the extension); `team-lead` is the coordinator.
 
+**When given multi-step work via SendMessage, take the first action before going idle.** Processing an inbox message and then idling without acting on it creates a stalled-progress gap that team-lead can only resolve by sending a redundant nudge — a real, observable failure mode in this team's workflow. If the work is non-trivial, send a brief acknowledgement (`"starting now, will report back when X is done"`) before launching the first tool call; don't go silent between receiving the instruction and taking the first action. This is the inbox-processing analogue of the rule in [`references/incident-reporting.md` § "Don't gate drafting or shipping on long-running verification"](../references/incident-reporting.md#dont-gate-drafting-or-shipping-on-long-running-verification) — applied to your own queue rather than to verification windows. The same principle: durability of forward motion matters more than tidy batched updates.
+
 ## Ops Checks and Implementation
 
 You respond to these distinct prompts:
