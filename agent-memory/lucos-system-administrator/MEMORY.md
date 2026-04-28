@@ -1,5 +1,13 @@
 # lucos-system-administrator Memory
 
+## configy null serialisation — use `get(key) or default`, not `get(key, default)`
+
+configy API returns explicit `null` for absent optional fields — `dict.get(key, default)` passes `None` straight through. Always use `get(key) or default`. Dev-only YAML testing won't catch this. Incident: lucos_backups#221 (2026-04-28). See `configy-null-serialisation.md`.
+
+## aurora NAS is a storage-only host in the estate (added 2026-04-27)
+
+aurora is now listed in `lucos_configy/config/hosts.yaml` with `is_storage_only: true`, `ssh_gateway: xwing`, `backup_root: /share/backups/`, `shell_flavour: busybox`. It doesn't run Docker — container ops checks don't apply. Backups routed via xwing jump host.
+
 ## Verify timeline before stating root cause
 
 When proposing root cause theories involving dates, check the chronology is internally consistent first. See `feedback_verify_timeline_before_stating.md`. When you can't produce a consistent timeline, say "I can't determine the root cause from code analysis alone" — that's the correct honest answer.
