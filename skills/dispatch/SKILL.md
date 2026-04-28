@@ -93,11 +93,11 @@ If a PR was created and approved:
    ```
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
-3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Search the **entire org** for open issues with `status:blocked` that reference the closing issue number in their body or comments. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), so a repo-scoped search is insufficient:
+3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Search the **entire org** for open issues with `status:blocked` that reference the closing issue number in their body **or comments**. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), and a blocking dependency is often added in a comment after the issue was originally raised — so searching only `in:body` will miss real dependents.
    ```bash
-   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager "search/issues?q=org:lucas42+is:open+label:status:blocked+{issue_number}+in:body"
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager "search/issues?q=org:lucas42+is:open+label:status:blocked+{issue_number}+in:body,comments"
    ```
-   For each result, read the full issue body and comments to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
+   For each result, read the full issue body **and all comments** to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
 
    **When unblocking an issue, you MUST do both of the following — removing the label without updating the board is incomplete:**
    1. Remove the `status:blocked` label from the issue.
