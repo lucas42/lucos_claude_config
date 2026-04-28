@@ -133,12 +133,12 @@ There are two distinct auto-merge workflows — do not conflate them:
 - Fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
 - If `true`: bot approval triggers `gh pr merge --auto --merge`.
 - If `false`: bot review is posted but doesn't enable auto-merge — human approval needed.
-- **Most lucos repos are supervised (`unsupervisedAgentCode: false`)**. Confirmed unsupervised as of 2026-04-09: `lucos_agent_coding_sandbox`, `lucos_repos`. Always check configy rather than assuming.
+- **Most lucos repos are supervised.** Confirmed unsupervised as of 2026-04-28: `lucos_agent_coding_sandbox`, `lucos_repos`, **`lucos`**. Always run `check-unsupervised` to verify — never infer from repo name or memory.
+- **NEVER use `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'` to check supervision.** Repos not in configy return empty output, which silently misclassifies them as supervised. `lucos` and `lucos_backups` are not in configy, causing false "supervised" claims in PR #118 and others. The canonical command is `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised, exit 1 = supervised, exit 2 = error).
 
 ### Key distinction
 - `unsupervisedAgentCode` only affects **agent-authored PRs** (via code-reviewer-auto-merge). It has NO bearing on Dependabot PRs.
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
-- Check configy for a repo's flag: `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`
 
 ### NEVER claim "auto-merge triggered/succeeded" based on workflow conclusion alone
 - The `reusable / auto-merge` or `code-reviewer-auto-merge` workflow having `conclusion: success` does NOT mean auto-merge was enabled. On supervised repos, the workflow runs and correctly does nothing.
