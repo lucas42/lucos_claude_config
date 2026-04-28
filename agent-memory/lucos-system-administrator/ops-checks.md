@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-27
+container_status: 2026-04-28
 resource_checks: 2026-04-23
 syslog_review: 2026-04-23
 software_updates: 2026-04-23
 sandbox_drift: 2026-04-23
-repos_dashboard: 2026-04-27
+repos_dashboard: 2026-04-28
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-27
 certificate_expiry: 2026-04-27
@@ -778,5 +778,16 @@ certificate_expiry: 2026-04-27
 **Repos dashboard**:
 - `lucos_arachne` `required-status-checks-coherent` was failing with "check 'ci/circleci: lucos/build-amd64' not reported on HEAD of main" — stale cache false positive. Triggered rerun; convention now passes. No issue raised.
 - `lucos_docker_mirror` `circleci-jobs-in-required-checks` still failing (test-proxy not in required checks). Issue #46 (auto-raised 2026-04-20) already tracks this — no action needed.
+
+**No new issues raised.**
+
+### 2026-04-28 (checks 1 + 6 due; all other checks not yet due)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- salvare: clean (via xwing jump host) — no crashed, stopped, or unhealthy containers
+- xwing: clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**: No failing conventions. Clean.
 
 **No new issues raised.**
