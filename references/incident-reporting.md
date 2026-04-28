@@ -13,21 +13,25 @@ Before writing a new report, check whether the incident you are about to documen
 
 When in doubt, ask the team-lead before creating a fresh report — it is far easier to fold information into an existing report than to merge two later.
 
-## Don't gate drafting on long-running verification
+## Don't gate drafting or shipping on long-running verification
 
-When verifying an incident's resolution takes meaningful time — multi-hour cron reruns, soak windows, estate-wide deploy propagation, post-failure data backfills, etc. — draft the report **in parallel** with the verification. Do not sit idle waiting for verification to complete before starting to write.
+When verifying an incident's resolution takes meaningful time — multi-hour cron reruns, soak windows, estate-wide deploy propagation, post-failure data backfills, etc. — draft the report **and ship the PR** in parallel with the verification. Two principles:
+
+- **Don't sit idle before drafting.** Almost everything that goes into the report (root cause, code-site references, fix description, timeline up to the verification trigger, the analysis sections) is already known once the fix is shipped.
+- **Don't gate the PR on verification.** Durability of state-in-git matters more than the tidiness of a TBD-free first commit. Verification windows can outlast a work session; uncommitted draft material on disk does not survive a context loss, but pushed commits do.
 
 The pattern:
 
-1. Once the fix is shipped and the verification is in flight, start drafting immediately. Almost everything that goes into the report (root cause, code-site references, fix description, timeline up to the verification trigger, the analysis sections) is already known.
-2. Leave the verification-result sections as clearly-marked TBDs. Examples:
+1. Once the fix is shipped and verification is in flight, start drafting immediately.
+2. Leave verification-result sections as clearly-marked TBDs. Examples:
    - In the timeline: `2026-04-28 HH:MM | Rerun completes — TBD pending result`
    - In the header table: `Duration | … — TBD pending verification`
    - In the summary: `Verified end-to-end with rerun — TBD pending rerun completion`
-3. Once verification completes, fill in the TBDs — and **only then** open the PR.
-4. If verification surfaces a further failure mode (i.e. the incident isn't actually resolved yet), update the report to reflect the new chapter of the story before opening the PR. Never ship a report that pre-emptively claims success that didn't happen.
+3. **Open the PR as soon as the draft is coherent** — default mode is a normal (non-draft) PR. List the outstanding TBDs in the PR body so reviewers know what's pending and a cold reader (e.g. you in a future session) can pick up the work. Use a *draft* PR only when the substantive content (root cause, fix description) is itself still uncertain — not merely because verification is pending.
+4. As verification completes, fill in the TBDs via follow-up commits on the same branch.
+5. If verification surfaces a further failure mode (the incident isn't actually resolved yet), update the report via further commits to reflect the new chapter of the story. An explicit `TBD pending result` line is not a claim of success, so leaving it in place while waiting does not violate this — but once the result is known, do not retain a TBD that no longer reflects reality. The report is amendable: if anything else develops after merge, update it via a fresh PR.
 
-Sitting idle until verification completes wastes time and delays the team-lead's ability to confirm the incident is closed out. The TBD-and-fill-in pattern keeps work flowing without misrepresenting state.
+Sitting idle until verification completes — or holding the PR back — wastes time and delays the team-lead's ability to confirm the incident is closed out. The TBD-and-fill-in pattern keeps work flowing and durable without misrepresenting state.
 
 This rule applies equally to fresh reports and to extending an existing one.
 
