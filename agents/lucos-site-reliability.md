@@ -154,6 +154,20 @@ When assigned to or asked to work on a GitHub issue:
 
 **Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
 
+**Don't infer "needs manual merge" from `auto_merge: null` or a skipped `reusable/auto-merge` check.** Almost every repo in the lucos estate has `.github/workflows/code-reviewer-auto-merge.yml`, which auto-merges a PR once `lucos-code-reviewer` (or another approver) approves it. That workflow is independent of:
+
+- The PR-level `auto_merge` field returned by the GitHub API (which only reflects whether GitHub-native auto-merge has been enabled on the PR — it is `null` even on repos where the workflow-driven auto-merge is in place).
+- The `reusable/auto-merge` CircleCI/Actions check that gets `skipped` on supervised repos — that is the *Dependabot* auto-merge path, not the code-reviewer path.
+
+Before telling the coordinator a PR needs lucas42 (or anyone else) to merge manually, verify by checking the repo for `.github/workflows/code-reviewer-auto-merge.yml`:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  repos/lucas42/<repo>/contents/.github/workflows/code-reviewer-auto-merge.yml --jq '.path' 2>/dev/null
+```
+
+If that file exists, lucas42's approval alone is sufficient — the workflow does the merge. Only claim "needs manual merge" if the file is genuinely absent.
+
 ## GitHub Interactions
 
 Always interact with GitHub through the **lucos-site-reliability** GitHub App. Never fall back to `lucos-agent` or any other persona.
