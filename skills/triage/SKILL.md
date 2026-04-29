@@ -1,16 +1,12 @@
 ---
 name: triage
 description: The coordinator triages all open issues with inline agent consultation
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Perform triage directly and summarise the results. Do not ask for clarification — immediately begin.
 
-## Step 0: Review Closures and Sweep the Board
-
-This step has **two independent halves** — both must run.
-
-### 0a. Memory review of closures of issues you authored
+## Step 1: Memory Review of Closures of Issues You Authored
 
 Check whether any issues you (lucos-issue-manager) previously raised have been closed, in case the closure reasoning reflects a decision or preference you should remember:
 
@@ -21,13 +17,13 @@ Check whether any issues you (lucos-issue-manager) previously raised have been c
 
 For each unfamiliar closure: read the final comments. Skip issues you've already reviewed. Update memory only if there is something genuinely new — most closures are routine completions and need no action.
 
-### 0b. Board-wide Done-column sweep
+## Step 2: Board-wide Done-column Sweep
 
 Closed issues should not remain on the project board. The built-in workflow moves them to the Done column on close, but they must then be deleted entirely. **This sweep is board-driven, not author-driven** — query the board for items with `Status = Done` (`optionId == "878c350f"`) across **all pages** and delete every one with `deleteProjectV2Item`. The previous (author-scoped) cleanup missed closures by other bots and let backlog accumulate to ~100 items.
 
 Do this in a loop that re-fetches page 1 each round, since deletes shift items forward. A single shell loop running until page 1 contains no Done items is the simplest correct pattern. Keep going until the sweep reports zero Done items found.
 
-## Step 1: Discover and Triage Issues
+## Step 3: Discover and Triage Issues
 
 ```bash
 ~/sandboxes/lucos_agent/get-issues-for-triage
@@ -47,18 +43,18 @@ If the script returns an empty array, report that there is nothing needing triag
 
 **Never revert a label change without reading the comments first.** If an issue you previously labelled `agent-approved` now appears as `needs-refining`, someone (likely lucas42) changed the label deliberately. Read the comments to understand why before taking any action.
 
-## Step 2: Board Verification — "Needs Triage" Must Be Empty
+## Step 4: Board Verification — "Needs Triage" Must Be Empty
 
-After processing all issues in Step 1, verify that no items remain in the "Needs Triage" board column. Query the project board for items with status `79f7273e` (Needs Triage). If any are found:
+After processing all issues in Step 3, verify that no items remain in the "Needs Triage" board column. Query the project board for items with status `79f7273e` (Needs Triage). If any are found:
 
-- **Unlabelled**: triage now using Step 1.
+- **Unlabelled**: triage now using Step 3.
 - **`needs-refining` + `status:needs-design`**: a previous pass parked this instead of consulting the agent inline. Do the consultation now, then re-assign to the correct column.
 - **`needs-refining` + `status:awaiting-decision`**: board status wasn't updated — move to "Awaiting Decision" (`cf5e250d`).
 - **`agent-approved`**: board status wasn't updated — move to "Ready" (`3aaf8e5e`).
 
 **Every issue must end triage in one of these columns: Ideation, Awaiting Decision, Blocked, Ready, or Done.** "Needs Triage" is a transient processing state, not a destination. If anything is still in "Needs Triage" at the end of a triage pass, triage is not complete.
 
-## Step 3: Unblocking Check
+## Step 5: Unblocking Check
 
 During each triage pass, also check for `status:blocked` issues whose dependencies may have been resolved. Before removing `status:blocked` from an issue:
 
@@ -71,7 +67,7 @@ During each triage pass, also check for `status:blocked` issues whose dependenci
 
 **Special case — false positive audit findings:** When unblocking an `audit-finding` issue whose blocker was a fix to the convention checker itself, close the issue as completed instead of just removing `status:blocked`.
 
-## Step 4: Summary for the User
+## Step 6: Summary for the User
 
 Once triage is done, compile a prioritised list of issues that need the user's attention. This means any open issue with `owner:lucas42` — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
 
