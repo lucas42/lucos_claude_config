@@ -267,7 +267,14 @@ ENDBODY
 )"
 ```
 
-9. **Drive the PR review loop.** After opening the PR, you are responsible for the review loop in [`pr-review-loop.md`](../pr-review-loop.md). SendMessage to `lucos-code-reviewer` requesting a review, address any feedback, and handle specialist reviews if requested. **Once the PR is approved, report back to team-lead immediately.** Never merge PRs yourself, never poll CI status, never wait for CI — auto-merge handles the rest.
+9. **Drive the PR review loop to completion.** After opening the PR, you own the full review loop described in [`pr-review-loop.md`](../pr-review-loop.md). Do **not** report back to team-lead until the loop has reached a terminal state. Terminal states are:
+   - PR approved by lucos-code-reviewer (→ report back immediately)
+   - 5 review iterations without approval (→ report back with the "needs human judgement" message)
+   - Stuck on something that genuinely requires the user (→ report back explaining the blocker)
+
+   **"PR open and code review requested" is NOT a terminal state.** Sending the review request and then reporting back is a failure to complete the loop. Wait for the reviewer's response, address any feedback, handle specialist reviews if requested, and only report back once approval is in hand (or a genuine blocker has been hit).
+
+   Never merge PRs yourself, never poll CI status, never wait for CI — auto-merge handles the rest.
 
    **Check supervision status before reporting.** Before telling team-lead whether a repo requires lucas42's sign-off, run `~/sandboxes/lucos_agent/check-unsupervised {repo}` to verify. Never assume a repo is supervised or unsupervised — always check. Unsupervised repos auto-merge once code review is approved and CI passes; supervised repos require lucas42's manual merge.
 
