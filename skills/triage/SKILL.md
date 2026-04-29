@@ -6,16 +6,26 @@ disable-model-invocation: true
 
 Perform triage directly and summarise the results. Do not ask for clarification — immediately begin.
 
-## Step 0: Review Closed Issues You Raised
+## Step 0: Review Closures and Sweep the Board
 
-Before triaging new issues, check whether any issues you previously raised have been closed:
+This step has **two independent halves** — both must run.
+
+### 0a. Memory review of closures of issues you authored
+
+Check whether any issues you (lucos-issue-manager) previously raised have been closed, in case the closure reasoning reflects a decision or preference you should remember:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
   "search/issues?q=author:app/lucos-issue-manager+org:lucas42+is:issue+is:closed+sort:updated-desc&per_page=10"
 ```
 
-For each closed issue: read the final comments to understand the closure reasoning. If it reflects a decision or preference you weren't aware of, update your memory. Skip issues you've already reviewed. Also use this step to **clean up the project board**: for any recently closed issue still on the board, remove it using `deleteProjectV2Item`.
+For each unfamiliar closure: read the final comments. Skip issues you've already reviewed. Update memory only if there is something genuinely new — most closures are routine completions and need no action.
+
+### 0b. Board-wide Done-column sweep
+
+Closed issues should not remain on the project board. The built-in workflow moves them to the Done column on close, but they must then be deleted entirely. **This sweep is board-driven, not author-driven** — query the board for items with `Status = Done` (`optionId == "878c350f"`) across **all pages** and delete every one with `deleteProjectV2Item`. The previous (author-scoped) cleanup missed closures by other bots and let backlog accumulate to ~100 items.
+
+Do this in a loop that re-fetches page 1 each round, since deletes shift items forward. A single shell loop running until page 1 contains no Done items is the simplest correct pattern. Keep going until the sweep reports zero Done items found.
 
 ## Step 1: Discover and Triage Issues
 
