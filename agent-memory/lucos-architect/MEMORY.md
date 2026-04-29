@@ -53,6 +53,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [configy serialises absent optional fields as explicit null](reference_configy_optional_field_nulls.md) — `dict.get(key, default)` doesn't fall back; use `get(key) or default`. YAML-only tests miss this.
 - [Inter-image build deps: single multi-target Dockerfile](reference_buildx_bake_additional_contexts.md) — `target:` scheme is bake-only and breaks compose; use `build.target` + `COPY --from=<stage>`
 - [Verify CI mechanism before claiming it gives sequencing](feedback_verify_ci_mechanism_before_relying_on_it.md) — read the orb/.circleci config; "implicit ordering" is a yellow flag, not an answer
+- [Reference-implementation defects propagate with confidence amplification](feedback_reference_implementation_propagation.md) — "follow X" copies treat X as already-reviewed; defects in X compound across services (eolas/contacts collectstatic, 2026-04-29)
+- [Named Docker volumes shadow image contents indefinitely](reference_named_volume_shadows_image.md) — first-init only; later image updates never refresh; masks build-time defects until volume is removed (eolas/contacts 2026-03-20 + 2026-04-29)
 
 ## Auto-merge & security checks
 
