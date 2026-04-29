@@ -129,10 +129,11 @@ There are two distinct auto-merge workflows — do not conflate them:
 - If an approved Dependabot PR is not merging, the problem is a workflow issue (startup failure, missing workflow file, etc.) — NOT the supervised flag.
 
 ### 2. `code-reviewer-auto-merge.yml` — for agent-authored PRs
-- Triggers on PR reviews from `lucos-code-reviewer[bot]`.
-- Fetches the `unsupervisedAgentCode` flag from `https://configy.l42.eu/repositories/{repo}`.
-- If `true`: bot approval triggers `gh pr merge --auto --merge`.
-- If `false`: bot review is posted but doesn't enable auto-merge — human approval needed.
+- Triggers on approval reviews from **either** `lucos-code-reviewer[bot]` OR `lucas42`.
+- Fetches `unsupervisedAgentCode` from configy and determines the **expected reviewer**:
+  - Unsupervised (`true`): expected reviewer = `lucos-code-reviewer[bot]` → bot approval triggers `gh pr merge --auto --merge`
+  - Supervised (`false`): expected reviewer = `lucas42` → lucas42's approval triggers `gh pr merge --auto --merge`
+- **On supervised repos, bot approval does nothing** (workflow runs but sees bot ≠ lucas42, skips merge). **lucas42's approval is all that's needed** — the workflow calls `gh pr merge --auto --merge` automatically; he does NOT need to click Merge separately.
 - **Most lucos repos are supervised.** Confirmed unsupervised as of 2026-04-28: `lucos_agent_coding_sandbox`, `lucos_repos`, **`lucos`**. Always run `check-unsupervised` to verify — never infer from repo name or memory.
 - **NEVER use `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'` to check supervision.** Repos not in configy return empty output, which silently misclassifies them as supervised. `lucos` and `lucos_backups` are not in configy, causing false "supervised" claims in PR #118 and others. The canonical command is `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised, exit 1 = supervised, exit 2 = error).
 
@@ -140,11 +141,12 @@ There are two distinct auto-merge workflows — do not conflate them:
 - `unsupervisedAgentCode` only affects **agent-authored PRs** (via code-reviewer-auto-merge). It has NO bearing on Dependabot PRs.
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 
-### NEVER claim "auto-merge triggered/succeeded" based on workflow conclusion alone
-- The `reusable / auto-merge` or `code-reviewer-auto-merge` workflow having `conclusion: success` does NOT mean auto-merge was enabled. On supervised repos, the workflow runs and correctly does nothing.
-- The only reliable signal is the `auto_merge` field on the PR itself being non-null.
-- If `auto_merge: null` after workflow succeeds, check `unsupervisedAgentCode`. If `false`, this is expected — report "awaiting lucas42 approval". Only flag as stuck if `unsupervisedAgentCode: true` but auto_merge is still null.
-- Confirmed failure: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" when PR was still open awaiting lucas42 approval.
+### Reporting supervised repo PR status
+- After bot approval on a supervised repo: `auto_merge: null` is **expected** (bot approval correctly did nothing). Report as: **"awaiting lucas42's approval — the workflow will auto-merge once he approves"**. Do NOT say he needs to click Merge.
+- After lucas42 approves: workflow calls `gh pr merge --auto --merge`, setting `auto_merge` non-null. PR merges once CI passes.
+- NEVER claim "auto-merge triggered/succeeded" based solely on the workflow check-run having `conclusion: success`. On supervised repos, the bot-approval run succeeds but does nothing. The only reliable signal after lucas42 approves is `auto_merge` being non-null on the PR itself.
+- Only flag as stuck (criterion 7) if `unsupervisedAgentCode: true` but `auto_merge` is still null after bot approval.
+- Confirmed wrong: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" when PR was awaiting lucas42. Also reported "awaiting lucas42 approval **to merge**" on lucos_eolas #218 and lucos_contacts #672, implying he had to click Merge. Corrected by lucos-site-reliability 2026-04-29.
 
 ## gh-as-agent Body Field Gotchas
 
