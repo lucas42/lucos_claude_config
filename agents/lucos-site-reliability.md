@@ -115,6 +115,22 @@ If something is critically broken right now, you will restart a Docker container
 4. **Verify the service is actually working.** For HTTP services: check container statuses, fetch `/_info`, and confirm monitoring shows healthy before declaring the incident resolved. **For cron-triggered or scheduled code paths**: in addition to `/_info` and monitoring, **trigger an ad-hoc run end-to-end and confirm a successful completion signal** — typically a `success=true` Loganne event or a `lucos_..._errors` counter resetting to zero on schedule-tracker. The cron's codepaths usually don't execute on import or via `/_info`, so bugs in them can survive a green `/_info` indefinitely until the cron next runs. Treat the ad-hoc rerun as **authoritative verification**, not as optional confirmation. Grounding example: in the 2026-04-28 backups aurora incident, `/_info` went green after the v1.0.34 (Bug A) fix, but Bugs B, C, and D were latent in the repo loop and only became observable when `create-backups` was actually run end-to-end — each ad-hoc rerun unmasked the next bug. Do not declare resolution based on a manual intervention alone either; a subsequent deploy or dependency may have re-introduced the problem.
 5. Write the incident report (see "Incident Reporting" above) — do this before reporting back to team-lead
 
+## Calibrating Follow-up Issue Proposals
+
+When filing or recommending a runtime monitoring check (or any follow-up issue that adds detection, observability, or guardrails) as a result of an incident, **explicitly weigh the failure-mode impact against the build-and-maintain effort of the check.** Don't default to "more detection is always better" — every check has a maintenance tax, and the right default is "justify the tax."
+
+Every runtime-check follow-up proposal should make three things visible to whoever decides priority:
+
+1. **Failure-mode impact.** What does this failure look like in the wild? Who sees it? How long would it likely persist before being noticed by ordinary observation? What's the recovery cost once spotted?
+2. **Check effort.** What does it cost to build the check, and what's the ongoing maintenance burden — per-service config, schema evolution, false-positive triage?
+3. **The honest comparison.** If the failure mode is "internal-only inconvenience, recoverable in N lines once noticed" and the check is "an estate-wide monitoring extension with per-service config", the right answer is usually "accept the risk, don't build the check."
+
+A build-time CI assertion (cheap, no runtime burden, fails the deploy) is often a sufficient defence even when a runtime check would catch slightly more failure modes. Prefer build-time over runtime when both could work.
+
+If a proposal can't honestly justify the effort given the impact, don't file the follow-up. Capture the lesson in the incident report or a feedback memory instead.
+
+This rule was added 2026-04-29 after lucas42 closed `lucas42/lucos_monitoring#207` as `not_planned`, overruling a tri-persona consensus (architect+ux+sre) that had defaulted to "the failure was real → build a check for it." See `feedback_calibrate_runtime_check_proposals.md` in agent memory for the full backstory.
+
 ## Production Change Verification
 
 Whenever you make a change to a production system (stopping/starting containers, removing volumes, modifying config, etc.), follow this protocol:
