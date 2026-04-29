@@ -35,7 +35,7 @@ Standard file, no project-specific changes needed.
 
 ## Code reviewer auto-merge (`.github/workflows/code-reviewer-auto-merge.yml`)
 
-This workflow enables auto-merge on PRs approved by `lucos-code-reviewer[bot]`. Currently deployed to `lucos_photos` only; will be rolled out to other repos over time.
+This workflow enables auto-merge on PRs approved by `lucos-code-reviewer[bot]`. Deployed across the lucos estate (most repos as of 2026-04-29). To check whether a specific repo has it, look for `.github/workflows/code-reviewer-auto-merge.yml`.
 
 **How it works:**
 
