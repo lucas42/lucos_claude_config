@@ -273,3 +273,7 @@ Don't speculate about convention/tool internals without reading the source. See 
   --method POST -f ref=main
 ```
 Returns empty (204 No Content) on success. Get workflow IDs via `repos/{owner}/{repo}/actions/workflows`.
+
+## Volume removal pre-check: verify image content before removing masking volumes
+
+Before removing a named volume as part of a "let the image handle it now" refactor, always confirm the new image actually contains what it's replacing. Incident: eolas/contacts styling lost 2026-04-29. See `volume-removal-image-verify.md`.
