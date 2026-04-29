@@ -35,3 +35,17 @@ The trick is mounting the volume at a path that is NOT the image's content path,
 **Where this hit**: 2026-03-20 across lucos_contacts (#561, then #668) and lucos_eolas (#98, then #212). Both repos moved Django `collectstatic` from `startup.sh` to the Dockerfile to reduce startup CPU spikes — both repos kept their named `staticfiles` volume mounted at the collectstatic target path. Result: 5+ weeks of stale CSS/JS/lucos_navbar.js served to end users on `contacts.l42.eu` and `eolas.l42.eu`. Discovered when lucos-ux noticed CSS changes from PR #667 didn't appear locally on `docker compose up`.
 
 **How to avoid in code review**: any PR that moves a step from `startup.sh` (or equivalent runtime script) into the `Dockerfile` build steps is suspect if the target path of that step is also listed in `docker-compose.yml`'s `volumes:` section. Ask: "is this path mounted as a named volume in production?" — if yes, the build-time output will be shadowed.
+
+**Removing the volume can EXPOSE a second bug** (not just unmask the first). 2026-04-29 sequel: the eolas/contacts consolidation PRs (`lucos_eolas#213`, `lucos_contacts#669`) introduced a build-time `collectstatic` that was itself broken — `settings_collectstatic.py` only declared `django.contrib.staticfiles` in `INSTALLED_APPS`, so `collectstatic` silently skipped the entire `django.contrib.admin` static tree. The bug shipped fine because the still-mounted `*_staticfiles` named volume from the original 2026-03-20 incident contained a complete admin asset tree from the OLD runtime collectstatic. When the orphaned volumes were removed (per `#214`/`#670`), nginx fell back to the image — which had no admin CSS — and every page rendered unstyled. **6.5 hours of user-visible breakage.**
+
+**Operational rule for "remove the orphan volume" cleanup tickets**: before removing a volume that's been masking a content-path, verify the new image *actually contains* what the volume contains. The cheap check:
+
+```bash
+# What's in the volume right now (the masking copy):
+docker run --rm -v <project>_<volname>:/in alpine ls -la /in/admin/css 2>/dev/null
+
+# What's in the latest image at the same path:
+docker run --rm <image>:latest ls -la /usr/share/nginx/html/resources/admin/css 2>/dev/null
+```
+
+If the image-side path is empty or missing files the volume has, do NOT remove the volume — file an issue against whoever owns the build step and wait for the fix. Recorded in incident report `2026-04-29-eolas-contacts-styling-lost.md`.
