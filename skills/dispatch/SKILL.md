@@ -47,7 +47,7 @@ If a PR exists that references the issue and is still **open**, the work has lik
 1. **Determine the repository name** from the issue URL.
 2. **Check whether the repository has unsupervised agent code enabled** by running `~/sandboxes/lucos_agent/check-unsupervised <repo-name>`.
 3. **If unsupervised (exit code 0):** the PR should auto-merge on its own. Tell the user the work is already done and the PR is awaiting auto-merge, then stop.
-4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to review and approve the existing PR — once approved, it will auto-merge. Provide the PR URL. Then stop -- do not dispatch a teammate.
+4. **If not unsupervised (exit code 1) or error (exit code 2):** tell the user they need to review the existing PR. Whether they need to merge it manually depends on the repo: most supervised repos do **not** have automatic post-approval merge — only `lucos_photos` currently has the code-reviewer-auto-merge workflow deployed. Before reporting, fetch the PR's `auto_merge` field via the API: if non-null, auto-merge is armed and approval is enough; if null, lucas42 must approve **and** click merge (or enable auto-merge first). Provide the PR URL. Then stop -- do not dispatch a teammate.
 
 If no open PR exists for the issue, continue.
 
@@ -121,5 +121,8 @@ If a PR was created and approved:
      - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
 5. **If not unsupervised (exit code 1) or error (exit code 2):**
-   - Tell the user the PR needs their review and approval. Once approved, it will auto-merge. Provide the full PR URL so they can easily navigate to it.
+   - Fetch the PR's `auto_merge` field via the GitHub API to determine what lucas42 needs to do:
+     - If `auto_merge` is non-null: auto-merge is armed. Tell lucas42 the PR needs his review and approval — once approved, it will auto-merge.
+     - If `auto_merge` is null (the common case for repos other than `lucos_photos`): tell lucas42 the PR needs his review/approval **and** his merge. There is no automatic merge after his approval on most repos.
+   - Provide the full PR URL so he can easily navigate to it.
    - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
