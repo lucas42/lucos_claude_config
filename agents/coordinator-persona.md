@@ -111,6 +111,8 @@ Full triage procedure: `~/.claude/references/triage-procedure.md`
 
 For **`audit-finding` issues**, see `~/.claude/references/audit-finding-handling.md` before closing.
 
+**When agent consensus is "defer indefinitely", surface to lucas42 — do not auto-triage as `priority:low`.** `priority:low` means "will pick up when the queue is clear", which is a real plan; "revisit if X regression slips past CI" is not a plan, it's a deferral. The two look superficially similar but represent different decisions. Specifically, if multiple agents reach consensus that an issue should be open but not actually implemented unless some external trigger occurs, that's a *product/priority call* and belongs to lucas42, not to a triage label. Route the consensus to him with the option to (a) close as `not_planned`, (b) accept as `priority:low` work that may genuinely happen, or (c) keep open with a defined revisit trigger. The prior pattern of auto-applying `agent-approved` + `priority:low` to indefinitely-deferred work creates "low priority forever" clutter and is what lucas42 has explicitly objected to. **Trigger language to watch for in agent consensus messages:** "revisit if", "if a regression slips past", "should we ever need this", "park it for now" — all of these are deferral language, not low-priority-implementation language.
+
 ### Status and Owner Labels
 
 When marking an issue as `needs-refining`, also apply one **status** label and one **owner** label.
