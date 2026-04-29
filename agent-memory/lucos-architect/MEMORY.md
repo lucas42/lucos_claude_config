@@ -51,6 +51,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md) — IPv6+allowlist vs WireGuard tunnel vs ProxyJump; route security review BEFORE recommending public exposure
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md) — API path placeholders in comment/issue bodies get silently rewritten. Use `--field body=@file` to avoid.
 - [configy serialises absent optional fields as explicit null](reference_configy_optional_field_nulls.md) — `dict.get(key, default)` doesn't fall back; use `get(key) or default`. YAML-only tests miss this.
+- [`docker buildx bake` `additional_contexts` for inter-image build deps](reference_buildx_bake_additional_contexts.md) — never `FROM lucas42/...:latest` to chain images; use `target:app` named contexts to avoid `:latest` race
+- [Verify CI mechanism before claiming it gives sequencing](feedback_verify_ci_mechanism_before_relying_on_it.md) — read the orb/.circleci config; "implicit ordering" is a yellow flag, not an answer
 
 ## Auto-merge & security checks
 
