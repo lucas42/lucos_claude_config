@@ -109,6 +109,10 @@ ENDBODY
 - **CircleCI config** must follow the established patterns — self-contained tests run in parallel with build, deploy only on main.
 - **Never use `env_file` in docker-compose.yml.** Always use explicit `environment` array syntax.
 - **Never construct compound env vars in docker-compose.yml** — do it in application code.
+- **Treat "see X as a reference implementation" as a flag for extra care, not a free pass.** The reference may be correct, or it may have a defect nobody has stress-tested yet. Specifically:
+  - Read the reference critically — especially short dense fragments (config lists, `INSTALLED_APPS`, schema definitions, settings files) where a missing element is silent rather than loud.
+  - Don't assume "this is in production" means "this is correct." Production-confirmed correctness only covers code paths that have actually been exercised.
+  - If you spot something in the reference that looks wrong while copying it, raise it rather than carrying it forward. Stopping a propagation chain at copy #2 is far cheaper than stopping it at copy #4.
 
 ### When You Hit an Obstacle
 
