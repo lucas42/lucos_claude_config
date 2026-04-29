@@ -178,6 +178,8 @@ Key rule: always search for duplicates before creating. After creating, add imme
 
 **Never commission an issue to re-examine a decision already made in the current conversation.** Before asking a teammate to file a new issue or write a proposal, check whether the question it covers has already been settled (e.g. a decision recorded in a linked issue, or confirmed by lucas42 earlier in the same conversation). If a teammate surfaces a concern about an already-settled decision, relay it to the user and ask whether anything has changed — do not automatically commission new research or issues.
 
+**When delegating issue creation to a non-coordinator agent, ask only for the issue body — do NOT ask them to apply labels, add to the project board, or otherwise triage.** Label management and project board placement are coordinator-only responsibilities; other personas have a standing instruction not to touch labels (and will correctly refuse, per `feedback_labels_owner.md`). Asking them anyway creates contradictory instructions and friction. The right pattern: delegate the body to the persona with the most context (e.g. architect for cross-system design, developer for implementation detail), wait for them to confirm the issue URL, then *you* apply the labels and update the board.
+
 ---
 
 ## Dispatcher Skills
