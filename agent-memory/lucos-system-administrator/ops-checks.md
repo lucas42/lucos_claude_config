@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-29
-resource_checks: 2026-04-23
-syslog_review: 2026-04-23
-software_updates: 2026-04-23
-sandbox_drift: 2026-04-23
-repos_dashboard: 2026-04-29
+container_status: 2026-04-30
+resource_checks: 2026-04-30
+syslog_review: 2026-04-30
+software_updates: 2026-04-30
+sandbox_drift: 2026-04-30
+repos_dashboard: 2026-04-30
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-27
 certificate_expiry: 2026-04-27
@@ -789,6 +789,31 @@ certificate_expiry: 2026-04-27
 - xwing: clean — no crashed, stopped, or unhealthy containers
 
 **Repos dashboard**: No failing conventions. Clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-04-30 (checks 1–6 due; monthly checks not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only):
+- Sudo failures from 2026-04-23 (ops work) and 2026-04-27 (backup investigation). All expected. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.4.1, containerd 2.2.1→2.2.3, buildx 0.31.1→0.33.0, compose 5.1.0→5.1.3. Routine.
+- Xwing: Docker CE 29.4.0→29.4.1, containerd 2.2.2→2.2.3, compose 5.1.2→5.1.3; libssl3/openssl from `stable` (NOT `stable-security`), kernel 6.12.47→6.12.75, raspi-firmware updates. Routine.
+- Salvare: Docker CE 29.3→29.4.1, containerd, buildx, compose; libssl3/openssl from `oldstable` (not security-tagged), kernel 6.12.25→6.12.75 (large jump), raspi-utils, linux-libc-dev. Routine.
+
+**Resources**:
+- Avalon: 2.8Gi available of 7.6Gi. Swap 951Mi/4.5Gi (21%). Disk 14%. Load 2.33/3.14/3.20 (54 days uptime). Fine.
+- Xwing: disk **72%** (81G/117G) — recovering from 95% on 2026-04-27. Load 3.65/3.50/3.51 (consistently elevated but known pattern). Memory 421Mi available. Swap 321Mi/905Mi (35%).
+- Salvare: disk 60% (33G/58G). Load 0.09. Memory fine.
+
+**Sandbox drift**: 1 remote commit (b8265c1 — PHP 8.4 + Composer added to lima.yaml). PHP 8.4 and Composer already installed on this VM. No live VM action needed.
+
+**Repos dashboard**: 58 repos checked, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
 
