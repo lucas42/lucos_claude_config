@@ -29,7 +29,7 @@ Run the global prioritisation script:
 ~/sandboxes/lucos_agent/get-next-implementation-issue
 ```
 
-This searches across **all** repositories and **all** personas for the single highest-priority `agent-approved`, non-blocked issue. It prints three lines:
+This returns the next implementable issue from the **lucOS Issue Prioritisation** project board, choosing the topmost item in the Ready column whose Status is Ready (excluding Blocked) across all repositories and personas. **The ordering is determined by position in the Ready column, not by the `priority:*` label.** lucas42 may manually reorder the column to put a lower-`priority:*`-labelled issue ahead of a higher-priority one — that manual ordering is authoritative. Do not second-guess it by re-checking labels. It prints three lines:
 
 1. The owner label (e.g. `owner:lucos-developer`)
 2. The issue number and title (e.g. `#42 Fix the thing`)
