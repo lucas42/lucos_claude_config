@@ -66,19 +66,37 @@ Filter the results to events where `source == "lucos_monitoring"`. Look back ove
 
 #### What to look for
 
-**Flappy alerts** — a system that has fired multiple `monitoringAlert` / `monitoringRecovery` cycles in a short period. More than 2–3 oscillations within a few hours is worth investigating. Flappy systems may indicate:
+**Flappy alerts** — a system that has fired any `monitoringAlert` / `monitoringRecovery` cycle. Even a single short flap is signal: it produced an alert, which means it crossed the threshold the monitoring system uses to wake people up. Repeated flaps amplify the problem; isolated flaps still represent a fragile check or a real (but brief) failure that wants explaining.
+
+Flappy systems may indicate:
 - An intermittent dependency (network, upstream service)
 - A service with a fragile healthcheck or tight timeout
 - A resource exhaustion cycle (OOM → restart → recover → repeat)
+- A check that fires during a known-acceptable window (e.g. a dependency's deploy) without using the suppression tools provided
 
 **Persistent alerts** — a system with a `monitoringAlert` event and no subsequent `monitoringRecovery`. These may represent an ongoing failure that Check 1 (Monitoring API) should already surface, but the Loganne history provides context on how long the system has been failing.
 
+#### Do not accept flaps as "expected" or "known pattern"
+
+If a flap is acceptable (i.e. the underlying condition is benign and we don't want to wake anyone up for it), then it must be **suppressed using the available tools** — not tolerated as noise. The lucos monitoring service supports several mechanisms:
+
+- **Deploy-window suppression** — alerts on a system are suppressed while that system is being deployed. Already on by default for the deploying system itself.
+- **`dependsOn` on checks** — a check declared as `dependsOn: <other_system>` is suppressed when the depended-on system is in its deploy window. This is the right fix for cross-service probes that flap during dependency deploys (e.g. weightings probing media-api during a media-api deploy). Check is declared in the service's own `/_info` payload alongside `techDetail` and `ok`.
+- **`failThreshold` per check** — number of consecutive failed polls required before a check goes unhealthy. Use this to ride out tight-timeout transients. Default is 1; bump to 2+ for checks with sub-second timeouts that occasionally lose a race. Declared in `/_info` alongside the check.
+- **Warm-up alert skipping** — `lucos_monitoring` skips alerts on the first poll after its own restart, so its cold-state cache misses don't cascade.
+
+If you find a flap and conclude it's a class of failure that's *acceptable*, the response is to **use one of the tools above to suppress it**, not to write it off as known. If there's no tool that fits the situation, **raise a ticket on `lucos_monitoring`** describing the pattern and proposing a new mechanism (or extension to an existing one). "We've seen this before" is not a disposition.
+
 #### Action
 
-For any flappy or persistent alert not already covered by a known open issue:
-1. Check for an existing issue using the duplicate prevention queries above
-2. If none exists, raise a GitHub issue on the relevant repo with: the system name, the alert pattern observed (timestamps, number of cycles), and the risk if left unaddressed
-3. If the pattern suggests a systemic reliability problem, flag for deeper investigation
+For every flap (any monitoringAlert/Recovery cycle) and every persistent alert in the lookback window:
+
+1. Check for an existing open issue on the affected service or `lucos_monitoring` covering the same root cause; comment with new data if so, otherwise file new.
+2. **Diagnose the root cause** — SSH in, read logs, inspect timing against deploy events. If you can't diagnose because logs were rotated or the container has been replaced, **the next step is to add more logs** (file a small issue on the affected service requesting diagnostic log lines around the failing check). Don't shrug and move on.
+3. **Pick a remediation** from the tools above and either fix it directly (it's usually a small `/_info` payload change) or file an issue with a precise proposal. If none of the tools fit, file an issue on `lucos_monitoring` proposing the missing mechanism.
+4. If the pattern suggests a systemic reliability problem (cascade, resource exhaustion, recurring deploy-side breakage), escalate the priority and flag for deeper investigation.
+
+A flap that recurs across ops-check runs without progress is itself a process failure — note it explicitly in the completion manifest if you're seeing the same pattern you saw last time.
 
 ---
 
