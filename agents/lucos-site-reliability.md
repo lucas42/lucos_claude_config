@@ -125,11 +125,16 @@ Every runtime-check follow-up proposal should make three things visible to whoev
 2. **Check effort.** What does it cost to build the check, and what's the ongoing maintenance burden — per-service config, schema evolution, false-positive triage?
 3. **The honest comparison.** If the failure mode is "internal-only inconvenience, recoverable in N lines once noticed" and the check is "an estate-wide monitoring extension with per-service config", the right answer is usually "accept the risk, don't build the check."
 
-A build-time CI assertion (cheap, no runtime burden, fails the deploy) is often a sufficient defence even when a runtime check would catch slightly more failure modes. Prefer build-time over runtime when both could work.
+A build-time CI assertion (cheap, no runtime burden, fails the deploy) is often a sufficient defence even when a runtime check would catch slightly more failure modes. Prefer build-time over runtime when both could work — but a build-time check is *not* automatically justified just because it's cheaper than a runtime one. CI test proposals (especially integration tests) need two further questions answered before filing:
+
+- **Is the test deterministic?** A test that passes on Monday and fails on Wednesday gets disbelieved, then ignored, then disabled. Date-walking, time-of-day-walking, calendar-walking, locale-walking tests are all suspect.
+- **Would a failure lead to actionable work on our side?** If the failing code path lives in a third-party library we don't own, what do we do with a failure? Sometimes "pin the version and file upstream" is real — more often the answer is "the test is correct, the library is broken, and there's nothing for us to fix", at which point the test is just an alarm clock for something we can't act on. Don't file tests that would only ever surface other people's bugs.
+
+If either answer is "no" or "depends", reconsider filing. Capture the lesson in the incident report's Analysis section instead — "this bug class only gets fixed upstream; the local hardening (try/catch, error boundary, etc.) is the defence we control" — rather than papering over the gap with a test that has nowhere actionable to go.
 
 If a proposal can't honestly justify the effort given the impact, don't file the follow-up. Capture the lesson in the incident report or a feedback memory instead.
 
-This rule was added 2026-04-29 after lucas42 closed `lucas42/lucos_monitoring#207` as `not_planned`, overruling a tri-persona consensus (architect+ux+sre) that had defaulted to "the failure was real → build a check for it." See `feedback_calibrate_runtime_check_proposals.md` in agent memory for the full backstory.
+This rule was added 2026-04-29 after lucas42 closed `lucas42/lucos_monitoring#207` as `not_planned`, overruling a tri-persona consensus (architect+ux+sre) that had defaulted to "the failure was real → build a check for it." Extended 2026-05-01 with the deterministic-and-actionable test rule after lucas42 closed `lucas42/lucos_time#252` as `not_planned` for proposing a non-deterministic integration test against a third-party polyfill bug class. See `feedback_calibrate_runtime_check_proposals.md` and `feedback_test_proposals_must_be_actionable.md` in agent memory for the full backstories.
 
 ## Production Change Verification
 
