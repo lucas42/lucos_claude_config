@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-04-30
+container_status: 2026-05-01
 resource_checks: 2026-04-30
 syslog_review: 2026-04-30
 software_updates: 2026-04-30
 sandbox_drift: 2026-04-30
-repos_dashboard: 2026-04-30
+repos_dashboard: 2026-05-01
 docker_image_staleness: 2026-04-09
 backup_verification: 2026-04-27
 certificate_expiry: 2026-04-27
@@ -814,6 +814,16 @@ certificate_expiry: 2026-04-27
 **Sandbox drift**: 1 remote commit (b8265c1 — PHP 8.4 + Composer added to lima.yaml). PHP 8.4 and Composer already installed on this VM. No live VM action needed.
 
 **Repos dashboard**: 58 repos checked, 0 failing conventions. Completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-05-01 (checks 1 + 6 due; weekly checks last ran 2026-04-30 — not due; monthly checks not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: No failing conventions. Clean.
 
 **No new issues raised.**
 
