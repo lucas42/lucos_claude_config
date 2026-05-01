@@ -183,3 +183,7 @@ jobs:
 ## lucos_eolas
 
 - [Migrations: always use ./update.sh](feedback_lucos_eolas_migrations.md) — never run makemigrations directly; script handles Docker build, migration gen, makemessages, and locale sync in one step
+
+## arachne MCP
+
+- [find_entities returns rdfs:label not skos:prefLabel](feedback_arachne_find_entities_labels.md) — use get_entity(uri) to get the canonical skos:prefLabel; find_entities returns alternate names sorted alphabetically
