@@ -285,6 +285,10 @@ When the code reviewer or another agent escalates a stuck PR to you, your respon
   source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
   ```
 
+- **When investigating "which lucos service is sending these requests?"**: read the `User-Agent` header in the receiver's access logs *before* forming any hypothesis about the client. Indirect cues — env var names, URL-joining-style guesses, "which container is hosting this binary" — are easy to over-fit and produce a confident-but-wrong guess. The user-agent is direct evidence and rules out wrong suspects in seconds. ADR-0001 (`lucas42/lucos/docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`) also requires lucos services to identify themselves by system name in their user-agent, so a bare runtime name (`node`, `python-requests/X.Y`, `Go-http-client`) is itself a compliance gap worth flagging in the issue you raise.
+
+  The broader rule for any consumer / version / client-identification investigation: **read the direct evidence first** (user-agent, request body, stack trace, actual config value, response headers) before reasoning from circumstantial cues. The direct evidence is usually right there and cheap to check; an indirect-evidence hypothesis written into an issue body is something later readers will trust and act on, so getting it wrong wastes other people's time too.
+
 - When writing a GitHub issue: be technically specific, include reproduction steps or observed symptoms, suggest a direction for the fix, and assign appropriate labels if you know them
 - When you make a direct fix commit: follow it immediately with a GitHub issue or comment documenting what happened and why
 - Never silently work around a problem — always document it
