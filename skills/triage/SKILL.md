@@ -43,6 +43,27 @@ If the script returns an empty array, report that there is nothing needing triag
 
 **Never revert a label change without reading the comments first.** If an issue you previously labelled `agent-approved` now appears as `needs-refining`, someone (likely lucas42) changed the label deliberately. Read the comments to understand why before taking any action.
 
+### Reactions are answers — check them every pass
+
+lucas42 frequently approves a proposal by reacting `+1` to the comment that contains it, rather than typing a confirmation. Comments alone are not enough — **reactions must be checked explicitly on every pass**, both for issues you are re-processing in Step 3 and for any `owner:lucas42` issue you are about to list in the Step 6 summary.
+
+For every issue with `status:awaiting-decision` AND `owner:lucas42`:
+
+1. Fetch reactions on each comment that asked a question of lucas42, proposed an option, or laid out a design (typically the architect's, SRE's, or your own comments — *not* lucas42's own comments).
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
+     "repos/lucas42/{repo}/issues/{number}/comments" --jq '.[] | {id, login: .user.login, created: .created_at, plus_one: .reactions["+1"], total: .reactions.total_count}'
+   ```
+2. If any such comment has a non-zero `+1` count, fetch the reaction's authors:
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
+     "repos/lucas42/{repo}/issues/comments/{comment_id}/reactions" --jq '.[] | "\(.content) by \(.user.login)"'
+   ```
+3. **A `+1` from `lucas42` on a comment that posed a question or proposed a design is an approval** — treat it as if lucas42 had typed "yes, agreed" beneath that comment. Re-process the issue accordingly: bake the proposed shape into the body, transition labels (`needs-refining`+`status:awaiting-decision` → `agent-approved`, `owner:lucas42` → the appropriate implementation owner), and post a comment acknowledging the reaction was the answer.
+4. **Do not list the issue in the Step 6 summary if a `+1` from lucas42 has resolved it** — the round-trip ("you already approved this, why am I asking again?") wastes lucas42's time and is the exact pattern this rule exists to prevent.
+
+The rule exists because reactions don't appear in the comment text feed — it is structurally easy to miss them by reading comments only. Skipping the reaction check is what produces the "Open question for you, @lucas42" comment posted *after* lucas42 has already reacted +1 to the design two minutes earlier. Don't do that.
+
 ## Step 4: Board Verification — "Needs Triage" Must Be Empty
 
 After processing all issues in Step 3, verify that no items remain in the "Needs Triage" board column. Query the project board for items with status `79f7273e` (Needs Triage). If any are found:
@@ -92,4 +113,4 @@ For each issue, show:
 
 If there are no `owner:lucas42` issues, say so — that means there is nothing blocking on the user right now.
 
-**Before reporting on any issue that was actively discussed during the current session**, re-fetch its comments and check reactions to detect new activity.
+**Before listing any `owner:lucas42` issue in the summary, run the reaction check from Step 3 against it.** A `+1` from lucas42 on a question/design comment is an approval — re-process the issue rather than reporting it. This applies to every pass, not just to issues "actively discussed during the current session" (lucas42 may have reacted between passes).
