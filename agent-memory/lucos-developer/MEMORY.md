@@ -179,3 +179,7 @@ jobs:
 - [Check existing issues before filing](feedback_check_existing_issues.md) — search open issues first; other agents may have already filed the same finding
 - [Grep for old name before renaming](feedback_rename_grep.md) — always `grep -r "old_name" .` before committing a rename; missed reference caused crash-loop + outage (lucos_arachne #267/#280)
 - [Verify Dockerfile COPY when adding new files](feedback_dockerfile_copy.md) — check Dockerfile covers new dirs; `COPY *.py .` silently missed `ontologies/` dir (lucos_arachne #267/#282)
+
+## lucos_eolas
+
+- [Migrations: always use ./update.sh](feedback_lucos_eolas_migrations.md) — never run makemigrations directly; script handles Docker build, migration gen, makemessages, and locale sync in one step
