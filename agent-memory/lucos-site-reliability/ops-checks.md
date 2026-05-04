@@ -2,9 +2,9 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-04-05
-info_endpoint_quality: 2026-04-05
-external_deps: 2026-04-05
+ci_status: 2026-05-04
+info_endpoint_quality: 2026-05-04
+external_deps: 2026-05-04
 
 ## Container Log Review History
 
@@ -12,24 +12,24 @@ lucos_comhra_agent: 2026-04-24
 lucos_comhra_llm: 2026-04-26
 lucos_schedule_tracker: 2026-04-24
 lucos_media_weightings: 2026-04-21
-lucos_photos_worker: 2026-04-20
+lucos_photos_worker: 2026-05-04
 lucos_arachne_explore: 2026-05-01
-lucos_arachne_web: 2026-04-19
+lucos_arachne_web: 2026-05-04
 lucos_backups: 2026-04-29
 lucos_authentication: 2026-04-28
 lucos_repos_app: 2026-05-01
 lucos_dns_bind: 2026-04-30
 lucos_loganne: 2026-04-29
 lucos_configy: 2026-04-29
-lucos_contacts_app: 2026-04-18
-lucos_contacts_db: 2026-04-19
+lucos_contacts_app: 2026-05-04
+lucos_contacts_db: 2026-05-04
 lucos_contacts_googlesync_import: 2026-04-20
 lucos_contacts_web: 2026-04-20
 lucos_creds: 2026-04-24
 lucos_creds_configy_sync: 2026-04-19
 lucos_creds_ui: 2026-04-20
 lucos_dns_sync: 2026-04-22
-lucos_eolas_app: 2026-04-19
+lucos_eolas_app: 2026-05-04
 lucos_eolas_db: 2026-04-21
 lucos_eolas_web: 2026-04-21
 lucos_locations_mosquitto: 2026-04-28
