@@ -148,7 +148,27 @@ Pull requests must be created using `gh-as-agent`, exactly like issue comments a
     -f body="Closes #42\n\n..."
 ```
 
-### 4. Tag commits and pull requests with the issue
+### 4. Request lucas42 as reviewer on supervised repos
+
+Immediately after creating a PR, check whether the repo is supervised by running `~/sandboxes/lucos_agent/check-unsupervised <repo>`. Exit codes:
+
+- **exit 0** — `unsupervisedAgentCode` is set; the auto-merge workflow handles approvals; no action needed.
+- **exit 1** — repo is supervised; lucas42 needs to review.
+- **exit 2** — script error (system not in configy, API unreachable). Treat as supervised and escalate.
+
+On exit 1, request lucas42 as a reviewer on the new PR:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <your-persona> repos/lucas42/<repo>/pulls/<number>/requested_reviewers \
+    --method POST \
+    -f reviewers[]=lucas42
+```
+
+This ensures lucas42 receives a GitHub notification on supervised PRs even when their watch settings are restricted to "Participating and @mentions". Without the reviewer request, supervised PRs would sit unnoticed in their inbox.
+
+**Never infer supervision status by reading workflow YAML, `.github/` files, or other repo state.** Always run the `check-unsupervised` script — configy is the single source of truth, and ad-hoc inference will drift over time.
+
+### 5. Tag commits and pull requests with the issue
 
 Every commit and pull request made as part of the work should reference the issue number. In commit messages, include the issue reference (e.g. `Refs #42`).
 
@@ -161,11 +181,11 @@ The full list of closing keywords is: `close`, `closes`, `closed`, `fix`, `fixes
 
 **Note:** GitHub does not process closing keywords when a bot merges a PR. Repos with the code reviewer auto-merge workflow handle this automatically (see `references/github-config.md`). For repos without that workflow, closing keywords still serve as documentation of intent — a human merging the PR will trigger the auto-close.
 
-### 5. Comment on unexpected obstacles
+### 6. Comment on unexpected obstacles
 
 If you hit a significant unexpected obstacle during the work — especially one that risks not being able to finish without further input — post a follow-up comment on the issue explaining what you've encountered. Don't silently get stuck or work around something without flagging it.
 
-### 6. Don't close issues yourself
+### 7. Don't close issues yourself
 
 Issues should be closed automatically via the closing keyword in the merged PR. Do not close issues manually unless explicitly instructed to (e.g. told that an issue is now obsolete).
 
