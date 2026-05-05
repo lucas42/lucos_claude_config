@@ -99,9 +99,15 @@ If a PR was created and approved:
    ```
    For each result, read the full issue body **and all comments** to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
 
-   **When unblocking an issue, you MUST do both of the following — removing the label without updating the board is incomplete:**
+   **When unblocking an issue, you MUST do all three of the following — removing the label and updating the Status without repositioning leaves the issue stranded at the bottom of the queue:**
    1. Remove the `status:blocked` label from the issue.
    2. Update the project board Status field from Blocked → Ready (option ID `3aaf8e5e`).
+   3. **Reposition the item per its priority.** When a Status field changes, the item keeps its existing global position on the board — it does NOT move to the top of the new column. So an unblocked item lands at whatever board position it had when blocked (typically the bottom). Apply the standard priority-positioning rules:
+      - **`priority:critical` or `priority:high`**: call `updateProjectV2ItemPosition` with no `afterId` to move to the top.
+      - **`priority:medium`**: position with `afterId` set to the last `priority:high` item in Ready, so the medium item lands above other mediums but below highs.
+      - **`priority:low`**: leave at bottom (no repositioning needed).
+
+      Without this step, the work has been "unblocked" in name only — `/next` won't see it ahead of older items, and you'll incorrectly claim it's "next in line" if you reason from memory rather than the board. (Lesson from 2026-05-05: I unblocked lucos_media_seinn#425, said it was next, then `/next` returned a different priority:high issue because #425 was sitting at the bottom of Ready.)
 
    Read `~/.claude/references/triage-reference-data.md` for the full board API patterns.
 
