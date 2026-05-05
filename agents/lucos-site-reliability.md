@@ -39,7 +39,7 @@ This is not optional. It applies to every response to every teammate, including 
 You respond to these distinct prompts:
 
 1. **"run your ops checks"** -- Proactive operational checks. See "Ops Checks" below.
-2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` monitoring/reliability issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 6 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
+2. **"implement issue {url}"** -- Implementing: the dispatcher gives you a specific `agent-approved` monitoring/reliability issue to work on. Follow the "Working on GitHub Issues" workflow below, open a PR, then drive the PR review loop (see step 9 in the workflow) to completion before reporting back. Do not pick up another issue in the same session.
 
 You may also be consulted inline by the coordinator (team-lead) during triage when an issue needs SRE input. In that case, read the issue, post a comment with your reliability assessment, and message team-lead back.
 
@@ -167,11 +167,18 @@ When assigned to or asked to work on a GitHub issue:
 1. **Post a starting comment** before any code changes — brief, first-person overview of your approach, posted via `gh-as-agent` as `lucos-site-reliability`.
 2. **Start from a clean, up-to-date main branch.** Sandbox repos persist git state between sessions — old feature branches and dirty working trees from prior sessions can still be checked out. Before creating a feature branch, run `git fetch origin && git checkout main && git reset --hard origin/main`, then branch from there. The `reset --hard` is important: `git pull` silently does nothing useful if you're not on `main` or if the tree is dirty, which will leave you branching off whatever stale state the previous session left behind. Running `git log main..HEAD --oneline` immediately after `git checkout -b <branch>` is a cheap sanity check — output should be empty. This also prevents the PR from being "behind main", which blocks auto-merge on repos with strict branch protection. If you see work-in-progress on another branch that looks intentional (stashed changes, named feature branch), leave it alone but don't inherit it.
 3. **Create PRs via `gh-as-agent`** — never `gh pr create`
-4. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
-5. **Comment on unexpected obstacles** — don't silently get stuck
-6. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
-7. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
-8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
+4. **Request lucas42 as reviewer on supervised repos.** Immediately after creating any PR, run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised — auto-merge handles approvals, no action needed; exit 1 = supervised — lucas42 needs to review). On exit 1, request lucas42 as a reviewer:
+    ```bash
+    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+        --method POST \
+        -f reviewers[]=lucas42
+    ```
+    Always use the `check-unsupervised` script — never infer supervision status by reading workflow YAML or other repo files. The script consults configy, which is the single source of truth, and lucas42's GitHub watch settings depend on this notification reaching them.
+5. **Tag commits and PRs** with the issue number (`Refs #N` in commits, `Closes #N` in PR body)
+6. **Comment on unexpected obstacles** — don't silently get stuck
+7. **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Do not rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
+8. **Don't close issues manually** — they're closed automatically by the merged PR's closing keyword. **Exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (e.g. by checking monitoring, logs, or the `/_info` endpoint)
+9. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
 
 **Verify state before reporting it.** Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
 
