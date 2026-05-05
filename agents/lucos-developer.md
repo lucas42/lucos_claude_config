@@ -93,6 +93,14 @@ ENDBODY
 )"
 ```
 
+8a. **Request lucas42 as reviewer on supervised repos.** Immediately after creating any PR, run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised — auto-merge handles approvals, no action needed; exit 1 = supervised — lucas42 needs to review). On exit 1, request lucas42 as a reviewer:
+    ```bash
+    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+        --method POST \
+        -f reviewers[]=lucas42
+    ```
+    Always use the `check-unsupervised` script — never infer supervision status by reading workflow YAML or other repo files. The script consults configy, which is the single source of truth, and lucas42's GitHub watch settings depend on this notification reaching them.
+
 8. **Follow the PR review loop** — after opening a PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../pr-review-loop.md). Send a message to the `lucos-code-reviewer` teammate to request a review, address any feedback, and handle specialist reviews if requested. Do not report back to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap). **Once the PR is approved, report back immediately.** Never merge PRs, never wait for CI, never poll CI status. CI and auto-merge handle the rest without agent involvement.
 
    **When reporting approval:** say "PR approved" and the URL — nothing else. Do **not** mention supervision status, merge expectations, or whether lucas42 needs to approve, in **any message** — approval reports, status updates, or multi-PR chain descriptions. You do not know whether a repo is supervised. The coordinator runs `check-unsupervised` itself. Guessing wrong has caused multiple incorrect reports (including lucos_photos flagged as supervised three separate times when it is unsupervised). The rule: PR approved → URL → stop. Any mention of "supervised", "unsupervised", "needs lucas42", or "auto-merge" is a violation.
