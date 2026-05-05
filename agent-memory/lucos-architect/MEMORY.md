@@ -58,6 +58,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Named Docker volumes shadow image contents indefinitely](reference_named_volume_shadows_image.md) — first-init only; later image updates never refresh; masks build-time defects until volume is removed (eolas/contacts 2026-03-20 + 2026-04-29)
 - [Compare channels honestly when proposing instrumentation](feedback_compare_channels_for_instrumentation.md) — don't anchor on Loganne for telemetry; weigh service logs / `/_info` / tracing first. Loganne = cross-estate state changes; service logs = local detail (lucos#126, 2026-05-05)
 - [Apply frame-review to your own prior reasoning](feedback_apply_frame_review_to_own_reasoning.md) — when a teammate's architecture summary makes you want to flip a recommendation, re-trace the code yourself before pivoting. Their summary is evidence, not a substitute for verification (seinn#425, 2026-05-05)
+- [Loganne consumer test](reference_loganne_consumer_test.md) — Loganne is the cross-estate async event bus, not just observability. Before recommending a new event, name the consumer that needs it asynchronously. "Cross-estate state change" framing is too loose (scenes#51, 2026-05-05)
 
 ## Auto-merge & security checks
 
