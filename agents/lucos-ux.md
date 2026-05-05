@@ -267,6 +267,14 @@ ENDBODY
 )"
 ```
 
+8a. **Request lucas42 as reviewer on supervised repos.** Immediately after creating any PR, run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised — auto-merge handles approvals, no action needed; exit 1 = supervised — lucas42 needs to review). On exit 1, request lucas42 as a reviewer:
+    ```bash
+    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-ux repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+        --method POST \
+        -f reviewers[]=lucas42
+    ```
+    Always use the `check-unsupervised` script — never infer supervision status by reading workflow YAML or other repo files. The script consults configy, which is the single source of truth, and lucas42's GitHub watch settings depend on this notification reaching them.
+
 9. **Drive the PR review loop to completion.** After opening the PR, you own the full review loop described in [`pr-review-loop.md`](../pr-review-loop.md). Do **not** report back to team-lead until the loop has reached a terminal state. Terminal states are:
    - PR approved by lucos-code-reviewer (→ report back immediately)
    - 5 review iterations without approval (→ report back with the "needs human judgement" message)
