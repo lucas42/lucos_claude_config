@@ -24,6 +24,7 @@ certificate_expiry: 2026-04-27
 - `salvare.s.l42.eu` is **IPv6-only** (AAAA record, no A record). The agent VM does not have IPv6 (vzNAT is IPv4-only). Direct SSH to salvare will always fail with "No address associated with hostname" — this is NOT a DNS incident, it is expected. Always use xwing as a jump host: `ssh -J xwing.s.l42.eu salvare.s.l42.eu`. Do not report this as a finding.
 - The router container is named **`lucos_router`** on both avalon and xwing (not `router` as previously noted — that was wrong).
 - `~/.ssh/known_hosts` is cleared between VM sessions on the current live VM — must run `ssh-keyscan -H avalon.s.l42.eu salvare.s.l42.eu xwing.s.l42.eu >> ~/.ssh/known_hosts` at start of each session. Fixed in lucos_agent_coding_sandbox#36 (merged 2026-03-18) — resolves on next VM rebuild from lima.yaml.
+- **Salvare runs WiFi-only by design** — the room it's in has no Ethernet ports. `eth0` will always show `NO-CARRIER`. Do NOT flag this as a fault. Salvare's network connectivity is entirely via `wlan0`. (Confirmed 2026-05-06, lucos_agent_coding_sandbox#69 closed as not_planned.)
 
 ## Run Log
 
