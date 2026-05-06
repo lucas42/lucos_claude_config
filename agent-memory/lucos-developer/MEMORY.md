@@ -184,6 +184,15 @@ jobs:
 
 - [Migrations: always use ./update.sh](feedback_lucos_eolas_migrations.md) — never run makemigrations directly; script handles Docker build, migration gen, makemessages, and locale sync in one step
 
+## lucos_arachne ingestor
+
+- **Entry**: `ingestor/ingest.py`. Tests: `python3 -m pytest` in `ingestor/`. All 117 pass.
+- **Triplestore helpers**: `ingestor/triplestore.py`. `rdflib` already in Pipfile.
+- **Skolemisation**: `ingestor/skolemise.py`. Blank nodes → `urn:lucos:skolem:<sha256>` (tree-shaped hash, cycle detection → UUID fallback).
+- **Diff path** (PR #439, Option 2): `diff_graph_in_triplestore()` returns SPARQL Update fragment. Migration case (old graph has bnodes) uses `DELETE WHERE + INSERT DATA`. Phase 1 collects all live-source fragments, executes as one SPARQL Update. Ontologies keep `replace_graph_in_triplestore`.
+- **loc_mads.rdf** doesn't parse with rdflib (invalid RDF/XML) — don't apply diff path to ontologies.
+- **`COPY *.py .`** in Dockerfile covers all new `.py` files in `ingestor/`.
+
 ## arachne MCP
 
 - [find_entities returns rdfs:label not skos:prefLabel](feedback_arachne_find_entities_labels.md) — use get_entity(uri) to get the canonical skos:prefLabel; find_entities returns alternate names sorted alphabetically
