@@ -132,14 +132,16 @@ Check `ops-checks.md` for `codeql-coverage` last_run date; skip if less than a m
 
 Identify repos with supported languages (Python, JavaScript/TypeScript, Java) but no CodeQL workflow. A repo with no SAST coverage is a blind spot — you won't get alerts even if vulnerable code is committed.
 
+**Scope: core lucos estate only.** Exclude forked repositories — these are forks of upstream open source libraries and are maintained externally. Use the `fork` field from the GitHub API to filter them out.
+
 **CodeQL supported languages (exhaustive list):** C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. Do NOT raise CodeQL coverage issues for any other language — PHP in particular is not supported. If a repo's primary language is unsupported, skip it silently.
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
-  "/users/lucas42/repos?per_page=100" --jq '[.[] | select(.archived == false) | .name]'
+  "/users/lucas42/repos?per_page=100" --jq '[.[] | select(.archived == false and .fork == false) | .name]'
 ```
 
-For each active repo, check whether `.github/workflows/codeql-analysis.yml` (or equivalent) exists. Also check the primary language via the repo metadata (`language` field). Raise an issue on any repo that has Python, JavaScript, TypeScript, or Java as a primary language but lacks a CodeQL workflow — unless an issue already exists requesting it.
+For each active non-fork repo, check whether `.github/workflows/codeql-analysis.yml` (or equivalent) exists. Also check the primary language via the repo metadata (`language` field). Raise an issue on any repo that has Python, JavaScript, TypeScript, or Java as a primary language but lacks a CodeQL workflow — unless an issue already exists requesting it.
 
 After completing, update `codeql-coverage` in `ops-checks.md` with today's date.
 
@@ -149,7 +151,9 @@ After completing, update `codeql-coverage` in `ops-checks.md` with today's date.
 
 Check `ops-checks.md` for `github-actions-audit` last_run date; skip if less than a month ago.
 
-For each active lucas42 repo, fetch `.github/workflows/*.yml` and check for:
+**Scope: core lucos estate only.** Exclude forked repositories — these are forks of upstream open source libraries maintained externally and are not in scope. Filter using `select(.archived == false and .fork == false)` when fetching the repo list.
+
+For each active non-fork lucas42 repo, fetch `.github/workflows/*.yml` and check for:
 
 1. **Unpinned third-party actions** — any `uses:` reference to a non-GitHub-owned action (i.e. not `actions/*`, `github/*`) that uses a mutable tag (e.g. `v1`, `main`, `latest`) rather than a full commit SHA. Mutable tags are a supply chain risk: the tag can be silently repointed to malicious code.
 2. **Overly broad permissions** — workflows that omit the top-level `permissions` key entirely (GitHub defaults to broad read-write for the `GITHUB_TOKEN`) or grant more than the job actually needs.

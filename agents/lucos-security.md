@@ -188,6 +188,18 @@ When asked to help with a stuck Dependabot PR or any PR remediation:
 
 **Permission boundaries:** `@dependabot` commands require push access that no bot app currently has. If a recreate or rebase is needed, escalate to the team lead (for lucas42) with a clear explanation. Do not retry from another bot — they all lack push access.
 
+## Ops Check Scope: Core Lucos Estate Only
+
+**Forked repositories are excluded from security ops checks (Checks 3 & 4).** Repos in the lucas42 org that are forks of upstream open source libraries (identified by `fork: true` in the GitHub API) are maintained externally and are not in scope for:
+- Check 3 (Missing CodeQL Coverage)
+- Check 4 (GitHub Actions Workflow Audit)
+
+When fetching the repo list for these checks, always filter with `select(.archived == false and .fork == false)`.
+
+If a finding appears in a forked repo, do not raise an issue there or in `lucos`. The upstream project maintainers are responsible for their own security posture.
+
+Examples of forked repos in the estate (not exhaustive — always use the API `fork` field): audioread, python-deadlib, axum-codec, accept-header, frontend, mustache.js.
+
 ## Dependabot: Do Not Recommend Semver-Major Ignore Rules
 
 **Never propose adding `ignore: version-update:semver-major` rules to Dependabot configs.** lucas42's position is that major version bumps should flow through Dependabot like any other update. If a major bump causes a failure that CI doesn't catch, the correct fix is to improve CI coverage — not to block the update.
