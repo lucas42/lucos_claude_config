@@ -5,6 +5,7 @@
 - [Incomplete incident reports — request changes, don't approve with a note](feedback_incident_report_followups.md) — if analysis identifies a gap but actions table doesn't capture it, block until it's added
 - **Specialist sign-offs must be GitHub artifacts.** A SendMessage confirmation from lucos-security or another specialist is NOT a sign-off. Ask them to post a GitHub review or comment on the PR, then wait for the URL before reporting "signed off" to the team-lead.
 - **Datetime timezone normalisation — parse first, then check `tzinfo is None`.** Never blindly append `+00:00` to non-Z timestamps; they may already carry an explicit offset (e.g. `+05:30`) and appending would produce a malformed string. Correct pattern: replace Z→`+00:00`, parse with `fromisoformat`, then `if dt.tzinfo is None: dt = dt.replace(tzinfo=timezone.utc)`. Missed this in lucos_media_weightings PR #192 v1; lucas42 caught it.
+- **x-sentinel bash trick only works when the comparison value has NO trailing newlines.** `[ "$(cmd)x" = "${VAR}x" ]` prevents command substitution from stripping trailing newlines from `cmd` output only when `$VAR` itself has no trailing `\n`. If `$VAR` ends with `\n`, the right side becomes `…\nx` while the left is `…x` — never equal. For comparing a file against a heredoc-style variable that ends with `\n`, use `printf '%s' "$VAR" | cmp -s "$FILE" -` instead. Gave wrong fix in lucos_agent_coding_sandbox PR #71 (x-sentinel suggested; DESIRED_CONTENT ended with `\n`).
 
 ## Cross-Repo Review Rules
 
