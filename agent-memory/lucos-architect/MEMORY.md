@@ -59,6 +59,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Compare channels honestly when proposing instrumentation](feedback_compare_channels_for_instrumentation.md) — don't anchor on Loganne for telemetry; weigh service logs / `/_info` / tracing first. Loganne = cross-estate state changes; service logs = local detail (lucos#126, 2026-05-05)
 - [Apply frame-review to your own prior reasoning](feedback_apply_frame_review_to_own_reasoning.md) — when a teammate's architecture summary makes you want to flip a recommendation, re-trace the code yourself before pivoting. Their summary is evidence, not a substitute for verification (seinn#425, 2026-05-05)
 - [Loganne consumer test](reference_loganne_consumer_test.md) — Loganne is the cross-estate async event bus, not just observability. Before recommending a new event, name the consumer that needs it asynchronously. "Cross-estate state change" framing is too loose (scenes#51, 2026-05-05)
+- [Don't remove implicit feedback without explicit replacements](reference_implicit_feedback_replacement.md) — unintended side-effects can become load-bearing UX feedback. Removing them needs an explicit replacement first. Chesterton's Fence variant for accidental behaviours (media_manager#237, 2026-05-06)
 
 ## Auto-merge & security checks
 
