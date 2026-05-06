@@ -23,11 +23,11 @@ lucos_loganne: 2026-04-29
 lucos_configy: 2026-04-29
 lucos_contacts_app: 2026-05-04
 lucos_contacts_db: 2026-05-04
-lucos_contacts_googlesync_import: 2026-04-20
-lucos_contacts_web: 2026-04-20
+lucos_contacts_googlesync_import: 2026-05-06
+lucos_contacts_web: 2026-05-06
 lucos_creds: 2026-04-24
-lucos_creds_configy_sync: 2026-04-19
-lucos_creds_ui: 2026-04-20
+lucos_creds_configy_sync: 2026-05-06
+lucos_creds_ui: 2026-05-06
 lucos_dns_sync: 2026-04-22
 lucos_eolas_app: 2026-05-04
 lucos_eolas_db: 2026-04-21
@@ -63,7 +63,7 @@ lucos_docker_health_app: 2026-04-23
 
 lucos_docker_mirror_web: 2026-05-01
 lucos_docker_mirror_registry: 2026-05-01
-lucos_docker_mirror_info: 2026-04-19
+lucos_docker_mirror_info: 2026-05-06
 
 ## SSH Hostname Note
 
