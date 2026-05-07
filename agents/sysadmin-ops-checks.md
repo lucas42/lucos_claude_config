@@ -212,7 +212,20 @@ SSH into each active host and check when running containers were last built:
 ssh <host> "docker ps --format '{{.Names}}\t{{.Image}}' | while read name image; do echo \"$name: $(docker inspect --format '{{.Created}}' $image 2>/dev/null || echo 'unknown')\"; done"
 ```
 
-Services that haven't been rebuilt in more than 60 days may be running outdated base images. Raise issues for any services that appear stale without a clear reason. Frame these as operational hygiene (stale builds accumulate drift from upstream, miss improvements and bug fixes), not as CVE findings — specific vulnerability tracking is lucos-security's responsibility via Dependabot alerts.
+Services that haven't been rebuilt in more than 60 days may be running outdated base images. However, **before raising an issue, verify there is actually a newer version available upstream**. A production image that is 70 days old is not stale if the upstream Docker Hub image hasn't been updated in 70 days either.
+
+**Verification step for third-party images** (images not built locally — no `build:` directive in `docker-compose.yml`):
+```bash
+curl -s "https://hub.docker.com/v2/repositories/{org}/{image}/tags/{tag}" | python3 -c "
+import sys, json; data=json.load(sys.stdin); print(f\"last_updated: {data['last_updated']}\")"
+```
+Compare the Docker Hub `last_updated` date against the production image creation date. If they match (or are within a day or two of each other), the image IS the latest available — **do not raise an issue**. The upstream simply hasn't published anything newer.
+
+If the production image IS older than the latest Docker Hub tag, then raise a staleness issue — something is blocking the pull (broken Dependabot config, CI failure, etc.) and warrants investigation.
+
+For **locally-built images** (those with a `build:` directive), the 60-day threshold applies directly — these are rebuilt on every deploy, so an old build indicates missed deployments or broken CI.
+
+Frame staleness issues as operational hygiene (stale builds accumulate drift from upstream, miss improvements and bug fixes), not as CVE findings — specific vulnerability tracking is lucos-security's responsibility via Dependabot alerts.
 
 **Where to file:** Raise the issue on the repo that **owns the image** — e.g., a stale `lucos_locations_otrecorder` image goes on `lucos_locations`, a stale `lucos_photos_postgres` image goes on `lucos_photos`. Do **not** file on `lucos_agent_coding_sandbox` — that repo is for VM provisioning concerns only.
 
