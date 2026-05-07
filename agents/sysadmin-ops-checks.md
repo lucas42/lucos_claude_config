@@ -214,6 +214,8 @@ ssh <host> "docker ps --format '{{.Names}}\t{{.Image}}' | while read name image;
 
 Services that haven't been rebuilt in more than 60 days may be running outdated base images. Raise issues for any services that appear stale without a clear reason. Frame these as operational hygiene (stale builds accumulate drift from upstream, miss improvements and bug fixes), not as CVE findings — specific vulnerability tracking is lucos-security's responsibility via Dependabot alerts.
 
+**Where to file:** Raise the issue on the repo that **owns the image** — e.g., a stale `lucos_locations_otrecorder` image goes on `lucos_locations`, a stale `lucos_photos_postgres` image goes on `lucos_photos`. Do **not** file on `lucos_agent_coding_sandbox` — that repo is for VM provisioning concerns only.
+
 ---
 
 ## Frequency Tracking

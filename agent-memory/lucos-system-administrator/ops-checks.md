@@ -902,5 +902,7 @@ certificate_expiry: 2026-05-07
 - Salvare: all images May 2026. Fine.
 
 **Issues raised**:
-- lucos_agent_coding_sandbox#73: lucos_locations_otrecorder image 9 months stale (recurrence — #20 was closed completed but image unchanged)
-- lucos_agent_coding_sandbox#74: lucos_photos_postgres image 70 days stale
+- lucos_locations#79: lucos_locations_otrecorder image 9 months stale (recurrence — lucos_agent_coding_sandbox#20 was closed completed but image unchanged; lucos_agent_coding_sandbox#73 misfiled, closed)
+- lucos_photos#381: lucos_photos_postgres image 70 days stale (lucos_agent_coding_sandbox#74 misfiled, closed)
+
+**Convention noted**: docker image staleness issues belong on the repo that owns the image, NOT on lucos_agent_coding_sandbox (which is VM provisioning only).
