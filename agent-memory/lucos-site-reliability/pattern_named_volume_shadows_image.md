@@ -49,3 +49,30 @@ docker run --rm <image>:latest ls -la /usr/share/nginx/html/resources/admin/css 
 ```
 
 If the image-side path is empty or missing files the volume has, do NOT remove the volume — file an issue against whoever owns the build step and wait for the fix. Recorded in incident report `2026-04-29-eolas-contacts-styling-lost.md`.
+
+---
+
+## Variant 2 — image symlinks frozen in shared volume, resolve per-container
+
+A 2026-05-07 sequel showed a different facet of the same root cause. When the path the image owns contains a **symlink** (e.g. `nginx:alpine` ships `/var/log/nginx/access.log -> /dev/stdout` and `error.log -> /dev/stderr`), and a named volume is mounted at the parent directory, those symlinks get copied verbatim into the new volume on first init. They look like real symlinks afterwards, but `/dev/stdout` resolves at `open()` time **in the resolving process's namespace**.
+
+If two containers share the volume — one writer (nginx in `web`) and one reader (a sidecar reading "the log file" via the volume) — the writer gets its own stdout (which is what nginx wants anyway), and the reader gets *its own* stdout, a stream that has no other writers and never reaches EOF. `for line in f:` blocks forever. Worker timeouts, healthcheck cascade.
+
+Hit 2026-05-07 on `lucas42/lucos_docker_mirror#57` (the `_metric_pull_rate()` canary): worker timeout cascade in info sidecar took out `/_info` and tripped `docker.l42.eu` + `schedule-tracker / lucos_docker_health_avalon` for ~33 minutes. Reverted in `lucas42/lucos_docker_mirror#58`. Re-implementation tracked in `lucas42/lucos_docker_mirror#59`. Full incident: `lucas42/lucos/docs/incidents/2026-05-07-docker-mirror-canary-symlink-trap.md`.
+
+**How to confirm in 30 seconds**:
+```bash
+docker exec <reader_container> ls -la <mounted_path>/
+# Look for symlinks-to-/dev/{stdout,stderr,null}
+```
+
+**Diagnostic signature in logs**:
+- Reader's gunicorn / equivalent logs show `[CRITICAL] WORKER TIMEOUT` followed by traceback ending at the line that iterates the file.
+- Mirror traffic / actual service work continues unaffected — only the metric/log-reading code path is dead.
+
+**How to avoid in code review**: any PR that mounts a named volume on top of a path the image controls AND has another container reading from that volume — list the mount path's contents (`docker run --rm <image> ls -la <path>`) and look for symlinks-to-`/dev/...`. If any are present:
+1. Either overlay-mount only the specific real files, not the directory, OR
+2. Explicitly remove/replace the symlinks in the entrypoint before any reader tries to read (`rm -f /var/log/nginx/access.log` before `exec nginx`)
+3. Make the reader code defensive with `stat.S_ISREG()` so a non-file at the path becomes a benign default rather than a hang.
+
+**Common lesson**: volume init is a *snapshot, not a live mirror*. Anything in the snapshot — stale build output, old static files, frozen symlinks — becomes a per-volume liability that outlives any image rebuild. When designing any sidecar/sharing pattern with named volumes, the first question is: **what's at this mount path *in the image at first init*?** Whatever's there is going to be in the volume forever (or until someone explicitly cleans it).
