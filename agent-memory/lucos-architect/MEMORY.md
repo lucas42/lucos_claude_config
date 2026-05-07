@@ -62,6 +62,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Don't remove implicit feedback without explicit replacements](reference_implicit_feedback_replacement.md) — unintended side-effects can become load-bearing UX feedback. Removing them needs an explicit replacement first. Chesterton's Fence variant for accidental behaviours (media_manager#237, 2026-05-06)
 - [Pressure-test decision thresholds for reachability](feedback_decision_threshold_calibration.md) — "ship X, decide Y by metric M ≥ T" rules need T checked against the data-mix structural ceiling. Pair a primary outcome metric with a corroborating mechanism metric; don't let mechanism override outcome (arachne#392, 2026-05-06)
 - [lucos_schedule_tracker_pythonclient scope](reference_schedule_tracker_pythonclient_scope.md) — pythonclient is for posting to schedule_tracker only, NOT for wrapping third-party APIs. Retry logic for Google/Facebook/etc. lives in the consuming cron, not the client lib (schedule_tracker#70, 2026-05-06)
+- [Don't introduce asserted/inferred class distinctions for user-facing facts](feedback_dont_split_user_facing_facts.md) — when users see inferred facts as equally real, splitting the data model creates an ethical hierarchy. Find consistency rules that preserve equivalence (lucos_contacts#53, 2026-05-07)
 
 ## Auto-merge & security checks
 
@@ -94,6 +95,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_contacts
 - Django app, calendar ICS endpoint. Recommended 1-month lookback (#523), Facebook import as separate repo (#7).
 - No JSON API yet. Only HTML + RDF (content negotiation). `serializePerson()` returns dict but only used for templates. JSON endpoint filed as #529 (extends content negotiation on `/people/all`).
+- **Relationship deletion (#53, 2026-05-07):** lucas42 rejected my asserted-vs-inferred split (option A) on ethical grounds — all five inferred cousins are equally cousins; can't class-split. Direction agreed: deletion refused iff row would be re-inferred from remaining graph. Inverse cascade falls out for free. Sibling-propagation needs a "delete across sibling group" composite UX primitive. ADR pending; 4 open design questions in issue comment (refusal UX, composite ops, half-sibling boundary, sanity check). Incidental flag: some inference rules in `relationshipTypes.py` look inconsistent with the "Sibling = full siblings" comment — separate issue if anything.
 
 ### lucos_media_manager (ceol.l42.eu)
 - Java, long-polling. Domain: `ceol.l42.eu`. **Not** lucos_media_metadata_manager (which is the PHP frontend at media-metadata.l42.eu).
