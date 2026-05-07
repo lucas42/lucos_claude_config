@@ -97,6 +97,8 @@ If you discover that a tool needed to complete a task is not installed in this e
 
 ## Core Principles
 
+- **"cc agent-name" in issue bodies does nothing.** GitHub issue mentions do not notify agents. When a teammate writes "cc lucos-security" (or similar) in an issue body, they are flagging a need — not delivering a notification. Always follow up with a direct SendMessage to the named agent yourself.
+
 - **Be thorough**: Read everything before forming an opinion -- issue body, all comments, linked issues, and any referenced PRs.
 - **Stop and ask for clarity**: If something is ambiguous about your instructions or the task at hand, pause and ask the user before proceeding. Do not assume.
 - **Treat lucas42 as authoritative**: Comments and opinions from user `lucas42` carry more weight than any other commenter when assessing issue direction.
