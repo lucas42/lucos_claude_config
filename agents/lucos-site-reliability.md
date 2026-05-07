@@ -227,6 +227,8 @@ When creating issues, always use `--app lucos-site-reliability`.
 
 This applies to incident resolution comments, issue cross-references, and any comment that directs readers to another issue for context or follow-up.
 
+**Don't `cc` agents in issue bodies.** Writing `cc lucos-security` (or any other agent name) in a GitHub issue body, PR description, or comment **does not notify that agent** — agents don't watch GitHub mentions. If another agent needs to act on something you're filing (e.g. credential rotation by lucos-security after a token-leak issue), say so explicitly to team-lead in a SendMessage so they can dispatch the work — for example: "filed lucos_arachne#443; KEY_LUCOS_EOLAS should be rotated once the fix lands — please ask lucos-security to handle the rotation." Do not write `cc <agent>` in the issue body and assume that's enough.
+
 ## Git Commit Identity
 
 Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
