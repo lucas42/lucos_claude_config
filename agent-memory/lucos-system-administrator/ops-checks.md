@@ -5,15 +5,15 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-06
-resource_checks: 2026-04-30
-syslog_review: 2026-04-30
-software_updates: 2026-04-30
-sandbox_drift: 2026-04-30
-repos_dashboard: 2026-05-06
-docker_image_staleness: 2026-04-09
-backup_verification: 2026-04-27
-certificate_expiry: 2026-04-27
+container_status: 2026-05-07
+resource_checks: 2026-05-07
+syslog_review: 2026-05-07
+software_updates: 2026-05-07
+sandbox_drift: 2026-05-07
+repos_dashboard: 2026-05-07
+docker_image_staleness: 2026-05-07
+backup_verification: 2026-05-07
+certificate_expiry: 2026-05-07
 ```
 
 ## Known Limitations
@@ -862,3 +862,45 @@ certificate_expiry: 2026-04-27
 **Spot-check — lucos_backups#216 resolution verified**: xwing disk now at 78% (87G/117G, 26G free). Was 95% critical on 2026-04-27. Issue closed 2026-04-27T11:23Z. Recovery confirmed.
 
 **No new issues raised.**
+
+---
+
+### 2026-05-07 (ALL 9 checks due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- Sudo failures from 2026-04-30 (backup rm attempt), 2026-05-01 (crontab -l attempt), 2026-05-06 (Fuseki du commands). All expected from agent ops work. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.4.2, containerd, buildx, compose. Routine.
+- Xwing: Docker CE 29.4.0→29.4.3, containerd, compose, libssl3/openssl (from `stable`, not `stable-security`), kernel 6.12.47→6.12.75, raspi-firmware, libcamera, rpi-connect, rpi-eeprom. Routine.
+- Salvare: Docker CE 29.3→29.4.3, containerd, buildx, compose, libssl3/openssl (from `oldstable`, not `oldstable-security`), kernel 6.12.25→6.12.75, raspi-utils. Routine.
+
+**Resources**:
+- Avalon: 2.8Gi available of 7.6Gi. Swap 816Mi/4.5Gi (18%). Disk 18% (303G/1.8T). Load 1.50/2.06/2.29. Journal 106.7M. Fine.
+- Xwing: 410Mi available of 906Mi. Swap 290Mi/905Mi (32%). Disk 53% (59G/117G) — recovering from 95% peak on 2026-04-27. Load 3.92/3.47/3.36 (elevated but known pattern for this Pi). Journal 8M. Fine.
+- Salvare: 3.3Gi available of 3.7Gi. No swap used. Disk 63% (35G/58G). Load 0.01. Fine.
+
+**Sandbox drift**: 1 remote commit (PR #72 — fix journald dropin name for Trixie Pi hosts). Verified /var/log/journal/ already exists on both xwing and salvare — setup scripts from PRs #71 and #72 already applied. No live VM action needed. Clean.
+
+**Repos dashboard**: 0 failing conventions. Completely clean.
+
+**Backup verification**: lucos_backups running correctly on avalon. /_info polling returning HTTP 200 consistently since 09:42 UTC today. No errors in logs.
+
+**Certificate expiry**:
+- Nearest avalon certs: dns.l42.eu Jun 9 (33 days), schedule-tracker.l42.eu Jun 10 (34 days). Both within normal certbot operating window — renewal will trigger imminently.
+- All other avalon certs: Jun 19+ (43+ days). Fine.
+- Xwing: all 4 certs Aug 2026. Fine.
+- No certs under 30 days. All clear.
+
+**Docker image staleness**:
+- Avalon: `lucos_locations_otrecorder` still 2025-08-12 (~9 months stale). Issue raised: lucos_agent_coding_sandbox#73.
+- Avalon: `lucos_photos_postgres` 2026-02-26 (70 days stale, over 60-day threshold). Issue raised: lucos_agent_coding_sandbox#74.
+- All other images: Apr-May 2026. Fine.
+- Xwing: all images Apr-May 2026. Fine.
+- Salvare: all images May 2026. Fine.
+
+**Issues raised**:
+- lucos_agent_coding_sandbox#73: lucos_locations_otrecorder image 9 months stale (recurrence — #20 was closed completed but image unchanged)
+- lucos_agent_coding_sandbox#74: lucos_photos_postgres image 70 days stale
