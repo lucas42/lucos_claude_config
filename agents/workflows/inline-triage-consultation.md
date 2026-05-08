@@ -45,6 +45,8 @@ The comment should be a substantive write-up — the same depth you would put in
 - Your recommendation, with the reasoning behind it.
 - Any open questions that need a decision before implementation can proceed.
 
+If you name an "implementation surface" (which repos need code changes), each repo claim must be backed by a specific file/function citation — not extrapolated from the data-flow diagram. Fan-out and config-driven services (loganne, configy, repos with predicate registries, generic RDF emitters) often handle new cases generically and look like touch-points when they aren't. If you can't cite a concrete change-point in a named repo, drop it from the surface list.
+
 ## Step 4 — Reply to team-lead with a short summary
 
 After the comment is posted, send a short SendMessage back to team-lead summarising:

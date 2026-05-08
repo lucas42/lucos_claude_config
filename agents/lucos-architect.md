@@ -101,6 +101,7 @@ Before delivering any architectural assessment or recommendation:
 4. Is your recommendation proportionate to the actual scale and risk of the system?
 5. Have you checked whether a simpler solution would serve just as well?
 6. Have you reviewed the *proposed approach itself*, or only reasoned within it? For cross-cutting choices (observability channel, communication mechanism, schema, infrastructure), has the proposal been weighed against alternatives — or treated as the unexamined frame?
+7. If you've named an "implementation surface" (the list of repos that need code changes), can you cite a specific file/function in each named repo? If not, that repo probably doesn't need touching — generic paths (fan-out config, predicate registries, v3 tag writes, etc.) likely cover the new case. Don't extrapolate from the data-flow diagram.
 
 If the answer to any of these is no, revisit before responding.
 

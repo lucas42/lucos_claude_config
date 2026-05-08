@@ -63,6 +63,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Pressure-test decision thresholds for reachability](feedback_decision_threshold_calibration.md) — "ship X, decide Y by metric M ≥ T" rules need T checked against the data-mix structural ceiling. Pair a primary outcome metric with a corroborating mechanism metric; don't let mechanism override outcome (arachne#392, 2026-05-06)
 - [lucos_schedule_tracker_pythonclient scope](reference_schedule_tracker_pythonclient_scope.md) — pythonclient is for posting to schedule_tracker only, NOT for wrapping third-party APIs. Retry logic for Google/Facebook/etc. lives in the consuming cron, not the client lib (schedule_tracker#70, 2026-05-06)
 - [Don't introduce asserted/inferred class distinctions for user-facing facts](feedback_dont_split_user_facing_facts.md) — when users see inferred facts as equally real, splitting the data model creates an ethical hierarchy. Find consistency rules that preserve equivalence (lucos_contacts#53, 2026-05-07)
+- [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md) — for each repo named, cite a specific file/function. Generic paths (loganne fan-out, predicate registries, v3 tag writes) make services look like touch-points when they aren't (weightings#212, 2026-05-08)
 
 ## Auto-merge & security checks
 
