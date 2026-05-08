@@ -193,6 +193,19 @@ jobs:
 - **loc_mads.rdf** doesn't parse with rdflib (invalid RDF/XML) — don't apply diff path to ontologies.
 - **`COPY *.py .`** in Dockerfile covers all new `.py` files in `ingestor/`.
 
+## lucos_media_manager
+
+- **Language**: Java (requires Java 25 / Maven). Tests run in Docker: `docker run --rm -v $PWD:/app -w /app maven:3-eclipse-temurin-26-alpine mvn clean test`.
+- **MediaApi**: `fetch()` (GET), `patch()` (PATCH with JSON body). Tags path: `/v3/tracks/{trackid}/tags`.
+- **Track.recordTag(tagName, tagValue)**: best-effort — logs errors, never throws. Returns silently if `trackid` is null.
+- **PlaylistTest**: use `new HashMap<>(Map.of(...))` not `Map.of()` for Track metadata — Track constructor calls `metadata.put()` which fails on immutable maps.
+
+## lucos_media_weightings
+
+- **Tests**: `cd src && python3 test_logic.py`. All tests in one file — add cases to the `testcases` list.
+- **Tag format**: v3 tags are `{tagName: [{name: value}]}`. Use `getTagValue(tags, key)` to read.
+- **Recency logic**: `lastSuccessfulPlay` tag → ÷50 if <1 day, ÷10 if <7 days. Bypassed if `about`/`mentions` matches `currentItems`. Follows same timezone-normalisation pattern as `added` tag.
+
 ## arachne MCP
 
 - [find_entities returns rdfs:label not skos:prefLabel](feedback_arachne_find_entities_labels.md) — use get_entity(uri) to get the canonical skos:prefLabel; find_entities returns alternate names sorted alphabetically
