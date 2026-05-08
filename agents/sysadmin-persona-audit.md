@@ -8,31 +8,61 @@ This file is read by `lucos-system-administrator` when running a persona consist
 - When a new persona has just been created via `/agents`
 - When an issue is raised requesting it
 
+## Background — ADR-0003 transition
+
+Per [ADR-0003](../docs/adr/0003-skill-based-persona-structure.md), persona files are migrating from carrying inline copies of common sections to carrying short pointers to canonical Layer C references in `references/`. The migration is staged across multiple PRs (#56 architect pilot, #57 per-persona roll-out).
+
+During the transition, persona files exist in one of two states:
+
+- **Migrated** — persona file contains a pointer to the canonical reference (e.g. links to `references/teammate-communication.md`).
+- **Pre-migration** — persona file still has the old inline text and no pointer.
+
+The audit handles both states. **A pre-migration persona is not a drift finding** — it is "awaiting Stage 3 migration".
+
 ## How to Run
 
-1. **Read the reference**: `~/.claude/agents/common-sections-reference.md` defines the canonical version of each common section with `{placeholder}` markers.
+1. **Read the reference**: `~/.claude/agents/common-sections-reference.md` lists each common section and its canonical Layer C reference (e.g. `references/teammate-communication.md`), plus the personas that should and should not have it.
 
-2. **Read identity data**: `~/sandboxes/lucos_agent/personas.json` provides the persona-specific values (`bot_name`, `bot_user_id`, etc.) to substitute into the placeholders.
+2. **Read identity data**: `~/sandboxes/lucos_agent/personas.json` provides the persona-specific values (`bot_name`, `bot_user_id`, etc.) for cross-checking.
 
-3. **Read each persona file**: `~/.claude/agents/lucos-*.md` (excluding `common-sections-reference.md` itself).
+3. **Read each persona file**: `~/.claude/agents/lucos-*.md` (excluding `common-sections-reference.md` and any other non-persona file). Also read `~/.claude/agents/coordinator-persona.md` — the coordinator is not matched by the `lucos-*.md` glob but it has its own version of some sections.
 
-4. **Compare each common section** in the persona file against the reference, substituting the correct persona-specific values. Check every section defined in the reference file — some sections have notes indicating they don't apply to certain personas (e.g. "The coordinator does NOT have this section"). Respect those exclusions.
+4. **For each common section in the reference, check each persona file:**
+   - **(a) Migrated check** — does the persona file contain a pointer to the canonical reference (e.g. mentions `references/teammate-communication.md`)? If yes: section is OK, skip to the next section.
+   - **(b) Pre-migration check** — does the persona file contain the old inline text (without the pointer)? If yes: this is **not drift** — it is awaiting Stage 3 migration. Note it in the report under "personas awaiting migration" but do not modify the file. Pre-migration personas are tracked under [issue #57](https://github.com/lucas42/lucos_claude_config/issues/57) and will be migrated one per PR.
+   - **(c) Missing check** — neither the pointer nor inline text is present? **This is a real finding.** A persona is missing a required common section entirely. Add the appropriate pointer (preferred — match the post-migration shape) and report.
+   - **(d) Exclusion check** — `common-sections-reference.md` notes which personas should NOT have a given section (e.g. the coordinator does not have `Label Workflow` or `Committing ~/.claude Changes`). Respect those exclusions; do not flag absence as drift.
 
-5. **Fix drift** by editing the persona file. Preserve the surrounding persona-specific context — only update the common section content to match the reference. Be careful not to remove persona-specific additions (e.g. lucos-security has an extra dependabot step between the issue discovery steps — that's an addition, not drift).
+5. **Persona-specific additions** — personas may add their own sections, decision criteria, or notes. The reference's "Persona-specific additions (NOT drift)" section enumerates known intentional ones. New persona-specific content is allowed; do not remove it during audit.
 
-5.5. **Check the coordinator persona.** `~/.claude/agents/coordinator-persona.md` is not matched by the `lucos-*.md` glob, but it may still need updating when common sections change. Review the reference file's exclusion notes — if a new common section does NOT have a coordinator exclusion note, check whether it should be added to the coordinator persona too. The coordinator has its own versions of some sections (e.g. its own `~/.claude` maintenance instructions instead of the "Committing ~/.claude Changes" section), so use judgement.
+6. **Check memory directory paths** — the canonical path is `/home/lucas.linux/.claude/agent-memory/{persona-name}/`. Flag and fix any that use a different base path (e.g. `/Users/lucas/`). This applies whether the persona is migrated or pre-migration.
 
-6. **Check memory directory paths**: The canonical path is `/home/lucas.linux/.claude/agent-memory/{persona-name}/`. Flag and fix any that use a different base path (e.g. `/Users/lucas/`).
+7. **Check `~/.bash_aliases`** — verify that `~/.bash_aliases` contains a shell function for each persona file found in `~/.claude/agents/lucos-*.md`. Each persona should have a function (e.g. `lucos-architect() { _lucos_persona lucos-architect "$@"; }`) that calls the `_lucos_persona` helper. If any are missing, add them.
 
-7. **Report findings**: List each persona checked, what drift was found (if any), and what was fixed. If a persona file is missing a common section entirely (e.g. a newly created persona that doesn't have the label workflow section), add it.
+8. **Workflow file pointer spot-check** — for personas that respond to `"implement issue {url}"` (developer, architect, ux), check that they reference `agents/workflows/implement-issue.md` from their `Triggers` section. For personas the coordinator consults inline (architect, developer, security, sre, ux), check that they reference `agents/workflows/inline-triage-consultation.md`. Missing references on a migrated persona are real findings; pre-migration personas are exempt.
 
-7.5. **Check `~/.bash_aliases`**: Verify that `~/.bash_aliases` contains a shell function for each persona file found in `~/.claude/agents/lucos-*.md`. Each persona should have a function (e.g. `lucos-architect() { _lucos_persona lucos-architect "$@"; }`) that calls the `_lucos_persona` helper. If any are missing, add them.
+9. **Report findings** — group findings into:
+   - **Migrated personas with real drift** (missing references, wrong memory path, missing workflow pointers) — fix and commit.
+   - **Pre-migration personas awaiting Stage 3** — list with issue #57 cross-reference; do NOT modify these files.
+   - **Persona-specific additions confirmed** — for the audit log, just so the report is honest about what was preserved.
 
-## Drift vs. Intentional Variation
+## What counts as drift, and what doesn't
 
-- **Drift**: Different wording for the same instruction, wrong paths, wrong persona name in a command, missing warnings (e.g. the amend caveat in git commit identity).
-- **Not drift**: Persona-specific sections that don't exist in the reference (e.g. "Reptile Facts" in code-reviewer, "Dependabot Alerts" step in security). Additional persona-specific "What to save" items in the memory section. Different section ordering or heading names, as long as the content is equivalent.
+**Drift (a real finding, fix during audit):**
+
+- A migrated persona is missing the pointer to a required Layer C reference.
+- The wrong memory directory path (`/Users/lucas/...` instead of `/home/lucas.linux/...`).
+- A migrated persona has BOTH the inline text AND the pointer (it should be one or the other; the pointer is preferred and the inline text should be removed).
+- A persona's GitHub identity references the wrong app name (`--app lucos-architect` written into the wrong persona).
+- `~/.bash_aliases` missing a function for a persona file that exists.
+
+**Not drift (do not modify):**
+
+- A pre-migration persona that still has the old inline text. Tracked under #57.
+- Persona-specific additions enumerated in `common-sections-reference.md`.
+- Different ordering of sections within a persona file, as long as required sections are present.
+- A persona that has a workflow trigger the audit doesn't yet know about — file an issue rather than removing it.
 
 ## After Fixing Drift
 
-Commit all changes to the `~/.claude` repo (`lucas42/lucos_claude_config`) with a clear commit message listing which personas were updated and what was fixed.
+Commit all changes to the `~/.claude` repo (`lucas42/lucos_claude_config`) with a clear commit message listing which personas were updated and what was fixed. See [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the commit-and-push pattern (use `--app lucos-system-administrator`).
