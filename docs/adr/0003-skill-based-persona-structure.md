@@ -172,10 +172,12 @@ Once all seven personas are migrated:
 
 ### 6. What ships incrementally vs together
 
-- **Stage 1** can ship as multiple PRs, one per shared reference, in any order. Each is independently reviewable and risks nothing.
-- **Stage 2** is one PR per persona migration. Stage 2 cannot start before Stage 1 completes, because the personas reference Stage 1 files.
-- **Stage 3** PRs are independent of each other and can interleave.
-- **Stage 4** is a tidy-up pass once everything else is done.
+Stage numbers below correspond to the stages defined in section 5 above.
+
+- **Stage 1 (shared references)** can ship as multiple PRs, one per shared reference, in any order. Each is independently reviewable and risks nothing.
+- **Stage 2 (architect pilot)** is one PR. It cannot start before Stage 1 completes, because the architect persona file will reference the Stage 1 files. It must complete and be validated before Stage 3 begins.
+- **Stage 3 (roll-out)** is one PR per persona migration. The PRs within Stage 3 are independent of each other and can interleave.
+- **Stage 4 (tidy)** is a tidy-up pass once everything else is done.
 
 The whole rollout is **decomposable**. There is no atomic "convention + rollout" coupling like the `lucos_repos` estate-rollout case — these are not audit-checked conventions, just persona-internal references. Standard `/dispatch` flow is fine.
 
