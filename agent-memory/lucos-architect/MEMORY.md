@@ -70,6 +70,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Dependabot auto-merge on `pull_request` trigger works fine **if** `LUCOS_CI_APP_ID` and `LUCOS_CI_PRIVATE_KEY` are populated in the repo's Dependabot secret scope (distinct from Actions scope). Previous memory said "must use `pull_request_target`" — that was wrong; `pull_request` is the current working pattern (v1.16.0). See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md). Outdated note in `github-actions-permissions.md` needs a sweep.
 - Auto-merge caller workflows require at least `permissions: contents: read` -- `permissions: {}` causes `startup_failure` because GitHub Actions cannot fetch the cross-repo reusable workflow definition without it. Discovered via 2026-03-21 incident.
 - `.github` smoke test suite only covers `dependabot-auto-merge`, not `code-reviewer-auto-merge` -- gap tracked in lucos#58.
+- [Dependabot security updates are independent of dependabot.yml schedule](reference_dependabot_security_vs_version_feeds.md) — `schedule.interval` only governs the version-update feed; security updates fire on advisory match regardless. Slowing routine churn to weekly does NOT delay vuln patching. Per-repo "security updates" toggle must be on.
 
 ## Infrastructure notes
 
