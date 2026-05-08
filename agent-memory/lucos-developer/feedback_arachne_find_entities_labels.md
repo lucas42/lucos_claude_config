@@ -8,6 +8,10 @@ type: feedback
 
 The canonical name stored in the `name` field in lucos_eolas is the `skos:prefLabel`.
 
-**Why:** This caused incorrect name lookups in lucos_eolas#71 — "Allhalloween" was returned instead of "Hallowe'en", "Chanukah" instead of "Hanukkah", "Chislev" instead of "Kislev". lucas42 caught it in review.
+**Why:** This caused incorrect name lookups in TWO separate PRs:
+- lucos_eolas#71: "Allhalloween" instead of "Hallowe'en", "Chanukah" instead of "Hanukkah", "Chislev" instead of "Kislev"
+- lucos_eolas#230 / PR #240: 13 out of 24 TransportMode backfill entries used alternate names (e.g. "chopper" instead of "helicopter", "automobile" instead of "car", "ambulation" instead of "walking")
 
-**How to apply:** When you need to verify the canonical name of an entity for use in code or migrations, use `mcp__arachne__get_entity(uri=...)` and read the `skos:prefLabel` field — not the `rdfs:label` values returned by `find_entities`.
+lucas42 caught both in review. This is a **recurring mistake** — do not rely on `find_entities` results for data migrations.
+
+**How to apply:** When you need the canonical name of any entity for use in code, migrations, or lookups, use `mcp__arachne__get_entity(uri=...)` and read the `skos:prefLabel` field. Never use `find_entities` results as migration lookup keys — they return `rdfs:label` (alternate names), sorted alphabetically, which are frequently NOT the canonical `name`.
