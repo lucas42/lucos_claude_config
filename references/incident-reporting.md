@@ -37,6 +37,23 @@ Sitting idle until verification completes — or holding the PR back — wastes 
 
 This rule applies equally to fresh reports and to extending an existing one.
 
+## Propagate factual corrections through every narrative section
+
+When a reviewer (lucas42, team-lead, code-reviewer, or any other source) supplies a factual correction during the drafting or review loop — especially one about *framing* (e.g. "this wasn't routine, it was X"; "the cause wasn't Y, it was Z"; "the trigger wasn't discretionary, it was instructed by W") — apply it to **every** narrative section that touches the corrected fact, not just the section the reviewer pointed at.
+
+Why: the closest match to the reviewer's quote is rarely the only place where the original framing appeared. The Summary, Timeline (especially pre-incident rows), Analysis stages, "What Was Tried That Didn't Work," Sensitive Findings, and the PR description are all narrative surfaces. Most readers skim the Summary; a Summary that contradicts a deeper section is worse than either alone, because it creates visible incoherence and signals carelessness.
+
+The pattern:
+
+1. Re-read the reviewer's correction in full and identify the **fact** being corrected, not just the surface wording.
+2. `grep` the file for the **original framing** — the wording you used before the correction — and any synonyms you might have varied (e.g. "routine," "maintenance," "scheduled," "hygiene," "automatic," "background," "incidental"). Don't rely on memory of where you wrote what; let `grep` find every occurrence.
+3. For each match, decide whether the correction applies. If yes, rewrite that sentence/row to match the corrected framing. Update both the prose and any structured fields (timeline rows, header table) consistently.
+4. **Re-read the Summary explicitly after the pass.** Even after a thorough grep, the Summary often retains residual phrasing (different word, same framing) that the grep didn't catch. The Summary is the most-read section; getting it consistent is the highest-leverage thing.
+5. Push a single commit with the propagation pass and reference the corrector in the commit message ("per lucas42's correction" / "per team-lead's correction").
+6. When reporting back to the corrector, **list every section you updated**, not just "I applied your correction" — that lets the corrector verify the propagation was complete without reading the diff.
+
+This is independent of whether the original framing was yours or inherited from upstream sources (issue body, PR description, prior agent's notes). The propagation pass is about the report's coherence, not assigning blame.
+
 ## Step 1: Write the incident report
 
 Given a closed critical issue that needs a report:
