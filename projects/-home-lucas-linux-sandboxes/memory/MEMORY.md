@@ -36,7 +36,7 @@
 - [Auto-merge on approval](feedback_auto_merge_workflow.md) — PRs auto-merge when approved; don't ask user to manually merge
 - [No transient dismissals](feedback_no_transient_dismissals.md) — never hand-wave unhealthy systems as "transient"; name them, explain the cause, and state when/how alerts will clear
 - [Correct agents when wrong](feedback_correct_agents.md) — when an agent reports something factually incorrect, correct them and prompt instruction updates
-- [SendMessage has no broadcast mechanism](feedback_shutdown_no_broadcast.md) — to:"broadcast" / to:"*" goes to a phantom inbox; always fan out individual SendMessage calls per teammate
+- [Don't broadcast shutdown requests](feedback_shutdown_no_broadcast.md) — structured messages can't be broadcast; send individual shutdown_request to each teammate
 - [Follow archival checklist](feedback_follow_archival_checklist.md) — always use lucos/docs/repo-archival.md when decommissioning repos or systems
 - [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — when an agent says they've raised an issue, triage it inline; don't wait for the next triage run
 - [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — don't raise issues proposing Dependabot semver-major ignores; major bumps should flow through and CI should catch breakage
@@ -45,7 +45,6 @@
 - [No inline lessons in instruction files](feedback_no_inline_lessons.md) — keep persona/skill text lean; put "Lesson from {date}" narrative in the commit message, not the file
 - [Question whether an issue should exist](feedback_question_issue_existence.md) — before triaging an agent-raised issue, check if it duplicates an existing tracking surface with a fully automated resolution path
 - [Dispatch what /next returns](feedback_dispatch_what_next_returns.md) — never reposition or skip an item /next returns based on labels or recent context; lucas42's manual board positioning is authoritative
-- [Don't act on ambiguous user replies](feedback_ambiguous_user_reply.md) — if a reply could answer either of two posed questions, ask which; avoid parallel-labeling collisions across sections
 
 ## Active Projects
 

@@ -171,7 +171,7 @@ Persona file updated with a standing instruction on 2026-04-18.
 
 `lucos_creds` bootstraps its own deploy from a manually-maintained base64 snapshot stored as a CircleCI env var (`LUCOS_DEPLOY_ENV_BASE64`). This snapshot overwrites the production `.env` on every redeploy. This creates a critical security risk beyond operational reliability:
 
-**A credential rotation done in the live lucos_creds store (e.g. after a suspected compromise) will be silently undone on the next redeploy** if the CircleCI env var isn't also updated. The engineer who rotated the credential gets no signal that the rotation didn't stick.
+**A credential rotation applied only to the live lucos_creds store will silently fail to take effect.** The deploy writes `.env` from `LUCOS_DEPLOY_ENV_BASE64` (the stale snapshot), not from the live store — so the running service never sees the new value. There is no transient success: the credential never propagates to the running containers at any point unless `LUCOS_DEPLOY_ENV_BASE64` is also updated.
 
 **Affected credentials** (the ones in lucos_creds's own `.env`, not credentials it stores for other services):
 - `UI_PRIVATE_SSH_KEY` — SSH key for the UI service
