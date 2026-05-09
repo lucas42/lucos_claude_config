@@ -15,3 +15,5 @@ Two CircleCI project environment variables are set on `lucas42/lucos_creds` to b
 **How to apply:** During any credential rotation involving `KEY_LUCOS_MONITORING`, flag to whoever is doing the rotation that the CircleCI project env var on `lucas42/lucos_creds` needs manual updating. Rotation via the CircleCI API: `POST https://circleci.com/api/v2/project/github/lucas42/lucos_creds/envvar` with `{"name": "KEY_LUCOS_MONITORING", "value": "<new_value>"}`.
 
 Similarly, if the lucos_creds production `.env` changes significantly, `LUCOS_DEPLOY_ENV_BASE64` needs to be re-generated and updated.
+
+**Incident:** 2026-05-09 — an SSH key was updated in lucos_creds production credentials but `LUCOS_DEPLOY_ENV_BASE64` was not updated. The next deploy silently reverted the fix, causing a prolonged outage. Runbook: `https://github.com/lucas42/lucos/blob/main/docs/runbooks/update-lucos-creds-production.md`. Incident report: `https://github.com/lucas42/lucos/blob/main/docs/incidents/2026-05-09-creds-ssh-key-crlf.md`.
