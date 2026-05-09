@@ -20,7 +20,7 @@ Before applying any labels, ask whether the issue is a useful addition to the qu
 
 When all three hold, raising a GitHub issue adds coordinator triage overhead and project-board clutter without enabling any action the existing surface wouldn't enable. **Do not apply labels.** Instead, send a SendMessage to the raising agent explaining why this should not have been raised and asking them to update their standing instructions, then close the issue as `not_planned` with a brief comment pointing at the canonical surface. Remove from the project board if it was already added.
 
-This check applies regardless of whether the originating agent is doing routine ops checks or one-off investigation. The lesson from `lucos_backups#270` (paramiko CVE, 2026-05-09): the raiser's own framing was "Dependabot will auto-PR when a patch ships" — that framing is itself the signal that no separate issue is warranted.
+This check applies regardless of whether the originating agent is doing routine ops checks or one-off investigation. If the raising agent's own framing already includes a phrase like "the auto-PR will appear when upstream patches", treat that framing as the signal that no separate issue is warranted.
 
 ---
 
