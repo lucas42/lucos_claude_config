@@ -4,9 +4,9 @@
 
 configy API returns explicit `null` for absent optional fields — `dict.get(key, default)` passes `None` straight through. Always use `get(key) or default`. Dev-only YAML testing won't catch this. Incident: lucos_backups#221 (2026-04-28). See `configy-null-serialisation.md`.
 
-## aurora NAS is a storage-only host in the estate (added 2026-04-27)
+## aurora NAS — QNAP busybox host, storage-only
 
-aurora is now listed in `lucos_configy/config/hosts.yaml` with `is_storage_only: true`, `ssh_gateway: xwing`, `backup_root: /share/backups/`, `shell_flavour: busybox`. It doesn't run Docker — container ops checks don't apply. Backups routed via xwing jump host.
+QNAP NAS (kernel 3.4.6 armv5tel, busybox userland). No Docker, no shadow-utils (`useradd`/`usermod` absent). User homes at `/share/homes/$user`. SSH via xwing jump host. `is_storage_only: true` in configy. lucos-backups user was set up manually — init-host.sh was never run end-to-end there. See `aurora-host.md`.
 
 ## Verify timeline before stating root cause
 
