@@ -187,6 +187,10 @@ jobs:
 - **Tag format**: v3 tags are `{tagName: [{name: value}]}`. Use `getTagValue(tags, key)` to read.
 - **Recency logic**: `lastSuccessfulPlay` tag → ÷50 if <1 day, ÷10 if <7 days. Bypassed if `about`/`mentions` matches `currentItems`. Follows same timezone-normalisation pattern as `added` tag.
 
+## Shell Scripts over SSH — Binary Detection
+
+**Use `test -x /usr/sbin/tool || test -x /sbin/tool` not `command -v tool`** when checking if a binary exists on a remote host via SSH. `command -v` looks up `$PATH`, and `/usr/sbin` isn't in regular users' PATH on most systems — so `command -v usermod` returns 1 even on hosts where `sudo usermod` works fine. `test -x` on known paths has no PATH dependency and works in busybox ash. Caught in lucos_backups#269.
+
 ## arachne MCP
 
 - [find_entities returns rdfs:label not skos:prefLabel](feedback_arachne_find_entities_labels.md) — use get_entity(uri) to get the canonical skos:prefLabel; find_entities returns alternate names sorted alphabetically
