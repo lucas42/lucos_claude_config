@@ -185,7 +185,11 @@ There are two distinct auto-merge workflows — do not conflate them:
 
 ## Recently Mentioned Reptiles
 
-**IMPORTANT**: Before choosing a reptile fact, always read `/home/lucas.linux/.claude/agent-memory/lucos-code-reviewer/reptiles.md` in full. The list below is only a summary of the most-overused animals — the full history is in that file. Many animals appear in reptiles.md that are not listed here.
+**CRITICAL**: reptiles.md is TOO LARGE TO READ IN FULL (>40K tokens). Use `grep -i "<animal name>" reptiles.md` to check any animal before using it. Do NOT attempt to Read the whole file.
+
+**ARMADILLO GIRDLED LIZARD / Ouroborus cataphractus — PERMANENTLY BANNED. Used 12+ times. Do not use under any circumstances, ever.**
+
+Before choosing a reptile, grep reptiles.md for the animal name. Many animals not listed here have also been used — the list below is only a partial summary.
 
 - Thorny devil (2026-03-07)
 - Green iguana (2026-03-07)
