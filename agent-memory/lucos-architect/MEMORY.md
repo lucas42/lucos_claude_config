@@ -14,9 +14,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - App downloads (#115): recommended GitHub Releases for APK storage, `GET /api/app/latest` endpoint. Depends on #38 (versioning).
 - App telemetry (#39 on android repo): recommended extending photos API with `POST /api/telemetry`. Skip OpenTelemetry. Revisit central service if second consumer appears. Telemetry shares same Postgres DB as app data -- DB restore wipes telemetry too (learned from 2026-03-17 incident). Separation tracked in #211.
 - Photo serving (#26, closed): Option 1 (API serves files directly) confirmed. Stable URLs: `/photos/{id}/original`, `/photos/{id}/thumbnail`.
-- Video upload (#60): needs-refining. See `project-details.md`.
-- Profile pictures (#149): agent-approved, priority:high. 4 criteria (det_score, frontality, face w/h); smile/hat deferred. Worker generates crops to `/data/photos/derivatives/`. Adds `profile_photo_id`, `profile_auto_generated` to person table. Requires persisting det_score + kps from InsightFace.
-- Face reprocessing (#208, merged): preserves `person_confirmed=True` via embedding cosine similarity. Lesson: bounding-box IoU fragile under EXIF orientation; embeddings invariant.
+- Profile pictures (#149): agent-approved, priority:high. 4 criteria (det_score, frontality, face w/h); smile/hat deferred. Worker writes crops to `/data/photos/derivatives/`. Adds `profile_photo_id`/`profile_auto_generated` to person; requires persisting det_score+kps from InsightFace. Face reprocessing (#208 merged) preserves `person_confirmed=True` via embedding cosine similarity (IoU fragile under EXIF orientation; embeddings invariant).
 - Face-to-contact linking (#104): design agreed; details in project-details.md. Sequencing depends on contacts JSON API (#529). Names managed in contacts, not photos.
 
 ## Architectural review convention (agreed -- lucas42/lucos#24)
@@ -76,9 +74,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Infrastructure notes
 
 - **CI token migration (ADR-0001 in lucos_deploy_orb, PR #90):** Replacing broad-scoped PAT with GitHub App installation token (`lucos-ci` app). Key: must pass `repositories: ["$CIRCLE_PROJECT_REPONAME"]` at token generation to get per-repo scoping — without it, token has access to all repos. New orb command `generate-github-token`. Blocked on lucas42 creating the GitHub App. `Refs #83` (security), also addresses #82 (rate limits).
-- CI orb: `build-multiplatform` is the standard for multi-arch services (amd64+arm64 via buildx+QEMU). `build-amd64` still used for amd64-only services. Large images (>1GB) impact build/deploy times.
+- CI orb: `build-multiplatform` is standard for multi-arch services (amd64+arm64 via buildx+QEMU); `build-amd64` for amd64-only. pici retired 2026-03-17, no more remote SSH builds. Large images (>1GB) impact build/deploy times.
 - `depends_on` in compose does not wait for service readiness. Projects with Postgres should have startup retry logic.
-- ARM builds now use `build-multiplatform` orb job (docker buildx + QEMU). pici retired, repo archived (2026-03-17). No more remote SSH builds.
+- [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md) — `LUCOS_DEPLOY_ENV_BASE64` from CircleCI overrides `.env` on every deploy (breaks circular self-deploy from lucos_creds#152). Live-store fixes don't propagate without updating the snapshot too. Generalises: any service whose config provider depends on the service itself probably has a snapshot path — grep `*_DEPLOY_*` / `*_ENV_BASE64`. Failure-mode: 2026-05-09 incident.
 - ARM-deployed services: lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_router, lucos_static_media
 - **Docker volume restore gotcha**: `docker run` with a new volume does NOT apply Docker Compose labels. lucos_backups depends on these labels. Volume restores must use `docker compose` to create the volume first, or manually apply labels. Documented in lucos_backups#64.
 - **Bulk deployment waves (2026-03-17 to 2026-03-21, 4 incidents in 5 days):** new failure class from agent automation. Healthcheck failed 3 ways: false-healthy (partial .env, data loss + DB restore, #lucos_deploy_orb#40, #lucos_creds#112), false-unhealthy (load spike, eolas collectstatic + arachne ingestor bulk fetch are CPU hotspots), estate-wide auto-merge break (`permissions: {}` rollout without smoke testing, lucos#58, #59). Systemic lesson: agent execution speed is a liability without verification gates running at the same speed.
@@ -131,9 +129,6 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ### lucos_media_linuxplayer
 - Node.js + mplayer on ARM. Primary cause of stale position on device switch (#14).
-
-### pici (archived 2026-03-17)
-- Retired. All services migrated to `build-multiplatform` (buildx + QEMU). Repo archived. `build-arm64` and `build-armv7l` orb jobs deprecated.
 
 ### lucos_repos
 - Greenfield redesign (#22): Go + SQLite, convention auditing. Tickets #23-#30. Audit lifecycle (#30) awaiting approval.
