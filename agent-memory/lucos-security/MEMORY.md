@@ -167,6 +167,21 @@ Do not raise issues proposing `ignore: version-update:semver-major` for any ecos
 
 Persona file updated with a standing instruction on 2026-04-18.
 
+## Risk: lucos_creds LUCOS_DEPLOY_ENV_BASE64 Silently Reverts Rotations
+
+`lucos_creds` bootstraps its own deploy from a manually-maintained base64 snapshot stored as a CircleCI env var (`LUCOS_DEPLOY_ENV_BASE64`). This snapshot overwrites the production `.env` on every redeploy. This creates a critical security risk beyond operational reliability:
+
+**A credential rotation done in the live lucos_creds store (e.g. after a suspected compromise) will be silently undone on the next redeploy** if the CircleCI env var isn't also updated. The engineer who rotated the credential gets no signal that the rotation didn't stick.
+
+**Affected credentials** (the ones in lucos_creds's own `.env`, not credentials it stores for other services):
+- `UI_PRIVATE_SSH_KEY` — SSH key for the UI service
+- `CONFIGY_SYNC_PRIVATE_SSH_KEY` — SSH key for configy sync
+- `KEY_LUCOS_CREDS` — the master credential for the credential store itself
+
+These are the most sensitive cryptographic material in the estate. `KEY_LUCOS_CREDS` especially — a silently-reverted rotation here is the worst case.
+
+**Status (2026-05-09):** Runbook in lucos_creds#304 should include explicit callout: *"Rotating any credential present in LUCOS_DEPLOY_ENV_BASE64 without also updating the CircleCI env var will silently undo the rotation on the next deploy."* Architectural auto-sync is deferred (cost). lucos_creds#306 adds startup validation of SSH key material.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.
