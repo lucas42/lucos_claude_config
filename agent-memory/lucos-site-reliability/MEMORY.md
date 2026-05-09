@@ -23,7 +23,15 @@ docker restart lucos_monitoring
 
 Container names match the service name in `docker-compose.yml`.
 
+## lucos_creds Self-Deploy
+
+**lucos_creds reads `.env` from a CircleCI `LUCOS_DEPLOY_ENV_BASE64` snapshot, not from creds.l42.eu.** See [reference_lucos_creds_self_deploy.md](reference_lucos_creds_self_deploy.md). Live store changes do NOT propagate until the snapshot is manually refreshed. When investigating "fix didn't take after redeploy" on lucos_creds, check the snapshot before anything else. Caused the 2026-05-09 CRLF incident.
+
 ## Standing Rules
+
+**Healthcheck depth varies — `Healthy` is not proof of end-to-end working.** See [feedback_healthcheck_depth_varies.md](feedback_healthcheck_depth_varies.md). Always read the actual `healthcheck.test` line before treating Docker `Healthy` as recovery proof. `lucos_creds_configy_sync`'s healthcheck is `test -p /var/log/cron.log` — entirely uncorrelated with whether the cron's SSH key works. Bit me 2026-05-09 (lucos_creds CRLF incident).
+
+**When a fix to live state doesn't take after redeploy, ask whether deploy reads live state or a snapshot.** See [feedback_snapshot_indirection.md](feedback_snapshot_indirection.md). Bypasses exist for good reasons (avoiding circular deploy dependencies); always check `.circleci/config.yml` and project env vars for `*_DEPLOY_*` / `*_ENV_BASE64` patterns before concluding "user re-stored it wrong." Bit me 2026-05-09 — diagnosed lucas42's UI re-store as faulty when in fact `LUCOS_DEPLOY_ENV_BASE64` was overwriting it.
 
 **Keep the docker.l42.eu mirror in the orb.** See [feedback_keep_docker_mirror.md](feedback_keep_docker_mirror.md). Mirror-side bugs (digest-404, etc.) must be fixed at the mirror layer, not by removing the BuildKit mirror config from `publish-docker.yml`. Reason: Docker Hub rate-limit exposure across estate-wide concurrent CI is worse than the mirror's bugs. Confirmed 2026-04-19 when lucas42 rejected PR lucas42/lucos_deploy_orb#143.
 
