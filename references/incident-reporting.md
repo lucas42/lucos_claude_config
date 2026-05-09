@@ -114,14 +114,36 @@ After opening the PR, follow the PR review loop defined in `pr-review-loop.md` -
 
 ## Step 3: Notify the team after merge
 
-Once the incident report PR is merged or closed, broadcast a notification to all teammates with a link to the report so they can learn from the outcomes:
+Once the incident report PR is merged or closed, send a notification to every other teammate with a link to the report so they can learn from the outcomes.
+
+**There is no broadcast mechanism in SendMessage.** Setting `to: "broadcast"` puts the message into a phantom inbox no agent reads — it does not multiplex. The only structured message types are `shutdown_request`, `shutdown_response`, and `plan_approval_response`. To reach the whole team, send **individual SendMessage calls**, one per teammate. You can issue all of them in a single response (parallel tool calls).
+
+Recipients (excluding yourself):
+
+- lucos-architect
+- lucos-code-reviewer
+- lucos-developer
+- lucos-security
+- lucos-system-administrator
+- lucos-ux
+
+Suggested content (same for each recipient):
 
 ```
-SendMessage (type: broadcast):
-  "Incident report published: docs/incidents/{filename}.md
-   Source issue: https://github.com/lucas42/{repo}/issues/{number}
-   Summary: {one-line summary of what happened and the root cause}
-   Read the full report at: https://github.com/lucas42/lucos/blob/main/docs/incidents/{filename}.md"
+Incident report published: docs/incidents/{filename}.md
+Source issue: https://github.com/lucas42/{repo}/issues/{number}
+Summary: {one-line summary of what happened and the root cause}
+Lessons: {bullet list of the load-bearing lessons most likely to affect future work}
+Read the full report at: https://github.com/lucas42/lucos/blob/main/docs/incidents/{filename}.md
 ```
 
-This ensures all agents -- architect, developer, sysadmin, security, and issue manager -- can absorb lessons learned and update their own memory or practices as needed. Use `broadcast` for this notification since incident learnings are relevant to the entire team.
+This ensures every agent — architect, code-reviewer, developer, security, sysadmin, ux — can absorb lessons learned and update their own memory or practices as needed.
+
+## Completion checklist
+
+The incident report is delivered when ALL of the following are true. Reporting back to the dispatcher before all four are true is incomplete; do not substitute an outcomes-style "Done" summary that omits any step.
+
+- [ ] Report written following `docs/incidents/TEMPLATE.md` (Step 1)
+- [ ] Follow-up issues filed and linked in the report's Follow-up Actions table (Step 1, item 3)
+- [ ] PR raised, reviewed, and merged (Step 2)
+- [ ] Individual notification messages sent to every other teammate (Step 3 — six messages, not one "broadcast")
