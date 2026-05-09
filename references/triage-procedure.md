@@ -62,6 +62,11 @@ This check applies regardless of whether the originating agent is doing routine 
 - Check whether the issue body or comments reference other issues as prerequisites (e.g. "depends on #X", "blocked by #Y", or sequencing like "step 1 must be done before step 2"). This includes cross-repo references (e.g. `lucas42/other_repo#N`).
 - If the issue has unresolved dependencies, it should be marked `agent-approved` + `status:blocked` with the blocking issue referenced in the body or a comment — even if the design is fully agreed and the issue is otherwise ready. An issue that cannot be started yet is blocked, regardless of how well-specified it is.
 
+**Code-context check (when an issue responds to a `TODO` / `FIXME` / inline comment)**: If the issue body cites or paraphrases a `TODO`, `FIXME`, or similar inline marker in code, fetch the surrounding lines of that file and read the marker in its full context before approving — do not rely on the issue body's interpretation alone.
+- Look for **deferral signals** in the marker's wording: "for now", "until X", "placeholder", "future-proofing", "reserved for", "not used yet", "implement when Y arrives", "not currently supported". These indicate the marker is *documenting* deferred state, not requesting current implementation.
+- If the marker is intentionally deferred, do NOT approve the issue as actionable. Either close it as `not_planned` with a comment explaining the marker's intent, or — if the deferral is genuinely ambiguous — message the file's most recent author (typically `lucas42`) to confirm the intent before any further action.
+- A marker's "TODO: do X" phrasing is not by itself a request to do X now. The same line frequently documents *why X has been deliberately not done yet*. The "TODO" prefix is just a convention; the surrounding wording carries the actual intent.
+
 ---
 
 ## Step 3: Take Action
