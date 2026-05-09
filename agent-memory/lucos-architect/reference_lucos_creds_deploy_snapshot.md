@@ -34,6 +34,10 @@ When that issue lands as `owner:lucos-architect`, the design space includes:
 
 Trade-offs to weigh: complexity of the bootstrap path, attack surface of any new auth flow that lets CI read live creds, recovery posture if the live store is itself broken at deploy time (the snapshot is a recovery path — auto-sync removes it).
 
+## Framing for the deferred architectural item
+
+When SRE files the snapshot-auto-sync issue, they will frame it as: *"lucas42 has deferred this for cost reasons; is there a low-cost variant, or close `not_planned`?"* — with **security's silent-rotation-revert framing as the cost-side counter-weight to consider** (i.e. the cost of *not* auto-syncing is that a credential rotation done in the live store can be silently reverted by the next deploy from the stale snapshot). Worth pulling up the security persona's framing of silent-rotation-revert risk when the issue lands, before forming a recommendation. Source: SRE SendMessage 2026-05-09 follow-up to creds incident broadcast.
+
 ## Provenance
 
 - Foundational decision: `lucas42/lucos_creds#152` (circular dependency)
