@@ -2,7 +2,13 @@
 # commit-agent-memory.sh
 #
 # Automatically commits and pushes uncommitted changes in ~/.claude/agent-memory/
-# and ~/.claude/projects/ (dispatcher auto-memory).
+# and ~/.claude/projects/ (dispatcher auto-memory) directly to the main branch,
+# regardless of which branch is currently checked out in ~/.claude.
+#
+# IMPORTANT — branch safety: this script always commits to main via a temporary
+# git worktree. It never commits to, or pushes to, whatever feature branch a
+# teammate might currently have checked out. This prevents memory updates from
+# contaminating feature-branch PRs when cron fires mid-session.
 #
 # Scope: ONLY agent-memory/ and projects/ — not agents/, CLAUDE.md, settings.json,
 # or any other config files. Those warrant deliberate review before going upstream.
@@ -30,28 +36,65 @@ export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent -o 
 
 cd "$CLAUDE_DIR"
 
-# Check whether there are any uncommitted changes in agent-memory/ or projects/.
-# We check both staged and unstaged changes, plus untracked files in those dirs.
-if git diff --quiet HEAD -- agent-memory/ projects/ && \
+# Fetch the latest main so our diff baseline is accurate regardless of the
+# currently checked-out branch.
+git fetch --quiet origin main
+
+# Check whether the working tree has any changes vs origin/main in the memory
+# directories. We check modified tracked files, staged files, and untracked files.
+if git diff --quiet origin/main -- agent-memory/ projects/ && \
    git diff --quiet --cached -- agent-memory/ projects/ && \
    [ -z "$(git ls-files --others --exclude-standard -- agent-memory/ projects/)" ]; then
-    echo "$(date -Iseconds) No uncommitted changes in agent-memory/ or projects/ — nothing to do."
+    echo "$(date -Iseconds) No changes in agent-memory/ or projects/ vs origin/main — nothing to do."
     exit 0
 fi
 
-echo "$(date -Iseconds) Uncommitted changes detected in agent-memory/ or projects/ — committing."
+echo "$(date -Iseconds) Changes detected vs origin/main — committing to main via temporary worktree."
 
-# Stage only agent-memory/ and projects/ — nothing else
+# Create a temporary worktree at origin/main.
+# Using a worktree means we commit directly into the main branch object graph
+# without disturbing whatever branch is currently checked out in CLAUDE_DIR.
+WORKTREE_DIR=$(mktemp -d)
+git worktree add --quiet "$WORKTREE_DIR" origin/main
+
+# Copy the current working-tree state of both memory directories into the
+# worktree. cp -rT copies directory contents (not the directory itself as a
+# child), so agent-memory/ → $WORKTREE_DIR/agent-memory/ (not /agent-memory/agent-memory/).
+# Memory files are append-only by design — we do not delete files that exist on
+# main but have been removed locally; that is intentional.
+cp -rT "$CLAUDE_DIR/agent-memory/" "$WORKTREE_DIR/agent-memory/"
+if [ -d "$CLAUDE_DIR/projects/" ]; then
+    cp -rT "$CLAUDE_DIR/projects/" "$WORKTREE_DIR/projects/"
+fi
+
+cd "$WORKTREE_DIR"
+
+# Stage only agent-memory/ and projects/ — nothing else.
 git add agent-memory/ projects/
 
-# Commit with the bot identity
+# If nothing actually changed after the copy (e.g. all changes were already on
+# main from a previous tick), exit cleanly without an empty commit.
+if git diff --quiet --cached -- agent-memory/ projects/; then
+    echo "$(date -Iseconds) Nothing to commit after sync — worktree already matches working tree."
+    cd "$CLAUDE_DIR"
+    git worktree remove --force "$WORKTREE_DIR"
+    exit 0
+fi
+
+# Commit with the bot identity.
 git \
     -c user.name="$IDENTITY_NAME" \
     -c user.email="$IDENTITY_EMAIL" \
     commit -m "Auto-commit agent memory updates"
 
-echo "$(date -Iseconds) Committed. Pushing..."
+echo "$(date -Iseconds) Committed. Pushing to main..."
 
-git push
+git push origin HEAD:main
 
 echo "$(date -Iseconds) Push complete."
+
+# Clean up the temporary worktree.
+cd "$CLAUDE_DIR"
+git worktree remove --force "$WORKTREE_DIR"
+
+echo "$(date -Iseconds) Done."
