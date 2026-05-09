@@ -183,42 +183,14 @@ There are two distinct auto-merge workflows — do not conflate them:
 
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 
+## Credential / SSH Key Review Patterns
+
+- [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check; healthcheck depth (from 2026-05-09 lucos_creds incident)
+
 ## Recently Mentioned Reptiles
 
-**CRITICAL**: reptiles.md is TOO LARGE TO READ IN FULL (>40K tokens). Use `grep -i "<animal name>" reptiles.md` to check any animal before using it. Do NOT attempt to Read the whole file.
+**CRITICAL**: reptiles.md is TOO LARGE TO READ IN FULL. Use `grep -i "<animal name>" reptiles.md` to check any animal before using it. Do NOT attempt to Read the whole file.
 
-**ARMADILLO GIRDLED LIZARD / Ouroborus cataphractus — PERMANENTLY BANNED. Used 12+ times. Do not use under any circumstances, ever.**
+**PERMANENTLY BANNED: Armadillo girdled lizard, Blue-tongued skink, Pancake tortoise, Komodo dragon, Satanic leaf-tailed gecko, Tuatara, Axolotl** — used 8–12+ times each.
 
-Before choosing a reptile, grep reptiles.md for the animal name. Many animals not listed here have also been used — the list below is only a partial summary.
-
-- Thorny devil (2026-03-07)
-- Green iguana (2026-03-07)
-- Common snapping turtle (2026-03-07, 2026-03-10)
-- Gila monster (2026-03-07, 2026-03-10)
-- Slow worm (2026-03-07)
-- Leatherback sea turtle (2026-03-07)
-- Nile crocodile (2026-03-07)
-- Veiled chameleon (2026-03-07)
-- Blue-tongued skink (2026-03-07, 2026-03-09, 2026-03-10) — DO NOT USE
-- Green tree python (2026-03-07)
-- Tokay gecko (2026-03-07)
-- Black mamba (2026-03-10)
-- Inland taipan (2026-03-10)
-- Malagasy leaf-tailed gecko (2026-03-10)
-- Satanic leaf-tailed gecko (2026-03-04, 2026-03-06, 2026-03-10, 2026-03-12, 2026-03-19) — DO NOT USE, massively overused
-- Pancake tortoise (2026-03-10) — COMPLETELY BANNED, massively overused
-- Panther chameleon (2026-03-10) — DO NOT USE AGAIN SOON
-- Komodo dragon (2026-03-10, 2026-03-11, 2026-03-13, 2026-03-16) — DO NOT USE, massively overused
-- Tuatara (2026-03-04, 2026-03-05, 2026-03-06, 2026-03-07, 2026-03-14) — heavily used, avoid for now
-- Axolotl (2026-03-10, 2026-03-12, 2026-03-14, 2026-03-17) — DO NOT USE, massively overused (also technically an amphibian)
-- Texas horned lizard / Horned lizard / Phrynosoma (2026-03-05, 2026-03-17, 2026-03-19) — DO NOT USE, used three times
-- Spiny softshell turtle / Apalone spinifera (2026-03-05, 2026-03-06, 2026-03-23) — DO NOT USE, used multiple times
-- Bog turtle (2026-03-05, 2026-03-21, 2026-04-02) — used 3 times, avoid for now
-- Eastern hognose snake (2026-04-05)
-- Sungazer lizard / Smaug giganteus (2026-04-06)
-- Puff adder / Bitis arietans (2026-04-06)
-- Timber rattlesnake / Crotalus horridus (2026-04-06)
-- Eastern box turtle / Terrapene carolina (2026-03-18, 2026-04-07) — used twice, avoid for now
-- Armadillo girdled lizard / Ouroborus cataphractus (8 uses across 2026-03-04 to 2026-04-08) — PERMANENTLY BANNED, used in EVERY session
-- Reticulated python (*Malayopython reticulatus*) (2026-04-08) — lucos_search_component PR #107
-- Green basilisk lizard / Basiliscus plumifrons (2026-04-08) — lucos_media_weightings PR #143
+Do NOT use any reptile without grepping reptiles.md first. Many species beyond the banned list have also been overused.
