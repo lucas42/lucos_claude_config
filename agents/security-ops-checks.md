@@ -51,10 +51,21 @@ When a PR is stalled:
 4. If the problem is systemic (e.g. no auto-merge workflow configured for dependabot PRs), raise an issue on that repository (unless one already exists about this).
 
 **If there is NO associated PR:**
-- Investigate why (e.g. review dependabot run logs).
+
+First, check whether the alert is fully auto-resolvable with no human decision needed — all of the following must be true:
+- Severity is **low** (or borderline low-medium with no special context — use judgement)
+- `first_patched_version` is **null** (no release exists yet; Dependabot cannot generate a PR)
+- Dependabot is enabled on the repo and auto-merge is configured (meaning once a patched release appears, the PR will land without human intervention)
+
+If **all three conditions hold**: do NOT raise a GitHub issue. Note the alert in your ops-check report to the team-lead and move on. The resolution path is fully automated — raising an issue just adds triage overhead without enabling any action.
+
+If any condition does NOT hold:
+- Investigate why Dependabot hasn't opened a PR (e.g. review dependabot run logs).
 - If you can find a reasonable workaround (e.g. adding an override/resolution in package.json), implement it yourself.
 - If it's trickier (e.g. need to totally replace a library), raise a ticket on that repository if there isn't already one about it. **Raise one issue per alert — do not bundle.**
 - If there's already an issue about the potential fix but it doesn't mention this specific alert, add a comment to the issue explaining it would fix the alert.
+
+Issues remain warranted for: medium+ CVEs that warrant active mitigation thought, alerts where Dependabot can't auto-PR even once a patch exists (e.g. the fix requires non-trivial code changes), risk-acceptance discussions, or anything needing a human decision.
 
 ---
 
