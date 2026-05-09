@@ -154,6 +154,10 @@ jobs:
 
 - [Null serialisation for optional fields](configy_null_fields.md) — use `dict.get(key) or default`, not `dict.get(key, default)`; configy sends explicit `null` for absent optional fields
 
+## TODO/FIXME Interpretation
+
+- [Check for deferred intent before raising TODO as an issue](feedback_todo_deferred_intent.md) — "For now", "until X", "placeholder", "reserved for future" signals mean the author intentionally deferred; don't raise as actionable without design input
+
 ## PR Process
 
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
