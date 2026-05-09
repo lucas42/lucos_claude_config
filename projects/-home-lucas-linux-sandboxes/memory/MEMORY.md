@@ -44,6 +44,7 @@
 - [Don't endorse unverified analysis](feedback_no_unverified_endorsement.md) — verbatim relay is fine, but no editorial praise of agent reasoning unless I've checked the substance against ground truth
 - [No inline lessons in instruction files](feedback_no_inline_lessons.md) — keep persona/skill text lean; put "Lesson from {date}" narrative in the commit message, not the file
 - [Question whether an issue should exist](feedback_question_issue_existence.md) — before triaging an agent-raised issue, check if it duplicates an existing tracking surface with a fully automated resolution path
+- [Dispatch what /next returns](feedback_dispatch_what_next_returns.md) — never reposition or skip an item /next returns based on labels or recent context; lucas42's manual board positioning is authoritative
 
 ## Active Projects
 
