@@ -42,6 +42,7 @@
 - [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — don't raise issues proposing Dependabot semver-major ignores; major bumps should flow through and CI should catch breakage
 - [Consult github-workflow.md first](feedback_consult_github_workflow_doc.md) — when composing GitHub API instructions for agents, read the doc rather than recalling syntax (some PATCH fields silently ignored)
 - [Don't endorse unverified analysis](feedback_no_unverified_endorsement.md) — verbatim relay is fine, but no editorial praise of agent reasoning unless I've checked the substance against ground truth
+- [No inline lessons in instruction files](feedback_no_inline_lessons.md) — keep persona/skill text lean; put "Lesson from {date}" narrative in the commit message, not the file
 
 ## Active Projects
 
