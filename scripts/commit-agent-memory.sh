@@ -57,6 +57,15 @@ echo "$(date -Iseconds) Changes detected vs origin/main — committing to main v
 WORKTREE_DIR=$(mktemp -d)
 git worktree add --quiet "$WORKTREE_DIR" origin/main
 
+# Ensure the worktree is removed on exit — whether success, error, or signal.
+# The 2>/dev/null suppresses noise when the worktree was already cleaned up on
+# the success path; || true prevents this handler from masking the original exit code.
+_cleanup() {
+    cd "$CLAUDE_DIR"
+    git worktree remove --force "$WORKTREE_DIR" 2>/dev/null || true
+}
+trap _cleanup EXIT
+
 # Copy the current working-tree state of both memory directories into the
 # worktree. cp -rT copies directory contents (not the directory itself as a
 # child), so agent-memory/ → $WORKTREE_DIR/agent-memory/ (not /agent-memory/agent-memory/).
@@ -74,10 +83,9 @@ git add agent-memory/ projects/
 
 # If nothing actually changed after the copy (e.g. all changes were already on
 # main from a previous tick), exit cleanly without an empty commit.
+# The EXIT trap handles worktree cleanup.
 if git diff --quiet --cached -- agent-memory/ projects/; then
     echo "$(date -Iseconds) Nothing to commit after sync — worktree already matches working tree."
-    cd "$CLAUDE_DIR"
-    git worktree remove --force "$WORKTREE_DIR"
     exit 0
 fi
 
@@ -92,9 +100,4 @@ echo "$(date -Iseconds) Committed. Pushing to main..."
 git push origin HEAD:main
 
 echo "$(date -Iseconds) Push complete."
-
-# Clean up the temporary worktree.
-cd "$CLAUDE_DIR"
-git worktree remove --force "$WORKTREE_DIR"
-
-echo "$(date -Iseconds) Done."
+# EXIT trap handles worktree cleanup.
