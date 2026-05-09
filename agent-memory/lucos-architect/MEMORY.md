@@ -63,6 +63,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Pressure-test decision thresholds for reachability](feedback_decision_threshold_calibration.md) — "ship X, decide Y by metric M ≥ T" rules need T checked against the data-mix structural ceiling. Pair a primary outcome metric with a corroborating mechanism metric; don't let mechanism override outcome (arachne#392, 2026-05-06)
 - [lucos_schedule_tracker_pythonclient scope](reference_schedule_tracker_pythonclient_scope.md) — pythonclient is for posting to schedule_tracker only, NOT for wrapping third-party APIs. Retry logic for Google/Facebook/etc. lives in the consuming cron, not the client lib (schedule_tracker#70, 2026-05-06)
 - [Don't introduce asserted/inferred class distinctions for user-facing facts](feedback_dont_split_user_facing_facts.md) — when users see inferred facts as equally real, splitting the data model creates an ethical hierarchy. Find consistency rules that preserve equivalence (lucos_contacts#53, 2026-05-07)
+- [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md) — for each repo named, cite a specific file/function. Generic paths (loganne fan-out, predicate registries, v3 tag writes) make services look like touch-points when they aren't (weightings#212, 2026-05-08)
 
 ## Auto-merge & security checks
 
@@ -70,6 +71,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Dependabot auto-merge on `pull_request` trigger works fine **if** `LUCOS_CI_APP_ID` and `LUCOS_CI_PRIVATE_KEY` are populated in the repo's Dependabot secret scope (distinct from Actions scope). Previous memory said "must use `pull_request_target`" — that was wrong; `pull_request` is the current working pattern (v1.16.0). See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md). Outdated note in `github-actions-permissions.md` needs a sweep.
 - Auto-merge caller workflows require at least `permissions: contents: read` -- `permissions: {}` causes `startup_failure` because GitHub Actions cannot fetch the cross-repo reusable workflow definition without it. Discovered via 2026-03-21 incident.
 - `.github` smoke test suite only covers `dependabot-auto-merge`, not `code-reviewer-auto-merge` -- gap tracked in lucos#58.
+- [Dependabot security updates are independent of dependabot.yml schedule](reference_dependabot_security_vs_version_feeds.md) — `schedule.interval` only governs the version-update feed; security updates fire on advisory match regardless. Slowing routine churn to weekly does NOT delay vuln patching. Per-repo "security updates" toggle must be on.
 
 ## Infrastructure notes
 
