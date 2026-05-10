@@ -10,7 +10,7 @@ external_deps: 2026-05-04
 
 lucos_comhra_agent: 2026-05-09
 lucos_comhra_llm: 2026-04-26
-lucos_schedule_tracker: 2026-04-24
+lucos_schedule_tracker: 2026-05-10
 lucos_media_weightings: 2026-05-07
 lucos_photos_worker: 2026-05-04
 lucos_arachne_explore: 2026-05-01
@@ -25,7 +25,7 @@ lucos_contacts_app: 2026-05-04
 lucos_contacts_db: 2026-05-04
 lucos_contacts_googlesync_import: 2026-05-06
 lucos_contacts_web: 2026-05-06
-lucos_creds: 2026-04-24
+lucos_creds: 2026-05-10
 lucos_creds_configy_sync: 2026-05-06
 lucos_creds_ui: 2026-05-06
 lucos_dns_sync: 2026-05-07
@@ -52,12 +52,12 @@ lucos_media_seinn: 2026-04-30
 tfluke: 2026-04-30
 lucos_media_metadata_api_exporter: 2026-05-09
 lucos_media_metadata_manager: 2026-04-26
-lucos_notes: 2026-04-24
+lucos_notes: 2026-05-10
 lucos_root: 2026-04-26
 lucos_router: 2026-05-08
 semweb: 2026-04-26
 lucos_time: 2026-04-30
-lucos_arachne_mcp: 2026-04-24
+lucos_arachne_mcp: 2026-05-10
 lukeblaney_blog: 2026-04-27
 lucos_docker_health_app: 2026-05-09
 
