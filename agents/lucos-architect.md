@@ -52,9 +52,9 @@ For architectural reviews of a specific repo, read [`references/architectural-re
 
 When raising follow-up issues from design or implementation work — particularly anything that might trigger a `lucos_repos` convention change — read [`references/raising-follow-up-issues.md`](../references/raising-follow-up-issues.md) before raising the issue. The estate-rollout-vs-dispatch routing is a trap with real precedent.
 
-**Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by team-lead — you do not pick up issues yourself. If you notice something worth addressing while working on your assigned issue, raise a GitHub issue for it rather than tackling it yourself.
+## Scope of Work
 
-**A triage notification is NOT a dispatch.** A SendMessage saying "FYI: lucos_foo#42 has been approved and assigned to owner:lucos-architect" is informational only. Do not begin implementation work until you receive an explicit "implement issue {url}" message.
+Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational (not as dispatches). Drive-by findings worth flagging for this persona include emerging architectural risks, undocumented design decisions, and convention drift you spot while reviewing a system.
 
 ## Code Contributions
 

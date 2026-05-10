@@ -73,7 +73,12 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 
 | File | Contents |
 |---|---|
-| [`references/github-workflow.md`](references/github-workflow.md) | `gh-as-agent`, `git-as-agent`, GitHub App limits, issue workflow, PR creation, bulk rollouts |
+| [`references/teammate-communication.md`](references/teammate-communication.md) | SendMessage rules, `teammate_id` handling, "user cannot see messages between teammates", take-the-first-action rule |
+| [`references/agent-github-identity.md`](references/agent-github-identity.md) | `gh-as-agent` / `git-as-agent` wrappers, heredoc + file-backed body patterns, template-substitution gotcha, committing `~/.claude` changes |
+| [`references/label-workflow.md`](references/label-workflow.md) | Labels are coordinator-only — every other persona posts a summary comment and stops |
+| [`references/agent-memory-conventions.md`](references/agent-memory-conventions.md) | What/what-not to save, MEMORY.md size limit, four memory types, frame-review pattern |
+| [`references/scope-of-work.md`](references/scope-of-work.md) | Dispatch contract: only work on assigned issues, raise drive-bys as new issues, triage notifications are informational |
+| [`references/github-workflow.md`](references/github-workflow.md) | GitHub App limits, issue workflow, PR creation, bulk rollouts (extends `agent-github-identity.md`) |
 | [`references/docker-conventions.md`](references/docker-conventions.md) | Container naming, volumes, env vars, networking, healthcheck gotchas |
 | [`references/circleci-conventions.md`](references/circleci-conventions.md) | Standard CI config templates, CircleCI API access |
 | [`references/info-endpoint-spec.md`](references/info-endpoint-spec.md) | `/_info` endpoint fields, tiers, and example |
@@ -85,4 +90,20 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 | [`references/audit-finding-handling.md`](references/audit-finding-handling.md) | Audit-finding issue lifecycle: when to close, re-raise rule, false-positive handling |
 | [`references/lucos-repos-api.md`](references/lucos-repos-api.md) | `lucos_repos` API: `/api/sweep` (full audit) and `/api/rerun` (ad-hoc convention recheck) |
 | [`references/issue-creation.md`](references/issue-creation.md) | How to create a new GitHub issue: duplicate check, writing, `gh-as-agent` command, project board |
+| [`references/raising-follow-up-issues.md`](references/raising-follow-up-issues.md) | Choosing between `/dispatch` and `/estate-rollout` when raising follow-up issues from design or implementation work |
+| [`references/incident-reporting.md`](references/incident-reporting.md) | SRE incident-report process: drafting, parallel verification, PR shape, team notification |
+| [`references/architectural-review.md`](references/architectural-review.md) | Architect persona's repo-review template, file naming, and CLAUDE.md critique guidance |
 | [`python-testing.md`](python-testing.md) | FastAPI + SQLAlchemy testing patterns and gotchas |
+
+### Workflow files
+
+Step-by-step procedures loaded by personas at the start of a trigger live under `agents/workflows/`. They are referenced from each persona's Triggers section:
+
+| File | Trigger | Used by |
+|---|---|---|
+| [`agents/workflows/implement-issue.md`](agents/workflows/implement-issue.md) | `"implement issue {url}"` | architect, developer, security, site-reliability, system-administrator, ux |
+| [`agents/workflows/inline-triage-consultation.md`](agents/workflows/inline-triage-consultation.md) | inline coordinator consultation during triage | architect, developer, security, site-reliability, system-administrator, ux |
+| [`agents/workflows/review-pr.md`](agents/workflows/review-pr.md) | `"review PR {url}"`, `"review any open PRs"` | code-reviewer |
+| [`agents/workflows/production-change-verification.md`](agents/workflows/production-change-verification.md) | any production system change | site-reliability (plus any persona that touches production) |
+
+For the full three-layer model — what belongs in personas vs. workflows vs. references, and how to add new content — see [`docs/agent-structure.md`](docs/agent-structure.md).

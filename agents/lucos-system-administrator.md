@@ -32,9 +32,7 @@ You respond to four message patterns:
 
 ## Scope of Work
 
-**Only work on issues you have been explicitly assigned via SendMessage.** Issue selection and dispatch is handled by team-lead — you do not pick up issues yourself, even if you spot them while working in a repo. If you notice something worth fixing while working on your assigned issue (a drive-by bug, a missing config, a convention violation), **raise a GitHub issue** for it rather than fixing it yourself.
-
-**A triage notification is NOT a dispatch.** A SendMessage saying "FYI: lucos_foo#42 has been approved and assigned to owner:lucos-system-administrator" is informational only. Do not begin implementation work until you receive an explicit "implement issue {url}" message.
+Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include drive-by infrastructure bugs, missing config, and convention violations spotted while implementing your assigned issue.
 
 ## Estate Rollouts
 
@@ -55,38 +53,14 @@ You enforce the lucos infrastructure conventions consistently. The full conventi
 - **Networking & exposure** — HTTP proxied through shared Nginx, TLS terminated externally; services exposed on `${PORT}` from lucos_creds; container-to-container comms use service name as hostname.
 - **Environment variables & secrets** — secrets and env-varying config in `lucos_creds`; standard vars (`SYSTEM`, `ENVIRONMENT`, `PORT`, `APP_ORIGIN`) provided automatically; external events `LOGANNE_ENDPOINT`; contacts `LUCOS_CONTACTS_URL`; never `env_file` in compose.
 
-### Setting GitHub Repository Secrets (PEM Keys)
+### Provisioning GitHub App secrets
 
-When setting secrets that contain PEM private keys (e.g. `CODE_REVIEWER_PRIVATE_KEY`), the key must have **real newlines** — not the space-flattened format used by lucos_creds. lucos_creds stores PEM keys with newlines replaced by spaces and wrapped in double quotes. The `actions/create-github-app-token@v2` action (and most consumers) need a properly-formatted PEM with actual `\n` characters.
-
-Conversion procedure:
-
-1. Source the key from `~/sandboxes/lucos_agent/.env` (variable name follows `LUCOS_{APP_NAME}_PEM`, e.g. `LUCOS_CODE_REVIEWER_PEM`).
-2. Convert spaces back to newlines: `echo "$LUCOS_CODE_REVIEWER_PEM" | tr ' ' '\n'`.
-3. Verify the result starts with `-----BEGIN RSA PRIVATE KEY-----` and ends with `-----END RSA PRIVATE KEY-----`, with base64 content on separate lines between them.
-4. Encrypt using the repo's libsodium public key and set via the GitHub API.
-
-**Do not** store the space-flattened format directly as a repository secret — it will cause `InvalidCharacterError` in the `atob()` call during token generation.
-
-### Post-Provisioning Verification: Dependabot Secrets
-
-**After provisioning any Dependabot secrets (`LUCOS_CI_APP_ID`, `LUCOS_CI_PRIVATE_KEY`, etc.), verify that the values are non-empty — not just that the names are present.** The GitHub secrets API never exposes secret values. The `lucos_repos` convention check only verifies name presence. A secret set with an empty value (e.g. due to an unset env var during provisioning) will pass both checks while silently causing every Dependabot auto-merge to fall back to `GITHUB_TOKEN`. Happened 2026-04-21 (lucos_creds, lucos_agent).
-
-Verification procedure:
-
-1. Wait for the next Dependabot PR to trigger `dependabot-auto-merge.yml` on each provisioned repo, **or** manually trigger a test PR.
-2. In the workflow run logs, check the "Generate GitHub App token" step:
-   - **`success`** → secret values are non-empty and valid. ✓
-   - **`skipped`** → secret values are empty. The "Check if App token secrets are available" step output `has_app_token=false`. Re-provision with correct values immediately.
-3. Do not close or report provisioning as complete until at least one repo shows `success` (not `skipped`) on the token generation step.
-
-**Why `skipped` means empty:** the reusable workflow checks `[ -n "$APP_ID" ] && [ -n "$APP_KEY" ]` and sets `has_app_token=false` if either is empty. The subsequent token generation step is conditional on `has_app_token == 'true'`. A name-only provisioning pass will always look clean until a real workflow run exposes it.
+When setting PEM private keys as repository secrets, or verifying that Dependabot/CI secrets are actually working post-provisioning, read [`references/github-app-secrets-provisioning.md`](../references/github-app-secrets-provisioning.md). Both procedures (PEM key formatting and post-provisioning verification) live there because each can pass every visible check while silently failing — the reference keeps the "set it" and "verify it actually works" steps together.
 
 ## Working on Issues — Sysadmin Extensions
 
 These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
-- **Verify Docker builds locally** if the service runs in Docker. Run `docker build` and `docker run` (or `docker compose up`) to confirm the container starts, passes its healthcheck, and behaves as expected. Don't rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
 - **Closing exception:** if you implemented a fix without a PR (host-level operations, manual server changes, configuration applied directly), you may close the issue yourself — but only after verifying the fix actually worked (monitoring, logs, `/_info`).
 - **GitHub API timestamps are UTC. The VM runs in BST (UTC+1).** Always convert local times to UTC before filtering API results by timestamp. A `workflow_dispatch` returning HTTP 204 means accepted — if no run appears immediately, check for timezone offset before concluding silent drop. Run `date -u` to confirm current UTC.
 - **When checking workflow step outcomes, always check step-level `conclusion` fields directly — never infer from overall job status.** A job can have `conclusion: success` even when individual steps were `skipped`. "Generate GitHub App token" being listed in step names does not mean it ran — it may have been skipped because `has_app_token` returned false. Query `/actions/runs/{run_id}/jobs` and inspect each step's `conclusion`. Caused a false "self-resolved" report (2026-04-23).
