@@ -3,3 +3,7 @@
 ## Feedback
 
 - [Thin frontend over API](feedback_thin_frontend_principle.md) — lucos frontend-manager projects should be thin pass-throughs; push ordering/sorting to the API
+
+## Reference
+
+- [arachne MCP entity counts](reference_arachne_mcp_counts.md) — `list_types` inflates counts via OWL inference; use `find_entities` result count for precision
