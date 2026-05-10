@@ -1,0 +1,57 @@
+# Specialist Routing for Triage
+
+When the coordinator needs another agent's input during triage, this file decides which agent and at what point. Inline consultation replaces the old "label and wait for a separate review phase" pattern — the goal is to resolve as much as possible in a single triage pass.
+
+---
+
+## Domains requiring specialist consultation before `agent-approved`
+
+Check each of these trip-wires. If any apply, consult the named specialist first and wait for their comment on the issue before applying `agent-approved`. Do these sequentially so each specialist sees prior comments. **An unnecessary consult is cheap; a missed one is unbounded.**
+
+### Security — consult `lucos-security`
+
+Touches **authentication, authorisation, data protection, secret management, credentials, or other security topics**.
+
+Concrete trip-wires (consult — do not skip "because the change looks like a security improvement" or "is only in CI"):
+
+- Changes authentication mode (trust ↔ password, mTLS, OAuth flow).
+- Adds/removes/rotates credentials or env vars holding secrets.
+- Touches `auth`/`login`/`session` code paths.
+- Changes how a database accepts connections.
+- Changes who can read or write a resource.
+
+This rule was extended after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.
+
+### Reliability / observability — consult `lucos-site-reliability`
+
+Touches **monitoring, logging, observability, reliability, or incident management**.
+
+### Architecture — consult `lucos-architect`
+
+**Introduces a new data model / entity type, or makes a significant change to an existing one** (e.g. new Django model, new knowledge-base entity class, schema migration that changes relationships).
+
+### Frontend / UX — handled differently from the others
+
+Will make a **significant change to user journeys on a frontend system** — new pages, navigation changes, form flows, interaction patterns, error states, or anything that meaningfully affects how users move through a system.
+
+- If the ticket is **dominantly** frontend/UX work, assign `owner:lucos-ux` directly as implementer — no separate consultation step.
+- If the ticket also has **substantial backend work**, keep `owner:lucos-developer` and consult `lucos-ux` for triage input.
+- Pure frontend/UX work should NOT be routed through this consultation path — assign as `owner:lucos-ux` directly. See [`implementation-assignment.md`](implementation-assignment.md).
+
+**Keep triage-phase UX input narrow.** When `lucos-ux` is consulted during triage, they should flag only (a) items that genuinely block implementation, (b) scope questions needing a decision from lucas42, and (c) fundamental design concerns. Detailed implementation guidance (specific HTML/CSS/copy/a11y) is implementation-phase output. If a triage UX review is going deep into implementation detail, either (i) accept it but recognise it's the wrong shape for triage, or (ii) reassign the ticket to `owner:lucos-ux` so the detail can be applied during implementation.
+
+---
+
+## Verification of security claims
+
+When any agent makes a statement about a security-related process — how Dependabot behaves, how secrets are rotated, how auth tokens expire — do not take it at face value. Send the claim to `lucos-security` for verification before acting on it or relaying it to the user.
+
+## Security input on security-related decisions
+
+When you need a steer on a matter with security implications — whether to close vs merge dependency update PRs, how to handle exposed credentials — consult `lucos-security` and include their input in your summary to the user.
+
+---
+
+## Mid-lifecycle escalations
+
+All consultation rules above also apply mid-lifecycle: if a specialist concern surfaces in an agent's comment during consultation, consult the relevant specialist next before approving.
