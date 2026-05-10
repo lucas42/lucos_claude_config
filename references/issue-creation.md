@@ -15,6 +15,8 @@ When asked to create a new issue:
    - Any known constraints or context.
    - Open questions, if any exist.
 
+   **Issue-number references inside the body must always be real issue numbers, never sequence labels.** When drafting a series of related issues (e.g. "ticket 1 / ticket 2 / ticket 3"), it is tempting to write `#1`, `#2`, `#3` as ordinal labels for the sequence — but GitHub autolinks `#N` to issue number N **in the same repo**, which on any active repository will be a real, unrelated ticket from years ago. The link is silent and the corruption is invisible in the source markdown. Two safe patterns: (a) file the earlier issues first and then reference their actual numbers in the later bodies, or (b) draft with a non-`#` placeholder (e.g. `[seq-1]`) and substitute the real numbers as you file. If you've already filed a body with sequence labels, fix it via PATCH before triage runs.
+
 4. **Create the issue** using `gh-as-agent`. There are two patterns; **pick the right one for your body content**:
 
    **Pattern A — inline heredoc** (use only for short, simple bodies with no path-template placeholders):
