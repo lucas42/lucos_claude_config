@@ -64,6 +64,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md) — for each repo named, cite a specific file/function. Generic paths (loganne fan-out, predicate registries, v3 tag writes) make services look like touch-points when they aren't (weightings#212, 2026-05-08)
 - [Check both sides of a replaced mechanism](feedback_check_both_sides_of_replaced_mechanism.md) — "X was removed" doesn't mean operations gated by X are now safe; the rules likely moved layer. Read the replacement (arachne#452, 2026-05-10)
 - [Simplify before elaborate in multi-round threads](feedback_simplify_before_elaborate_in_multi_round.md) — after a course-correction, default to "simpler by one layer" before refining the existing frame; burden of proof shifts to the more-complex design (arachne#452, 2026-05-10)
+- [Don't spawn teammates as subagents](feedback_dont_spawn_teammates_as_subagents.md) — talk to running `lucos-*` teammates via `SendMessage`, never `Agent({subagent_type:"lucos-..."})`; same persona name, different mechanism — Agent bypasses the team flow (claude_config#58, 2026-05-10)
 
 ## Auto-merge & security checks
 
