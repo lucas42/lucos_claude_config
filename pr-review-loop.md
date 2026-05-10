@@ -10,7 +10,9 @@ After creating a PR, track the **iteration count** starting at 1.
 
 ### Step 1: Request code review
 
-Send a message to the `lucos-code-reviewer` teammate asking it to review the PR:
+Send a message to the `lucos-code-reviewer` teammate asking it to review the PR. **Use `SendMessage` with `to: "lucos-code-reviewer"`** — the reviewer is already a teammate on the running team. **Do NOT use the `Agent` tool to spawn a fresh `lucos-code-reviewer` subagent**: that bypasses the team flow, gives the reviewer no shared inbox or context, and produces a tool-call return rather than a teammate message visible to the rest of the team.
+
+The message body is:
 
 > "review PR {pr_url}"
 
@@ -40,7 +42,7 @@ Address the code review feedback yourself -- you are the implementation teammate
 
 The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the teammate name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line — the persona name is also the teammate name (e.g. `lucos-security`).
 
-Send a message to that specialist teammate asking it to review the PR:
+Send a message to that specialist teammate via `SendMessage` (same rule as Step 1 — they are already on the team, do NOT spawn them via the `Agent` tool):
 
 > "review PR {pr_url} -- the code reviewer has requested your input, see their comment on the PR for context"
 

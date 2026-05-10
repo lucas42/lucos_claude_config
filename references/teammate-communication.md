@@ -10,6 +10,21 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead) and lucos-code-reviewer.
 
+## Don't spawn teammates as subagents
+
+When you need to interact with another `lucos-*` persona during a workflow (request a code review, escalate to security, ask for an SRE assessment), **always use `SendMessage` with `to: "<persona-name>"`** — they are already running teammates on the same team you are.
+
+**Never use the `Agent` tool with `subagent_type: "lucos-..."`** to spawn a fresh subagent for the same purpose. It looks like the same outcome but it isn't:
+
+- A fresh subagent has no shared inbox with the team — your "message" reaches them as a one-shot prompt with no context, and their reply comes back to you alone as a tool-call return rather than being visible to team-lead and the rest of the team.
+- The team coordinator loses sight of what's happening, because none of the messages flow through SendMessage routing.
+- The subagent bills its own context window, including re-loading its persona file, MEMORY.md, and any references — paid every time, instead of using the warm running teammate.
+- Multi-round workflows (e.g. PR review iterations) become impossible to drive coherently, because each Agent call starts a stateless persona with no recollection of the prior round.
+
+The `Agent` tool is for genuinely new contexts — research subtasks, file lookups, isolated worktree operations. It is **not** the mechanism for talking to a teammate that already exists.
+
+If you find yourself reaching for `Agent({subagent_type: "lucos-foo"})`, stop and use `SendMessage({to: "lucos-foo", ...})` instead.
+
 ## The user cannot see messages between teammates
 
 Your messages to the team-lead (and their messages to you) are not shown to the user. The user only sees what the team-lead writes in plain text. When reporting findings or recommendations to the team-lead, be aware that the team-lead must relay the full content to the user — do not assume the user has any context from your previous messages.

@@ -97,7 +97,7 @@ If you hit something that might block completion — a dependency issue, an arch
 
 ## Step 9 — Drive the PR review loop
 
-After opening the PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../../pr-review-loop.md). Send a message to `lucos-code-reviewer` to request a review, address any feedback, and handle specialist reviews if requested.
+After opening the PR, you are responsible for driving the review loop defined in [`pr-review-loop.md`](../../pr-review-loop.md). Send a message to `lucos-code-reviewer` via **`SendMessage` with `to: "lucos-code-reviewer"`** to request a review, address any feedback, and handle specialist reviews if requested. **Do NOT use the `Agent` tool to spawn a fresh `lucos-code-reviewer` (or any other `lucos-*`) subagent** — they are already teammates on the running team; spawning them via `Agent` bypasses the team flow. See [`references/teammate-communication.md`](../../references/teammate-communication.md) § "Don't spawn teammates as subagents".
 
 **Do not report back** to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap).
 
