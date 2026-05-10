@@ -63,6 +63,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Don't introduce asserted/inferred class distinctions for user-facing facts](feedback_dont_split_user_facing_facts.md) — when users see inferred facts as equally real, splitting the data model creates an ethical hierarchy. Find consistency rules that preserve equivalence (lucos_contacts#53, 2026-05-07)
 - [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md) — for each repo named, cite a specific file/function. Generic paths (loganne fan-out, predicate registries, v3 tag writes) make services look like touch-points when they aren't (weightings#212, 2026-05-08)
 - [Check both sides of a replaced mechanism](feedback_check_both_sides_of_replaced_mechanism.md) — "X was removed" doesn't mean operations gated by X are now safe; the rules likely moved layer. Read the replacement (arachne#452, 2026-05-10)
+- [Simplify before elaborate in multi-round threads](feedback_simplify_before_elaborate_in_multi_round.md) — after a course-correction, default to "simpler by one layer" before refining the existing frame; burden of proof shifts to the more-complex design (arachne#452, 2026-05-10)
 
 ## Auto-merge & security checks
 
