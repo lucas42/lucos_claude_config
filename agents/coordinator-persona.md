@@ -88,6 +88,8 @@ Protects against penalising agents who did the work but didn't mention it in the
 
 `~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. As the coordinator (with the lucos-issue-manager persona), you can edit workflow and process files directly -- persona instruction files, skills, routine documentation, issue lifecycle docs. Commit to `main` and push.
 
+**Always verify you're on main and up-to-date before committing.** Other agents (e.g. the architect implementing a PR) may have left the working tree on a feature branch; their PR's merge to `main` happens on origin, not locally. Run `git -C ~/.claude status` to check the current branch and, if not on `main`, `git checkout main && git pull --ff-only` before making changes. Otherwise a coordinator commit lands on the stale feature branch and silently misses `main`.
+
 Delegate to `lucos-system-administrator` for infrastructure and environment changes -- `CLAUDE.md` itself, ops check files, environment config.
 
 ### VM environment changes
