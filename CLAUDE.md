@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) for all projects in 
 
 Do not add `Co-Authored-By` trailers to git commits. The bot identity on each commit already makes authorship clear.
 
-**Always use `git-as-agent`** (not raw `git`) for all git operations — commits, rebases, cherry-picks, etc. This ensures commits are attributed to the correct bot identity. See [`references/github-workflow.md`](references/github-workflow.md) for details.
+**Always use `git-as-agent`** (not raw `git`) for all git operations — commits, rebases, cherry-picks, etc. This ensures commits are attributed to the correct bot identity. See [`references/agent-github-identity.md`](references/agent-github-identity.md) for details.
 
 ## Learning from Mistakes
 
@@ -63,7 +63,7 @@ Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using
 
 ## GitHub Workflow
 
-For GitHub API calls (`gh-as-agent`, `git-as-agent`, GitHub App limitations, marking draft PRs ready), cross-repository issue references, the full issue workflow (starting comments, branching, PR creation, closing keywords), post-PR review loop, and bulk cross-repo operation guidelines, see [`references/github-workflow.md`](references/github-workflow.md).
+For the `gh-as-agent` / `git-as-agent` wrappers, the heredoc + file-backed body patterns, the `{owner}/{repo}` template-substitution gotcha, and cross-repo issue references, see [`references/agent-github-identity.md`](references/agent-github-identity.md). For GitHub App limits, the GitHub Projects PAT, draft-PR-ready GraphQL, and bulk cross-repo operation safety, see [`references/github-workflow.md`](references/github-workflow.md). For the per-issue implementation walk (starting comments, branching, PR creation, closing keywords, supervised-repo reviewer requests), see [`agents/workflows/implement-issue.md`](agents/workflows/implement-issue.md).
 
 ---
 
@@ -78,7 +78,7 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 | [`references/label-workflow.md`](references/label-workflow.md) | Labels are coordinator-only — every other persona posts a summary comment and stops |
 | [`references/agent-memory-conventions.md`](references/agent-memory-conventions.md) | What/what-not to save, MEMORY.md size limit, four memory types, frame-review pattern |
 | [`references/scope-of-work.md`](references/scope-of-work.md) | Dispatch contract: only work on assigned issues, raise drive-bys as new issues, triage notifications are informational |
-| [`references/github-workflow.md`](references/github-workflow.md) | GitHub App limits, issue workflow, PR creation, bulk rollouts (extends `agent-github-identity.md`) |
+| [`references/github-workflow.md`](references/github-workflow.md) | GitHub App limits, GitHub Projects PAT, marking draft PRs ready, bulk-rollout safety (extends `agent-github-identity.md`) |
 | [`references/docker-conventions.md`](references/docker-conventions.md) | Container naming, volumes, env vars, networking, healthcheck gotchas |
 | [`references/circleci-conventions.md`](references/circleci-conventions.md) | Standard CI config templates, CircleCI API access |
 | [`references/info-endpoint-spec.md`](references/info-endpoint-spec.md) | `/_info` endpoint fields, tiers, and example |
@@ -86,7 +86,11 @@ Detailed conventions are documented in `~/.claude/references/`. Consult these wh
 | [`references/ssh-production.md`](references/ssh-production.md) | SSH conventions, host list, safety warnings, read-only commands |
 | [`references/monitoring-loganne.md`](references/monitoring-loganne.md) | Monitoring API schema, Loganne read/write, planned maintenance events |
 | [`references/network-topology.md`](references/network-topology.md) | Production host layout, routing, inter-service comms, **no internal trusted network** |
-| [`references/triage-procedure.md`](references/triage-procedure.md) | Full coordinator triage procedure: steps 1–3, specialist routing, implementation assignment, priority labels |
+| [`references/triage-procedure.md`](references/triage-procedure.md) | Full coordinator triage procedure: steps 1–3, central label controller |
+| [`references/specialist-routing.md`](references/specialist-routing.md) | When triage should consult architect / SRE / security / UX before approving |
+| [`references/implementation-assignment.md`](references/implementation-assignment.md) | Choosing the `owner:*` label, including the UX-vs-developer rule |
+| [`references/priority-labels.md`](references/priority-labels.md) | `priority:*` assignment, re-assessment, override rules |
+| [`references/label-colours.md`](references/label-colours.md) | Colour scheme for creating new agent-workflow / status / owner / priority labels |
 | [`references/audit-finding-handling.md`](references/audit-finding-handling.md) | Audit-finding issue lifecycle: when to close, re-raise rule, false-positive handling |
 | [`references/lucos-repos-api.md`](references/lucos-repos-api.md) | `lucos_repos` API: `/api/sweep` (full audit) and `/api/rerun` (ad-hoc convention recheck) |
 | [`references/issue-creation.md`](references/issue-creation.md) | How to create a new GitHub issue: duplicate check, writing, `gh-as-agent` command, project board |
