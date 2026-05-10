@@ -111,7 +111,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_arachne
 - nginx + Typesense + Fuseki + Python ingestor. configy#33: recommended closing.
 - **ADR-0001 (2026-03-07):** MCP server (`lucos_arachne_mcp`, routed at `/mcp/`) exposes 5 structured tools over the reasoning endpoint. Read-only. Streamable HTTP transport. Shipped 2026-04-07 (#63-#69 all closed). Key insight: LLMs cannot reliably generate SPARQL against custom ontologies (killed lucos_comhra) — MCP hides SPARQL behind typed parameters.
-- Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, OWL reasoning). `systems_to_graphs` in `ingestor/triplestore.py`.
+- Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, **no inference** — closures pre-computed by ingestor; `triplestore/configuration/arachne.ttl` confirms). `systems_to_graphs` in `ingestor/triplestore.py`. Implication: declaring `owl:inverseOf` is safe metadata — does not materialise reverse triples.
 - Memory #86: lucas42 reframed -- values inferencing (transitive containedIn), not wedded to Fuseki. Recommended pre-computing closures in ingestor. RDFS reasoner alone insufficient (no owl:TransitiveProperty).
 - Monitoring #87: lucas42 wants /_info delegated to explore container with real authenticated checks, not sidecar script. Revised design posted.
 - Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
