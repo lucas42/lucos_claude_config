@@ -127,5 +127,10 @@ If a PR was created and approved:
      - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
 5. **If not unsupervised (exit code 1) or error (exit code 2):**
+   - **First, verify lucas42 is set as a requested reviewer on the PR** so it lands in his GitHub "review requested" queue rather than relying on him spotting it via the project board:
+     ```bash
+     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '[.requested_reviewers[]?.login]'
+     ```
+     If `lucas42` is NOT in the returned list, the developer's PR-creation step didn't request him. Currently `lucos-issue-manager` lacks `pull_requests: write` and cannot add reviewers itself, so the fix is to message the **developer who created the PR** and ask them to add lucas42 as a reviewer (`POST repos/.../pulls/{n}/requested_reviewers` with `reviewers[]=lucas42`). Once `lucos_claude_config#71` lands and `lucos-issue-manager` has `pull_requests: write`, the coordinator can do this directly without the developer hop. Either way, the requested-reviewer state must be correct before the next step.
    - Tell the user the PR needs their review and approval. Once approved, it will auto-merge (the `code-reviewer-auto-merge.yml` workflow is deployed across the lucos estate; lucas42's approval triggers it). Provide the full PR URL so they can easily navigate to it.
    - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
