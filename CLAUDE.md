@@ -104,5 +104,6 @@ Step-by-step procedures loaded by personas at the start of a trigger live under 
 | [`agents/workflows/implement-issue.md`](agents/workflows/implement-issue.md) | `"implement issue {url}"` | architect, developer, security, site-reliability, system-administrator, ux |
 | [`agents/workflows/inline-triage-consultation.md`](agents/workflows/inline-triage-consultation.md) | inline coordinator consultation during triage | architect, developer, security, site-reliability, system-administrator, ux |
 | [`agents/workflows/review-pr.md`](agents/workflows/review-pr.md) | `"review PR {url}"`, `"review any open PRs"` | code-reviewer |
+| [`agents/workflows/production-change-verification.md`](agents/workflows/production-change-verification.md) | any production system change | site-reliability (plus any persona that touches production) |
 
 For the full three-layer model — what belongs in personas vs. workflows vs. references, and how to add new content — see [`docs/agent-structure.md`](docs/agent-structure.md).

@@ -60,6 +60,8 @@ Some workflow-shaped content lives directly under `agents/` rather than `agents/
 
 - `agents/sre-ops-checks.md`, `agents/security-ops-checks.md`, `agents/sysadmin-ops-checks.md` — ops-check task lists, one per persona, loaded by the `"run your ops checks"` trigger.
 - `agents/sre-circleci-api.md` — SRE CircleCI reference, loaded when investigating CI.
+- `agents/sre-stuck-pr-support.md` — SRE scope and auto-merge-trap guidance, loaded when escalated to help with a stuck PR.
+- `agents/sre-operational-defaults.md` — SRE diagnostic and investigation defaults, loaded when investigating runtime symptoms.
 - `agents/sysadmin-persona-audit.md` — sysadmin persona-consistency audit procedure, loaded by the `"audit persona consistency"` trigger.
 - `agents/code-reviewer-stuck-pr-guide.md` — stuck-PR criteria reference for the reviewer.
 - `agents/common-sections-reference.md` — audit reference (not loaded by any agent; read by the audit procedure).
