@@ -96,8 +96,10 @@ To find them:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
-  "search/issues?q=label:owner:lucas42+org:lucas42+is:issue+is:open+sort:created-asc&per_page=50"
+  'search/issues?q=label:"owner:lucas42"+org:lucas42+is:issue+is:open+sort:created-asc&per_page=50'
 ```
+
+**The label name MUST be quoted** because it contains a colon. GitHub's search API treats `label:owner:lucas42` as `label:owner` + literal `lucas42` and silently returns zero results — the request looks valid but the filter is wrong. Use `label:"owner:lucas42"` (or `label:"owner:lucos-developer"` etc.) any time a label name contains a colon. The same applies to `status:*` and `priority:*` labels.
 
 Present the list grouped and ordered by priority, consulting `~/sandboxes/lucos/docs/priorities.md` for the priority framework:
 
