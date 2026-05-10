@@ -133,7 +133,14 @@ If yes to any of the above, you MUST consult the relevant specialist (see "Speci
 When an issue needs refinement from an agent (architect, SRE, security, sysadmin, developer, or code-reviewer), do **not** leave a comment on the issue. Instead, message the agent directly as a teammate using SendMessage. In your message:
 - Link to the issue (full GitHub URL)
 - Explain what input you need from them and why
-- Ask them to post a comment on the issue (or add a reaction to an existing comment) with their input, then message you back when done
+- **Explicitly instruct them: "Post your analysis as a comment on the issue itself (using your own bot identity), then message me back with the comment URL when done."** Do not phrase this as "post your answer back here" or "report back to me with your findings" — that wording leads to them sending the analysis to you as an inbox message, which forces you to either paraphrase it onto the ticket (wrong) or post it verbatim under your own bot identity (also wrong — wrong attribution). The instruction must name the issue as the destination.
+
+**CHECKPOINT — never post an agent's analysis on the ticket on their behalf.** When an agent's analysis arrives via SendMessage, the *agent* posts it on the issue, not you. If you find yourself drafting a comment that begins "Consulted lucos-X" or "Per lucos-X's analysis" or quoting/paraphrasing their content, STOP. Send the agent back: ask them to post their analysis on the issue directly using their own bot identity, with the comment URL when done. The reasons:
+1. Comment attribution matters — readers (especially lucas42) need to see whose analysis it is from the avatar/login, not infer it from a paraphrase.
+2. Paraphrasing introduces translation loss — the agent's exact wording captures nuance you may flatten.
+3. It collapses two distinct activities (technical analysis vs. triage coordination) into a single voice, making the conversation harder to follow.
+
+Your role in the consultation is the triage coordination layer only: ask the agent for input, label the issue, update the board, and (if appropriate) leave a short triage-decision comment that *references* the agent's comment (e.g. "Marking awaiting-decision after consulting lucos-X above"). The substantive analysis stays in the agent's voice.
 
 Once the agent messages you back, re-read the issue — fetch **all** comments (not just the agent's new one) and **check reactions on every comment** (especially +1 from lucas42). lucas42 may have replied or reacted in the time between the agent posting and you re-reading. A +1 reaction on the agent's comment counts as approval of its recommendations. Then re-assess:
 - If lucas42 has replied with approval, or added a +1 reaction to the agent's comment, act on that
