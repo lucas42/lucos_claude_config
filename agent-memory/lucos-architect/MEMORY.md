@@ -62,6 +62,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [lucos_schedule_tracker_pythonclient scope](reference_schedule_tracker_pythonclient_scope.md) — pythonclient is for posting to schedule_tracker only, NOT for wrapping third-party APIs. Retry logic for Google/Facebook/etc. lives in the consuming cron, not the client lib (schedule_tracker#70, 2026-05-06)
 - [Don't introduce asserted/inferred class distinctions for user-facing facts](feedback_dont_split_user_facing_facts.md) — when users see inferred facts as equally real, splitting the data model creates an ethical hierarchy. Find consistency rules that preserve equivalence (lucos_contacts#53, 2026-05-07)
 - [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md) — for each repo named, cite a specific file/function. Generic paths (loganne fan-out, predicate registries, v3 tag writes) make services look like touch-points when they aren't (weightings#212, 2026-05-08)
+- [Check both sides of a replaced mechanism](feedback_check_both_sides_of_replaced_mechanism.md) — "X was removed" doesn't mean operations gated by X are now safe; the rules likely moved layer. Read the replacement (arachne#452, 2026-05-10)
 
 ## Auto-merge & security checks
 
@@ -111,7 +112,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ### lucos_arachne
 - nginx + Typesense + Fuseki + Python ingestor. configy#33: recommended closing.
 - **ADR-0001 (2026-03-07):** MCP server (`lucos_arachne_mcp`, routed at `/mcp/`) exposes 5 structured tools over the reasoning endpoint. Read-only. Streamable HTTP transport. Shipped 2026-04-07 (#63-#69 all closed). Key insight: LLMs cannot reliably generate SPARQL against custom ontologies (killed lucos_comhra) — MCP hides SPARQL behind typed parameters.
-- Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only, **no inference** — closures pre-computed by ingestor; `triplestore/configuration/arachne.ttl` confirms). `systems_to_graphs` in `ingestor/triplestore.py`. Implication: declaring `owl:inverseOf` is safe metadata — does not materialise reverse triples.
+- Two Fuseki endpoints: `raw_arachne` (read-write) and `arachne` (read-only). Inference moved from Fuseki to the ingestor: `compute_inferences()` walks `owl:TransitiveProperty` and `owl:inverseOf` declarations and materialises closures into `urn:lucos:inferred`, which `unionDefaultGraph` exposes to all `arachne` queries. **Declaring `owl:inverseOf` for a high-fan-out predicate (e.g. `dcterms:language`) materialises bloat — NOT safe metadata.** See [reference_arachne_ingestor_inverse_materialisation.md](reference_arachne_ingestor_inverse_materialisation.md).
 - Memory #86: lucas42 reframed -- values inferencing (transitive containedIn), not wedded to Fuseki. Recommended pre-computing closures in ingestor. RDFS reasoner alone insufficient (no owl:TransitiveProperty).
 - Monitoring #87: lucas42 wants /_info delegated to explore container with real authenticated checks, not sidecar script. Revised design posted.
 - Agent sandbox has drift problem (lima provisioning vs actual VM state) — prefer Docker containers for iterative development.
