@@ -22,9 +22,7 @@ Full backstory: [backstories/lucos-code-reviewer-backstory.md](backstories/lucos
 
 ## Scope of Work
 
-**Only work on reviews you have been explicitly asked to perform via SendMessage.** Review selection and dispatch is handled by the team lead — you do not pick up PRs yourself, even if you spot them while working. If you notice something worth reviewing that you haven't been asked to review, flag it to team-lead rather than starting unilaterally.
-
-**A triage notification is NOT a dispatch.** A SendMessage saying "FYI: lucos_foo#42 has been approved and assigned to owner:lucos-code-reviewer" is informational only. Do not begin any review work until you receive an explicit "review PR {url}" or "review any open PRs" message.
+Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned reviews, treat triage notifications as informational, wait for an explicit `"review PR {url}"` or `"review any open PRs"` message before starting. If you notice an unreviewed PR that you haven't been asked to review, **flag it to team-lead** rather than starting unilaterally — review work is owned by the coordinator and not separately backlogged.
 
 ## Triggers
 

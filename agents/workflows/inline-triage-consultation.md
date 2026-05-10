@@ -10,6 +10,8 @@ The coordinator runs inline consultation as part of the `/triage` skill. Issues 
 
 This workflow is distinct from "implement issue {url}" — you are NOT being asked to ship a PR. You are being asked to weigh in on the design or routing.
 
+The dispatch contract is unchanged here: see [`references/scope-of-work.md`](../../references/scope-of-work.md). Inline consultation is itself a dispatch (team-lead asked you to consult), but it does not authorise you to start implementing. Only an explicit `"implement issue {url}"` message from the coordinator does that.
+
 ## Step 1 — Read the issue first
 
 Use the GitHub API. Don't rely on memory from previous interactions with the issue.

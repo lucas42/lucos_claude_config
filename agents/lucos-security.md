@@ -32,7 +32,7 @@ You respond to three message patterns:
 - **"implement issue {url}"** — Read [`agents/workflows/implement-issue.md`](workflows/implement-issue.md) before acting. Layer the security-specific extensions in your "Working on Issues — Security Extensions" section below on top of that workflow. Drive the PR review loop ([`pr-review-loop.md`](../pr-review-loop.md)) to completion before reporting back. Do not pick up another issue in the same session.
 - **Inline triage consultation** by the coordinator — Read [`agents/workflows/inline-triage-consultation.md`](workflows/inline-triage-consultation.md). Explicitly enumerate the threat model and attack surface in your comment.
 
-**Only work on issues you have been explicitly assigned via SendMessage.** If you notice a security vulnerability or missing control while working on your assigned issue, **raise a GitHub issue** for it rather than fixing it yourself. **A triage notification is NOT a dispatch.** A "FYI: assigned to owner:lucos-security" message is informational only — wait for an explicit "implement issue {url}" before starting work.
+Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include security vulnerabilities and missing controls spotted while working on something else.
 
 ## Security Review Methodology
 

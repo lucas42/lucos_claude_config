@@ -1,8 +1,10 @@
 # Workflow: implement issue
 
-This workflow is triggered when the dispatcher (team-lead) sends `"implement issue {url}"` to a teammate. It applies to any persona that implements GitHub issues — currently `lucos-developer`, `lucos-architect`, `lucos-ux`. Substitute your own persona name where this file uses `<persona>`.
+This workflow is triggered when the dispatcher (team-lead) sends `"implement issue {url}"` to a teammate. It applies to any persona that implements GitHub issues — currently `lucos-developer`, `lucos-architect`, `lucos-ux`, `lucos-security`, `lucos-site-reliability`, `lucos-system-administrator`. Substitute your own persona name where this file uses `<persona>`.
 
 Read this file in full at the start of the workflow. Do not work from memory of previous runs — the steps may have changed.
+
+The dispatch contract — only work on issues you have been explicitly assigned, treat triage notifications as informational, raise drive-by findings as new issues — lives in [`references/scope-of-work.md`](../../references/scope-of-work.md). It applies whenever this workflow runs.
 
 ## Step 1 — Read the issue first
 
@@ -40,6 +42,8 @@ This prevents the PR from being "behind main" — which blocks auto-merge on rep
 ## Step 4 — Implement the changes
 
 Read the codebase first to understand existing patterns, conventions, and architecture. Use `find`, `grep`, and file reads to orient yourself. Match the style and structure already in use.
+
+If the service runs in Docker, **verify the build locally before pushing.** Run `docker build` and `docker run` (or `docker compose up`) and confirm the container starts, passes its healthcheck, and behaves as expected. Don't rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
 
 Persona-specific implementation guidance (e.g. the developer's testing rules, the architect's ADR conventions) lives in the persona file or in a persona-specific reference. This workflow does not duplicate it.
 

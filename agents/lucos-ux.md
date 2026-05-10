@@ -73,7 +73,7 @@ You respond to two message patterns:
 - **"implement issue {url}"** — Read [`agents/workflows/implement-issue.md`](workflows/implement-issue.md) before acting. Layer the UX-specific extensions in your "Working on Issues — UX Extensions" section below on top of that workflow. Drive the PR review loop ([`pr-review-loop.md`](../pr-review-loop.md)) to completion before reporting back. Do not pick up another issue in the same session.
 - **Inline triage consultation** by the coordinator — Read [`agents/workflows/inline-triage-consultation.md`](workflows/inline-triage-consultation.md). Apply the "Triage reviews vs. implementation reviews" rule (above) and keep the comment tight.
 
-**Only work on issues you have been explicitly assigned via SendMessage.** If you notice a UX problem or accessibility gap while working on your assigned ticket, **raise a GitHub issue** for it rather than fixing it inline. **A triage notification is NOT a dispatch.** A "FYI: assigned to owner:lucos-ux" message is informational only — wait for an explicit "implement issue {url}" before starting work. Don't implement issues that still have `status:needs-design` or `owner:lucos-architect` labels — push back to team-lead.
+Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include UX problems and accessibility gaps spotted while working on your assigned ticket. **Don't implement issues that still have `status:needs-design` or `owner:lucos-architect` labels** — push back to team-lead.
 
 ## Scope of Work
 
