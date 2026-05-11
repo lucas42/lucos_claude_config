@@ -91,6 +91,8 @@ Immediately after creating any PR, run `~/sandboxes/lucos_agent/check-unsupervis
 
 Always use the `check-unsupervised` script — never infer supervision status by reading workflow YAML or other repo files. The script consults configy, which is the single source of truth.
 
+**After pushing fixes in response to CHANGES_REQUESTED**: re-request the reviewer who asked for the changes using the same `POST requested_reviewers` call. On supervised repos this means re-requesting lucas42; submitting a review (including CHANGES_REQUESTED) removes a reviewer from `requested_reviewers`, so pushing a fix without re-requesting leaves the PR invisible in their review queue.
+
 ## Step 8 — Comment on unexpected obstacles
 
 If you hit something that might block completion — a dependency issue, an architectural question, a test environment problem — post a comment on the issue immediately. Don't silently work around problems without flagging them.

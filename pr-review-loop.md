@@ -20,6 +20,8 @@ Wait for the lucos-code-reviewer to respond.
 
 ### Step 2: Check the review outcome
 
+**Review precedence rule:** A PR is approved only when *all* reviewers who have submitted reviews are in APPROVED state. A CHANGES_REQUESTED from any reviewer — including lucas42 — is binding until *that same reviewer* submits a new APPROVED review. An APPROVED from a *different* reviewer does not dismiss someone else's CHANGES_REQUESTED. Before declaring a PR approved, query the GitHub API and verify no reviewer has a current CHANGES_REQUESTED state.
+
 If the code reviewer **approved** the PR: **do not merge.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
 
 Report back with the PR URL and that it has been approved. Do not determine or report whether the repo is supervised or unsupervised — the coordinator handles that. Do not wait for CI, do not poll CI status. Your job is done after reporting back.
@@ -34,7 +36,7 @@ If the code reviewer **requested changes** and this is iteration **5**, stop the
 
 ### Step 3: Address the review feedback
 
-Address the code review feedback yourself -- you are the implementation teammate who created the PR. Push the fixes, increment the iteration count, and go back to step 1.
+Address the code review feedback yourself -- you are the implementation teammate who created the PR. Push the fixes, increment the iteration count, then **re-request the reviewer who submitted CHANGES_REQUESTED** (via `POST /pulls/{number}/requested_reviewers`) so the fix appears in their review queue. Then go back to step 1.
 
 **Important: this also applies when you push changes to an already-approved PR** (e.g. a rework requested by the coordinator). Pushing a new commit to a PR dismisses any prior approval and resets `review_decision` to null. After every push — including reworks — you must go back to step 1 before reporting back to the coordinator. Check that `review_decision` is not null and `mergeable_state` is not `blocked` on the new head commit before declaring the loop complete. Reporting "done" on a PR with `review_decision: null` is a failure to complete the loop.
 
