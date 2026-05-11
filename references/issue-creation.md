@@ -51,3 +51,7 @@ When asked to create a new issue:
    The same rule applies to `PATCH` calls that update an existing issue body (`repos/.../issues/{number}` with `--method PATCH`) and to comments (`repos/.../issues/{number}/comments`).
 
 5. **Add the issue to the project board** immediately after creation. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
+
+6. **Hand off to the coordinator for triage.** Label management (applying `agent-approved` / `needs-refining`, status, priority, owner) and board field assignment beyond initial placement are coordinator-only responsibilities — non-coordinator personas have a standing rule against managing labels (see `~/.claude/references/label-workflow.md`). After filing the issue and adding it to the board, send the issue URL to the coordinator (`team-lead`) via SendMessage so they can complete triage.
+
+   **If you ARE the coordinator**, triage the issue inline yourself — assess against the triage criteria, apply the appropriate labels, set the Status/Priority/Owner fields on the board, and position by priority. Follow the procedure in `~/.claude/references/triage-procedure.md`. Do not park the issue and wait for a separate triage pass.
