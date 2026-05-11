@@ -48,6 +48,7 @@
 - [Don't act on ambiguous user replies](feedback_ambiguous_user_reply.md) — if a reply could answer either of two posed questions, ask which; avoid parallel-labeling collisions across sections
 - [Scope checks belong to reviewer](feedback_scope_checks_belong_to_reviewer.md) — PR-scope-vs-issue verification is code-reviewer's responsibility, not the coordinator's
 - [Ask about the plan first](feedback_ask_about_the_plan_first.md) — when relaying a multi-part agent plan, AskUserQuestion must lead with a plan-shape question, not just the niche details the agent flagged
+- [Re-fetch before accusing](feedback_refetch_before_accusing.md) — when a coordinator message contains a factual claim about another agent's GitHub state, re-fetch right before send, not at start of composing
 
 ## Active Projects
 
