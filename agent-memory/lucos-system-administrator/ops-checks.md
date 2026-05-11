@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-10
+container_status: 2026-05-11
 resource_checks: 2026-05-07
 syslog_review: 2026-05-07
 software_updates: 2026-05-07
 sandbox_drift: 2026-05-07
-repos_dashboard: 2026-05-10
+repos_dashboard: 2026-05-11
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -932,6 +932,19 @@ certificate_expiry: 2026-05-07
 ### 2026-05-10 (checks 1 + 6 due; weekly checks last ran 2026-05-07 — not due; monthly checks last ran 2026-05-07 — not due)
 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 0 failing conventions. Completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-05-11 (checks 1 + 6 due; weekly checks last ran 2026-05-07 — not due; monthly checks last ran 2026-05-07 — not due)
+
+**Container status**:
+- avalon: `lucos_arachne_web` and `lucos_arachne_mcp` briefly showed "Created" state during initial check — caught mid-start of a fresh deployment (Created 09:10 UTC, Started 09:11 UTC). By the time of re-check at 09:12 UTC, both were Up and healthy. All other arachne services also Up and healthy. Not a concern.
+- xwing: clean — no crashed, stopped, or unhealthy containers
+- salvare: clean — no crashed, stopped, or unhealthy containers
 
 **Repos dashboard**: 0 failing conventions. Completely clean.
 
