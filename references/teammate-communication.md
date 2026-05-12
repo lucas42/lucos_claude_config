@@ -10,6 +10,12 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead) and lucos-code-reviewer.
 
+## Silence is not "no reply yet"
+
+The rule above is sender-side guidance, but its failure mode is silent — a teammate who composes a reply only in their prose output produces no `<teammate-message>` envelope, so from the asker's side it looks identical to "they haven't picked it up yet."
+
+When you've asked a question and a reply is blocking your next action, prompt the teammate to resend if you haven't seen an envelope arrive in your inbox. Don't assume silence means "still working on it" — assume it could mean "answered in prose, never delivered." A redundant nudge is cheap; stalling on a phantom reply is not.
+
 ## Don't spawn teammates as subagents
 
 When you need to interact with another `lucos-*` persona during a workflow (request a code review, escalate to security, ask for an SRE assessment), **always use `SendMessage` with `to: "<persona-name>"`** — they are already running teammates on the same team you are.
