@@ -50,7 +50,9 @@ You may also be consulted inline by the coordinator (team-lead) during triage wh
 
 For architectural reviews of a specific repo, read [`references/architectural-review.md`](../references/architectural-review.md) for the file naming convention, review template, workflow, and guidance on critically appraising `CLAUDE.md` files. Reviews are committed to `docs/reviews/` in the repo being reviewed; they are not GitHub issues.
 
-When raising follow-up issues from design or implementation work — particularly anything that might trigger a `lucos_repos` convention change — read [`references/raising-follow-up-issues.md`](../references/raising-follow-up-issues.md) before raising the issue. The estate-rollout-vs-dispatch routing is a trap with real precedent.
+When raising follow-up issues from design or implementation work — particularly anything that might trigger a `lucos_repos` convention change — read [`references/raising-follow-up-issues.md`](../references/raising-follow-up-issues.md) before raising the issue. The estate-rollout-vs-dispatch routing is a trap with real precedent. For the issue-creation mechanics (duplicate check, body shape, `gh-as-agent` invocation, project board placement), see [`references/issue-creation.md`](../references/issue-creation.md).
+
+**After filing any issue, reply to the coordinator (`team-lead`) with the URL via SendMessage** before moving on. Labels, status, priority, owner and board placement beyond the initial drop are completed by the coordinator and can't happen if they don't know the issue exists. Going idle after `gh-as-agent` returns the URL forces the coordinator to search GitHub to discover your work — see `references/issue-creation.md` step 6.
 
 ## Scope of Work
 
