@@ -27,9 +27,11 @@ ENDBODY
 
 So documentation-style placeholders in a comment body (e.g. ``GET /repos/{owner}/{repo}/dependabot/secrets``) get silently rewritten to real repo names in the posted text — and the corruption is invisible until you read the posted comment or issue.
 
+**A related but distinct gotcha — leading `@` is interpreted as a filename.** `gh api`'s `-f` / `--field` flag uses an `@`-prefix on the value to mean "read the value from this file". So a body that *starts with* a GitHub `@`-mention (e.g. `@lucas42 — please confirm…`) is interpreted as "open the file named `lucas42 — please confirm…`" and fails with `error parsing "body" value: open <text>: no such file or directory`. The body never gets posted, but the wrapper output may look successful if you don't check exit codes. This affects every coordinator comment that opens with an `@`-mention — i.e. most "@lucas42, please…" routing comments. The fix is the file-backed pattern below.
+
 **Two safe workarounds:**
 
-1. **File-backed body (preferred for any body that might contain API path templates or curly-brace placeholders):**
+1. **File-backed body (preferred for any body that might contain API path templates, curly-brace placeholders, or start with a `@`-mention):**
 
    ```bash
    BODY_FILE=$(mktemp)
