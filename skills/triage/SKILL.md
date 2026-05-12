@@ -34,8 +34,9 @@ This returns a JSON array of all issues that currently need your attention. An i
 - **Unlabelled** — has never been triaged; needs initial triage.
 - **`needs-refining`** and the most recent comment is NOT from `lucos-issue-manager[bot]` — an owner agent has probably completed work and the issue needs a label transition (or someone has replied and it needs another look).
 - **`owner:lucos-issue-manager`** — explicitly routed back to you for action.
+- **`agent-approved` with a fresh `lucas42` comment** — the issue was previously approved as ready, but `lucas42` has commented more recently than the most recent `lucos-issue-manager[bot]` comment. The comment may be a substantive scope change (re-triage needed), a clarification to bake into the body, or an FYI. Re-evaluate per [`triage-procedure.md`](../../references/triage-procedure.md)'s **"If lucas42 has commented on an already-approved issue"** section.
 
-Issues labelled `agent-approved` are never included. Pull requests and archived repositories are excluded.
+Pull requests and archived repositories are excluded.
 
 Work through each issue using the full triage procedure in `~/.claude/references/triage-procedure.md`. Also read `~/.claude/references/triage-reference-data.md` for project board IDs, field mappings, and API patterns. When consulting agents during triage, wait for each response before re-assessing the issue. Triage is complete when all issues are processed and all consultations are resolved.
 

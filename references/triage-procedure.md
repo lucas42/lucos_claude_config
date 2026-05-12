@@ -65,6 +65,18 @@ When all three hold, raising a GitHub issue adds coordinator triage overhead and
 
 **Triage decisions are made from the ticket — not from out-of-band context.** The implementer only sees the ticket. Before any triage action: (a) anything a teammate sent you alongside the issue (SendMessage summaries, analysis, recommendations) counts only if it is also in the body or a comment — add it first if not; (b) reconcile title and body with comments — if comments contain revised approach, new constraints, refined scope, corrected assumptions, or dependency changes, update title and body to reflect the current understanding.
 
+### If lucas42 has commented on an already-approved issue
+
+The triage discovery surfaces `agent-approved` issues where `lucas42` has commented more recently than the most recent `lucos-issue-manager[bot]` comment. This is the **re-triage trigger** for issues that have moved past initial approval. Re-fetch the body, all comments, and reactions, then decide:
+
+- **Substantive change requested** (revised scope, new blocker, decision lucas42 wants made differently, rethinking the approach) → flip labels back. Remove `agent-approved`; add `needs-refining` + the appropriate status (`status:awaiting-decision` if lucas42 needs to choose between options he's listed; `status:needs-design` if an agent needs to think it through; `status:ideation` if the scope is now genuinely vague again). Re-apply the appropriate `owner:*` label. Update the body to reflect the revised understanding. Reposition on the project board. Then run the rest of Step 3 normally from the new state.
+
+- **Clarification or FYI only** (extra context, answers a question, confirms a detail, but doesn't change what gets built) → post a brief acknowledgement comment, leave labels as-is. **Also: consider whether the clarification belongs in the issue body or title.** The implementer reads the body, not the comment history; baking the clarification into the body (or refining the title) means the next reader doesn't have to scroll through comments to understand the issue. Don't paraphrase — quote or restructure cleanly so the new content integrates with the existing body. If you do edit the body, mention this in your acknowledgement comment ("Updated the body to bake in your clarification about X").
+
+Posting any `lucos-issue-manager[bot]` comment clears the re-triage flag (since the IM is now the most recent commenter), so each lucas42 comment gets exactly one re-triage cycle. **Do not skip the ack comment** — without it, the flag stays set and the same issue keeps reappearing on every triage pass.
+
+This rule applies even when the only "change" appears trivial — read the comment in full before classifying. lucas42 sometimes raises a clarification that looks superficial but reveals a scope assumption worth revisiting.
+
 ### If there are agreed changes to make to the issue
 
 Check the changes have been suggested or approved by `lucas42` or by a consulted agent whose input is uncontroversial. Update the issue body with the agreed clarifications/scope changes:
