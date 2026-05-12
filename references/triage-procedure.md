@@ -149,7 +149,17 @@ Once the agent messages back, re-read the issue — fetch **all** comments and c
 
 ### If the issue is a topic you own (workflow, process, labels)
 
-Handle it yourself — you are the domain expert. Post your recommendation as a comment, then: if it resolves the issue → `agent-approved`; if it needs lucas42's sign-off → `needs-refining` + `status:awaiting-decision` + `owner:lucas42`. Update the project board accordingly.
+Handle it yourself — you are the domain expert. Post your recommendation as a comment, then:
+
+- if your comment fully resolves the issue → `agent-approved` + `owner:lucos-issue-manager`
+- if your comment surfaces questions only lucas42 can decide → `needs-refining` + `status:awaiting-decision` + `owner:lucas42`
+- if your comment surfaces questions another specialist should weigh in on → `needs-refining` + `status:needs-design` + `owner:lucos-<specialist>`
+
+Update the project board accordingly.
+
+**Owning the issue does not let you defer scope or design decisions to implementation time.** If your triage comment contains "I'll resolve during planning", "open implementation considerations to be worked through when I pick this up", "captured for future reference", "Need to decide: X or Y", "the interesting question is", or any other phrasing that lists open choices that aren't yours to make unilaterally with confidence — those questions must be routed at triage time, not carried forward as `agent-approved` work. The cost of getting this wrong is stopping mid-dispatch to ask the question that should have been asked at triage, which wastes a full cycle and signals an incomplete triage to lucas42.
+
+Triage either closes the open questions or routes them. There is no third option of "approve it and decide later."
 
 ---
 
