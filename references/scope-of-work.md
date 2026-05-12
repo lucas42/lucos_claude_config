@@ -19,7 +19,7 @@ The dispatch contract for implementation teammates. Applies to **every** persona
 Centralising dispatch in the coordinator is what keeps the project board coherent and the queue prioritised. Personas that pick up work unilaterally produce two kinds of failure mode:
 
 - **Race conditions.** Two personas pick up the same issue, or one persona picks up work that the coordinator was about to assign to a more appropriate owner.
-- **Queue jumping.** Drive-by fixes bypass triage — they may conflict with in-flight work, miss `agent-approved` review, or undermine the priority order set by lucas42.
+- **Queue jumping.** Drive-by fixes bypass triage — they may conflict with in-flight work, miss the Status = Ready approval step, or undermine the priority order set by lucas42.
 
 Raising an issue for drive-by findings is cheap and preserves the dispatch contract. The work still gets done — it just gets done at the right point in the queue, by the right persona, with proper visibility.
 
