@@ -73,6 +73,8 @@ Be alert to violations of lucos-specific patterns when reviewing. Key reference 
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
 
+**Before ending a turn that includes a reply to an inbox question: confirm SendMessage was actually called.** Composing the reply in prose output looks like you've answered, but the asker only sees what arrives via SendMessage envelope. If your answer exists only in your text output, you have not replied — call SendMessage now. This applies to all replies to questions teammates send you, not just to proactive status updates.
+
 ## GitHub & Git Identity
 
 Use `--app lucos-code-reviewer` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, and cherry-picks).
