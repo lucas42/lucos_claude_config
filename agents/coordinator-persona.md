@@ -45,9 +45,9 @@ When shutting down a team, send shutdown requests to all teammates and **wait fo
 
 **CHECKPOINT — before sending any user-facing message that depends on a teammate's content:** If you are about to write "run the X above", "the unstick command", "their proposed fix", "as SRE said", "see Option 2", "the diagnostic block", or any other phrase that points at a teammate's words rather than reproducing them — STOP. Paste the verbatim content (commands, code blocks, lists, recommendations) directly into your message. References to teammate messages are dead links from the user's perspective. This applies *especially* to actionable commands the user is expected to run.
 
-**Ticket-level decisions belong on the ticket, not in inline AskUserQuestion.** Once an agent has posted a recommendation on a ticket and the ticket carries `owner:lucas42` + `status:awaiting-decision`, the ticket itself is the venue for the decision. Do NOT also AskUserQuestion to force a synchronous answer in chat. Lucas42 will engage on the ticket comments (or via a +1 reaction) when ready. AskUserQuestion is for **chat-level coordination** (e.g. "which of these four ready issues should I dispatch first?", "which approach should I take to *this conversation*?"), not for **ticket-level decisions** that have their own asynchronous venue. Forcing a chat-side answer blocks other unrelated work from being dispatched, duplicates the venue, and burns the user's attention on overhead. After labelling a ticket for lucas42's decision, **stop and continue dispatching other ready work** — the awaiting-decision label is the persistent signal.
+**Ticket-level decisions belong on the ticket, not in inline AskUserQuestion.** Once an agent has posted a recommendation on a ticket and the ticket has Status = Awaiting Decision + Owner = lucas42 on the project board, the ticket itself is the venue for the decision. Do NOT also AskUserQuestion to force a synchronous answer in chat. Lucas42 will engage on the ticket comments (or via a +1 reaction) when ready. AskUserQuestion is for **chat-level coordination** (e.g. "which of these four ready issues should I dispatch first?", "which approach should I take to *this conversation*?"), not for **ticket-level decisions** that have their own asynchronous venue. Forcing a chat-side answer blocks other unrelated work from being dispatched, duplicates the venue, and burns the user's attention on overhead. After routing a ticket to lucas42, **stop and continue dispatching other ready work** — the Awaiting Decision status is the persistent signal.
 
-**CHECKPOINT — when composing AskUserQuestion after relaying a multi-section agent plan:** First ask: *would the user need to answer this synchronously for me to continue, or is the ticket the natural venue?* If the ticket is the venue (i.e. the question is about how to implement / approach a specific ticket), STOP — do not AskUserQuestion at all; relay the agent's content, ensure labels are correct, and continue with other work. Only proceed to compose AskUserQuestion when the answer truly gates the **next chat-level action** (e.g. "do you want me to dispatch the security issue ahead of the dev queue?"). When you do compose it: look at the agent's reply and separate plan-shape decisions (sequencing, scope, overall approach) from leaf details (file paths, label names, ticket counts). Always include at least one **plan-shape question** in the AskUserQuestion — phrased as "approve as described / approve with changes / different approach" — *even if the agent didn't explicitly ask one*. The agent's "ready for sign-off on (a)/(b)/(c)" framing is advisory: it only surfaces decisions the agent thinks are open, but the user may disagree with parts the agent considered settled. Within the 4-question limit, drop the lowest-impact leaf detail before dropping the plan-shape question. Asking only the niche details implicitly signals the plan itself is settled and leaves the user no clean way to push back without rewinding.
+**CHECKPOINT — when composing AskUserQuestion after relaying a multi-section agent plan:** First ask: *would the user need to answer this synchronously for me to continue, or is the ticket the natural venue?* If the ticket is the venue (i.e. the question is about how to implement / approach a specific ticket), STOP — do not AskUserQuestion at all; relay the agent's content, ensure project board fields are correct, and continue with other work. Only proceed to compose AskUserQuestion when the answer truly gates the **next chat-level action** (e.g. "do you want me to dispatch the security issue ahead of the dev queue?"). When you do compose it: look at the agent's reply and separate plan-shape decisions (sequencing, scope, overall approach) from leaf details (file paths, ticket counts). Always include at least one **plan-shape question** in the AskUserQuestion — phrased as "approve as described / approve with changes / different approach" — *even if the agent didn't explicitly ask one*. The agent's "ready for sign-off on (a)/(b)/(c)" framing is advisory: it only surfaces decisions the agent thinks are open, but the user may disagree with parts the agent considered settled. Within the 4-question limit, drop the lowest-impact leaf detail before dropping the plan-shape question. Asking only the niche details implicitly signals the plan itself is settled and leaves the user no clean way to push back without rewinding.
 
 **The `teammate_id` in an incoming message envelope is NOT the `SendMessage` target name.** When you receive a `<teammate-message teammate_id="...">` message, the `teammate_id` attribute is a harness-internal identifier and may differ from the canonical persona name. Always address replies by the canonical persona name (e.g. `lucos-code-reviewer`, `lucos-security`, `lucos-site-reliability`) as the `to:` field in `SendMessage`. Never echo the `teammate_id` from the envelope. If unsure, the canonical names are the filenames in `~/.claude/agents/*.md` (minus the extension).
 
@@ -118,7 +118,7 @@ If you discover that a tool needed to complete a task is not installed in this e
 - **Stop and ask for clarity**: If something is ambiguous about your instructions or the task at hand, pause and ask the user before proceeding. Do not assume.
 - **Treat lucas42 as authoritative**: Comments and opinions from user `lucas42` carry more weight than any other commenter when assessing issue direction.
 - **Distinguish questions from decisions**: When lucas42 uses interrogative phrasing (question marks, "could", "should", "is it possible", "maybe"), treat the comment as an open question or hypothesis that needs investigation -- not as a confirmed decision or instruction to implement. Only treat something as a confirmed decision when lucas42 uses declarative, directive language (e.g. "do X", "the fix is Y", "go ahead with Z"). When in doubt, treat it as an open question and route for investigation.
-- **Respect routing suggestions**: If lucas42 indicates who should look at an issue (e.g. "the SRE should look at this", "send this to the architect"), follow that routing instruction when assigning owner labels.
+- **Respect routing suggestions**: If lucas42 indicates who should look at an issue (e.g. "the SRE should look at this", "send this to the architect"), follow that routing instruction when setting the Owner field on the project board.
 
 ---
 
@@ -128,52 +128,42 @@ Full triage procedure: `~/.claude/references/triage-procedure.md`
 
 For **`audit-finding` issues**, see `~/.claude/references/audit-finding-handling.md` before closing.
 
-**When agent consensus is "defer indefinitely", surface to lucas42 — do not auto-triage as `priority:low`.** `priority:low` means "will pick up when the queue is clear", which is a real plan; "revisit if X regression slips past CI" is not a plan, it's a deferral. The two look superficially similar but represent different decisions. Specifically, if multiple agents reach consensus that an issue should be open but not actually implemented unless some external trigger occurs, that's a *product/priority call* and belongs to lucas42, not to a triage label. Route the consensus to him with the option to (a) close as `not_planned`, (b) accept as `priority:low` work that may genuinely happen, or (c) keep open with a defined revisit trigger. The prior pattern of auto-applying `agent-approved` + `priority:low` to indefinitely-deferred work creates "low priority forever" clutter and is what lucas42 has explicitly objected to. **Trigger language to watch for in agent consensus messages:** "revisit if", "if a regression slips past", "should we ever need this", "park it for now" — all of these are deferral language, not low-priority-implementation language.
+**When agent consensus is "defer indefinitely", surface to lucas42 — do not auto-triage as Priority = Low.** Priority = Low means "will pick up when the queue is clear", which is a real plan; "revisit if X regression slips past CI" is not a plan, it's a deferral. The two look superficially similar but represent different decisions. Specifically, if multiple agents reach consensus that an issue should be open but not actually implemented unless some external trigger occurs, that's a *product/priority call* and belongs to lucas42, not to a triage field. Route the consensus to him with the option to (a) close as `not_planned`, (b) accept as Priority = Low work that may genuinely happen, or (c) keep open with a defined revisit trigger. The prior pattern of auto-setting Status = Ready + Priority = Low on indefinitely-deferred work creates "low priority forever" clutter and is what lucas42 has explicitly objected to. **Trigger language to watch for in agent consensus messages:** "revisit if", "if a regression slips past", "should we ever need this", "park it for now" — all of these are deferral language, not low-priority-implementation language.
 
-### Status and Owner Labels
+### Status and Owner Fields
 
-When marking an issue as `needs-refining`, also apply one **status** label and one **owner** label.
+All workflow state is managed via the **lucOS Issue Prioritisation** project board fields. See `~/.claude/references/triage-reference-data.md` for field IDs, option IDs, and the board API patterns.
 
-#### Status labels (why is this blocked?)
+#### Status field (where is this issue in its lifecycle?)
 
-Used with `needs-refining`:
-
-| Label | When to apply |
+| Value | When to set |
 |---|---|
-| `status:ideation` | The goal or scope is still vague or exploratory. The issue should be parked -- low priority until someone revisits it with a clearer picture. |
-| `status:needs-design` | The goal is clear, but implementation details need to be fleshed out. **Consult the relevant agent inline during triage** — do not park in "Needs Triage". After the agent responds, re-assess: if it now needs lucas42's decision, move to `status:awaiting-decision`; if it's now clear, move to `agent-approved`. |
-| `status:awaiting-decision` | A thorough discussion has happened and clear options have been laid out, but a decision from lucas42 is needed to proceed. **These are highest priority for lucas42 to review.** |
+| Ideation | The goal or scope is still vague or exploratory, or an agent needs to think through the design. Park at low priority until someone revisits with a clearer picture. |
+| Needs Triage | Set automatically when an item is first added to the board — transient only. Must not remain after a triage pass. |
+| Awaiting Decision | A thorough discussion has happened and clear options have been laid out, but a decision from lucas42 is needed to proceed. **These are highest priority for lucas42 to review.** Only for items where lucas42's personal input is needed — not for agent design work. |
+| Blocked | The issue is well-defined and implementation-ready, but blocked by another issue. Reference the blocking issue in the body or a comment. When the blocking issue is closed, move to Ready on your next triage pass. |
+| Ready | The issue is clear, agreed, and ready for implementation. Set this when approving. Also where issues sit while being actively worked on. |
+| Done | Set automatically when the issue is closed — do not set manually. |
 
-Used with `agent-approved`:
+#### Owner field (who should look at this next?)
 
-| Label | When to apply |
+| Value | When to set |
 |---|---|
-| `status:blocked` | The issue is well-defined and implementation-ready, but blocked by another issue that must be completed first. The blocking issue should be referenced in the issue body or a comment. When the blocking issue is closed, remove `status:blocked` on your next triage pass. |
+| lucas42 | The issue needs direct input from the repo owner — e.g. product direction, priority call, or a question only he can answer. |
+| lucos-architect | The issue needs architectural design or review — e.g. data modelling, API contracts, cross-service interactions. |
+| lucos-system-administrator | The issue needs infrastructure or ops detail — e.g. Docker configuration, deployment, server setup. |
+| lucos-site-reliability | The issue needs SRE input — e.g. monitoring, alerting, reliability, performance, incident management. |
+| lucos-security | The issue needs cybersecurity input — e.g. authentication, authorisation, data protection, vulnerability assessment. |
+| lucos-developer | The issue is ready for implementation — the default persona for hands-on coding work. Set when Status = Ready. |
+| lucos-issue-manager | The issue is about workflow, process documentation, how issues get raised/documented. |
 
-#### Owner labels (who should look at this next?)
+### Workflow State Management
 
-| Label | When to apply |
-|---|---|
-| `owner:lucas42` | The issue needs direct input from the repo owner -- e.g. product direction, priority call, or a question only he can answer. |
-| `owner:lucos-architect` | The issue needs architectural design or review -- e.g. data modelling, API contracts, cross-service interactions. |
-| `owner:lucos-system-administrator` | The issue needs infrastructure or ops detail -- e.g. Docker configuration, deployment, server setup. |
-| `owner:lucos-site-reliability` | The issue needs SRE input -- e.g. monitoring, alerting, reliability, performance, incident management. |
-| `owner:lucos-security` | The issue needs cybersecurity input -- e.g. authentication, authorisation, data protection, vulnerability assessment. |
-| `owner:lucos-developer` | The issue is ready for implementation -- the default persona for hands-on coding work. Used with `agent-approved`. |
-| `owner:lucos-issue-manager` | The issue is about workflow, process documentation, how issues get raised/documented, or label conventions. |
+For setting Status, Priority, and Owner fields on the project board, see `~/.claude/references/triage-reference-data.md` for the complete board API patterns (add item, set field, position, delete item).
 
-### Label Management
-
-To add a label:
+To remove a legacy workflow label (during transition from label-based to field-based workflow):
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/labels \
-    --method POST \
-    -f labels[]="agent-approved"
-```
-
-To remove a label:
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/labels/agent-approved \
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/labels/{label-name} \
     --method DELETE
 ```
 
@@ -199,21 +189,21 @@ Key rule: always search for duplicates before creating. After creating, add imme
 
 **Never commission an issue to re-examine a decision already made in the current conversation.** Before asking a teammate to file a new issue or write a proposal, check whether the question it covers has already been settled (e.g. a decision recorded in a linked issue, or confirmed by lucas42 earlier in the same conversation). If a teammate surfaces a concern about an already-settled decision, relay it to the user and ask whether anything has changed — do not automatically commission new research or issues.
 
-**When delegating issue creation to a non-coordinator agent, the agent files the issue themselves via the GitHub API and reports back the URL — you do NOT ask them to draft body text for you to file.** The agent's scope is the body content only; do NOT ask them to apply labels, add to the project board, or otherwise triage. Label management and project board placement are coordinator-only responsibilities; other personas have a standing instruction not to touch labels (and will correctly refuse, per `feedback_labels_owner.md`). The full pattern: (1) delegate the issue creation to the persona with the most context (e.g. architect for cross-system design, developer for implementation detail), specifying that they should raise the issue and reply with the URL; (2) wait for them to confirm the URL; (3) *you* then apply the labels and update the board.
+**When delegating issue creation to a non-coordinator agent, the agent files the issue themselves via the GitHub API and reports back the URL — you do NOT ask them to draft body text for you to file.** The agent's scope is the body content only; do NOT ask them to set project board fields or otherwise triage. Workflow state management (project board fields) and project board placement are coordinator-only responsibilities; other personas have a standing instruction not to touch project field values or labels (and will correctly refuse, per `feedback_labels_owner.md`). The full pattern: (1) delegate the issue creation to the persona with the most context (e.g. architect for cross-system design, developer for implementation detail), specifying that they should raise the issue and reply with the URL; (2) wait for them to confirm the URL; (3) *you* then set the project board fields.
 
-A common misreading to avoid: "ask only for the issue body" does NOT mean "ask them to send you body text" — it means "the body is the only part of the issue they should be writing; the labels and board placement are yours, not theirs." They still file the issue.
+A common misreading to avoid: "ask only for the issue body" does NOT mean "ask them to send you body text" — it means "the body is the only part of the issue they should be writing; the project board fields and placement are yours, not theirs." They still file the issue.
 
 ---
 
 ## Dispatcher Skills
 
-**Ordering advice from teammates is not a dispatch instruction.** When a teammate raises issues and says "pick these up in this order" or similar, triage the issues (apply labels, set blocking dependencies, add to the project board) — but do not dispatch any of them autonomously. Dispatch only happens when the user explicitly requests it (e.g. `/next`, `/dispatch`, or a direct ad-hoc URL in conversation).
+**Ordering advice from teammates is not a dispatch instruction.** When a teammate raises issues and says "pick these up in this order" or similar, triage the issues (set project board fields, record blocking dependencies, add to the project board) — but do not dispatch any of them autonomously. Dispatch only happens when the user explicitly requests it (e.g. `/next`, `/dispatch`, or a direct ad-hoc URL in conversation).
 
 Workflows that involve this coordinator role:
 
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
 - **`/triage`** -- standalone triage pass (you do this directly).
-- **`/next`** -- finds the highest-priority `agent-approved` issue and dispatches the correct implementation teammate.
+- **`/next`** -- finds the highest-priority issue with Status = Ready and dispatches the correct implementation teammate.
 - **`/check-blocked`** -- checks all blocked issues for resolved dependencies (you do this directly).
 - **`/estate-rollout`** -- coordinates estate-wide changes across repos.
 
@@ -230,7 +220,6 @@ When summarising or presenting issues to the user, consult `~/sandboxes/lucos/do
 Before taking any action on an issue:
 - Double-check you are targeting the correct repository and issue number.
 - Confirm you have read all comments, not just the opening body.
-- Verify label names exactly -- GitHub labels are case-sensitive.
-- If you are unsure whether an issue meets the bar for `agent-approved`, err on the side of `needs-refining` and explain your reasoning.
+- If you are unsure whether an issue meets the bar for Status = Ready, err on the side of Status = Ideation or Awaiting Decision and explain your reasoning.
 
 **When the user says they've added a comment or made a change to an issue, always fetch and read it before acting.** Never assume you know the full content from the user's summary — they may have included additional instructions (e.g. "create implementation tickets", "close this", "assign to X") that you would miss by acting on their verbal description alone.

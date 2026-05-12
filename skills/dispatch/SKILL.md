@@ -4,7 +4,7 @@ description: Guardrailed dispatch of a single GitHub issue to the correct implem
 disable-model-invocation: false
 ---
 
-Follow this process. The issue URL is provided as the first argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). An optional `owner:{name}` argument may follow (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`). If provided, use that owner for dispatch in Step 5 without querying labels or the project board. Do not ask for clarification -- immediately begin.
+Follow this process. The issue URL is provided as the first argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). An optional `owner:{name}` argument may follow (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`). If provided, use that owner for dispatch in Step 5 without querying the project board. Do not ask for clarification -- immediately begin.
 
 ## Step 1: Parse the issue URL and fetch issue data
 
@@ -14,7 +14,7 @@ Extract the repository (`{owner}/{repo}`) and issue number from the URL. Fetch t
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/{owner}/{repo}/issues/{number}
 ```
 
-Read the full issue body and note the current labels.
+Read the full issue body.
 
 ## Step 2: Pre-dispatch dependency check
 
@@ -65,13 +65,9 @@ If the issue is not an estate rollout (e.g. it's a bug fix, API change, dashboar
 
 If an `owner:{name}` argument was provided (see top of this file), use that directly — skip the lookup below.
 
-Otherwise, look up the owner from the **project board** (the source of truth for issue ownership). Query the issue's project board item to find the Owner field. If the issue is not on the project board, fall back to checking issue labels for `owner:*` labels:
+Otherwise, look up the owner from the **project board** (the source of truth for issue ownership). Query the issue's project board item to find the Owner field value. See `~/.claude/references/triage-reference-data.md` for the board query pattern. If the Owner field is not set, the issue has not been properly triaged — report this to the user and stop.
 
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} --jq '[.labels[].name | select(startswith("owner:"))] | first'
-```
-
-Extract the teammate name by stripping the `owner:` prefix (e.g. `owner:lucos-developer` becomes teammate `lucos-developer`). Send a message to that teammate using SendMessage, passing the **specific issue URL** so they know exactly what to work on. For example:
+The Owner field value is the teammate name directly (e.g. `lucos-developer`). Send a message to that teammate using SendMessage, passing the **specific issue URL** so they know exactly what to work on. For example:
 
 > "implement issue https://github.com/lucas42/lucos_photos/issues/42"
 
@@ -93,21 +89,16 @@ If a PR was created and approved:
    ```
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
-3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Search the **entire org** for open issues with `status:blocked` that reference the closing issue number in their body **or comments**. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), and a blocking dependency is often added in a comment after the issue was originally raised — so searching only `in:body` will miss real dependents.
-   ```bash
-   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager 'search/issues?q=org:lucas42+is:open+label:"status:blocked"+{issue_number}+in:body,comments'
-   ```
-   For each result, read the full issue body **and all comments** to confirm it actually references the closing issue as a dependency (not just a casual mention). For confirmed dependents, verify that **all** their dependencies are resolved before removing `status:blocked` — not just the one that was just closed.
+3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Query the project board for all items with Status = Blocked (option ID `d79b6b67`), paginating until exhausted. For each Blocked item, fetch the issue body **and all comments** to check whether the closing issue is referenced as a dependency. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), and a blocking dependency is often added in a comment after the issue was originally raised — so checking only the body will miss real dependents. For confirmed dependents, verify that **all** their dependencies are resolved before unblocking — not just the one that was just closed.
 
-   **When unblocking an issue, you MUST do all three of the following — removing the label and updating the Status without repositioning leaves the issue stranded at the bottom of the queue:**
-   1. Remove the `status:blocked` label from the issue.
-   2. Update the project board Status field from Blocked → Ready (option ID `3aaf8e5e`).
-   3. **Reposition the item per its priority.** When a Status field changes, the item keeps its existing global position on the board — it does NOT move to the top of the new column. So an unblocked item lands at whatever board position it had when blocked (typically the bottom). Apply the standard priority-positioning rules:
-      - **`priority:critical` or `priority:high`**: call `updateProjectV2ItemPosition` with no `afterId` to move to the top.
-      - **`priority:medium`**: position with `afterId` set to the last `priority:high` item in Ready, so the medium item lands above other mediums but below highs.
-      - **`priority:low`**: leave at bottom (no repositioning needed).
+   **When unblocking an issue, you MUST do all three of the following — updating the Status without repositioning leaves the issue stranded at the bottom of the queue:**
+   1. Update the project board Status field from Blocked → Ready (option ID `3aaf8e5e`).
+   2. **Reposition the item per its priority.** When a Status field changes, the item keeps its existing global position on the board — it does NOT move to the top of the new column. So an unblocked item lands at whatever board position it had when blocked (typically the bottom). Apply the standard priority-positioning rules:
+      - **Critical or High**: call `updateProjectV2ItemPosition` with no `afterId` to move to the top.
+      - **Medium**: position with `afterId` set to the last High item in Ready, so the medium item lands above other mediums but below highs.
+      - **Low**: leave at bottom (no repositioning needed).
 
-      Without this step, the work has been "unblocked" in name only — `/next` won't see it ahead of older items, and you'll incorrectly claim it's "next in line" if you reason from memory rather than the board. (Lesson from 2026-05-05: I unblocked lucos_media_seinn#425, said it was next, then `/next` returned a different priority:high issue because #425 was sitting at the bottom of Ready.)
+      Without this step, the work has been "unblocked" in name only — `/next` won't see it ahead of older items, and you'll incorrectly claim it's "next in line" if you reason from memory rather than the board. (Lesson from 2026-05-05: I unblocked lucos_media_seinn#425, said it was next, then `/next` returned a different high-priority issue because #425 was sitting at the bottom of Ready.)
 
    Read `~/.claude/references/triage-reference-data.md` for the full board API patterns.
 
