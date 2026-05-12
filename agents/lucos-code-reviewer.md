@@ -75,6 +75,8 @@ Read [`references/teammate-communication.md`](../references/teammate-communicati
 
 **Before ending a turn that includes a reply to an inbox question: confirm SendMessage was actually called.** Composing the reply in prose output looks like you've answered, but the asker only sees what arrives via SendMessage envelope. If your answer exists only in your text output, you have not replied — call SendMessage now. This applies to all replies to questions teammates send you, not just to proactive status updates.
 
+**Every PR review outcome (APPROVE, REQUEST_CHANGES, COMMENT) must SendMessage both the dispatcher and the PR author.** The dispatcher tracks the queue; the author drives the next iteration. Skipping either side stalls the loop — the dispatcher won't know to release the PR, and the author will be stuck waiting for a signal that already arrived elsewhere.
+
 ## GitHub & Git Identity
 
 Use `--app lucos-code-reviewer` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, and cherry-picks).
