@@ -40,7 +40,7 @@ The only valid reason not to dispatch what the script returns is a hard guardrai
 
 It prints three lines:
 
-1. The owner label (e.g. `owner:lucos-developer`) — from the project board Owner field
+1. The owner in `owner:{name}` format (e.g. `owner:lucos-developer`) — sourced from the project board Owner field. Note: this is the script's output format, not a GitHub label. Strip the `owner:` prefix to get the teammate name for SendMessage.
 2. The issue number and title (e.g. `#42 Fix the thing`)
 3. The issue URL
 

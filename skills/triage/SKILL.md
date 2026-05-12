@@ -96,12 +96,62 @@ During each triage pass, also check for issues with Status = Blocked whose depen
 
 Once triage is done, compile a prioritised list of issues that need the user's attention. This means any open issue with Owner = lucas42 on the project board — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
 
-To find them, query the project board for items with Owner = lucas42 (option ID `f2527ea3`) that are not Done. Use the same paginated board query pattern from `~/.claude/references/triage-reference-data.md`, filtering `fieldValues` for Owner = lucas42, then cross-referencing the linked issue's `state` to exclude closed ones. Example approach:
+To find them, query the project board for items with Owner = lucas42 (option ID `f2527ea3`) that are not closed, sorted by priority:
 
 ```python
-# Query board items, filter for Owner = lucas42, exclude State = CLOSED
-# Use fieldValues to find Owner option, check content.state != "CLOSED"
-# See triage-reference-data.md for the board query pattern
+import os, subprocess, json
+
+GH_PROJECTS = os.path.expanduser("~/sandboxes/lucos_agent/gh-projects")
+PRIORITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
+BOARD_QUERY = """{
+  node(id: "PVT_kwHOAAaLL84BRh5d") {
+    ... on ProjectV2 {
+      items(first: 100%s) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          content {
+            ... on Issue { title url state }
+          }
+          fieldValues(first: 10) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field { ... on ProjectV2SingleSelectField { name } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}"""
+
+cursor, results = None, []
+while True:
+    after = f', after: "{cursor}"' if cursor else ""
+    r = subprocess.run(
+        [GH_PROJECTS, "graphql", "-f", f"query={BOARD_QUERY % after}"],
+        capture_output=True, text=True, check=True,
+    )
+    items = json.loads(r.stdout)["data"]["node"]["items"]
+    for node in items["nodes"]:
+        c = node.get("content") or {}
+        if c.get("state") == "CLOSED":
+            continue
+        fields = {
+            fv["field"]["name"]: fv["name"]
+            for fv in (node.get("fieldValues") or {}).get("nodes", [])
+            if fv and "field" in fv and "name" in fv
+        }
+        if fields.get("Owner") == "lucas42":
+            results.append({**c, "priority": fields.get("Priority", "")})
+    if not items["pageInfo"]["hasNextPage"]:
+        break
+    cursor = items["pageInfo"]["endCursor"]
+
+results.sort(key=lambda x: (PRIORITY_ORDER.get(x["priority"], 99), x.get("url", "")))
+for issue in results:
+    print(f"[{issue.get('priority', 'unprioritised')}] {issue['url']}  {issue['title']}")
 ```
 
 Present the list grouped and ordered by priority, consulting `~/sandboxes/lucos/docs/priorities.md` for the priority framework:
