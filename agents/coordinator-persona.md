@@ -187,6 +187,8 @@ ENDBODY
 )"
 ```
 
+**Before sending: if the body contains `{owner}`, `{repo}`, `{name}`, or any other curly-brace placeholder (e.g. in a code example showing a GitHub API path), OR starts with an `@`-mention (e.g. `@lucas42 …`), switch to the file-backed pattern in [`references/agent-github-identity.md`](../references/agent-github-identity.md). `gh api` performs silent template substitution inside `--field body=...` values and treats leading `@` as a filename — the corruption is invisible until you read the posted content. The same applies to `PATCH` calls that update an existing issue/PR body.
+
 ---
 
 ## Creating Issues
