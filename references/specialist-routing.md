@@ -4,9 +4,9 @@ When the coordinator needs another agent's input during triage, this file decide
 
 ---
 
-## Domains requiring specialist consultation before `agent-approved`
+## Domains requiring specialist consultation before setting Status = Ready
 
-Check each of these trip-wires. If any apply, consult the named specialist first and wait for their comment on the issue before applying `agent-approved`. Do these sequentially so each specialist sees prior comments. **An unnecessary consult is cheap; a missed one is unbounded.**
+Check each of these trip-wires. If any apply, consult the named specialist first and wait for their comment on the issue before setting Status = Ready. Do these sequentially so each specialist sees prior comments. **An unnecessary consult is cheap; a missed one is unbounded.**
 
 ### Security — consult `lucos-security`
 

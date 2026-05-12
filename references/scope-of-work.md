@@ -28,6 +28,6 @@ Raising an issue for drive-by findings is cheap and preserves the dispatch contr
 Each persona's "Triggers" or "Scope of Work" section can extend this reference with:
 
 - A persona-specific example of what kind of drive-by finding to raise as an issue (e.g. "missing tests" for lucos-developer; "monitoring gaps" for lucos-site-reliability; "accessibility issues" for lucos-ux).
-- Persona-specific guards on which kinds of issue can be picked up (e.g. lucos-developer and lucos-ux both refuse issues still labelled `status:needs-design` or `owner:lucos-architect`).
+- Persona-specific guards on which kinds of issue can be picked up (e.g. lucos-developer and lucos-ux both refuse issues where Owner = lucos-architect on the project board — design hasn't been finalised yet).
 
 Persona-specific extensions must not contradict the two rules above.
