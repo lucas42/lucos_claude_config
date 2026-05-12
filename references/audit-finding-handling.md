@@ -17,7 +17,7 @@ An audit-finding issue may ONLY be closed when the convention **currently passes
 ## When NOT to close an audit-finding issue
 
 - **Convention still fails on the dashboard**: Keep it open. Fix the underlying problem first.
-- **False positive with a pending fix tracked elsewhere**: Mark `agent-approved` + `status:blocked` with a reference to the fix issue. Do NOT close — closing will cause the audit to re-raise a new issue within hours.
+- **False positive with a pending fix tracked elsewhere**: Set Status = Blocked on the project board with a reference to the fix issue. Do NOT close — closing will cause the audit to re-raise a new issue within hours.
 - **Convention "doesn't apply" to the repo**: The fix is to update the convention's `Check` function in `lucos_repos` — not to close the issue.
 
 ## Other audit-finding actions

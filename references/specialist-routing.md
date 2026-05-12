@@ -4,9 +4,9 @@ When the coordinator needs another agent's input during triage, this file decide
 
 ---
 
-## Domains requiring specialist consultation before `agent-approved`
+## Domains requiring specialist consultation before setting Status = Ready
 
-Check each of these trip-wires. If any apply, consult the named specialist first and wait for their comment on the issue before applying `agent-approved`. Do these sequentially so each specialist sees prior comments. **An unnecessary consult is cheap; a missed one is unbounded.**
+Check each of these trip-wires. If any apply, consult the named specialist first and wait for their comment on the issue before setting Status = Ready. Do these sequentially so each specialist sees prior comments. **An unnecessary consult is cheap; a missed one is unbounded.**
 
 ### Security — consult `lucos-security`
 
@@ -20,7 +20,7 @@ Concrete trip-wires (consult — do not skip "because the change looks like a se
 - Changes how a database accepts connections.
 - Changes who can read or write a resource.
 
-This rule was extended after marking `lucos_eolas#164` (CI trust auth → password auth) `agent-approved` without consulting security.
+This rule was extended after setting `lucos_eolas#164` (CI trust auth → password auth) to Status = Ready without consulting security.
 
 ### Reliability / observability — consult `lucos-site-reliability`
 
@@ -34,11 +34,11 @@ Touches **monitoring, logging, observability, reliability, or incident managemen
 
 Will make a **significant change to user journeys on a frontend system** — new pages, navigation changes, form flows, interaction patterns, error states, or anything that meaningfully affects how users move through a system.
 
-- If the ticket is **dominantly** frontend/UX work, assign `owner:lucos-ux` directly as implementer — no separate consultation step.
-- If the ticket also has **substantial backend work**, keep `owner:lucos-developer` and consult `lucos-ux` for triage input.
-- Pure frontend/UX work should NOT be routed through this consultation path — assign as `owner:lucos-ux` directly. See [`implementation-assignment.md`](implementation-assignment.md).
+- If the ticket is **dominantly** frontend/UX work, set Owner = lucos-ux on the project board as implementer — no separate consultation step.
+- If the ticket also has **substantial backend work**, keep Owner = lucos-developer and consult `lucos-ux` for triage input.
+- Pure frontend/UX work should NOT be routed through this consultation path — set Owner = lucos-ux directly. See [`implementation-assignment.md`](implementation-assignment.md).
 
-**Keep triage-phase UX input narrow.** When `lucos-ux` is consulted during triage, they should flag only (a) items that genuinely block implementation, (b) scope questions needing a decision from lucas42, and (c) fundamental design concerns. Detailed implementation guidance (specific HTML/CSS/copy/a11y) is implementation-phase output. If a triage UX review is going deep into implementation detail, either (i) accept it but recognise it's the wrong shape for triage, or (ii) reassign the ticket to `owner:lucos-ux` so the detail can be applied during implementation.
+**Keep triage-phase UX input narrow.** When `lucos-ux` is consulted during triage, they should flag only (a) items that genuinely block implementation, (b) scope questions needing a decision from lucas42, and (c) fundamental design concerns. Detailed implementation guidance (specific HTML/CSS/copy/a11y) is implementation-phase output. If a triage UX review is going deep into implementation detail, either (i) accept it but recognise it's the wrong shape for triage, or (ii) reassign the ticket to Owner = lucos-ux on the board so the detail can be applied during implementation.
 
 ---
 

@@ -45,8 +45,8 @@ When a PR is stalled:
 1. Check the PR's check runs to identify which check is failing and why. Read the check run output.
 2. If it's a simple fix you can handle inline (e.g. re-triggering a flaky check, pushing a trivial fix), do it and comment on the PR.
 3. Otherwise, raise an issue on the affected repo describing: the stalled PR number, which check is failing, and what you found in the check output. Do not raise an issue if one already exists for the same stall. Route ownership based on the failure type:
-   - **CodeQL / code analysis failure** → `owner:lucos-developer` (fix is typically a code or config change)
-   - **CI infrastructure failure** (flaky check, workflow misconfiguration, timeout) → `owner:lucos-site-reliability`
+   - **CodeQL / code analysis failure** → Owner = lucos-developer (fix is typically a code or config change)
+   - **CI infrastructure failure** (flaky check, workflow misconfiguration, timeout) → Owner = lucos-site-reliability
    - **Genuine security concern** with the new dependency version → handle yourself or raise as a security issue
 4. If the problem is systemic (e.g. no auto-merge workflow configured for dependabot PRs), raise an issue on that repository (unless one already exists about this).
 

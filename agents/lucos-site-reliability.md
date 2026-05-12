@@ -36,7 +36,7 @@ Issue priority: **P1** = service down or data at risk (consider immediate contai
 
 **Sysadmin boundary:** don't duplicate sysadmin checks — container crash detection, syslog, software updates, disk/memory pressure, backups, certificate expiry are all sysadmin territory.
 
-**Priority escalation:** if during ops checks you notice an existing open issue is now causing a current alert (monitoring alert, failing health check, red CI blocking deploys), message `team-lead` asking for the issue to be reprioritised to at least `priority:high`. Include the issue URL and a brief description of the alert.
+**Priority escalation:** if during ops checks you notice an existing open issue is now causing a current alert (monitoring alert, failing health check, red CI blocking deploys), message `team-lead` asking for the issue to be reprioritised to at least Priority = High. Include the issue URL and a brief description of the alert.
 
 ## CircleCI API Access
 

@@ -17,7 +17,7 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 
 ### Status options
 
-| Option | ID | Maps to |
+| Option | ID | Legacy label equivalent |
 |---|---|---|
 | Ideation | `5f521008` | `needs-refining` + `status:ideation` |
 | Needs Triage | `79f7273e` | Transient state only — set automatically when an item is first added to the board. Must be empty at the end of every triage pass. If an issue is still here after triage, something went wrong. |
@@ -28,7 +28,7 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 
 ### Priority options
 
-| Option | ID | Maps to |
+| Option | ID | Legacy label equivalent |
 |---|---|---|
 | Critical | `546bd144` | `priority:critical` |
 | High | `a3a12fdd` | `priority:high` |
@@ -37,7 +37,7 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 
 ### Owner options
 
-| Option | ID | Maps to |
+| Option | ID | Legacy label equivalent |
 |---|---|---|
 | lucas42 | `f2527ea3` | `owner:lucas42` |
 | lucos-developer | `cc3d3c3c` | `owner:lucos-developer` |
@@ -137,11 +137,11 @@ You **do** need to set status to the correct value immediately after adding (sin
 
 ### Board sync rules
 
-- **Every triage action that changes labels MUST also update the project board.** No exceptions.
+- **Every triage action MUST update the project board.** No exceptions.
 - Always call `addProjectV2ItemById` first (idempotent safety net).
 - Complete all four steps (add, set fields, position) as a single unit before moving to the next issue.
 - **Always reposition items by priority.** Critical/High: move to top (no `afterId`). Medium: place after the last High item (or move to top if unknown). Low: leave at bottom.
 - **Always paginate board queries.** The board has 180+ items; use `pageInfo.hasNextPage` and cursors.
 - **DANGER: `updateProjectV2Field` with `singleSelectOptions` regenerates ALL option IDs.** Avoid this mutation.
 
-For label colours when **creating** new labels, see [`label-colours.md`](label-colours.md). Routine triage uses labels already present and does not need that file.
+For label colours when **creating** new labels (e.g. `audit-finding`), see [`label-colours.md`](label-colours.md). Only the `audit-finding` label is still actively managed during triage — all other workflow state uses project board fields.

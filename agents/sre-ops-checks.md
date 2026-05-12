@@ -36,7 +36,7 @@ Fetch `https://monitoring.l42.eu/api/status` and inspect the response.
 
 1. **Investigate the root cause.** SSH into the relevant host, check container logs, inspect the environment, and determine why the check is failing. A monitoring check that reports failure is a symptom — your job is to find the cause.
 2. **Raise or update a GitHub issue.** If no open issue covers the problem, raise one with the root cause, impact, and suggested fix. If an existing issue already covers it, comment with any new findings.
-3. **Escalate priority if needed.** If the failure represents an active outage or data risk (e.g. backups not running, a service completely down), message `team-lead` to request `priority:high` or `priority:critical` on the issue. Do not leave active failures at default priority.
+3. **Escalate priority if needed.** If the failure represents an active outage or data risk (e.g. backups not running, a service completely down), message `team-lead` to request Priority = High or Critical on the issue. Do not leave active failures at default priority.
 4. **Attempt immediate remediation for service-down scenarios.** If a service is down and a restart could restore it, try `docker compose restart <service>` on the production host before raising the issue.
 5. **For CI failures: manually re-run the failed workflows directly.** CI failures do NOT self-heal unless something triggers a new run (a commit, a schedule, or a manual re-run). Do not assume self-healing will occur. You MUST: (a) fetch the most recent failed workflow ID for each affected repo, (b) trigger re-runs yourself via the CircleCI v2 API using the user-scoped token documented in `~/.claude/agents/sre-circleci-api.md` (`POST /api/v2/workflow/{id}/rerun` with `{"from_failed": true}`), and (c) confirm in your report that re-runs have been triggered. CircleCI re-runs are in your domain directly — no sysadmin hop required. **A CI failure is not resolved until CI is green — documenting the root cause is necessary but not sufficient.** If you see `Permission denied`, first sanity-check the token via `/api/v2/me` — the likely cause is an empty `$TOKEN` from grepping the wrong env var name (should be `CIRCLECI_API_TOKEN`, not `KEY_CIRCLECI`).
 
@@ -106,9 +106,60 @@ Verify that every resolved critical incident has a corresponding incident report
 
 #### Step 1: Find recently closed critical issues
 
-```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
-  "search/issues?q=org:lucas42+is:issue+is:closed+label:priority:critical+sort:updated-desc&per_page=20"
+Query the project board for issues with Priority = Critical (option ID `546bd144`, field `PVTSSF_lAHOAAaLL84BRh5dzg_VMpk`) and state = CLOSED. Priority labels no longer exist — use the project board. See `~/.claude/references/triage-reference-data.md` for full field IDs and the board query pattern. The project ID is `PVT_kwHOAAaLL84BRh5d`.
+
+```python
+import os, subprocess, json
+
+GH_PROJECTS = os.path.expanduser("~/sandboxes/lucos_agent/gh-projects")
+BOARD_QUERY = """{
+  node(id: "PVT_kwHOAAaLL84BRh5d") {
+    ... on ProjectV2 {
+      items(first: 100%s) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          content {
+            ... on Issue { title url state updatedAt repository { nameWithOwner } }
+          }
+          fieldValues(first: 10) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field { ... on ProjectV2SingleSelectField { name } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}"""
+
+cursor, results = None, []
+while True:
+    after = f', after: "{cursor}"' if cursor else ""
+    r = subprocess.run(
+        [GH_PROJECTS, "graphql", "-f", f"query={BOARD_QUERY % after}"],
+        capture_output=True, text=True, check=True,
+    )
+    items = json.loads(r.stdout)["data"]["node"]["items"]
+    for node in items["nodes"]:
+        c = node.get("content") or {}
+        if c.get("state") != "CLOSED":
+            continue
+        fields = {
+            fv["field"]["name"]: fv["name"]
+            for fv in (node.get("fieldValues") or {}).get("nodes", [])
+            if fv and "field" in fv and "name" in fv
+        }
+        if fields.get("Priority") == "Critical":
+            results.append(c)
+    if not items["pageInfo"]["hasNextPage"]:
+        break
+    cursor = items["pageInfo"]["endCursor"]
+
+for issue in sorted(results, key=lambda x: x["updatedAt"], reverse=True)[:20]:
+    print(issue["url"], "—", issue["title"])
 ```
 
 #### Step 2: Check for existing incident reports

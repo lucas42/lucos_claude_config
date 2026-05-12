@@ -12,11 +12,11 @@ If the user gives a specific issue URL to implement (rather than asking for the 
 
 ### Triage untriaged issues as part of ad-hoc dispatch
 
-**If an ad-hoc dispatched issue has never been triaged** (e.g. no `agent-approved` label, no `owner:*` label, no priority label — often the case for issues raised moments before the user asks for them to be picked up), **do the triage inline as part of the dispatch** rather than refusing or waiting for a separate triage pass. Specifically:
+**If an ad-hoc dispatched issue has never been triaged** (e.g. Status not yet set on the project board, Owner not set, Priority not set — often the case for issues raised moments before the user asks for them to be picked up), **do the triage inline as part of the dispatch** rather than refusing or waiting for a separate triage pass. Specifically:
 
 1. Read the issue body and assess it against the normal triage criteria (clarity of outcome, clarity of approach, dependencies, architectural questions). If it is clearly specified and implementable, proceed. If not, stop and triage it through the normal refinement process instead — dispatching an un-implementable issue wastes the teammate's time.
-2. Apply the full triage label set: `agent-approved`, `priority:high` (per ad-hoc rule above), and the appropriate `owner:*` label. If the user explicitly named an owner in their request, use that. Otherwise follow the normal implementation-assignment rules.
-3. Add the issue to the project board and set Status=Ready, Priority=High, Owner=(matching the label). Position at the top of the Ready column. See `~/.claude/references/triage-reference-data.md` for field IDs.
+2. Set Status = Ready, Priority = High (per ad-hoc rule above), and Owner = (appropriate persona) on the project board. If the user explicitly named an owner in their request, use that. Otherwise follow the normal implementation-assignment rules in `~/.claude/references/implementation-assignment.md`.
+3. Add the issue to the project board if not already present, and position at the top of the Ready column. See `~/.claude/references/triage-reference-data.md` for field IDs and option IDs.
 4. Then proceed with `/dispatch` as normal.
 
 Rationale: ad-hoc dispatch implies the user wants the work done *now*, and the untriaged state is usually just "this was raised minutes ago and hasn't hit a triage pass yet." Blocking on triage would be friction without benefit. But do not dispatch an issue that is genuinely unclear or un-implementable just because the user asked — if it needs refinement, say so and refine it instead.
@@ -29,7 +29,7 @@ Run the global prioritisation script:
 ~/sandboxes/lucos_agent/get-next-implementation-issue
 ```
 
-This returns the next implementable issue from the **lucOS Issue Prioritisation** project board, choosing the topmost item in the Ready column whose Status is Ready (excluding Blocked) across all repositories and personas. **The ordering is determined by position in the Ready column, not by the `priority:*` label.** lucas42 may manually reorder the column to put a lower-`priority:*`-labelled issue ahead of a higher-priority one — that manual ordering is authoritative. **Do not second-guess what the script returns.** This means:
+This returns the next implementable issue from the **lucOS Issue Prioritisation** project board, choosing the topmost item in the Ready column whose Status is Ready (excluding Blocked) across all repositories and personas. **The ordering is determined by position in the Ready column, not by the Priority field value.** lucas42 may manually reorder the column to put a lower-priority issue ahead of a higher-priority one — that manual ordering is authoritative. **Do not second-guess what the script returns.** This means:
 
 - Do not re-check the priority label and conclude the position must be wrong.
 - Do not reason from recent conversation context (e.g. "lucas42 said this was for later, so the position must be a board default") — lucas42 routinely repositions things deliberately, including items he previously deferred, when capacity opens up.
@@ -40,7 +40,7 @@ The only valid reason not to dispatch what the script returns is a hard guardrai
 
 It prints three lines:
 
-1. The owner label (e.g. `owner:lucos-developer`)
+1. The owner in `owner:{name}` format (e.g. `owner:lucos-developer`) — sourced from the project board Owner field. Note: this is the script's output format, not a GitHub label. Strip the `owner:` prefix to get the teammate name for SendMessage.
 2. The issue number and title (e.g. `#42 Fix the thing`)
 3. The issue URL
 
