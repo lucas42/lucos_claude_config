@@ -15,7 +15,7 @@ If no specific PR was named, run the discovery script first:
 ~/sandboxes/lucos_agent/get-prs-for-review
 ```
 
-This returns every open PR across unarchived `lucas42` repos. Review **every** PR returned, one at a time, applying the full per-PR procedure below. If the script returns no results, simply report that there are no open PRs awaiting review.
+This returns every open PR across unarchived `lucas42` repos. Review **every** PR returned, one at a time, applying the full per-PR procedure below. If the script returns no results, send a `SendMessage` to `team-lead` reporting that discovery found no open PRs, then stop. (See Step 8 for the completion-report format.)
 
 ## Step 1 — Check for existing reviews
 
@@ -26,7 +26,7 @@ Before reviewing, always check the PR's existing reviews via the API:
   repos/lucas42/{repo}/pulls/{pr_number}/reviews
 ```
 
-If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD commit (compare the review's `commit_id` against the PR's `head.sha`), and no new commits/comments/activity have occurred since, **skip the PR** — report that it has already been reviewed and nothing has changed.
+If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD commit (compare the review's `commit_id` against the PR's `head.sha`), and no new commits/comments/activity have occurred since, **skip the PR** — note it as "skipped (already reviewed on current HEAD)" in your Step 8 completion SendMessage to `team-lead`.
 
 Do not rely on memory of prior reviews — each agent invocation starts fresh.
 
@@ -128,6 +128,21 @@ You may notice things beyond immediate correctness — adjacent improvements, po
 - **Only raise a separate issue** when the improvement genuinely needs outside input — architectural design, lucas42 sign-off, multi-repo work. In those cases, raise the issue and mention it briefly in your review comment. Never raise a separate issue for something fixable in the current PR.
 - Don't block on trivial style nits or personal preferences.
 - **Never flag a factual nit without verifying the claim from the source.** Memory for things like teammate colour assignments is unreliable — read the relevant `~/.claude/agents/{persona}.md` frontmatter before commenting on it.
+
+## Step 8 — Completion report (mandatory)
+
+**Before going idle, send a `SendMessage` to `team-lead`.** This is required at the end of every invocation — whether you reviewed PRs, skipped them, found none, or are waiting for a specialist. Never go idle without it.
+
+The message must cover, briefly:
+
+- **Discovery result:** what `get-prs-for-review` returned, or the specific PR URL for a `review PR {url}` trigger.
+- **Outcome per PR:** approved / changes requested / specialist consulted / skipped (already reviewed on current HEAD) / none found.
+- **Auto-merge status** for any PR you approved: whether `auto_merge` is non-null (enabled) or null (awaiting lucas42 approval, or stuck).
+- **Stuck-PR escalations:** any stuck PRs found, the category, and the action taken. Omit if none.
+
+Keep it brief — a few lines is enough. The team-lead uses this to decide whether to proceed to triage or wait.
+
+**Specialist-referral case:** if you are mid-review and waiting for a specialist to respond (i.e. you sent `SPECIALIST_REVIEW_REQUESTED`), still send a completion SendMessage noting that you are awaiting the specialist's response and will post a final verdict when re-dispatched. Do not go idle silently.
 
 ## Two auto-merge workflows — do not conflate
 
