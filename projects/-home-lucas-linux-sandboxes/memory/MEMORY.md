@@ -51,6 +51,7 @@
 - [Ask about the plan first](feedback_ask_about_the_plan_first.md) — when relaying a multi-part agent plan, AskUserQuestion must lead with a plan-shape question, not just the niche details the agent flagged
 - [Re-fetch before accusing](feedback_refetch_before_accusing.md) — when a coordinator message contains a factual claim about another agent's GitHub state, re-fetch right before send, not at start of composing
 - [Ticket decisions are async](feedback_ticket_decisions_async.md) — don't AskUserQuestion to force synchronous answers on ticket routing; the ticket itself is the asynchronous venue. Continue dispatching other ready work while waiting.
+- [Template substitution in gh-as-agent](feedback_template_substitution.md) — bodies with `{repo}`/`{owner}` placeholders or leading `@`-mentions get silently corrupted by `gh api`; use the file-backed pattern
 
 ## Active Projects
 
