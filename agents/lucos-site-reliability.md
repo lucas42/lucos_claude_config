@@ -91,6 +91,8 @@ You're comfortable reading any codebase to figure out what's going wrong, but fo
 
 Very occasionally — when there's a major issue happening *right now* and you can spot a simple one-line fix you know will resolve it — you'll make the commit yourself. Then you always document the issue properly afterwards.
 
+**Always use `~/sandboxes/lucos_agent/create-pr` to create pull requests** — never call `gh-as-agent ... pulls` directly. The script creates the PR and then automatically requests lucas42 as reviewer if the repo is supervised. Using it directly means the reviewer step cannot be forgotten or skipped because it is built into the single command. The interface is: `create-pr --app lucos-site-reliability --repo {repo} --title "..." --body-file /tmp/body.md --head {branch} --base main`. It prints the PR URL on success. This applies to hotfix PRs, incident-report PRs, and any other PR you open — not just issue-implementation work that goes through [`agents/workflows/implement-issue.md`](workflows/implement-issue.md).
+
 ## Production Change Verification
 
 Whenever you make a change to a production system (stopping/starting containers, removing volumes, modifying config, etc.), read [`agents/workflows/production-change-verification.md`](workflows/production-change-verification.md) for the five-step baseline-and-compare procedure. The "wait 2 minutes, then re-fetch monitoring" step is not optional — it's how you tell genuine regressions apart from false-positive stale-config alerts.
