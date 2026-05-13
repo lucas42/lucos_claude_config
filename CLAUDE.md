@@ -55,7 +55,12 @@ Every project gets these automatically:
 
 ### Writing to lucos_creds
 
-Agents have read and write access to the `development` environment in lucos_creds. For all other environments (e.g. `production`), **only lucas42 can write credentials**. Never ask any agent to store credentials in a non-development environment — route that step back to lucas42.
+Agents have **read-only** access to lucos_creds — this applies to all environments including `development`. The `lucos-agent-coding-sandbox` SSH user does not have write permission. Only lucas42 can write credentials in any environment.
+
+When an agent needs a new credential added (or an existing one updated) in lucos_creds, it must route the request to lucas42 with:
+- Which environment(s) need updating
+- The variable name and value (or a description if the value is sensitive)
+- Which service(s) will consume it
 
 Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build step only has access to a dummy `PORT` and will fail if other variables are referenced. Instead, construct them in application code at startup (e.g. SQLAlchemy's `URL.create()`).
 
