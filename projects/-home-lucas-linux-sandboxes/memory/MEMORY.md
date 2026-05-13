@@ -58,6 +58,7 @@
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
 - [Media API v2→v3 migration](project_v3_migration.md) — parked as of 2026-04-05; dual-format in weightings nearly done, broader migration deferred
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
+- [Schedule_tracker v2 gating](project_schedule_tracker_v2_gating.md) — SRE test-suite review → recommendations implemented → unsupervisedAgentCode flipped → THEN v2 implementation
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
