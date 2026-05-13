@@ -68,6 +68,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Don't spawn teammates as subagents](feedback_dont_spawn_teammates_as_subagents.md) — talk to running `lucos-*` teammates via `SendMessage`, never `Agent({subagent_type:"lucos-..."})`; same persona name, different mechanism — Agent bypasses the team flow (claude_config#58, 2026-05-10)
 - [Test-scaffolding issues must scope assertions against existing code](feedback_test_harness_assertions_reachable.md) — every assertion in a harness/scaffolding ticket body must be reachable against main; assertions requiring not-yet-landed production code force the implementer to cherry-pick it and defeat the split (lucos_contacts#699, 2026-05-10)
 - [Do the mechanical check before publishing](feedback_mechanical_check_before_publishing.md) — for any audit/rollout/ADR scope list or cross-reference set, run the trivially-greppable check yourself before pushing; "spot-check this for me" to the reviewer is the tell that the check should have been mine (arachne#484 + PR #485, 2026-05-11)
+- [Breaking change when callers must change anyway](feedback_breaking_change_when_callers_must_change_anyway.md) — library backwards-compat only pays off if it saves callers from a code change; if every caller has to touch its call sites anyway, ship the break + major version bump (schedule_tracker_pythonclient#40, 2026-05-13)
 
 ## Auto-merge & security checks
 
