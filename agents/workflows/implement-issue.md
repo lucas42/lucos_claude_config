@@ -57,15 +57,11 @@ For breaking changes, use the `BREAKING CHANGE:` footer or a `!` after the type 
 
 ## Step 6 — Push and create a pull request
 
-Use `gh-as-agent` — never `gh pr create`:
+Use `~/sandboxes/lucos_agent/create-pr` — **never** call `gh-as-agent ... pulls` directly and **never** use `gh pr create`. The `create-pr` script creates the PR and automatically requests lucas42 as a reviewer if the repo is supervised. Combining both steps in one script means the reviewer request cannot be forgotten.
 
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/pulls \
-    --method POST \
-    -f title="Short, descriptive title" \
-    -f head="your-branch-name" \
-    -f base="main" \
-    --field body="$(cat <<'ENDBODY'
+BODY_FILE=$(mktemp)
+cat > "$BODY_FILE" <<'ENDBODY'
 Closes #N
 
 Brief description of what changed and why. Link to relevant issues, ADRs, or
@@ -74,24 +70,33 @@ prior art if useful.
 ## Test plan
 - [ ] Bulleted checklist of how the change was verified.
 ENDBODY
-)"
+
+~/sandboxes/lucos_agent/create-pr \
+    --app <persona> \
+    --repo {repo} \
+    --title "Short, descriptive title" \
+    --body-file "$BODY_FILE" \
+    --head your-branch-name \
+    --base main
+
+rm "$BODY_FILE"
 ```
 
-## Step 7 — Request lucas42 as reviewer on supervised repos
+The script prints the PR URL on success.
 
-Immediately after creating any PR, run `~/sandboxes/lucos_agent/check-unsupervised {repo}`:
+## Step 7 — Verify reviewer was requested on supervised repos
 
-- **Exit 0 (unsupervised)** — auto-merge handles approvals, no action needed.
-- **Exit 1 (supervised)** — lucas42 needs to review:
-  ```bash
-  ~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
-      --method POST \
-      -f reviewers[]=lucas42
-  ```
+`create-pr` handles this automatically. The only manual step remaining is:
 
-Always use the `check-unsupervised` script — never infer supervision status by reading workflow YAML or other repo files. The script consults configy, which is the single source of truth.
+**After pushing fixes in response to CHANGES_REQUESTED**: re-request the reviewer who asked for the changes using the `POST requested_reviewers` call directly (because `create-pr` is for initial creation only):
 
-**After pushing fixes in response to CHANGES_REQUESTED**: re-request the reviewer who asked for the changes using the same `POST requested_reviewers` call. On supervised repos this means re-requesting lucas42; submitting a review (including CHANGES_REQUESTED) removes a reviewer from `requested_reviewers`, so pushing a fix without re-requesting leaves the PR invisible in their review queue.
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+    --method POST \
+    -f reviewers[]=lucas42
+```
+
+Submitting a CHANGES_REQUESTED review removes the reviewer from `requested_reviewers`, so pushing a fix without re-requesting leaves the PR invisible in their review queue.
 
 ## Step 8 — Comment on unexpected obstacles
 
