@@ -118,10 +118,19 @@ If a PR was created and approved:
      - If CI is green and the branch is up to date, the PR will auto-merge on its own and there is nothing else to do.
 
 5. **If not unsupervised (exit code 1) or error (exit code 2):**
-   - **First, verify lucas42 is set as a requested reviewer on the PR** so it lands in his GitHub "review requested" queue rather than relying on him spotting it via the project board:
+   - **First, verify lucas42 was requested as a reviewer at some point in the PR's history** so it landed in his GitHub "review requested" queue rather than relying on him spotting it via the project board. **Use the timeline, NOT the `requested_reviewers` field on the PR object:**
      ```bash
-     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '[.requested_reviewers[]?.login]'
+     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{pr_number}/timeline --jq '[.[] | select(.event == "review_requested" and .requested_reviewer.login == "lucas42")] | length'
      ```
-     If `lucas42` is NOT in the returned list, the developer's PR-creation step didn't request him. `lucos-issue-manager` intentionally does not have `pull_requests: write` — granting it would also allow creating PRs, which defeats the delegation model — so the fix is to message the **developer who created the PR** and ask them to add lucas42 as a reviewer (`POST repos/.../pulls/{n}/requested_reviewers` with `reviewers[]=lucas42`). This delegation pattern is permanent; see `references/github-workflow.md` for rationale. Either way, the requested-reviewer state must be correct before the next step.
+     **Why not `requested_reviewers`?** Once a requested reviewer submits a review (approve, changes-requested, or comment), GitHub automatically removes them from `requested_reviewers` — the field reflects *pending* requests, not historical ones. If you check it after the code-reviewer round (or after lucas42 has approved), you'll see an empty array even when lucas42 was correctly requested at PR creation. The timeline preserves the original `review_requested` event regardless of subsequent reviews, so it's the right source of truth.
+
+     Also check if lucas42 already has a review on the PR (which implicitly proves he was requested):
+     ```bash
+     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number}/reviews --jq '[.[] | select(.user.login == "lucas42")] | length'
+     ```
+
+     If **both** counts are 0, lucas42 was never requested — message the **developer who created the PR** to add him (`POST repos/.../pulls/{n}/requested_reviewers` with `reviewers[]=lucas42`). `lucos-issue-manager` intentionally does not have `pull_requests: write` — granting it would also allow creating PRs, which defeats the delegation model. This delegation pattern is permanent; see `references/github-workflow.md` for rationale.
+
+     **CHECKPOINT — before accusing the developer of skipping the reviewer-request step:** If your draft contains "requested_reviewers is empty", "you didn't request lucas42", "no review_requested event", or any similar claim — STOP. Confirm via the timeline check above, not via `requested_reviewers`. Lesson from 2026-05-13 (lucos_monitoring#231): the dispatcher accused the developer of skipping the step when the developer had correctly requested lucas42 at PR creation, but lucas42 had already approved by the time the check ran — the developer's persona-update reinforcements weren't the problem; the dispatcher's check was structurally wrong.
    - Tell the user the PR needs their review and approval. Once approved, it will auto-merge (the `code-reviewer-auto-merge.yml` workflow is deployed across the lucos estate; lucas42's approval triggers it). Provide the full PR URL so they can easily navigate to it.
    - If there are dependent issues to unblock (from step 3), mention them — the user should know that merging this PR will unblock further work.
