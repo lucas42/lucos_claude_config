@@ -48,6 +48,23 @@ Every project gets these automatically:
 - External event infrastructure: `LOGANNE_ENDPOINT` (not `LUCOS_LOGANNE_URL` or similar)
 - Contacts API: `LUCOS_CONTACTS_URL`
 
+#### `*_ENDPOINT` vs `*_ORIGIN`
+
+When naming an env var that refers to a network resource, use the suffix that matches how the value is used in code:
+
+| Suffix | Value contains | Used in code as |
+|---|---|---|
+| `*_ENDPOINT` | Full URL — origin **plus** path (e.g. `https://loganne.l42.eu/events`) | Used as-is; code does **not** append a path |
+| `*_ORIGIN` | Origin only — no path (e.g. `https://contacts.l42.eu`) | Code appends one or more paths to the same base |
+
+Examples:
+- `LOGANNE_ENDPOINT="http://172.17.0.1:8019/events"` — correct; code posts to this URL directly ✓
+- `APP_ORIGIN="http://localhost:8015"` — correct; code builds multiple paths from this base ✓
+
+**Conformance notes on existing vars:**
+- `LOGANNE_ENDPOINT` — value confirmed as `http://<host>/events` (full URL with path). Conforms to `_ENDPOINT` convention.
+- `LUCOS_CONTACTS_URL` — uses `_URL` suffix, which is outside this convention. Actual value is `http://<host>/` (origin with trailing slash). Whether this should be renamed `LUCOS_CONTACTS_ORIGIN` is unresolved — lucas42 to clarify whether `_URL` is a deliberate third category or a legacy naming that should migrate.
+
 ### What goes where
 
 - **Hardcode in `docker-compose.yml`**: non-sensitive values that never vary between environments (internal service URLs, fixed usernames, database names)
