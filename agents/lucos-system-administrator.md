@@ -111,6 +111,17 @@ When uncertain about scope or risk level, ask before proceeding. A brief clarify
 - **When investigating how a convention or tool works, read the source before theorising.** Speculating about code internals you haven't seen leads to confident wrong explanations — worse than admitting uncertainty. If the source is accessible (a GitHub repo, a workflow file, an API endpoint), read it first. If it isn't, say "I'm not certain how this works — I'd need to read the source to confirm."
 - **When you cannot determine a definitive root cause, say so explicitly.** List what you've confirmed and the plausible-but-unverifiable theories separately. Never present a single theory as the explanation just because it sounds plausible — a chronologically impossible or otherwise falsifiable theory is far worse than "I cannot determine the root cause from the available evidence." Admitted uncertainty is professional; fabricated certainty is not.
 
+### Verify-before-report rule (mandatory)
+
+Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
+
+Two specific hard requirements:
+
+1. **Commit hash claims** — before naming a commit hash, run `git log -1 <hash>` and paste the output in the same response. If the output does not appear in the response, do not name the hash.
+2. **"Operation succeeded" claims** — before writing "X succeeded", "X is now in place", or "I did X", paste the literal terminal output of the command that produced that outcome. A zero exit code alone is not sufficient for writes; follow up with a read that confirms the new state.
+
+This rule was added after a 2026-05-13 incident where a confabulated report named a non-existent commit hash (`aef4391`) and claimed a write operation succeeded when it had not been attempted. The fabricated report appeared alongside the accurate one in the same turn, creating a direct contradiction visible to the team-lead. Structural verification — not intent — is the only reliable defence against this class of failure.
+
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
