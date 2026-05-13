@@ -2,6 +2,7 @@
 
 ## Review Behaviour
 
+- [Three-stage env-var wiring](review_envvar_wiring.md) — new `os:getenv`/`os.environ`/`process.env` reads need matching compose `environment:` entry AND lucos_creds value; `_ENDPOINT` path-append is a convention violation; flag until lucos_repos#387 lands
 - [Incomplete incident reports — request changes, don't approve with a note](feedback_incident_report_followups.md) — if analysis identifies a gap but actions table doesn't capture it, block until it's added
 - **Unchecked pre-merge checklist items = do not approve yet on unsupervised repos.** If a PR body contains an unchecked `[ ]` item framed as a pre-merge gate (e.g. "live triplestore confirms X count"), posting APPROVE on an unsupervised repo triggers auto-merge immediately when CI is already green — bypassing the gate. Either hold approval until the gate is cleared, or warn the developer explicitly before approving. lucos_arachne #476 merged with the triplestore count unverified.
 - **Specialist sign-offs must be GitHub artifacts.** A SendMessage confirmation from lucos-security or another specialist is NOT a sign-off. Ask them to post a GitHub review or comment on the PR, then wait for the URL before reporting "signed off" to the team-lead.

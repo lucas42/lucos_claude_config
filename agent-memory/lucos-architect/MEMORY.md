@@ -69,6 +69,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Test-scaffolding issues must scope assertions against existing code](feedback_test_harness_assertions_reachable.md) — every assertion in a harness/scaffolding ticket body must be reachable against main; assertions requiring not-yet-landed production code force the implementer to cherry-pick it and defeat the split (lucos_contacts#699, 2026-05-10)
 - [Do the mechanical check before publishing](feedback_mechanical_check_before_publishing.md) — for any audit/rollout/ADR scope list or cross-reference set, run the trivially-greppable check yourself before pushing; "spot-check this for me" to the reviewer is the tell that the check should have been mine (arachne#484 + PR #485, 2026-05-11)
 - [Breaking change when callers must change anyway](feedback_breaking_change_when_callers_must_change_anyway.md) — library backwards-compat only pays off if it saves callers from a code change; if every caller has to touch its call sites anyway, ship the break + major version bump (schedule_tracker_pythonclient#40, 2026-05-13)
+- [Flag-day plans need a verification gate, not just an order](feedback_flag_day_verification_gate.md) — when an ADR has two cutovers that must land together, specify a single verifiable command between them; "order without gate" lets the second cutover fire while the first is silently broken (ADR-0004 flag-day, 2026-05-13 monitoring blackout)
 
 ## Auto-merge & security checks
 
