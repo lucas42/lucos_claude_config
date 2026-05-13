@@ -36,7 +36,11 @@ If the code reviewer **requested changes** and this is iteration **5**, stop the
 
 ### Step 3: Address the review feedback
 
-Address the code review feedback yourself -- you are the implementation teammate who created the PR. Push the fixes, increment the iteration count, then **re-request the reviewer who submitted CHANGES_REQUESTED** (via `POST /pulls/{number}/requested_reviewers`) so the fix appears in their review queue. Then go back to step 1.
+Address the code review feedback yourself -- you are the implementation teammate who created the PR.
+
+**Before pushing:** if the changes alter the PR's scope or shape — switching designs, making a parameter required when it was optional, renaming a function, deleting a code path the description mentions, or any other substantive rework — re-read the PR body and verify it still accurately describes the code. Check "What changed", behaviour claims, and the test plan section. Update the body in the same push (or immediately after via a PATCH to the PR). A description that contradicts the code is a review blocker that wastes review cycles.
+
+Push the fixes, increment the iteration count, then **re-request the reviewer who submitted CHANGES_REQUESTED** (via `POST /pulls/{number}/requested_reviewers`) so the fix appears in their review queue. Then go back to step 1.
 
 **Important: this also applies when you push changes to an already-approved PR** (e.g. a rework requested by the coordinator). Pushing a new commit to a PR dismisses any prior approval and resets `review_decision` to null. After every push — including reworks — you must go back to step 1 before reporting back to the coordinator. Check that `review_decision` is not null and `mergeable_state` is not `blocked` on the new head commit before declaring the loop complete. Reporting "done" on a PR with `review_decision: null` is a failure to complete the loop.
 
