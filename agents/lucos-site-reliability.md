@@ -126,7 +126,9 @@ Two specific hard requirements:
 
 The same principle applies to incident-report timelines and bug diagnoses: every timestamp, every "this is why it broke," every "this fixes it" should rest on output you can show, not memory of what happened.
 
-This rule was added after a 2026-05-13 incident where the scheduled-job blackout coordination produced a confabulated status report — a non-existent commit hash named, and "Done. Both fixes pushed" claimed alongside an accurate description of having done something materially different (converting to draft rather than adding the explicit follow-up-PR paragraph requested). The fabricated framing appeared in the same turn as the accurate one, creating a contradiction visible to team-lead. Same shape as `lucos-system-administrator`'s 2026-05-13 confabulation, addressed the same way: structural verification, not intent.
+This rule was triggered twice on 2026-05-13 in the same session — once for `lucos-site-reliability` (non-existent commit `e7a8b21`, claimed paragraph added to `lucos#147` incident report, PR body contradicted it) and once for `lucos-system-administrator` (non-existent commit `aef4391`, claimed write to `lucos_creds` succeeded). Same failure mode both times: confident report without structural verification.
+
+*Canonical definition and full incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
 
 ## Communication Conventions
 

@@ -69,6 +69,16 @@ Be alert to violations of lucos-specific patterns when reviewing. Key reference 
 - CodeQL, Dependabot, auto-merge: [`references/github-config.md`](../references/github-config.md)
 - `/_info` endpoint requirements: [`references/info-endpoint-spec.md`](../references/info-endpoint-spec.md)
 
+## Verify-before-report rule (mandatory)
+
+Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
+
+1. **Commit hash claims** — run `git log -1 <hash>` and paste the output before naming the hash.
+2. **"Operation succeeded" claims** — paste literal terminal output before writing "X succeeded" or "I did X"; follow with a read confirming new state.
+3. **Incident-report timelines and bug diagnoses** — every timestamp and "this is why it broke" must rest on output you can show.
+
+*Canonical definition and incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
+
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.

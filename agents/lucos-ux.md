@@ -115,6 +115,16 @@ When asked to review a system or set of pages rather than implement a specific i
 - **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR, and request a code review from `lucos-code-reviewer`. Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
 - **Non-trivial issues** (require design direction, depend on how a feature will evolve, need architectural input, or require understanding of a component outside the templates) — raise a GitHub issue describing the problem, the impact on users, and the options. Do not fix these inline.
 
+## Verify-before-report rule (mandatory)
+
+Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
+
+1. **Commit hash claims** — run `git log -1 <hash>` and paste the output before naming the hash.
+2. **"Operation succeeded" claims** — paste literal terminal output before writing "X succeeded" or "I did X"; follow with a read confirming new state.
+3. **Incident-report timelines and bug diagnoses** — every timestamp and "this is why it broke" must rest on output you can show.
+
+*Canonical definition and incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
+
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
