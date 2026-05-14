@@ -165,6 +165,8 @@ jobs:
 - [Check existing issues before filing](feedback_check_existing_issues.md) — search open issues first; other agents may have already filed the same finding
 - [Grep for old name before renaming](feedback_rename_grep.md) — always `grep -r "old_name" .` before committing a rename; missed reference caused crash-loop + outage (lucos_arachne #267/#280)
 - [Verify Dockerfile COPY when adding new files](feedback_dockerfile_copy.md) — check Dockerfile covers new dirs; `COPY *.py .` silently missed `ontologies/` dir (lucos_arachne #267/#282)
+- [Refresh PR description with follow-up commits](feedback_pr_description_freshness.md) — if commit changes shape of work (passthrough vs hardcode, new dep, etc.) update description before re-requesting review
+- [arachne find_entities labels](feedback_arachne_find_entities_labels.md) — returns `rdfs:label` not `skos:prefLabel`; use `get_entity(uri)` for canonical name
 
 ## lucos_eolas
 
@@ -195,8 +197,4 @@ jobs:
 
 ## Shell Scripts over SSH — Binary Detection
 
-**Use `test -x /usr/sbin/tool || test -x /sbin/tool` not `command -v tool`** when checking if a binary exists on a remote host via SSH. `command -v` looks up `$PATH`, and `/usr/sbin` isn't in regular users' PATH on most systems — so `command -v usermod` returns 1 even on hosts where `sudo usermod` works fine. `test -x` on known paths has no PATH dependency and works in busybox ash. Caught in lucos_backups#269.
-
-## arachne MCP
-
-- [find_entities returns rdfs:label not skos:prefLabel](feedback_arachne_find_entities_labels.md) — use get_entity(uri) to get the canonical skos:prefLabel; find_entities returns alternate names sorted alphabetically
+Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH on remote hosts, so `command -v` returns 1 even when `sudo usermod` works fine. Caught in lucos_backups#269.
