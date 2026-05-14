@@ -3,7 +3,6 @@
 ## Standing patterns from 2026-05-13 scheduled-jobs blackout
 
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
-- [_ENDPOINT vs _ORIGIN convention](reference_endpoint_vs_origin_convention.md) — `_ENDPOINT` = full URL with path; `_ORIGIN` = origin only. Documented in lucas42/lucos#148.
 
 ## Loganne — Webhook Retry API
 
