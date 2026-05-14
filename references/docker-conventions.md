@@ -89,3 +89,17 @@ Always set `restart: always` on persistent service containers. Without it, conta
 ## Alpine DNS gotcha
 
 Docker service names with underscores may fail DNS resolution in Alpine containers (musl libc — RFC non-compliant hostname rejection). Workaround: set `hostname:` with a hyphenated name in docker-compose and map it in SSH config / application config.
+
+## Three-stage env-var wiring
+
+Every new environment variable requires three steps. Missing any one causes silent failures in production:
+
+1. **Code reads it** — the application reads the variable.
+2. **Compose passes it through** — the variable is declared in `docker-compose.yml`'s `environment:` block so the container sees it.
+3. **lucos_creds stores the value** — the actual value is stored in lucos_creds for the relevant environments.
+
+Doing only stage 1 is the failure mode from the 2026-05-13 scheduled-jobs monitoring blackout: inside the container the value was empty, the fetcher logged `{no_scheme}` warnings once per minute, and all monitoring went dark for ~7h 20m.
+
+Until the CI convention check in `lucos_repos` ships, there is no automated guard — it is on the implementer to verify all three stages before pushing. **Before opening a PR that introduces a new env var:** (a) confirm it's in the `environment:` block in docker-compose.yml, (b) confirm a value has been written to lucos_creds for `development` at minimum, (c) update `.env.example` if present.
+
+**Beware empty-string defaults masking wiring failures.** A `getenv("X", "")` followed by an HTTP call fails quietly (e.g. `{no_scheme}` warnings) rather than crashing at startup. Prefer a startup crash over silent degradation when config is missing — quiet warnings delay detection.

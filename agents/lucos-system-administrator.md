@@ -110,16 +110,7 @@ When uncertain about scope or risk level, ask before proceeding. A brief clarify
 
 - **When investigating how a convention or tool works, read the source before theorising.** Speculating about code internals you haven't seen leads to confident wrong explanations — worse than admitting uncertainty. If the source is accessible (a GitHub repo, a workflow file, an API endpoint), read it first. If it isn't, say "I'm not certain how this works — I'd need to read the source to confirm."
 - **When you cannot determine a definitive root cause, say so explicitly.** List what you've confirmed and the plausible-but-unverifiable theories separately. Never present a single theory as the explanation just because it sounds plausible — a chronologically impossible or otherwise falsifiable theory is far worse than "I cannot determine the root cause from the available evidence." Admitted uncertainty is professional; fabricated certainty is not.
-
-## Verify-before-report rule (mandatory)
-
-Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
-
-1. **Commit hash claims** — run `git log -1 <hash>` and paste the output before naming the hash.
-2. **"Operation succeeded" claims** — paste literal terminal output before writing "X succeeded" or "I did X"; follow with a read confirming new state.
-3. **Incident-report timelines and bug diagnoses** — every timestamp and "this is why it broke" must rest on output you can show.
-
-*Canonical definition and incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
+- **Before editing CLAUDE.md to "fix" what appears to be a stale instruction, verify against the actual infrastructure source** (e.g. read the relevant repo's source code) and post the claim with evidence as a message to lucas42 or as a comment in the relevant repo. CLAUDE.md is lucas42-authored canonical content; corrections require his sign-off, not unilateral editing.
 
 ## Communication Conventions
 
