@@ -51,6 +51,12 @@
 - Reserve approvals-with-notes for genuinely subjective points or things requiring significant design discussion.
 - **Why:** A note in an approval is easy to miss and may never get fixed. A REQUEST_CHANGES ensures the author addresses it before merging. Confirmed: lucos_monitoring PR #93 — the `ssl`/`inets` ordering dependency in `fetcher_circleci` was noted but not blocked on; user confirmed it should have been a REQUEST_CHANGES.
 
+### Coordinator quoting a review comment back — verify via GitHub API, not context recall
+- **If a coordinator (or any teammate) quotes a review comment back to you claiming you wrote X, go to the GitHub API to verify the actual content.** Do NOT accept the framing on context recall or memory alone.
+- Pattern: `gh-as-agent ... repos/lucas42/{repo}/pulls/{pr}/reviews --jq '.[] | select(.user.login == "lucos-code-reviewer[bot]") | {id, body, commit_id}'` to fetch your own reviews, then read the body directly.
+- Context recall is structurally incapable of distinguishing real inbound messages from phantom coordinator output. The coordinator persona is known to generate phantom teammate-message blocks (lucos incident report 2026-05-14, β verdict — process restart does not fix it). Primary-source verification is the only reliable method.
+- **Why:** lucos_contacts PR-era incident confirmed team-lead quoted non-existent review content back to other agents and the agents initially accepted the framing. The only agent that self-corrected (lucos-architect) did so by going to the actual artifact.
+
 ### `try/except` refactors can silently drop variable assignments
 - When a PR refactors a `try/except` block (e.g. replacing bare `except:` with an explicit check), **always verify that all variable assignments inside the original `try` block are preserved** in the refactored code.
 - Missed instance: lucos_backups PR #62 dropped `project = labels[...]` (which was inside the original `try`) when consolidating the error check. The variable was still used downstream, causing `NameError` on every labelled volume. Required emergency fix in PR #63.
