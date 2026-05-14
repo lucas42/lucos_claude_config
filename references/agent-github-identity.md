@@ -10,6 +10,16 @@ The persona's own bot identity is set by the `--app <persona>` flag on every wra
 
 Always use `~/sandboxes/lucos_agent/gh-as-agent --app <persona>` for all GitHub interactions — issues, pull requests, comments, reviews. Never use `gh` directly or fall back to another app's identity.
 
+**Do not prefix the path with `api`.** The wrapper already runs `gh api …` internally, so the first positional argument should be the API path itself (e.g. `repos/lucas42/{repo}/issues`). Prepending `api` produces `gh api api repos/…`, which is treated as a literal path and returns a generic `404 Not Found` rather than a helpful error — easy to mistake for a permissions problem and chase the wrong cause.
+
+```bash
+# ✓ correct
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues
+
+# ✗ wrong — silent 404
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> api repos/lucas42/{repo}/issues
+```
+
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{number}/comments \
     --method POST \
