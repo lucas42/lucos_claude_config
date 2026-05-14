@@ -50,20 +50,7 @@ Every project gets these automatically:
 
 #### `*_ENDPOINT` vs `*_ORIGIN`
 
-When naming an env var that refers to a network resource, use the suffix that matches how the value is used in code:
-
-| Suffix | Value contains | Used in code as |
-|---|---|---|
-| `*_ENDPOINT` | Full URL — origin **plus** path (e.g. `https://loganne.l42.eu/events`) | Used as-is; code does **not** append a path |
-| `*_ORIGIN` | Origin only — no path (e.g. `https://contacts.l42.eu`) | Code appends one or more paths to the same base |
-
-Examples:
-- `LOGANNE_ENDPOINT="http://172.17.0.1:8019/events"` — correct; code posts to this URL directly ✓
-- `APP_ORIGIN="http://localhost:8015"` — correct; code builds multiple paths from this base ✓
-
-**Conformance notes on existing vars:**
-- `LOGANNE_ENDPOINT` — value confirmed as `http://<host>/events` (full URL with path). Conforms to `_ENDPOINT` convention.
-- `LUCOS_CONTACTS_URL` — uses `_URL` suffix, which is outside this convention. Actual value is `http://<host>/` (origin with trailing slash). Whether this should be renamed `LUCOS_CONTACTS_ORIGIN` is unresolved — lucas42 to clarify whether `_URL` is a deliberate third category or a legacy naming that should migrate.
+Use `*_ENDPOINT` for full URLs used as-is in code (e.g. `LOGANNE_ENDPOINT="https://loganne.l42.eu/events"`) and `*_ORIGIN` for base URLs to which code appends paths (e.g. `APP_ORIGIN="https://photos.l42.eu"`). Full convention documented in [lucos#148](https://github.com/lucas42/lucos/issues/148).
 
 ### What goes where
 
@@ -72,12 +59,9 @@ Examples:
 
 ### Writing to lucos_creds
 
-Agents have **read-only** access to lucos_creds — this applies to all environments including `development`. The `lucos-agent-coding-sandbox` SSH user does not have write permission. Only lucas42 can write credentials in any environment.
+Agents have read and write access to the `development` environment in lucos_creds. For all other environments (e.g. `production`), **only lucas42 can write credentials**. Never ask any agent to store credentials in a non-development environment — route that step back to lucas42.
 
-When an agent needs a new credential added (or an existing one updated) in lucos_creds, it must route the request to lucas42 with:
-- Which environment(s) need updating
-- The variable name and value (or a description if the value is sensitive)
-- Which service(s) will consume it
+Writes go via SSH exec, not SCP/SFTP — SCP is read-only for all keys, so a permission-denied result on `scp` does not indicate the absence of exec write permission.
 
 Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using variable interpolation — the CI build step only has access to a dummy `PORT` and will fail if other variables are referenced. Instead, construct them in application code at startup (e.g. SQLAlchemy's `URL.create()`).
 
