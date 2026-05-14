@@ -9,6 +9,9 @@ See `aurora-host.md`.
 ## Verify timeline before stating root cause
 See `feedback_verify_timeline_before_stating.md`.
 
+## Verify the premise of a dispatch before shipping a fix
+False triggering events can make valid fixes ship for wrong reasons. See `feedback_verify_dispatch_premise.md`.
+
 ## Estate-wide incident investigation: always sweep ALL repos
 Use `users/lucas42/repos?per_page=100`. A partial sweep missed 3 repos in the 2026-04-21 empty-secrets batch.
 
