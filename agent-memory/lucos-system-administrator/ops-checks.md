@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-13
-resource_checks: 2026-05-07
-syslog_review: 2026-05-07
-software_updates: 2026-05-07
-sandbox_drift: 2026-05-07
-repos_dashboard: 2026-05-13
+container_status: 2026-05-14
+resource_checks: 2026-05-14
+syslog_review: 2026-05-14
+software_updates: 2026-05-14
+sandbox_drift: 2026-05-14
+repos_dashboard: 2026-05-14
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -956,6 +956,34 @@ certificate_expiry: 2026-05-07
 **Repos dashboard**: 58 repos checked, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
+
+---
+
+### 2026-05-14 (checks 1–6 due; monthly checks last ran 2026-05-07 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- All errors are lucos-agent sudo failures from prior agent ops work (loganne cleanup 2026-05-08, backup logs attempt 2026-05-09, dmesg 2026-05-10, journalctl 2026-05-12, sqlite3 2026-05-13). All expected. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3.0→29.4.3, containerd 2.2.1→2.2.3, buildx 0.31.1→0.34.0, compose 5.1.0→5.1.3. Routine.
+- Xwing: Docker CE 29.4.0→29.4.3, containerd 2.2.2→2.2.3, compose 5.1.2→5.1.3; libssl3t64/openssl from `stable` (not `stable-security`), kernel/rpi-firmware/rpi-connect/rpi-eeprom updates. Routine.
+- Salvare: Docker CE 29.3.0→29.4.3, containerd, buildx, compose; libssl3/openssl from `oldstable` (not `oldstable-security`), kernel 6.12.25→6.12.75 (large jump), linux-libc-dev, raspi-utils, rpicam-apps. Routine.
+
+**Resources**:
+- Avalon: 3.7Gi available of 7.6Gi. Swap 211Mi/4.5Gi (5%). Disk 15%. Load 2.76. Journal 109.1M. Fine.
+- Xwing: 499Mi available of 906Mi. Swap 129Mi/905Mi (14%). Disk **62%** (70G/117G) — up from 53% on 2026-05-07 (+11G in 7 days). Still below 80% threshold. At current growth rate (~11G/week) would hit 80% in ~2 weeks. Load 3.11/3.23/3.41 (known elevated pattern for this Pi). Journal 8M. Fine.
+- Salvare: 3.4Gi available of 3.7Gi. No swap used. Disk 67% (37G/58G) — up from 63% on 2026-05-07. Load 0.24. Fine.
+
+**Sandbox drift**: 1 remote commit behind (e1744f1 — PR #72, fix-journald-dropin-name). Same commit as last week — setup scripts already applied to live VM. No live VM action needed. Clean.
+
+**Repos dashboard**: 3 initial failures:
+- `lucos_arachne` `required-status-checks-coherent` — stale cache false positive. "ci/circleci: lucos/build" IS present in commit statuses. Rerun triggered; convention now passes.
+- `lucos_media_import` `required-status-checks-coherent` — stale cache false positive. "ci/circleci: build" IS present in commit statuses. Rerun triggered; convention now passes.
+- `lucos_schedule_tracker_pythonclient` `required-status-checks-coherent` — **REAL ISSUE**: required check "ci/circleci: test" but CircleCI config only has `lucos/release-pip` job (runs on main only — no test job). Auto-raised issue #42 already exists. Noted for dispatcher.
+
+**No new issues raised.** Existing: lucos_schedule_tracker_pythonclient#42 (stale required check).
 
 ---
 
