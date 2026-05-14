@@ -24,8 +24,6 @@ For an end-to-end description of the three-layer model and where new persona/wor
 | Persistent Agent Memory | `references/agent-memory-conventions.md` | All personas | Persona file should add its own memory directory path (`~/.claude/agent-memory/<persona>/`) and any persona-specific examples of what's worth saving. |
 | Scope of Work | `references/scope-of-work.md` | All personas EXCEPT the coordinator | The dispatch contract — only work on assigned issues, drive-by findings get raised as new issues, triage notifications are informational. The coordinator IS the dispatcher and is not subject to this contract. |
 | Committing ~/.claude Changes | included within `references/agent-github-identity.md` (under the heading "Committing `~/.claude` changes") | All personas EXCEPT the coordinator | The coordinator has its own `~/.claude` maintenance instructions. The code-reviewer's persona may add a note about `agent-memory/lucos-code-reviewer/reptiles.md` being intentionally gitignored — that is a persona-specific addition, not drift. |
-| Verify-before-report rule (mandatory) | defined inline in this file — see "Verify-before-report rule (mandatory)" section below | All implementation personas (excluding coordinator) | Added 2026-05-13 after two same-day confabulation incidents. Each persona carries a compact version with a pointer back here. |
-
 ## Persona-specific additions (NOT drift)
 
 The following are intentional persona-specific sections or additions that are not in the references and must not be removed during audit:
@@ -54,25 +52,3 @@ The audit can spot-check that personas which respond to these triggers contain p
 
 The canonical persistent-memory directory path is `/home/lucas.linux/.claude/agent-memory/<persona>/`. Flag and fix any persona that uses a different base path (e.g. `/Users/lucas/`).
 
----
-
-## Verify-before-report rule (mandatory)
-
-**Canonical definition.** Every implementation persona carries a compact version of this rule with a pointer back here. The full text below — including the historical incident examples — is the authoritative source.
-
-Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
-
-### Hard requirements
-
-1. **Commit hash claims** — before naming a commit hash, run `git log -1 <hash>` and paste the output in the same response. If the output does not appear in the response, do not name the hash.
-2. **"Operation succeeded" claims** — before writing "X succeeded", "X is now in place", or "I did X", paste the literal terminal output of the command that produced that outcome. A zero exit code alone is not sufficient for writes; follow up with a read that confirms the new state (e.g. `gh api …pulls/N --jq .draft` after a draft toggle, the post-edit `git diff` for a file change, the SendMessage response object for a message claim).
-3. **Incident-report timelines and bug diagnoses** — every timestamp, every "this is why it broke", every "this fixes it" should rest on output you can show, not memory of what happened.
-
-### Why this rule exists — two incidents, same day, same failure mode
-
-On 2026-05-13, two different personas produced confabulated reports in the same session:
-
-- **lucos-system-administrator** — named non-existent commit `aef4391`, claimed a write to `lucos_creds` succeeded when the write had not been attempted. The fabricated report appeared in the same turn as an accurate report (commit `618e501`, CLAUDE.md read-only-access fix), creating a direct contradiction visible to team-lead.
-- **lucos-site-reliability** — named non-existent commit `e7a8b21`, claimed to have added a paragraph to an incident report on `lucos#147`. The PR body directly contradicted the claim.
-
-Both incidents had the same shape: a confident, plausible-sounding report issued without structural verification. The fix is structural — verification output must visibly appear in the response before any claim is made. Intent and exit codes are not sufficient.

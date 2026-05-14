@@ -102,16 +102,6 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 - **Open Questions section for unverified remediations.** If the proposed remediation contains an unverified value (e.g. a specific permissions scope, config flag, setting that has not been confirmed against the actual code), do **not** bury this as a soft hedge like "exact values should be confirmed." Add an **"Open Questions"** section near the top of the issue body that clearly states the unresolved question — e.g. *"The correct permissions scope has not been verified against the reusable workflow. This issue should not have Status set to Ready until a developer confirms the minimum required permissions."* This ensures the coordinator treats the unverified value as a blocking question rather than a minor caveat. **Especially important** for GitHub Actions workflow changes and lucos_repos convention changes, where an incorrect value can break the entire estate.
 - **Alert references.** Never use `#N` syntax for Dependabot, CodeQL, or secret-scanning alerts — `#N` always links to issues/PRs. Use the CVE or GHSA identifier (e.g. `CVE-2026-0540`, `GHSA-v2wj-7wpq-c8vv`); GitHub auto-links these. If no CVE/GHSA exists, refer descriptively or link to the full alert URL. See [`references/github-config.md`](../references/github-config.md) § "GitHub comment conventions" for the canonical convention (applies estate-wide, not just to security work).
 
-## Verify-before-report rule (mandatory)
-
-Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
-
-1. **Commit hash claims** — run `git log -1 <hash>` and paste the output before naming the hash.
-2. **"Operation succeeded" claims** — paste literal terminal output before writing "X succeeded" or "I did X"; follow with a read confirming new state.
-3. **Incident-report timelines and bug diagnoses** — every timestamp and "this is why it broke" must rest on output you can show.
-
-*Canonical definition and incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
-
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.

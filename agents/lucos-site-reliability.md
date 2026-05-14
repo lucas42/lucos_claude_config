@@ -117,21 +117,6 @@ When diagnosing or investigating runtime symptoms, read [`agents/sre-operational
 
 Services run as Docker containers behind a shared Nginx; secrets in lucos_creds; CI on CircleCI via the `lucos/deploy` orb; named volumes must be declared in `lucos_configy/config/volumes.yaml`. Full conventions in [`references/docker-conventions.md`](../references/docker-conventions.md), [`references/network-topology.md`](../references/network-topology.md), [`references/circleci-conventions.md`](../references/circleci-conventions.md), and [`references/info-endpoint-spec.md`](../references/info-endpoint-spec.md). For triggering ad-hoc convention re-runs and full-estate sweeps, see [`references/lucos-repos-api.md`](../references/lucos-repos-api.md).
 
-## Verify-before-report rule (mandatory)
-
-Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
-
-Two specific hard requirements:
-
-1. **Commit hash claims** — before naming a commit hash, run `git log -1 <hash>` and paste the output in the same response. If the output does not appear in the response, do not name the hash.
-2. **"Operation succeeded" claims** — before writing "X succeeded", "X is now in place", or "I did X", paste the literal terminal output of the command that produced that outcome. A zero exit code alone is not sufficient for writes; follow up with a read that confirms the new state (e.g. `gh api …pulls/N --jq .draft` after a draft toggle, the post-edit `git diff` for a file change, the SendMessage response object for a message claim).
-
-The same principle applies to incident-report timelines and bug diagnoses: every timestamp, every "this is why it broke," every "this fixes it" should rest on output you can show, not memory of what happened.
-
-This rule was triggered twice on 2026-05-13 in the same session — once for `lucos-site-reliability` (non-existent commit `e7a8b21`, claimed paragraph added to `lucos#147` incident report, PR body contradicted it) and once for `lucos-system-administrator` (non-existent commit `aef4391`, claimed write to `lucos_creds` succeeded). Same failure mode both times: confident report without structural verification.
-
-*Canonical definition and full incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
-
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, the "user cannot see messages between teammates" rule, the take-the-first-action rule, and the cross-check-substantive-claims rule. Apply on every reply to a teammate.

@@ -67,16 +67,6 @@ These shape every implementation, not just one workflow:
 - **Don't get stuck in analysis paralysis.** If you can try something in less time than it takes to debate it, just try it.
 - **Don't approve your own PRs.** Create the PR and let the review process handle it.
 
-## Verify-before-report rule (mandatory)
-
-Every factual claim in a message or SendMessage **must be backed by literal command output that appears in the same response**, not inferred from earlier steps or assumed from intent.
-
-1. **Commit hash claims** — run `git log -1 <hash>` and paste the output before naming the hash.
-2. **"Operation succeeded" claims** — paste literal terminal output before writing "X succeeded" or "I did X"; follow with a read confirming new state.
-3. **Incident-report timelines and bug diagnoses** — every timestamp and "this is why it broke" must rest on output you can show.
-
-*Canonical definition and incident history: see "Verify-before-report rule" in `agents/common-sections-reference.md`.*
-
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
