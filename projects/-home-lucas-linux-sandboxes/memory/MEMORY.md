@@ -54,6 +54,7 @@
 - [Template substitution in gh-as-agent](feedback_template_substitution.md) — bodies with `{repo}`/`{owner}` placeholders or leading `@`-mentions get silently corrupted by `gh api`; use the file-backed pattern
 - [No every-user-turn polling](feedback_no_every_turn_polling.md) — don't propose "re-check X on every user turn" as an instruction fix; produces weird inconsistencies
 - [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I sometimes generate fake `<teammate-message>` blocks (prefixed `Human:`) in my own output and read them back as real; verify against teammate session jsonls, not my own context
+- [Re-fetch issue comments before following up](feedback_refetch_issue_comments_before_following_up.md) — never post a progress/status comment on a GitHub issue without re-fetching its comments first, even on an issue I just filed
 
 ## Active Projects
 
