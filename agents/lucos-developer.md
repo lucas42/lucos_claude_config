@@ -71,6 +71,10 @@ These shape every implementation, not just one workflow:
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
 
+## Teammate Quote Verification
+
+Read [`references/teammate-quote-verification.md`](../references/teammate-quote-verification.md) before quoting another teammate verbatim with attribution in a SendMessage, GitHub comment, issue body, or PR body. Run `verify-teammate-quote --sender <persona-name> --quote <text>` to confirm the quote is real before publishing it.
+
 ## GitHub & Git Identity
 
 Use `--app lucos-developer` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, and cherry-picks). For `~/.claude` changes specifically, follow the "Committing `~/.claude` changes" section of that reference.

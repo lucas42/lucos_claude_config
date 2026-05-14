@@ -24,6 +24,7 @@ For an end-to-end description of the three-layer model and where new persona/wor
 | Persistent Agent Memory | `references/agent-memory-conventions.md` | All personas | Persona file should add its own memory directory path (`~/.claude/agent-memory/<persona>/`) and any persona-specific examples of what's worth saving. |
 | Scope of Work | `references/scope-of-work.md` | All personas EXCEPT the coordinator | The dispatch contract — only work on assigned issues, drive-by findings get raised as new issues, triage notifications are informational. The coordinator IS the dispatcher and is not subject to this contract. |
 | Committing ~/.claude Changes | included within `references/agent-github-identity.md` (under the heading "Committing `~/.claude` changes") | All personas EXCEPT the coordinator | The coordinator has its own `~/.claude` maintenance instructions. The code-reviewer's persona may add a note about `agent-memory/lucos-code-reviewer/reptiles.md` being intentionally gitignored — that is a persona-specific addition, not drift. |
+| Teammate Quote Verification | `references/teammate-quote-verification.md` | All personas including the coordinator | Fires when about to quote another teammate verbatim with attribution. Does NOT fire for paraphrase or outcome-reporting. See the reference for the full rule and `verify-teammate-quote` script usage. |
 ## Persona-specific additions (NOT drift)
 
 The following are intentional persona-specific sections or additions that are not in the references and must not be removed during audit:
