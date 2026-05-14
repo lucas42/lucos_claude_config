@@ -53,6 +53,7 @@
 - [Ticket decisions are async](feedback_ticket_decisions_async.md) — don't AskUserQuestion to force synchronous answers on ticket routing; the ticket itself is the asynchronous venue. Continue dispatching other ready work while waiting.
 - [Template substitution in gh-as-agent](feedback_template_substitution.md) — bodies with `{repo}`/`{owner}` placeholders or leading `@`-mentions get silently corrupted by `gh api`; use the file-backed pattern
 - [No every-user-turn polling](feedback_no_every_turn_polling.md) — don't propose "re-check X on every user turn" as an instruction fix; produces weird inconsistencies
+- [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I sometimes generate fake `<teammate-message>` blocks (prefixed `Human:`) in my own output and read them back as real; verify against teammate session jsonls, not my own context
 
 ## Active Projects
 
