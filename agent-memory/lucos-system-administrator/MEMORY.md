@@ -102,9 +102,6 @@ Never use bare `docker run` + alpine tar into new volume — loses compose label
 ## lucos_creds CircleCI env vars: manual rotation required
 `KEY_LUCOS_MONITORING` and `LUCOS_DEPLOY_ENV_BASE64` are outside automatic rotation. 2026-05-09 incident: not updating LUCOS_DEPLOY_ENV_BASE64 caused reverted fix. See `lucos-creds-circleci-env-vars.md`.
 
-## reptiles.md recurring git tracking
-See `reptiles-md-tracking.md`. Fix: `git rm --cached agent-memory/lucos-code-reviewer/reptiles.md` then commit+push.
-
 ## Docker daemon restarts: check live-restore first, prefer SIGHUP
 `systemctl restart docker` without `live-restore` kills all containers. Use `systemctl reload docker` (SIGHUP) for hot-reloadable changes. See `docker-daemon-restart-risk.md`.
 

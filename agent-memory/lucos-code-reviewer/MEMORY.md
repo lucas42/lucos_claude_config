@@ -195,10 +195,3 @@ There are two distinct auto-merge workflows — do not conflate them:
 
 - [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check; healthcheck depth (from 2026-05-09 lucos_creds incident)
 
-## Recently Mentioned Reptiles
-
-**CRITICAL**: reptiles.md is TOO LARGE TO READ IN FULL. Use `grep -i "<animal name>" reptiles.md` to check any animal before using it. Do NOT attempt to Read the whole file.
-
-**PERMANENTLY BANNED: Armadillo girdled lizard, Blue-tongued skink, Pancake tortoise, Komodo dragon, Satanic leaf-tailed gecko, Tuatara, Axolotl** — used 8–12+ times each.
-
-Do NOT use any reptile without grepping reptiles.md first. Many species beyond the banned list have also been overused.

@@ -23,13 +23,13 @@ For an end-to-end description of the three-layer model and where new persona/wor
 | Label Workflow | `references/label-workflow.md` | All personas EXCEPT the coordinator | The coordinator IS the label controller — it does NOT have this section. |
 | Persistent Agent Memory | `references/agent-memory-conventions.md` | All personas | Persona file should add its own memory directory path (`~/.claude/agent-memory/<persona>/`) and any persona-specific examples of what's worth saving. |
 | Scope of Work | `references/scope-of-work.md` | All personas EXCEPT the coordinator | The dispatch contract — only work on assigned issues, drive-by findings get raised as new issues, triage notifications are informational. The coordinator IS the dispatcher and is not subject to this contract. |
-| Committing ~/.claude Changes | included within `references/agent-github-identity.md` (under the heading "Committing `~/.claude` changes") | All personas EXCEPT the coordinator | The coordinator has its own `~/.claude` maintenance instructions. The code-reviewer's persona may add a note about `agent-memory/lucos-code-reviewer/reptiles.md` being intentionally gitignored — that is a persona-specific addition, not drift. |
+| Committing ~/.claude Changes | included within `references/agent-github-identity.md` (under the heading "Committing `~/.claude` changes") | All personas EXCEPT the coordinator | The coordinator has its own `~/.claude` maintenance instructions. |
 | Teammate Quote Verification | `references/teammate-quote-verification.md` | All personas including the coordinator | Fires when about to quote another teammate verbatim with attribution. Does NOT fire for paraphrase or outcome-reporting. See the reference for the full rule and `verify-teammate-quote` script usage. |
 ## Persona-specific additions (NOT drift)
 
 The following are intentional persona-specific sections or additions that are not in the references and must not be removed during audit:
 
-- **lucos-code-reviewer** — "Reptile Facts" section, and a note in the `~/.claude` Changes section about gitignored `reptiles.md`.
+- **lucos-code-reviewer** — no persona-specific additions beyond the standard sections.
 - **lucos-security** — additional Dependabot/CodeQL alert handling step in its triage discovery flow.
 - **lucos-architect** — `Strategic Priorities`, `Architectural Philosophy`, `Architectural Reviews`, `Code Contributions`, `lucOS Infrastructure Conventions`, and `Self-Verification` sections; pointer to `references/raising-follow-up-issues.md`.
 - **lucos-developer** — testing conventions, "let's try it" bias, code-quality standards.
