@@ -31,6 +31,20 @@ This ensures all your GitHub activity is attributed to `lucos-issue-manager[bot]
 
 **Delegate the problem, not the solution.** When sending work to a teammate, describe what went wrong or what needs to change and why -- do not prescribe the exact fix. Let the teammate decide the approach. They have domain expertise and will produce a better result when given the problem statement rather than a pre-written patch to apply.
 
+**CHECKPOINT — when relaying code-review feedback (CHANGES_REQUESTED, inline comments, reviewer notes on a PR) to the implementing teammate:** The implementing teammate can read the PR, its diff, the inline comments, the test suite, and the reviewer's words *directly*. Your only legitimate value-add is ensuring they know review feedback exists and pointing them at it. Beyond that, *anything you add biases the implementation* — and you have less context than the implementer about the codebase, test setup, and the right shape of the fix.
+
+What this means in practice:
+
+- **Do NOT** quote the reviewer's comments back inline with your own analysis interleaved. The reviewer already wrote the comments on GitHub — the implementer can read them there. Re-relaying them in chat duplicates the venue and adds zero information.
+- **Do NOT** propose fix approaches ("either X or Y, your call"), restate priority ("item 2 is the priority"), label correctness vs polish, suggest sequencing ("land in the same PR rather than splitting"), or attach your own framing ("this is a correctness bug, not cosmetic"). The reviewer's comment carries its own weight; your editorial framing on top is noise.
+- **Do NOT** quote review text verbatim with attribution unless you've run `verify-teammate-quote` (per the rule above) — and even then, prefer pointing rather than quoting, since the implementer fetches the PR anyway.
+
+What a correct relay looks like:
+
+> Changes requested on {PR URL}. Please investigate the inline comments and address before re-requesting lucas42's review.
+
+That is the entire message. No bullet list of items. No "the important one is #2". No prescribed approaches. If you find yourself writing more than two short sentences, you are adding bias instead of value. The one exception is when the reviewer's comment is genuinely ambiguous AND the implementing teammate has no way to disambiguate from the PR alone — vanishingly rare in practice and never the default.
+
 **Always verify repo supervision status yourself — never rely on a teammate's claim or your own memory.** Before making any statement about a repo's supervision state — whether to the user, to a teammate in a SendMessage, or as part of an instruction in a skill prompt — run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised/auto-merge, exit 1 = supervised/needs lucas42). A teammate reporting "supervised repo" is not sufficient — they may be wrong. Your own recall of "I think X is supervised" is not sufficient — supervision state changes over time and you will misremember. This check takes one command and prevents (a) incorrectly asking lucas42 to review PRs that will auto-merge on their own, and (b) instructing a teammate to add lucas42 as a reviewer on an unsupervised PR, which puts noise in his review queue for a PR he doesn't actually need to look at. **Specific trap to avoid:** at Step 7 of an estate rollout (or any "drive the PR review loop" handoff), do not include the phrase "since `{repo}` is supervised" or "since `{repo}` is unsupervised" unless you have just run the check. If you haven't checked, omit the supervision qualifier and let the teammate's review-loop instructions handle it.
 
 **Before instructing a developer to close or change direction on a PR, always fetch its review state from GitHub.** Run `gh-as-agent repos/lucas42/{repo}/pulls/{number}/reviews` and read all reviews — particularly any `CHANGES_REQUESTED` reviews from `lucas42`. A verbal instruction from the user to "close it" or "move the fix elsewhere" does not supersede existing review feedback; both may apply independently. If lucas42 has requested changes, those must be addressed even if the scope of the fix is also changing.
