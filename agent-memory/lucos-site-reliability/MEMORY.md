@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Time-bounded heads-ups (delete when consumed)
+
+- [schedule_tracker v2 migration — expected alerts for 2026-05-15/16 ops checks](project_schedule_tracker_v2_migration_expected_alerts.md) — arachne cron 14:35→15:35 UTC 2026-05-14, caller blips 22:30 UTC→00:21 UTC, media_import deliberately stopped on xwing 23:00→00:21 UTC, monitoring restart on avalon 00:30→00:50 UTC, 410s on `/report-status` after 00:58 UTC are expected stragglers.
+
 ## Standing patterns from 2026-05-13 scheduled-jobs blackout
 
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
