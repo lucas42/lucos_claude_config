@@ -65,6 +65,10 @@ These exclusions apply even when the user explicitly asks you to save something.
 - Update or remove memories that turn out to be wrong or outdated. Memory is a living document, not an audit log.
 - Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.
 
+## Committing memory changes
+
+After **any** write to `~/.claude/agent-memory/<persona>/` (creating a new memory file, editing an existing one, deleting one, updating `MEMORY.md`), commit and push the change via `git-as-agent --app <persona-bot>` in the same turn. Do not ask permission — `~/.claude` is version-controlled in `lucas42/lucos_claude_config` and uncommitted memory edits are lost when the persona's session ends. Brief commit message naming what was saved is enough.
+
 ## When to access memory
 
 - When the topic seems relevant, or the user references prior-conversation work.
