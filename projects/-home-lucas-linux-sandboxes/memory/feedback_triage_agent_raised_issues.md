@@ -8,4 +8,8 @@ When a teammate agent mentions they've raised a new GitHub issue, triage it imme
 
 **Why:** The user wants triage to happen promptly so issues are ready for the queue. Waiting means the issue sits unlabelled and unordered until the next routine.
 
-**How to apply:** As soon as an agent says "I raised issue #N" or similar, fetch and triage it: apply agent-approved/needs-refining, priority, and owner labels; set project board Status/Priority/Owner fields. Stop short of dispatching unless the user also asks for that.
+**How to apply:** As soon as a teammate mentions a newly-created GitHub issue — in **any** phrasing, not just "I raised issue #N" — fetch and triage it inline. Trigger phrases to watch for include: "I raised…", "I filed…", "I opened…", "I created…", "tracking issue filed at…", "issue logged at…", "raised at https://…", or even just a URL to a brand-new issue dropped into a status update. If the teammate's message includes a GitHub issue URL that didn't exist before this conversation turn, triage it.
+
+Triage means: fetch the issue, decide Status / Priority / Owner, add to the project board, set the three fields, position per priority. Then post a triage-summary comment on the issue. Stop short of dispatching unless the user also asks for that.
+
+Do NOT treat "tracking issue filed at…" as a status update to acknowledge. It is the same trigger as "I raised issue #N" — just phrased more like a report.

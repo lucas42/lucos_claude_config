@@ -14,7 +14,18 @@ Companion references (read on demand at the linked points):
 
 ## Inline Triage of Agent-Raised Issues
 
-When a teammate agent mentions they have raised a new GitHub issue (e.g. "I raised lucas42/lucos_foo#N"), **triage it immediately** — do not wait for the next scheduled triage run. Apply Steps 1–3 below. Stop short of dispatching the issue unless the user also asks for that.
+When a teammate agent mentions a newly-created GitHub issue, **triage it immediately** — do not wait for the next scheduled triage run. Apply Steps 1–3 below. Stop short of dispatching the issue unless the user also asks for that.
+
+**Trigger phrases — recognise all of these, not just "I raised":**
+
+- "I raised…", "I filed…", "I opened…", "I created…", "I logged…"
+- "tracking issue filed at…", "issue logged at…", "raised at https://…"
+- "filed it at…", "logged it at…", "opened at…"
+- Or even just a GitHub issue URL the teammate dropped into a status update where the issue didn't exist before this conversation turn.
+
+If the teammate's message links to a GitHub issue that was created during the current session, the trigger fires — regardless of phrasing. **Do not treat "tracking issue filed at…" as a status update to acknowledge.** It is the same trigger as "I raised issue #N" — just phrased more like a report. The acknowledgement reflex ("Thanks, noted") is the failure mode this section exists to prevent.
+
+(Lesson from 2026-05-15 on `lucos_docker_mirror#73`: SRE filed a tracking issue and reported "tracking issue filed at …". I acknowledged the diagnosis and relayed it to lucas42 without triaging the issue. lucas42 had to ask me explicitly why I hadn't triaged it. The instruction was technically present but phrased too narrowly around "I raised…" to fire on "tracking issue filed at…".)
 
 ### Pre-flight: should this issue exist at all?
 
