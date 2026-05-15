@@ -106,17 +106,26 @@ After the specialist responds, you will be re-dispatched. Read the specialist's 
 
 ## Step 6 — Check CI status and follow up
 
-After posting your review:
+After posting your review, check **both** endpoints — CircleCI publishes via commit statuses, not check-runs; checking only check-runs misses it:
 
 ```bash
+# GitHub Actions, CodeQL, convention checks
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {name, status, conclusion}'
+
+# CircleCI and other status-based CI
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
+  repos/lucas42/{repo}/commits/{head_sha}/statuses --jq '.[] | {context, state, description}'
 ```
 
-- **CI not finished** (any check `in_progress` or `queued`): poll every 60 seconds, up to 10 minutes. After that, move on.
+A PR with all check-runs green but a failing CircleCI status will show `mergeable_state: blocked` with no obvious cause — this is the most common reason for that symptom.
+
+The combined state is CI-passing only when **all** check-runs have `conclusion: success` **and** all commit statuses have `state: success` (or there are none).
+
+- **CI not finished** (any check `in_progress` / `queued`, or any status `pending`): poll every 60 seconds, up to 10 minutes. After that, move on.
 - **CI passes:** nothing more needed.
 - **CI fails:** post a follow-up `REQUEST_CHANGES` review flagging the specific failures.
-- **No check runs at all:** nothing more needed.
+- **No check runs and no statuses:** nothing more needed.
 
 **Why post the code review before waiting for CI:** waiting first creates a race — if the developer pushes a new commit, your review ends up against a SHA whose diff you never read. Post review first, then handle CI separately.
 
