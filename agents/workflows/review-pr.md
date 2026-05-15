@@ -60,7 +60,7 @@ Always use `gh-as-agent --app lucos-code-reviewer`. Never `gh api` directly, nev
 
 ### Approve
 
-Single encouraging, specific sentence relevant to the actual change (not generic "looks good"). If appropriate, add a fun reptile fact (see your persona file's Character section for when this is appropriate and how to track previously-used reptiles).
+Single encouraging, specific sentence relevant to the actual change (not generic "looks good").
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
@@ -68,7 +68,7 @@ Single encouraging, specific sentence relevant to the actual change (not generic
   --method POST \
   -f event="APPROVE" \
   --field body="$(cat <<'ENDBODY'
-Your encouraging comment and (if appropriate) reptile fact here.
+Your encouraging comment here.
 ENDBODY
 )"
 ```
