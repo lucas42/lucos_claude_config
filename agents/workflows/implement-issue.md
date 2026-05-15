@@ -84,19 +84,30 @@ rm "$BODY_FILE"
 
 The script prints the PR URL on success.
 
-## Step 7 — Verify reviewer was requested on supervised repos
+## Step 7 — Re-request reviewer after pushing fixes
 
-`create-pr` handles this automatically. The only manual step remaining is:
+`create-pr` handles the *initial* reviewer request automatically at PR creation: it adds `lucas42` on supervised repos and adds nobody on unsupervised repos.
 
-**After pushing fixes in response to CHANGES_REQUESTED**: re-request the reviewer who asked for the changes using the `POST requested_reviewers` call directly (because `create-pr` is for initial creation only):
+The one situation where you must manually call `POST /requested_reviewers` yourself is **after pushing a fix in response to a CHANGES_REQUESTED review**. Submitting CHANGES_REQUESTED removes the reviewer from `requested_reviewers`, so without a fresh request the fixed PR falls out of their review queue.
+
+**Pick the reviewer to re-request from the actual review history — do not hard-code a name.**
 
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+# 1. Find the reviewer who submitted CHANGES_REQUESTED:
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> \
+    repos/lucas42/{repo}/pulls/{number}/reviews \
+    --jq '[.[] | select(.state == "CHANGES_REQUESTED")] | last | .user.login'
+
+# 2. Re-request that exact reviewer:
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> \
+    repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
     --method POST \
-    -f reviewers[]=lucas42
+    -f 'reviewers[]=<reviewer-login-from-step-1>'
 ```
 
-Submitting a CHANGES_REQUESTED review removes the reviewer from `requested_reviewers`, so pushing a fix without re-requesting leaves the PR invisible in their review queue.
+The login will typically be `lucas42` (supervised repos only, when he has personally reviewed) or `lucos-code-reviewer` (after the bot has submitted CHANGES_REQUESTED on any repo).
+
+**Never request a reviewer who has not already reviewed the PR.** Specifically: do not request `lucas42` on an unsupervised repo — he was not added at PR creation, so there is nothing to re-engage. Hard-coding `lucas42` in this step pollutes his review queue with PRs he never volunteered to review.
 
 ## Step 8 — Comment on unexpected obstacles
 
