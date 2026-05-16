@@ -72,6 +72,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Flag-day plans need a verification gate, not just an order](feedback_flag_day_verification_gate.md) — when an ADR has two cutovers that must land together, specify a single verifiable command between them; "order without gate" lets the second cutover fire while the first is silently broken (ADR-0004 flag-day, 2026-05-13 monitoring blackout)
 - [Verify the premise, not just the quote](feedback_verify_premise_not_just_quotes.md) — when a teammate's reasoning rests on a structural domain claim ("X is impossible"), run the cheap falsifying check before extrapolating (lucos#151 Stage 5, 2026-05-14)
 - [Shutdown means no tool calls](feedback_shutdown_no_tool_calls.md) — on `shutdown_request`, respond in text only; any tool call (incl. no-op Agent spawn) keeps the process alive (2026-05-15)
+- [Convention scope = failure mode scope](feedback_convention_scope_failure_mode.md) — don't bundle hygiene rules into a failure-mode-targeted convention; lucas42 corrected env_var_passthrough KEY=value handling — hardcoded values can't have the empty-string failure mode (PR #393, 2026-05-16)
 
 ## Auto-merge & security checks
 
