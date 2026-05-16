@@ -56,6 +56,7 @@
 - [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I sometimes generate fake `<teammate-message>` blocks (prefixed `Human:`) in my own output and read them back as real; verify against teammate session jsonls, not my own context
 - [Re-fetch issue comments before following up](feedback_refetch_issue_comments_before_following_up.md) — never post a progress/status comment on a GitHub issue without re-fetching its comments first, even on an issue I just filed
 - [Disambiguate AskUserQuestion layers](feedback_askuserquestion_layer_disambiguation.md) — option labels must name the system layer when the action could happen at multiple layers (code vs detector vs config)
+- [Migration scope matches spec scope](feedback_migration_scope_matches_spec.md) — when briefing a teammate to apply a spec / convention / rollout, the brief covers only what the spec requires; no adjacent "while you're at it" checks
 
 ## Active Projects
 
