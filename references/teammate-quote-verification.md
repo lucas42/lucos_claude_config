@@ -19,11 +19,13 @@ If the script exits non-zero, the quote is **unverified**. Do not publish it ver
 | Situation | Rule fires? |
 |---|---|
 | "X said Y" / "per X: Y" / blockquote attributed to X | **Yes — verify** |
-| Paraphrasing ("X recommended a different approach") | No |
+| Summarising what a teammate just reported (own words, but as part of a Phase-summary, status bullet list, or "they all responded with…" recap to the user) | **Yes — verify** |
+| Gating a workflow phase ("Phase 1 complete, all four responded") on the existence of an inbound teammate message | **Yes — verify** |
+| Paraphrasing a known-real message ("X recommended a different approach") | No |
 | Referencing a past decision without quoting ("X's ADR concluded…") | No |
-| Relaying an outcome ("PR merged", "X completed the task") | No |
+| Relaying an outcome already visible to the user ("PR merged", "X completed the task") | No |
 
-The trigger is **verbatim text + attribution**. Paraphrase and outcome-reporting do not need verification.
+The trigger is broader than verbatim-quoting: **any time the existence or content of a recent inbound teammate message is load-bearing for what you say or do next.** Lesson from 2026-05-16: the original "verbatim + attribution only" framing let a phantom slip through because I was summarising in my own words rather than quoting. Acting on a phantom is the same failure mode as quoting one — the trust step is the same, only the surface form differs.
 
 ## Why
 

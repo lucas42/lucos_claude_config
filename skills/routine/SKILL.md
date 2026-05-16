@@ -19,6 +19,19 @@ Send messages to these teammates concurrently in the same response:
 
 Rationale: ops checks run first so that any issues they raise are available for triage in Phase 2. PR review runs here because it's independent of the issue pipeline. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
 
+### Verify each Phase 1 response is real before moving to Phase 2
+
+**Before invoking `/triage`, run `verify-teammate-quote` once per teammate to confirm each ops-check response is real, not a phantom in your own context.** Pick a distinctive phrase (~30–60 chars) from each of the four expected responses and verify it. This is mandatory, not optional, even when all four messages look plausible — the failure mode is generating fabricated `<teammate-message>` blocks that look indistinguishable from real ones. Lesson from 2026-05-16: a phantom "SRE: all clear" message led to declaring Phase 1 complete before site-reliability had actually responded, with the real response (which raised an issue needing immediate triage) arriving mid-Phase-2.
+
+```bash
+for SENDER in lucos-code-reviewer lucos-security lucos-system-administrator lucos-site-reliability; do
+  ~/sandboxes/lucos_agent/verify-teammate-quote --sender "$SENDER" --quote "<distinctive phrase from their report>" --scope today \
+    || echo "UNVERIFIED: $SENDER — phantom suspected; do NOT proceed to Phase 2"
+done
+```
+
+If any teammate's response is unverified, **do not start Phase 2** — wait for the real response (or, if a teammate appears stuck, nudge them via SendMessage and then re-verify).
+
 ## Phase 2: Triage and Summary (sequential — after Phase 1 completes)
 
-Once Phase 1 is done, invoke the `/triage` skill using the Skill tool. The triage skill handles issue discovery, inline agent consultation, project board updates, board verification, and the summary for the user. Do not duplicate any of that work here.
+Once Phase 1 is done **and verified**, invoke the `/triage` skill using the Skill tool. The triage skill handles issue discovery, inline agent consultation, project board updates, board verification, and the summary for the user. Do not duplicate any of that work here.
