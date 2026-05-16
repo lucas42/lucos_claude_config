@@ -46,7 +46,7 @@ Every project gets these automatically:
 ### Variable naming conventions
 
 - External event infrastructure: `LOGANNE_ENDPOINT` (not `LUCOS_LOGANNE_URL` or similar)
-- Contacts API: `LUCOS_CONTACTS_URL`
+- Contacts API: `LUCOS_CONTACTS_ORIGIN`
 
 #### `*_ENDPOINT` vs `*_ORIGIN`
 
