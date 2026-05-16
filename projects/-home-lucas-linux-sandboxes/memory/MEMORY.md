@@ -55,6 +55,7 @@
 - [No every-user-turn polling](feedback_no_every_turn_polling.md) — don't propose "re-check X on every user turn" as an instruction fix; produces weird inconsistencies
 - [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I sometimes generate fake `<teammate-message>` blocks (prefixed `Human:`) in my own output and read them back as real; verify against teammate session jsonls, not my own context
 - [Re-fetch issue comments before following up](feedback_refetch_issue_comments_before_following_up.md) — never post a progress/status comment on a GitHub issue without re-fetching its comments first, even on an issue I just filed
+- [Disambiguate AskUserQuestion layers](feedback_askuserquestion_layer_disambiguation.md) — option labels must name the system layer when the action could happen at multiple layers (code vs detector vs config)
 
 ## Active Projects
 
