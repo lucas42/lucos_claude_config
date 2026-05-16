@@ -88,14 +88,30 @@ Do not run `apt upgrade` yourself — that's a change with downtime risk and nee
 
 ### Check 4: Resource Checks
 
-SSH into each active host and check:
+**Production hosts** — SSH into each active host and check:
 
 - **Memory**: `free -h` — flag if available memory is consistently low
 - **Disk space**: `df -h` — flag any filesystem above 80% used. If a filesystem is above 80%, **investigate the cause before raising the issue**: run `du -h --max-depth=2 / --exclude=/proc --exclude=/sys --exclude=/dev 2>/dev/null | sort -rh | head -20` to identify the largest directories, then drill down further as needed. Include the breakdown (top consumers by path and size) in the issue body, along with your assessment of whether the growth is expected (e.g. backup accumulation during retention window) or unexpected (e.g. runaway logs, orphaned Docker layers). Do not raise a "disk is full" issue without this analysis — repeated issues closed without root cause identified are noise.
 - **IOPS/load**: `uptime` and `iostat -x 1 3` if available — flag sustained high load
 - **Journal/log size**: `journalctl --disk-usage` — flag if approaching problematic sizes
 
-Trivial hygiene fixes (e.g. clearing a tmp dir that obviously accumulated junk) can be done immediately if they carry no downtime risk. Anything more significant: raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` or the relevant repo.
+**Local sandbox VM** — also check the agent's own environment (no SSH needed, run locally):
+
+```bash
+df -h                    # root filesystem — flag if above 80%
+free -h                  # memory
+uptime                   # load
+docker system df         # Docker images/containers/volumes/build cache — the main space consumer on this VM
+```
+
+If root filesystem is above 80%, investigate with `du -h --max-depth=2 / --exclude=/proc --exclude=/sys --exclude=/dev --exclude=/run 2>/dev/null | sort -rh | head -20`. Key known consumers on this VM:
+- **Docker images/build cache**: the largest consumer; `docker image prune -a -f` removes all unused images; `docker builder prune -f` clears build cache
+- **`~/sandboxes/*/target` or `*/build` dirs**: Maven/Gradle/Rust build artefacts — safe to delete. These may be root-owned (built inside Docker containers) — use `sudo rm -rf`. **Passwordless sudo IS available on the local VM** — verify with `sudo -n true` before assuming it's unavailable.
+- **`~/.gradle/caches`, `~/.npm/_cacache`**: tool caches — safe to delete, will re-download on next use
+- **`~/.claude/projects/`**: Claude conversation logs — do NOT delete without explicit instruction
+- **`~/go/pkg/mod`**: Go module cache — `go clean -modcache`; safe to delete, will re-download
+
+Hygiene fixes on the local VM (clearing build artefacts, pruning Docker images/cache, clearing tool caches) can all be done immediately — this is a dev sandbox with no production workloads. Anything that would need permanent provisioning changes: raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox`.
 
 If resource findings might have an application-level root cause, flag this in the issue body for lucos-site-reliability to cross-check.
 
