@@ -13,11 +13,11 @@ lucos_comhra_llm: 2026-05-11
 lucos_schedule_tracker: 2026-05-10
 lucos_media_weightings: 2026-05-07
 lucos_photos_worker: 2026-05-04
-lucos_arachne_explore: 2026-05-01
+lucos_arachne_explore: 2026-05-16
 lucos_arachne_web: 2026-05-04
 lucos_backups: 2026-05-14
 lucos_authentication: 2026-05-13
-lucos_repos_app: 2026-05-01
+lucos_repos_app: 2026-05-16
 lucos_dns_bind: 2026-05-15
 lucos_loganne: 2026-05-14
 lucos_configy: 2026-05-14
@@ -61,8 +61,8 @@ lucos_arachne_mcp: 2026-05-10
 lukeblaney_blog: 2026-05-12
 lucos_docker_health_app: 2026-05-09
 
-lucos_docker_mirror_web: 2026-05-01
-lucos_docker_mirror_registry: 2026-05-01
+lucos_docker_mirror_web: 2026-05-16
+lucos_docker_mirror_registry: 2026-05-16
 lucos_docker_mirror_info: 2026-05-06
 
 ## SSH Hostname Note
