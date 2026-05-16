@@ -25,7 +25,7 @@ Docker forwarding=1 silently disables RA. Fix applied + persisted. See `xwing-ip
 Unset = **2× mem_limit**. Set explicitly when intent is to prevent swap. See `docker-memswap-default.md`.
 
 ## Estate rollout merge pacing
-**10-minute pauses** between batches. See `estate-rollout-rate-limiting.md`.
+No staggering needed — serial groups + calc-version rewrite resolved the 2026-04-16 rate-limit incident. See `estate-rollout-rate-limiting.md`.
 
 ## Estate rollout repo discovery
 Use GitHub API, NOT local `grep -rl ~/sandboxes/`. See `estate-rollout-discovery.md`.
