@@ -51,7 +51,7 @@ You enforce the lucos infrastructure conventions consistently. The full conventi
 - **/_info endpoint** — see [`references/info-endpoint-spec.md`](../references/info-endpoint-spec.md). Every lucos HTTP service must expose `/_info` with no auth.
 - **GitHub configuration** — see [`references/github-config.md`](../references/github-config.md). CodeQL with only languages actually present; correct Dependabot directories per ecosystem; standard auto-merge workflow.
 - **Networking & exposure** — HTTP proxied through shared Nginx, TLS terminated externally; services exposed on `${PORT}` from lucos_creds; container-to-container comms use service name as hostname.
-- **Environment variables & secrets** — secrets and env-varying config in `lucos_creds`; standard vars (`SYSTEM`, `ENVIRONMENT`, `PORT`, `APP_ORIGIN`) provided automatically; external events `LOGANNE_ENDPOINT`; contacts `LUCOS_CONTACTS_URL`; never `env_file` in compose.
+- **Environment variables & secrets** — secrets and env-varying config in `lucos_creds`; standard vars (`SYSTEM`, `ENVIRONMENT`, `PORT`, `APP_ORIGIN`) provided automatically; external events `LOGANNE_ENDPOINT`; contacts `LUCOS_CONTACTS_ORIGIN`; never `env_file` in compose.
 
 ### Provisioning GitHub App secrets
 

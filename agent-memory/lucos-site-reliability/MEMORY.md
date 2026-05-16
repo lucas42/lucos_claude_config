@@ -157,7 +157,7 @@ Container names match the service name in `docker-compose.yml`.
 - `/_info` checks/metrics both empty — issues #10 and #11 still open.
 - Worker not implemented — Loganne event delivery unresolved (issue #24 still open).
 - Issue #202 (Loganne 400 on photoProcessed events): open, P3. Non-fatal but every process_photo job emits it.
-- Issue #213 (Contact display names): `sweep_contact_display_names` builds double-slash URLs (trailing slash on `LUCOS_CONTACTS_URL` + leading slash on path). Fix: strip trailing slash.
+- Issue #213 (Contact display names): `sweep_contact_display_names` builds double-slash URLs (trailing slash on `LUCOS_CONTACTS_ORIGIN` + leading slash on path). Fix: strip trailing slash.
 - **reprocess_photo idempotency trap**: `process_photo` short-circuits if original file AND thumbnail both exist. To force regeneration, delete thumbnails from `/data/photos/derivatives/` first (named `{sha256hash}_thumb.jpg`).
 
 ## lucos_repos — Convention Checks
