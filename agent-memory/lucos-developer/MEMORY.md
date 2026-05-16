@@ -4,7 +4,7 @@
 
 - **Server**: Go SSH/SFTP server in `server/src/`. Tests run with `/usr/local/go/bin/go test ./src`.
 - **UI**: Node/Express in `ui/src/index.js`, EJS views in `ui/src/views/`. No UI tests.
-- **SSH command syntax**: `system/env/KEY=value` (set), `system/env/KEY=` (delete simple), `client/env => server/env` (create linked), `rm client/env => server` (delete linked), `ls` / `ls system/env` / `ls system/env/KEY` (read).
+- **SSH command syntax**: `system/environment/KEY=value` (set), `system/environment/KEY=` (delete simple), `client/environment => server/environment` (create linked), `rm client/environment => server/environment` (delete linked), `ls system/environment` / `ls system/environment/KEY` (read). Values may contain slashes — the server splits on `=` first (max 2 parts), so URL values like `http://...` work fine. The key path must have exactly 3 slash-delimited segments: `system/environment/KEY`.
 - **CI**: CircleCI runs Go tests in parallel with Docker build. Config in `.circleci/config.yml`.
 - **`/usr/local/go/bin/go`** is the Go binary path (not on PATH in bash tool sessions).
 - Linked credential DB schema: UNIQUE on (clientsystem, clientenvironment, serversystem) — serverenvironment not part of the unique key.
@@ -167,6 +167,7 @@ jobs:
 - [Verify Dockerfile COPY when adding new files](feedback_dockerfile_copy.md) — check Dockerfile covers new dirs; `COPY *.py .` silently missed `ontologies/` dir (lucos_arachne #267/#282)
 - [Refresh PR description with follow-up commits](feedback_pr_description_freshness.md) — if commit changes shape of work (passthrough vs hardcode, new dep, etc.) update description before re-requesting review
 - [arachne find_entities labels](feedback_arachne_find_entities_labels.md) — returns `rdfs:label` not `skos:prefLabel`; use `get_entity(uri)` for canonical name
+- [Dependabot recreate needs push access](feedback_dependabot_recreate.md) — GitHub Apps can't use `@dependabot recreate`; close the PR, flag to team-lead for lucas42 to post it
 
 ## lucos_eolas
 
