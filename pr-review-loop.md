@@ -4,6 +4,8 @@ This document describes the standard review loop that an implementation teammate
 
 Every teammate that creates a PR is responsible for driving the review loop to completion before reporting back to whoever asked it to do the work.
 
+**Coordinator override rule:** If a coordinator instruction reverses a step you are in the middle of (e.g. "stop pushing", "leave the PR as-is", "don't dispatch the reviewer"), drop any in-flight work in that step immediately — even if a commit is half-staged or a message is about to be sent. Do not complete the step and then apply the instruction to the next one. Message queues are async, so an override that arrives mid-step is still binding for everything you haven't yet executed.
+
 ## The loop
 
 After creating a PR, track the **iteration count** starting at 1.
