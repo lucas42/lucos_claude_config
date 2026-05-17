@@ -82,9 +82,10 @@ A memory that names a specific function, file, or flag is a claim that it existe
 
 - If the memory names a file path: check the file exists.
 - If the memory names a function or flag: grep for it.
+- If the memory asserts the **lifecycle status of ongoing work** — phrases like "X is parked", "Y has shipped", "Z is blocked on W", "the migration is in progress", "this hasn't been implemented yet" — verify against GitHub issues, PRs, deployed code, or recent commits before relying on the status as a premise. Lifecycle-status memories age faster than any other kind, and they are especially load-bearing when they feed secondary decisions (e.g. "no consumer exists for this event yet *because the consuming system is parked*"). Treating a stale status as fact and reasoning forward from it produces architectural conclusions that are correct only by accident.
 - If the user is about to act on your recommendation (not just asking about history), verify first.
 
-"The memory says X exists" is not the same as "X exists now."
+"The memory says X exists" is not the same as "X exists now." Equally, "the memory says X is parked / done / blocked" is not the same as "X is parked / done / blocked **now**" — and the gap between those two has been the source of real architectural misjudgements (e.g. arguing "no live consumer exists, so file the event for future use" when in fact the consumer is ready to wire up today).
 
 A memory that summarises repo state (activity logs, architecture snapshots) is frozen in time. If the user asks about *recent* or *current* state, prefer `git log` or reading the code over recalling the snapshot.
 
