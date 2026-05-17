@@ -114,15 +114,20 @@ After posting your review, check **both** endpoints — CircleCI publishes via c
   repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {name, status, conclusion}'
 
 # CircleCI and other status-based CI
+# IMPORTANT: the statuses endpoint returns ALL historical entries (newest-first).
+# Use unique_by(.context) to keep only the latest state per context.
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
-  repos/lucas42/{repo}/commits/{head_sha}/statuses --jq '.[] | {context, state, description}'
+  repos/lucas42/{repo}/commits/{head_sha}/statuses \
+  --jq 'unique_by(.context) | .[] | {context, state, description}'
 ```
 
 A PR with all check-runs green but a failing CircleCI status will show `mergeable_state: blocked` with no obvious cause — this is the most common reason for that symptom.
 
-The combined state is CI-passing only when **all** check-runs have `conclusion: success` **and** all commit statuses have `state: success` (or there are none).
+The combined state is CI-passing only when **all** check-runs have `conclusion: success` **and** all latest-per-context commit statuses have `state: success` (or there are none).
 
-- **CI not finished** (any check `in_progress` / `queued`, or any status `pending`): poll every 60 seconds, up to 10 minutes. After that, move on.
+**Do not use an `until` loop that checks for any pending entry in the raw statuses list** — old superseded entries remain in the list forever and the loop will never exit. Instead, re-fetch with `unique_by(.context)` and check whether any latest-per-context entry has `state: pending`.
+
+- **CI not finished** (any check `in_progress` / `queued`, or any latest-per-context status `pending`): poll every 60 seconds, up to 10 minutes. After that, move on.
 - **CI passes:** nothing more needed.
 - **CI fails:** post a follow-up `REQUEST_CHANGES` review flagging the specific failures.
 - **No check runs and no statuses:** nothing more needed.
@@ -179,6 +184,8 @@ Exit 0 = unsupervised (auto-merge fires on bot approval); exit 1 = supervised (n
 After approving any PR, run these checks before moving on:
 
 1. **Check CI status.** Never approve a PR with failing CI — verify check-runs AND commit statuses (some CI systems like CircleCI report via commit statuses, not check-runs) before posting `APPROVE`. If CI is failing, post `REQUEST_CHANGES` instead, regardless of code quality.
+
+   **Re-fetch the PR head SHA immediately before posting `APPROVE`** — if the head has changed since you verified the diff (e.g. a new commit was pushed while CI was running), inspect the new diff before approving. GitHub attaches reviews to the *current* PR head, not the commit you reviewed. A review posted on an unexamined commit is worse than no review. (Failure mode: lucos_contacts PR #715 — a revert commit landed during CI wait; APPROVE was inadvertently posted on the reverted code.)
 2. **Check auto-merge.** Wait ~30 seconds after approval, then re-fetch the PR and check the `auto_merge` field.
    - **Non-null:** auto-merge enabled, will merge when CI passes. Report as "auto-merge enabled".
    - **Null:** check supervision status with `check-unsupervised` (above). If supervised (exit 1), this is **expected** — report as "awaiting lucas42 approval", not "auto-merge triggered". If unsupervised (exit 0) and `auto_merge` is still null, flag as stuck (criterion 7 in the stuck-PR guide) and check the Actions runs API for any workflow with `startup_failure` or `failure`.
