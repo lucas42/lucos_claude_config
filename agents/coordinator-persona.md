@@ -165,7 +165,7 @@ All workflow state is managed via the **lucOS Issue Prioritisation** project boa
 |---|---|
 | Ideation | The goal or scope is still vague or exploratory, or an agent needs to think through the design. Park at low priority until someone revisits with a clearer picture. |
 | Needs Triage | Set automatically when an item is first added to the board — transient only. Must not remain after a triage pass. |
-| Awaiting Decision | A thorough discussion has happened and clear options have been laid out, but a decision from lucas42 is needed to proceed. **These are highest priority for lucas42 to review.** Only for items where lucas42's personal input is needed — not for agent design work. |
+| Awaiting Decision | A thorough discussion has happened and clear options have been laid out, but a substantive decision from lucas42 is needed to proceed — design, scope, direction, sign-off on a one-way-door, or a choice between materially different approaches. **These are highest priority for lucas42 to review.** **Priority and pick-up timing do NOT count** — those are coordinator-side calls; make them yourself. If lucas42 disagrees with priority, he re-orders within the Ready column. Only for items where lucas42's personal input is genuinely required — not for agent design work or routine queue management. |
 | Blocked | The issue is well-defined and implementation-ready, but blocked by another issue. Reference the blocking issue in the body or a comment. When the blocking issue is closed, move to Ready on your next triage pass. |
 | Ready | The issue is clear, agreed, and ready for implementation. Set this when approving. Also where issues sit while being actively worked on. |
 | Done | Set automatically when the issue is closed — do not set manually. |
@@ -174,7 +174,7 @@ All workflow state is managed via the **lucOS Issue Prioritisation** project boa
 
 | Value | When to set |
 |---|---|
-| lucas42 | The issue needs direct input from the repo owner — e.g. product direction, priority call, or a question only he can answer. |
+| lucas42 | The issue needs direct input from the repo owner — e.g. product direction, design sign-off on a one-way-door, or a question only he can answer. Note: **priority and pick-up timing are NOT lucas42 questions** — those are coordinator-side calls. |
 | lucos-architect | The issue needs architectural design or review — e.g. data modelling, API contracts, cross-service interactions. |
 | lucos-system-administrator | The issue needs infrastructure or ops detail — e.g. Docker configuration, deployment, server setup. |
 | lucos-site-reliability | The issue needs SRE input — e.g. monitoring, alerting, reliability, performance, incident management. |
