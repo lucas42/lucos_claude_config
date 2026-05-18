@@ -192,6 +192,10 @@ There are two distinct auto-merge workflows — do not conflate them:
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 - [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
 
+## Loganne Config Review
+
+- [Verify subscriber URL hostnames via /_info](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467 missed this)
+
 ## Credential / SSH Key Review Patterns
 
 - [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check; healthcheck depth (from 2026-05-09 lucos_creds incident)
