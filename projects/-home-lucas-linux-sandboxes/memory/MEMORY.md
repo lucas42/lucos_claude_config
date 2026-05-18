@@ -58,11 +58,12 @@
 - [Disambiguate AskUserQuestion layers](feedback_askuserquestion_layer_disambiguation.md) — option labels must name the system layer when the action could happen at multiple layers (code vs detector vs config)
 - [Migration scope matches spec scope](feedback_migration_scope_matches_spec.md) — when briefing a teammate to apply a spec / convention / rollout, the brief covers only what the spec requires; no adjacent "while you're at it" checks
 - [Ready means fully implementable](feedback_ready_means_fully_implementable.md) — if any cross-repo dependency is open, the issue is Blocked, not Ready, regardless of "parallel unit-testable" framings
+- [Verify project-state before citing](feedback_verify_project_state_before_citing.md) — never cite "parked / deferred / completed" from a MEMORY.md index line; re-read the memory file AND verify against the live ticket/board
 
 ## Active Projects
 
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
-- [Media API v2→v3 migration](project_v3_migration.md) — parked as of 2026-04-05; dual-format in weightings nearly done, broader migration deferred
+- [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
