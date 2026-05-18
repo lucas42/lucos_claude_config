@@ -76,6 +76,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [File follow-up tickets during design](feedback_file_followups_during_design.md) — when a design surfaces downstream work in other repos, file those tickets immediately, never defer pending dependencies; lucas42 doesn't trust us to remember later (eolas#19, 2026-05-17)
 - [Data-driven over code rules for federation-layer priority](feedback_data_driven_over_code_rules.md) — when a federation ingestor needs source-system priority, express it via an asymmetric RDF predicate source systems emit (e.g. `preferredIdentifier`), not hardcoded if/else; predicate URIs must be dereferencable; reuse existing vocabulary services (eolas#19 + arachne#539, 2026-05-17)
 - [Don't grep-and-conclude on consumer wiring](feedback_grep_and_conclude_anti_pattern.md) — zero grep hits is weak evidence a system doesn't consume something; webhook handlers often dispatch by pattern/suffix, not literal name. Read the entry point (server.py, route table) before stating a conclusion (arachne webhook miss, 2026-05-17)
+- [Indexability by exclusion vs inclusion](reference_indexability_exclusion_vs_inclusion.md) — arachne search indexer uses denylist of meta-types; legitimate `skos:prefLabel` on a predicate pulls it into the indexable loop and crashes if its `rdf:type` isn't in the denylist; inclusion (via `eolas:hasCategory` allowlist) is structurally cleaner; #544 namespace filter is right next step. Triggered by eolas#256 + arachne#371 interaction, 2026-05-17/18
 
 ## Auto-merge & security checks
 

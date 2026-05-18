@@ -69,6 +69,9 @@ Persona files cached at conversation start. Mid-conversation changes need a fres
 ## lucos_arachne one-shot containers (confirmed 2026-03-06)
 `lucos_arachne_ingestor`, `_triplestore`, `_search` have `restart: no` — always Exited between runs. Normal.
 
+## lucos_arachne ingestor: startup auto-runs ingest.py (30s jitter)
+Deploy itself is the verification trigger — no manual exec needed. Cron is once-daily `15 04 * * *`; startup run is the only timely post-deploy path. See `arachne-startup-autoingest.md`.
+
 ## lucos_arachne_triplestore memory limit (updated 2026-04-20)
 2G mem / -Xmx1024m. TDB2 tombstones accumulate — compact with `POST http://localhost:3030/$/compact/ds`. See lucos_arachne#386.
 

@@ -190,6 +190,7 @@ There are two distinct auto-merge workflows — do not conflate them:
 ## Repo-Specific Notes
 
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
+- [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
 
 ## Credential / SSH Key Review Patterns
 
