@@ -12,6 +12,10 @@
 
 - [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — adding prefLabel to a predicate/class definition pulls it into the doc-building loop, forcing label lookup on its rdf:types. Combined with the IGNORE_TYPES denylist gap this caused the 2026-05-18 incident. Watch until lucas42/lucos_arachne#544 replaces the denylist with a namespace filter.
 
+## Standing Rules
+
+- [Silent fallbacks are a security risk, not just an operational one](feedback_silent_fallbacks_are_a_security_risk.md) — when weighing "remove fallback for loud failure" vs "keep fallback for defence-in-depth", state both perspectives. Silent fallbacks expose data-poisoning attack surface. lucos-security framing 2026-05-18.
+
 ## Loganne — Webhook Retry API
 
 Loganne auto-retries failed webhooks only **once** (`src/webhooks.js`) then gives them up as permanent failures — so a downstream outage lasting more than ~20 seconds (e.g. a rolling monitoring redeploy) will leave events stranded in `status: failure`, which keeps `webhook-error-rate` red forever. **Restarting loganne does NOT clear them** — in-memory failure state survives restart via filesystem persistence, and there's no fresh-retry-on-boot path.
