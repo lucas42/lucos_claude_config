@@ -61,6 +61,7 @@
 - [Verify project-state before citing](feedback_verify_project_state_before_citing.md) — never cite "parked / deferred / completed" from a MEMORY.md index line; re-read the memory file AND verify against the live ticket/board
 - [Don't shift work to coordinator](feedback_dont_shift_work_to_coordinator.md) — don't add workflow rules that move issue-close work (or similar) from GitHub automation onto the coordinator without lucas42 asking; trust the automation + brief transient inconsistencies
 - [Verify identifiers before propagating](feedback_verify_before_propagating.md) — when fan-out propagating a teammate's concrete identifier (URL/domain/repo/path) into multiple GitHub bodies, verify against an authoritative source first; an agent's report is not a verified fact
+- [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's design question verbatim; never augment with my own option list or "options I see" framing, which biases the agent toward the obvious defaults
 
 ## Active Projects
 
