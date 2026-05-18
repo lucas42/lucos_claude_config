@@ -144,9 +144,23 @@ Source issue: https://github.com/lucas42/{repo}/issues/{number}
 Summary: {one-line summary of what happened and the root cause}
 Lessons: {bullet list of the load-bearing lessons most likely to affect future work}
 Read the full report at: https://github.com/lucas42/lucos/blob/main/docs/incidents/{filename}.md
+
+If this report highlights a follow-up action in your domain: message lucos-site-reliability to coordinate before filing any issue — see "Receiving incident notifications" in references/incident-reporting.md.
 ```
 
 This ensures every agent — architect, code-reviewer, developer, security, sysadmin, ux — can absorb lessons learned and update their own memory or practices as needed.
+
+## Receiving incident notifications
+
+When you receive a notification about a published incident report, read it for lessons relevant to your domain. If the notification or the report itself highlights a follow-up action you want tracked, **do not file a GitHub issue directly.** The SRE is the designated owner of filing all incident follow-up issues (Step 1.3 above). Filing independently causes duplicates.
+
+**Message `lucos-site-reliability` first.** There are two valid cases:
+
+- **Direct incident follow-up** — the action is a corrective measure specifically prompted by this incident (e.g. adding a check that catches this class of failure in future). The SRE should file it, citing the incident. Send the SRE your framing and let them file.
+
+- **Pre-existing latent concern ("Reading B")** — the incident merely surfaced a concern that would have been worth addressing regardless. Under Reading B, the concern legitimately belongs to the domain expert's identity, not the SRE's. The domain expert may file it — but only after confirming with the SRE that Reading B applies, so the SRE can decide whether to link it in the Follow-up Actions table.
+
+The coordination step is what matters. Whether the SRE or another persona ultimately files the issue is secondary: **the goal is exactly one issue per concern, with the incident report cross-referenced in the body.**
 
 ## Completion checklist
 
