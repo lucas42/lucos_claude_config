@@ -53,8 +53,6 @@ Always use the `git-as-agent` wrapper for every commit-writing operation. See [`
 
 Reference the issue in commits (`Refs #N`) and reserve closing keywords (`Closes #N`, `Fixes #N`) for the PR body.
 
-**Multi-PR issues:** If a single issue is fixed across two or more PRs (e.g. paired changes across repos shipping in tandem), use `Refs #N` on **all** of them — NOT `Closes`. GitHub fires the auto-close event the first time any `Closes`-bearing PR merges, which prematurely closes the issue if the other PRs are still open. The coordinator will close the issue manually once all PRs are merged.
-
 For breaking changes, use the `BREAKING CHANGE:` footer or a `!` after the type (e.g. `feat!:`) — `semantic-release` requires a machine-readable token, not prose.
 
 ## Step 6 — Push and create a pull request
