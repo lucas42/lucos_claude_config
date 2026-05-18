@@ -59,6 +59,7 @@
 - [Migration scope matches spec scope](feedback_migration_scope_matches_spec.md) — when briefing a teammate to apply a spec / convention / rollout, the brief covers only what the spec requires; no adjacent "while you're at it" checks
 - [Ready means fully implementable](feedback_ready_means_fully_implementable.md) — if any cross-repo dependency is open, the issue is Blocked, not Ready, regardless of "parallel unit-testable" framings
 - [Verify project-state before citing](feedback_verify_project_state_before_citing.md) — never cite "parked / deferred / completed" from a MEMORY.md index line; re-read the memory file AND verify against the live ticket/board
+- [Don't shift work to coordinator](feedback_dont_shift_work_to_coordinator.md) — don't add workflow rules that move issue-close work (or similar) from GitHub automation onto the coordinator without lucas42 asking; trust the automation + brief transient inconsistencies
 
 ## Active Projects
 
