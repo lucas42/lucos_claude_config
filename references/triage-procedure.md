@@ -68,6 +68,8 @@ When all three hold, raising a GitHub issue adds coordinator triage overhead and
 
 **Cross-issue dependencies**: Check body and comments for prerequisites ("depends on #X", "blocked by #Y", cross-repo `lucas42/other_repo#N`). Unresolved dependency → Status = Blocked on the project board with the blocker referenced, even if the design is fully agreed.
 
+**Status precedence when multiple apply.** Blocked competes with Ready — it does not override Awaiting Decision or Ideation. If an issue is both blocked by a dependency AND has outstanding decisions / design work, prefer **Awaiting Decision** (or **Ideation** for thinking-work) over Blocked. The decisions and design work can happen in parallel with the dependency work, and surfacing as Blocked hides them from lucas42's queue. Reference the blocker in a comment so the dependency is still tracked. Only use Blocked when the *only* thing preventing dispatch is the open prerequisite — i.e. the issue would otherwise be Ready.
+
 **Code-context check (issues citing a `TODO` / `FIXME`)**: Fetch the surrounding lines and read the marker in context before approving — don't trust the issue body's interpretation alone. Look for **deferral signals**: "for now", "until X", "placeholder", "future-proofing", "reserved for", "not used yet", "implement when Y arrives", "not currently supported". These indicate the marker *documents* deferred state, not a request for current implementation. The `TODO` prefix is just convention; the surrounding wording carries the intent. If intentionally deferred, close as `not_planned` with an explanatory comment; if ambiguous, message the file's most recent author to confirm first.
 
 ---

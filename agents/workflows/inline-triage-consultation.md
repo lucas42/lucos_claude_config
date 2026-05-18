@@ -49,9 +49,9 @@ The comment should be a substantive write-up — the same depth you would put in
 
 If you name an "implementation surface" (which repos need code changes), each repo claim must be backed by a specific file/function citation — not extrapolated from the data-flow diagram. Fan-out and config-driven services (loganne, configy, repos with predicate registries, generic RDF emitters) often handle new cases generically and look like touch-points when they aren't. If you can't cite a concrete change-point in a named repo, drop it from the surface list.
 
-## Step 4 — Recommend a Status correctly: Ready vs Blocked
+## Step 4 — Recommend a Status correctly: Ready vs Blocked vs Awaiting Decision
 
-If your assessment notes any unresolved dependency that gates end-to-end verification of the work — a cross-repo issue, an in-repo prerequisite, an upstream type that doesn't yet exist, anything that must close before the work could be merged in a working state — recommend **Status = Blocked**, name the blocker explicitly, and stop.
+If your assessment notes any unresolved dependency that gates end-to-end verification of the work — a cross-repo issue, an in-repo prerequisite, an upstream type that doesn't yet exist, anything that must close before the work could be merged in a working state — the issue cannot be Ready. Recommend **Status = Blocked** (with the blocker named) UNLESS the issue also has outstanding decisions or design work, in which case recommend **Status = Awaiting Decision** (or **Ideation**) and note the dependency in the recommendation. Awaiting Decision and Ideation override Blocked because the decision/design work happens in parallel with the dependency, and surfacing as Blocked hides them from lucas42's queue.
 
 Do NOT recommend Ready on the grounds that:
 
@@ -59,11 +59,11 @@ Do NOT recommend Ready on the grounds that:
 - "the design is fully agreed" — design-readiness is not implementation-readiness
 - "implementation can start in parallel where the body permits" — start-ability is a scheduling note for the implementer, never a triage-status signal
 
-Ready means the work can be implemented AND merged to a working, end-to-end-verifiable state today. If it can't, it's Blocked.
+Ready means the work can be implemented AND merged to a working, end-to-end-verifiable state today. If it can't, it's Blocked / Awaiting Decision / Ideation per the precedence above.
 
-When raising new issues yourself with known cross-repo dependencies, name them in the body so triage can route to Blocked without re-discovery. (Worked example: `lucos_arachne#539`, 2026-05-18 — was marked Ready with a "parallel unit-testable" carve-out, caught by lucas42 and corrected to Blocked.)
+When raising new issues yourself with known cross-repo dependencies, name them in the body so triage can route appropriately without re-discovery. (Worked example: `lucos_arachne#539`, 2026-05-18 — was marked Ready with a "parallel unit-testable" carve-out, caught by lucas42 and corrected to Blocked.)
 
-The triage procedure (`references/triage-procedure.md`, "Cross-issue dependencies") has the canonical rule; this step exists because the failure mode is in *applying* it during consultation framing, not in knowing it exists.
+The triage procedure (`references/triage-procedure.md`, "Cross-issue dependencies" and "Status precedence when multiple apply") has the canonical rules; this step exists because the failure mode is in *applying* them during consultation framing, not in knowing they exist.
 
 ## Step 5 — Reply to team-lead with a short summary
 
