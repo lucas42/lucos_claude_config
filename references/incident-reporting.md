@@ -4,6 +4,15 @@ This document defines the process for writing an incident report for a specific 
 
 Use this process when you have identified a critical issue that needs a report -- whether during ops checks (Check 2: Incident Report Coverage) or when asked to write a report ad-hoc.
 
+> **STOP — read the completion checklist before you start, not after.** Incident-report work is delivered when *all four* items below are true, not when the report PR is open:
+>
+> 1. Report written following `docs/incidents/TEMPLATE.md`
+> 2. Follow-up issues filed and linked in the Follow-up Actions table
+> 3. PR raised, **reviewed, and merged** (drive the review loop yourself per `pr-review-loop.md` — do not stop at "PR opened")
+> 4. Individual notification messages sent to **every other teammate** (six messages, not one "broadcast")
+>
+> The full checklist with checkbox syntax is at the bottom of this file. It is duplicated here at the top because every previous false-completion of this workflow has been caused by reading down to Step 2 and stopping. Items 3 and 4 are not optional follow-ups — they are part of the work.
+
 ## Extend an existing report, or write a new one?
 
 Before writing a new report, check whether the incident you are about to document is actually a *continuation* of an existing one. The rule:
@@ -147,3 +156,17 @@ The incident report is delivered when ALL of the following are true. Reporting b
 - [ ] Follow-up issues filed and linked in the report's Follow-up Actions table (Step 1, item 3)
 - [ ] PR raised, reviewed, and merged (Step 2)
 - [ ] Individual notification messages sent to every other teammate (Step 3 — six messages, not one "broadcast")
+
+### Mandatory completion-report format
+
+Before reporting back to the dispatcher (team-lead or user) that the incident report is delivered, **the completion message must restate each of the four checklist items verbatim, each annotated `done` or `not done`**. This is a forcing function: composing the message exposes any item that isn't actually true.
+
+Example completion-report fragment:
+
+> **Incident report completion checklist:**
+> - [x] Report written following `docs/incidents/TEMPLATE.md` — done (`docs/incidents/2026-05-18-…md`)
+> - [x] Follow-up issues filed and linked — done (`lucas42/lucos_arachne#544` in Follow-up Actions table)
+> - [x] PR raised, reviewed, and merged — done (`lucas42/lucos#161`, merged HH:MMZ)
+> - [x] Individual notifications sent to every other teammate — done (architect, code-reviewer, developer, security, system-administrator, ux — six messages)
+
+If any item is `not done`, the completion report is premature; **do not send it**. Continue the work (drive the review loop, send the notifications) and report back only once all four are `done`. A partial-progress update is fine and welcome — but it must clearly say "in progress" and list which items remain, not "done" / "no outstanding actions".
