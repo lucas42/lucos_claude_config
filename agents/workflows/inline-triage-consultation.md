@@ -61,7 +61,7 @@ Do NOT recommend Ready on the grounds that:
 
 Ready means the work can be implemented AND merged to a working, end-to-end-verifiable state today. If it can't, it's Blocked / Awaiting Decision / Ideation per the precedence above.
 
-When raising new issues yourself with known cross-repo dependencies, name them in the body so triage can route appropriately without re-discovery. (Worked example: `lucos_arachne#539`, 2026-05-18 — was marked Ready with a "parallel unit-testable" carve-out, caught by lucas42 and corrected to Blocked.)
+When raising new issues yourself with known cross-repo dependencies, name them in the body so triage can route appropriately without re-discovery.
 
 The triage procedure (`references/triage-procedure.md`, "Cross-issue dependencies" and "Status precedence when multiple apply") has the canonical rules; this step exists because the failure mode is in *applying* them during consultation framing, not in knowing they exist.
 

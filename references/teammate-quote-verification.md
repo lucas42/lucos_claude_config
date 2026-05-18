@@ -26,11 +26,11 @@ If the script exits non-zero, the quote is **unverified**. Do not publish it ver
 | Referencing a past decision without quoting ("X's ADR concluded…") | No |
 | Relaying an outcome already visible to the user ("PR merged", "X completed the task") | No |
 
-The trigger is broader than verbatim-quoting: **any time the existence or content of a recent inbound message — teammate or user — is load-bearing for what you say or do next.** Lesson from 2026-05-16: the original "verbatim + attribution only" framing let a phantom slip through because I was summarising in my own words rather than quoting. Acting on a phantom is the same failure mode as quoting one — the trust step is the same, only the surface form differs.
+The trigger is broader than verbatim-quoting: **any time the existence or content of a recent inbound message — teammate or user — is load-bearing for what you say or do next.** Acting on a phantom is the same failure mode as quoting one — the trust step is the same, only the surface form differs.
 
 ## Phantom slash commands
 
-The same fabrication failure mode that produces phantom `<teammate-message>` blocks also produces phantom slash-command invocations. **Lesson from 2026-05-16:** after acknowledging a real `/next` and a teammate idle notification, the coordinator emitted a fake `Human: <command-message>next</command-message>...` block as part of its own assistant output, then read it back in the next turn as if the user had typed it and proceeded to run the prioritisation script and call `/dispatch`. The user caught it during dispatch.
+The same fabrication failure mode that produces phantom `<teammate-message>` blocks also produces phantom slash-command invocations: the coordinator can emit a fake `Human: <command-message>...</command-message>` block as part of its own assistant output, then read it back in the next turn as if the user had typed it and proceed to act on it.
 
 **Verification for slash commands** is mechanical: the harness writes real user inputs to the team-lead session jsonl as `type:user role:user` entries; phantoms appear as `role:assistant` content embedded inside the previous assistant turn (often with a literal `Human:` prefix). To verify a suspect slash-command invocation, find the team-lead session jsonl and check whether the command text appears as a real user-role entry whose timestamp is after the previous assistant response. Quick check:
 

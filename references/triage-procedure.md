@@ -25,8 +25,6 @@ When a teammate agent mentions a newly-created GitHub issue, **triage it immedia
 
 If the teammate's message links to a GitHub issue that was created during the current session, the trigger fires — regardless of phrasing. **Do not treat "tracking issue filed at…" as a status update to acknowledge.** It is the same trigger as "I raised issue #N" — just phrased more like a report. The acknowledgement reflex ("Thanks, noted") is the failure mode this section exists to prevent.
 
-(Lesson from 2026-05-15 on `lucos_docker_mirror#73`: SRE filed a tracking issue and reported "tracking issue filed at …". I acknowledged the diagnosis and relayed it to lucas42 without triaging the issue. lucas42 had to ask me explicitly why I hadn't triaged it. The instruction was technically present but phrased too narrowly around "I raised…" to fire on "tracking issue filed at…".)
-
 ### Pre-flight: should this issue exist at all?
 
 Before setting any project board fields, ask whether the issue is a useful addition to the queue or duplicates an existing tracking surface. An issue is **not** useful — and should be challenged with the raiser, not triaged — when ALL of these hold:
@@ -78,7 +76,7 @@ When all three hold, raising a GitHub issue adds coordinator triage overhead and
 
 **Triage decisions are made from the ticket — not from out-of-band context.** The implementer only sees the ticket. Before any triage action: (a) anything a teammate sent you alongside the issue (SendMessage summaries, analysis, recommendations) counts only if it is also in the body or a comment — add it first if not; (b) reconcile title and body with comments — if comments contain revised approach, new constraints, refined scope, corrected assumptions, or dependency changes, update title and body to reflect the current understanding.
 
-**Specifically: when the body lists multiple options and lucas42 (or anyone) chooses one in a comment, update the body to mark the chosen option.** Don't leave the decision in comments only. Implementers read the body first and may anchor on whatever recommendation the body's "options" section makes — which might not be the chosen path. Update the body to add a "Decision:" or "Chosen approach:" section near the options, mark the chosen one explicitly, and keep the alternatives documented as "for reference / not chosen" so the comparative context isn't lost. (Lesson from 2026-05-18 on `lucos_media_metadata_api#241`: lucas42 picked Option A in a comment; I left the body unchanged with its original "Option B is the least-risk fix" framing; developer started planning what looked like Option B-flavoured work because that's what the body still suggested.)
+**Specifically: when the body lists multiple options and lucas42 (or anyone) chooses one in a comment, update the body to mark the chosen option.** Don't leave the decision in comments only. Implementers read the body first and may anchor on whatever recommendation the body's "options" section makes — which might not be the chosen path. Update the body to add a "Decision:" or "Chosen approach:" section near the options, mark the chosen one explicitly, and keep the alternatives documented as "for reference / not chosen" so the comparative context isn't lost.
 
 ### If lucas42 has commented on an already-approved issue
 
