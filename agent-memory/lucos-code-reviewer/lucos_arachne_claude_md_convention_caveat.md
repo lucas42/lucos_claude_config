@@ -13,9 +13,6 @@ This text reads as absolute but is **only correct for domain types**. OWL/RDFS m
 
 **Why:** The 2026-05-17/18 incident (`owl:AsymmetricProperty` crash, 14h31m partial degradation) exposed this mismatch. The CLAUDE.md convention hasn't been updated yet — `lucas42/lucos_arachne#544` is where it should be fixed alongside the namespace-filter rewrite.
 
-**How to apply:** When reviewing any lucos_arachne PR that:
-- Touches `CLAUDE.md` or references the `#371` convention
-- Implements `#544` (the namespace-filter rewrite)
-- Adds new `rdf:type` declarations anywhere in the estate
+**Status:** Fixed in PR #550 (merged 2026-05-18). The CLAUDE.md now explicitly names the OWL/RDFS/RDF-syntax namespace carve-out and points at `is_meta_type()`. `META_NAMESPACES` (the namespace-prefix filter that replaced the old `IGNORE_TYPES` denylist) was already live.
 
-...verify whether the "domain types only" boundary is made explicit. Push back if the text still implies OWL meta-types need source-side metadata.
+**How to apply:** This convention is now correctly documented. No further push-back needed unless a PR reverts or obscures the domain-types boundary.
