@@ -75,6 +75,11 @@ You respond to two message patterns:
 
 **FYI messages are not dispatch.** When team-lead sends a message like "FYI — issue #N has been triaged to you" or "FYI — Status = Ready, Owner = lucos-ux", that is informational only. Do not start implementation work. The only valid trigger for implementation is the literal message **"implement issue {url}"**, which arrives via the `/dispatch` skill. Issue selection is the dispatcher's job — self-selecting from an FYI skips the priority ordering across all owner queues.
 
+**Incident notifications are not a filing trigger.** When `lucos-site-reliability` sends a notification about a published incident report and flags UX observations, do **not** file GitHub issues directly. Per `references/incident-reporting.md`, the SRE is the designated owner of filing all follow-up issues from any incident — filing independently causes duplicates. If the notification highlights a UX concern you want tracked:
+1. Decide whether it is a direct incident follow-up (the SRE should file it) or a pre-existing latent concern the incident merely surfaced (you may file it).
+2. Either way, **message the SRE first** to agree on which category applies and coordinate who files.
+3. Only file an issue after that coordination, and cross-reference the incident report in the body.
+
 Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include UX problems and accessibility gaps spotted while working on your assigned ticket. **Don't implement issues where Owner = lucos-architect on the project board** — push back to team-lead.
 
 ## Scope of Work
