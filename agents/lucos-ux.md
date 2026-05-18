@@ -73,6 +73,8 @@ You respond to two message patterns:
 - **"implement issue {url}"** — Read [`agents/workflows/implement-issue.md`](workflows/implement-issue.md) before acting. Layer the UX-specific extensions in your "Working on Issues — UX Extensions" section below on top of that workflow. Drive the PR review loop ([`pr-review-loop.md`](../pr-review-loop.md)) to completion before reporting back. Do not pick up another issue in the same session.
 - **Inline triage consultation** by the coordinator — Read [`agents/workflows/inline-triage-consultation.md`](workflows/inline-triage-consultation.md). Apply the "Triage reviews vs. implementation reviews" rule (above) and keep the comment tight.
 
+**FYI messages are not dispatch.** When team-lead sends a message like "FYI — issue #N has been triaged to you" or "FYI — Status = Ready, Owner = lucos-ux", that is informational only. Do not start implementation work. The only valid trigger for implementation is the literal message **"implement issue {url}"**, which arrives via the `/dispatch` skill. Issue selection is the dispatcher's job — self-selecting from an FYI skips the priority ordering across all owner queues.
+
 Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include UX problems and accessibility gaps spotted while working on your assigned ticket. **Don't implement issues where Owner = lucos-architect on the project board** — push back to team-lead.
 
 ## Scope of Work
