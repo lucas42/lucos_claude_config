@@ -56,16 +56,12 @@
 
 - [Heredoc << escaping](circleci_heredoc_escaping.md) — in v2.1 config, `<<` must be escaped as `\<<` in shell commands (even inside block scalars) or CI fails with "Unclosed << tag"
 
-## Docker — Local Builds
+## Docker
 
-`docker` is available at `/usr/bin/docker` and the daemon is running. Always run `docker build <context>` locally before pushing Dockerfile changes — do not rely on CI to catch build failures.
-
-## Docker Conventions
-
-See `~/.claude/references/docker-conventions.md` for canonical Docker conventions (container naming, volumes, healthchecks). Missing the role suffix in container_name/image is a recurring review comment — check docker-compose.yml before opening any PR.
-
-- **Healthcheck URLs: always use `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1` (IPv6) but services bind `0.0.0.0` (IPv4 only). Using `localhost` causes healthchecks to fail silently. Fixed in lucos_arachne#91 and lucos_contacts#535.
-- **`php:*-apache` images include `curl` but NOT `wget`** — use `curl -sf http://127.0.0.1/` for healthchecks, no Dockerfile install step needed. `-f` treats HTTP errors as failures (wget doesn't do this by default).
+- `docker` at `/usr/bin/docker`; always run `docker build` locally before pushing Dockerfile changes.
+- See `~/.claude/references/docker-conventions.md` for conventions. Missing role suffix in container_name/image is a recurring review comment.
+- **Healthcheck URLs: always `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1`; services bind `0.0.0.0` (IPv4 only). Fixed in lucos_arachne#91 and lucos_contacts#535.
+- **`php:*-apache`**: has `curl` but not `wget` — use `curl -sf http://127.0.0.1/` for healthchecks.
 
 ## Python test stubs (sys.modules injection)
 
@@ -76,12 +72,7 @@ When stubbing modules via `sys.modules` before importing a server module in test
 - **CRITICAL: pop the server module too** before installing stubs if multiple test files all use `sys.modules` stubs and import the same server module. If test_auth.py imports server (caching it in sys.modules with its empty stubs bound to globals), then test_webhook.py's stubs will NOT bind — server.py's module globals still point to test_auth.py's stubs. Fix: `sys.modules.pop("server", None)` at the top of test_webhook.py before stub setup. Failing to do this causes `KeyError` on `live_systems[event["source"]]` and similar (values are `{}` from the earlier stub).
 - **Stub must include ALL functions imported in server.py** — missing one (e.g. `merge_items_in_triplestore`) causes `ImportError` before cleanup code runs, leaving ALL stubs in `sys.modules` and cascading failures into subsequent test files.
 
-## Java Mockito — Phase-dependent auth mocks
-
-When refactoring auth checks in Java controllers, ALL mock-creating helpers must be updated:
-- `compareRequestResponse` — mock helper, needs auth setup
-- `checkNotAllowed` — separate mock helper, easy to miss
-If switching from `hasAuthorizationHeader() && !isAuthorised()` (Phase 1) to `!isAuthorised()` (Phase 3), add `when(request.isAuthorised()).thenReturn(true)` to BOTH helpers.
+- [Java Mockito — auth mocks](java_mockito_auth.md) — update ALL mock helpers (compareRequestResponse AND checkNotAllowed) when refactoring auth checks
 
 ## Never Merge PRs — and Never Report Post-Approval State Without Checking
 
@@ -196,6 +187,13 @@ jobs:
 - **Tag format**: v3 tags are `{tagName: [{name: value}]}`. Use `getTagValue(tags, key)` to read.
 - **Recency logic**: `lastSuccessfulPlay` tag → ÷50 if <1 day, ÷10 if <7 days. Bypassed if `about`/`mentions` matches `currentItems`. Follows same timezone-normalisation pattern as `added` tag.
 
-## Shell Scripts over SSH — Binary Detection
+## lucos_contacts
 
-Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH on remote hosts, so `command -v` returns 1 even when `sudo usermod` works fine. Caught in lucos_backups#269.
+- **Django app**. Tests run via `docker compose --profile test up test --build --exit-code-from test`.
+- **Test runner wiring**: new test files must be added to `app/agents/tests/__init__.py` as `from .module import *` — Django's test runner discovers via `__init__.py` only; new files that aren't imported there are dead code and never run.
+- **Admin Loganne pattern**: capture old field value in `save_model` (DB read before `super().save_model()`), store on request (`request._saved_foo`), compare vs new value in `response_change` to emit the correct event.
+- **Migration workflow**: `docker compose up -d --build app` → `docker compose exec app python manage.py makemigrations` → `docker cp lucos_contacts_app:/usr/src/app/agents/migrations/ app/agents/`.
+
+## Shell Scripts over SSH
+
+Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH on remote hosts. Caught in lucos_backups#269.
