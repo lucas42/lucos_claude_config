@@ -62,6 +62,7 @@
 - [Don't shift work to coordinator](feedback_dont_shift_work_to_coordinator.md) — don't add workflow rules that move issue-close work (or similar) from GitHub automation onto the coordinator without lucas42 asking; trust the automation + brief transient inconsistencies
 - [Verify identifiers before propagating](feedback_verify_before_propagating.md) — when fan-out propagating a teammate's concrete identifier (URL/domain/repo/path) into multiple GitHub bodies, verify against an authoritative source first; an agent's report is not a verified fact
 - [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's design question verbatim; never augment with my own option list or "options I see" framing, which biases the agent toward the obvious defaults
+- [No verbatim quotes on the ticket](feedback_no_verbatim_quotes_on_ticket.md) — triage-decision comments on a ticket should be brief and reference prior comments by position; verbatim quotes are for SendMessage (where the inbox doesn't show the thread), not for the ticket itself
 
 ## Active Projects
 
