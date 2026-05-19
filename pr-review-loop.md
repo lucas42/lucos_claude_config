@@ -56,6 +56,18 @@ Push the fixes, increment the iteration count, then **go back to step 1** (dispa
 
 **Important: this also applies when you push changes to an already-approved PR** (e.g. a rework requested by the coordinator). Pushing a new commit to a PR dismisses any prior approval and resets `review_decision` to null. After every push — including reworks — you must go back to step 1 before reporting back to the coordinator. Check that `review_decision` is not null and `mergeable_state` is not `blocked` on the new head commit before declaring the loop complete. Reporting "done" on a PR with `review_decision: null` is a failure to complete the loop.
 
+### Step 3b: Required-check failures that need a non-code action
+
+Some required checks fail in ways that no further code change can fix — most commonly a CodeQL / GHAS alert that an agent has assessed as a false positive but that hasn't auto-cleared after the fix lands. The code-reviewer cannot approve while a required check is failing, so the loop will stall here unless you act.
+
+Recognise the scenario: a required check (e.g. `CodeQL`) has `conclusion: "failure"` on the PR head, but the assessing specialist (e.g. `lucos-security`) has already commented on the PR that the underlying finding is safe / a false positive / mitigated.
+
+In that case, you (the implementation teammate driving the loop) are responsible for coordinating the non-code resolution. SendMessage the assessing specialist, ask them to dismiss the alert as a false positive (`lucos-security` has `security_events: write` and can `PATCH` the alert), and wait for confirmation. Do not assume the dismissal will happen on its own.
+
+If the specialist replies that they can't dismiss (e.g. permission issue, audit-trail preference), escalate to the coordinator with the PR URL and the specific blocker — don't loop indefinitely.
+
+Once the check clears, go back to step 1 to re-request `lucos-code-reviewer`. This does not increment the iteration count — it's a non-code resolution, not a code-change iteration.
+
 ### Step 4: Specialist review
 
 The code reviewer has requested input from a specialist (either `lucos-security` or `lucos-site-reliability`). Extract the teammate name from the `SPECIALIST_REVIEW_REQUESTED: <persona>` line — the persona name is also the teammate name (e.g. `lucos-security`).
