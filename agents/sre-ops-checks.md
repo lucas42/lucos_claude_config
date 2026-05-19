@@ -102,83 +102,91 @@ A flap that recurs across ops-check runs without progress is itself a process fa
 
 ### Check 3: Incident Report Coverage
 
-Verify that every resolved critical incident has a corresponding incident report in the `lucos` repo. Critical incidents deserve post-mortems — they are how the team learns and prevents recurrence.
+Verify that every significant resolved incident has a corresponding incident report in the `lucos` repo. Significant incidents deserve post-mortems — they are how the team learns and prevents recurrence.
 
-#### Step 1: Find recently closed critical issues
+**Signal source: Loganne, not the project board.** The previous version of this check queried the GitHub Projects v2 board for items with Priority = Critical and state = CLOSED. That doesn't work: the board is configured to auto-remove items once they're marked Done, so the query returns zero closed items regardless of how many critical incidents we've had. We use Loganne's `monitoringAlert` / `monitoringRecovery` history instead — it captures *what actually went wrong in production*, which is a better backing-truth than *what someone happened to label as Critical*. Incident reporting at resolution time (per [`references/incident-reporting.md`](../references/incident-reporting.md)) is the primary mechanism; this check is the safety net.
 
-Query the project board for issues with Priority = Critical (option ID `546bd144`, field `PVTSSF_lAHOAAaLL84BRh5dzg_VMpk`) and state = CLOSED. Priority labels no longer exist — use the project board. See `~/.claude/references/triage-reference-data.md` for full field IDs and the board query pattern. The project ID is `PVT_kwHOAAaLL84BRh5d`.
+#### Step 1: Find recent significant outages from Loganne
 
-```python
-import os, subprocess, json
+Fetch monitoring events over the past 30 days and pair `monitoringAlert` → `monitoringRecovery` per affected system. Outages lasting longer than 30 minutes are the threshold for "worth a closer look" — adjust if you're seeing too many or too few candidates. Shorter alert/recovery cycles are almost always deploy-window blips or single-poll glitches and don't need post-mortems.
 
-GH_PROJECTS = os.path.expanduser("~/sandboxes/lucos_agent/gh-projects")
-BOARD_QUERY = """{
-  node(id: "PVT_kwHOAAaLL84BRh5d") {
-    ... on ProjectV2 {
-      items(first: 100%s) {
-        pageInfo { hasNextPage endCursor }
-        nodes {
-          content {
-            ... on Issue { title url state updatedAt repository { nameWithOwner } }
-          }
-          fieldValues(first: 10) {
-            nodes {
-              ... on ProjectV2ItemFieldSingleSelectValue {
-                name
-                field { ... on ProjectV2SingleSelectField { name } }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}"""
+```bash
+source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)
+curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?limit=2000" | python3 -c "
+import json, sys
+from datetime import datetime, timezone, timedelta
+from collections import defaultdict
 
-cursor, results = None, []
-while True:
-    after = f', after: "{cursor}"' if cursor else ""
-    r = subprocess.run(
-        [GH_PROJECTS, "graphql", "-f", f"query={BOARD_QUERY % after}"],
-        capture_output=True, text=True, check=True,
-    )
-    items = json.loads(r.stdout)["data"]["node"]["items"]
-    for node in items["nodes"]:
-        c = node.get("content") or {}
-        if c.get("state") != "CLOSED":
-            continue
-        fields = {
-            fv["field"]["name"]: fv["name"]
-            for fv in (node.get("fieldValues") or {}).get("nodes", [])
-            if fv and "field" in fv and "name" in fv
-        }
-        if fields.get("Priority") == "Critical":
-            results.append(c)
-    if not items["pageInfo"]["hasNextPage"]:
-        break
-    cursor = items["pageInfo"]["endCursor"]
+data = json.load(sys.stdin)
+events = data.get('events', data) if isinstance(data, dict) else data
+if isinstance(events, dict): events = events.get('events', [])
 
-for issue in sorted(results, key=lambda x: x["updatedAt"], reverse=True)[:20]:
-    print(issue["url"], "—", issue["title"])
+cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+threshold = timedelta(minutes=30)
+
+per_system = defaultdict(list)
+for e in events:
+    t = e.get('type')
+    if t not in ('monitoringAlert', 'monitoringRecovery'): continue
+    try:
+        ts = datetime.fromisoformat((e.get('date') or e.get('time') or '').replace('Z', '+00:00'))
+    except: continue
+    if ts < cutoff: continue
+    hr = e.get('humanReadable', '')
+    # 'N failing check(s) on lucos X (host)' or 'All checks healthy on lucos X (host)'
+    if ' on ' in hr:
+        sysname = hr.split(' on ', 1)[1].split(' (', 1)[0].strip()
+        # Loganne renders the system display name with spaces; normalise back to
+        # the underscore form used by repo/container names (e.g. lucos_loganne).
+        sysname = sysname.replace(' ', '_')
+    else:
+        continue
+    per_system[sysname].append((ts, t, hr))
+
+print(f'Outages >{int(threshold.total_seconds()/60)} minutes in last 30 days:')
+for system, evs in sorted(per_system.items()):
+    evs.sort()
+    last_alert = None
+    for ts, t, hr in evs:
+        if t == 'monitoringAlert':
+            last_alert = ts
+        elif t == 'monitoringRecovery' and last_alert:
+            dur = ts - last_alert
+            if dur > threshold:
+                print(f'  {ts.strftime(\"%Y-%m-%d\")} {system}: {dur} (alert {last_alert.strftime(\"%H:%M\")}Z -> recovery {ts.strftime(\"%H:%M\")}Z)')
+            last_alert = None
+    if last_alert is not None and (datetime.now(timezone.utc) - last_alert) > threshold:
+        print(f'  {last_alert.strftime(\"%Y-%m-%d\")} {system}: UNRECOVERED alert (started {last_alert.strftime(\"%H:%M\")}Z) — check Loganne directly')
+"
 ```
+
+Note: monitoringAlertSuppressed events (deploy-window suppression) are intentionally excluded — they're not real outages. If you suspect a long outage during a planned deploy, check Loganne directly with a wider event-type filter.
 
 #### Step 2: Check for existing incident reports
 
-For each closed critical issue, check whether an incident report already exists in the `lucos` repo at `docs/incidents/`. Search by looking for the issue URL or issue title in existing reports:
+For each outage from step 1, check whether an incident report in the `lucos` repo at `docs/incidents/` mentions the affected system around that date:
 
 ```bash
-# List existing incident reports
 ls ~/sandboxes/lucos/docs/incidents/*.md
 
-# Search for references to the issue URL or repo+number in existing reports
-grep -rl "lucas42/{repo}/issues/{number}" ~/sandboxes/lucos/docs/incidents/
+# Find reports mentioning a specific system
+grep -ril "<system_name>" ~/sandboxes/lucos/docs/incidents/
+
+# Or filter by date in the filename (incident reports follow YYYY-MM-DD-summary.md)
+ls ~/sandboxes/lucos/docs/incidents/2026-05-*.md
 ```
 
-If a matching incident report already exists, skip that issue — no action needed.
+If a matching report already covers the outage, skip — no action needed.
 
-#### Step 3: Write reports for uncovered issues
+#### Step 3: Judge each uncovered outage before writing
 
-For each critical issue that has no corresponding incident report, follow the process in [`references/incident-reporting.md`](../references/incident-reporting.md) to write the report, raise a PR, and notify the team after merge.
+Not every >30-minute outage warrants a full post-mortem. Apply judgement:
+
+- **Always write a report** for: user-visible service degradation, data loss or corruption risk, external impact (e.g. a service that integrations depend on going down), and any incident where the team learned something non-obvious from the resolution.
+- **Probably skip** for: internal-only event-bus delays that self-cleared (e.g. webhook-delivery backlog that drained on its own), single-check transients on a non-critical scheduled job, and outages whose root cause is "we already had an incident report for this exact pattern last week."
+- **If unsure, write a brief one.** Even a short report — root cause, fix, timeline — is better than no record.
+
+For each that does need a report, follow [`references/incident-reporting.md`](../references/incident-reporting.md) to draft, raise a PR, and notify the team after merge.
 
 ---
 
