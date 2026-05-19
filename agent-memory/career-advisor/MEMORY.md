@@ -13,3 +13,4 @@
 - [CV commit discipline](feedback_cv_commit_discipline.md) — small targeted commits, source-only, gitignore artefacts
 - [CV copy-editing scope](feedback_cv_copy_editing_scope.md) — mechanical edits ok without asking, copy changes need consultation
 - [CV dialect preference](feedback_cv_dialect_preference.md) — no Americanisms; Northern Hiberno-English default; London-comprehensible
+- [CV variant content rule](feedback_cv_variant_content_rule.md) — default drop Earlier Career & Positions in submissions; pull forward entries directly relevant to the target employer/industry
