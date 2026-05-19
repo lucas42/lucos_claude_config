@@ -83,6 +83,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Check value when fix complexity grows](feedback_check_value_when_fix_complexity_grows.md) — when a proposed fix accumulates new types / components / prerequisite tickets, pause and ask "what concrete functionality breaks without this?" — don't refine the fix further until the value is re-established. Group-type proposal in media#237 was the worked example: 3 follow-up tickets to fix an aesthetic class-label issue (2026-05-19)
 - [No vague-aesthetic hedging](feedback_vague_aesthetic_hedging.md) — "ugly" / "clean" / "feels right" as load-bearing arguments are tells that the concern hasn't been articulated; name the failure mode concretely or drop the claim (media#246 chat, 2026-05-19)
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album; membership deferred to media#247 (2026-05-19)
+- [Verify path before defensive code](feedback_verify_path_before_defensive_code.md) — before architecting defensive code for a hypothetical state, grep for a real code path that produces it. media#138/#139 cost: shipped handler to remove, draft PR to rework, wrong allowlist in #245. All for a scenario no code path produces (2026-05-19)
+- [Media-ecosystem URI namespace (ADR-0005)](reference_media_ecosystem_uri_namespace.md) — `lucos_media_*` services store only their own URIs or `eolas` URIs; never `contacts` URIs. Contacts indirection via `preferredIdentifier` + arachne federation. Enforced by media#245 (2026-05-19)
 
 ## Auto-merge & security checks
 
