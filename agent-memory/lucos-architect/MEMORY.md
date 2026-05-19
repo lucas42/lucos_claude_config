@@ -80,6 +80,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Ready vs startability](feedback_ready_vs_startability.md) — never use "code can start in parallel" as a Ready signal in inline triage; unresolved dependency = Blocked regardless of how much pre-work is independent (arachne#539, 2026-05-18)
 - [Question the option list](feedback_question_the_option_list.md) — when a triage brief delivers a question alongside (a)/(b)/(c)/(d) candidate answers, re-read the verbatim question and read the actual code path before reasoning within the frame; the (a)reject/(b)reject/(c)accept/(d)reject pattern is the smoking gun for option-list anchoring (media#237 + media#240, 2026-05-19)
 - [Verify frequency claims against data](feedback_verify_frequency_claims_against_data.md) — when a recommendation rests on "X is dominantly Y in this library", run a cheap arachne / DB query before publishing; general-world word usage isn't evidence about library-specific data. `soundtrack: Happy Days` falsified my "soundtrack→film" claim in one sample (media#240, 2026-05-19)
+- [Check value when fix complexity grows](feedback_check_value_when_fix_complexity_grows.md) — when a proposed fix accumulates new types / components / prerequisite tickets, pause and ask "what concrete functionality breaks without this?" — don't refine the fix further until the value is re-established. Group-type proposal in media#237 was the worked example: 3 follow-up tickets to fix an aesthetic class-label issue (2026-05-19)
 
 ## Auto-merge & security checks
 
