@@ -16,3 +16,4 @@
 - [CV copy-editing scope](feedback_cv_copy_editing_scope.md) — mechanical edits ok without asking, copy changes need consultation
 - [CV dialect preference](feedback_cv_dialect_preference.md) — no Americanisms; Northern Hiberno-English default; London-comprehensible
 - [CV variant content rule](feedback_cv_variant_content_rule.md) — default drop Earlier Career & Positions in submissions; pull forward entries directly relevant to the target employer/industry
+- [CV application privacy](feedback_cv_application_privacy.md) — no employer names in commit messages, memory files, or anything else that lands in a public repo

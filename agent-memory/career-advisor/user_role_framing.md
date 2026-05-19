@@ -40,8 +40,8 @@ Following content can describe the agentic work: multi-persona LLM agent fleet f
 
 ## Level-positioning when the JD level doesn't match recent titles
 
-- **Director → Staff IC** (e.g. cv-staff-engineer.md for Funding Circle): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.
-- **Director → Director/Head/VP of Engineering** (e.g. cv-engineering-director.md for Partnerize): lean into the Director title and multi-team leadership; soften "manager of managers" per above; pull architecture experience (especially Architect - Content / publishing platform) up the page.
+- **Director → Staff IC** (e.g. cv-staff-engineer.md for a fintech Staff Engineer JD): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.
+- **Director → Director/Head/VP of Engineering** (e.g. cv-engineering-director.md for a platform-engineering Director JD): lean into the Director title and multi-team leadership; soften "manager of managers" per above; pull architecture experience (especially Architect - Content / publishing platform) up the page.
 - **Director → Engineering Manager / Tech Lead Manager** (not yet built): expected to need a "leading through senior leads" middle-ground framing.
 
 ## How to apply

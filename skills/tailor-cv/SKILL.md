@@ -23,10 +23,11 @@ This is career-advisor work — it uses the career-advisor GitHub identity for c
 Read these memory files before starting:
 
 **Standing rules** (how to work on the CV):
-- `~/.claude/agent-memory/career-advisor/feedback_cv_commit_discipline.md` — small targeted commits; source-only; gitignore artefacts
+- `~/.claude/agent-memory/career-advisor/feedback_cv_commit_discipline.md` — small targeted commits for reusable work; one bundled commit per new variant; source-only; gitignore artefacts
 - `~/.claude/agent-memory/career-advisor/feedback_cv_copy_editing_scope.md` — mechanical edits OK; copy changes need consultation
 - `~/.claude/agent-memory/career-advisor/feedback_cv_dialect_preference.md` — UK English, Northern Hiberno-English default, London-comprehensible, no Americanisms
 - `~/.claude/agent-memory/career-advisor/feedback_cv_variant_content_rule.md` — default-drop Earlier Career & Positions of Responsibility from submission variants; pull individual entries forward only when directly relevant to the target employer/industry
+- `~/.claude/agent-memory/career-advisor/feedback_cv_application_privacy.md` — no employer-applied-to names in commits, memory files, filenames, or anywhere else that lands in a public repo
 
 **Pre-confirmed Luke-facts** (don't re-ask things settled here):
 - `~/.claude/agent-memory/career-advisor/user_skills_inventory.md` — defensible languages, databases, methodologies; what Luke will and won't claim
@@ -109,22 +110,24 @@ Per `feedback_cv_copy_editing_scope.md`, any new copy needs consultation. Show L
 
 Get sign-off on each block before writing the variant file.
 
-## Step 7: Create the variant file
+## Step 7: Create the variant file (do all the work locally before committing)
 
-Choose a filename matching the role archetype, not the specific employer: `cv-staff-engineer.md`, `cv-platform-architect.md`, `cv-security-engineering-manager.md`. (One file can serve many similar applications; we trim the role title in the file to be generic.)
+Per `feedback_cv_commit_discipline.md`, **variant creation is a single bundled commit** — don't split it across multiple commits the way source-of-truth edits are split. Do all the steps below locally first, then commit once at the end of Step 9.
 
-Create `~/sandboxes/lukeblaney_cv/cv-{role}.md` as a copy of `cv-extended.md`, then apply (each as its own focused commit per `feedback_cv_commit_discipline.md`):
+Choose a filename matching the **role archetype, not the specific employer**: `cv-staff-engineer.md`, `cv-platform-architect.md`, `cv-security-engineering-manager.md`. (One file can serve many similar applications; the filename never names a specific employer — see `feedback_cv_application_privacy.md`.)
+
+Create `~/sandboxes/lukeblaney_cv/cv-{role}.md` as a copy of `cv-extended.md`, then apply (still locally, not yet committed):
 
 1. Add Summary section between contact block and Employment (use `# Summary` heading)
 2. Add Career Break & Current Focus section (if applicable, before Skills)
 3. Add Skills section with JD-tuned grouped keywords (use `# Skills` heading)
 4. Apply role-specific bullet reframes per Step 6
 
-## Step 8: Apply standard cuts to hit page target
+## Step 8: Apply standard cuts (still in the same uncommitted state)
 
 Variants land at **3 pages** by default — Luke's historical pattern across cv.tex, cv-tech.tex, cv-architect.tex, cv-security.tex. 2 pages is possible with more aggressive cuts but only when the audience demands it.
 
-Apply these standard cuts (each as its own commit):
+Apply these standard cuts (all as part of the single variant commit at the end of Step 9):
 
 1. **Collapse adjacent Principal Engineer entries** — cv-extended.md has three PE entries covering Feb 2018 - Mar 2022. For most variants, combine into a single entry titled `## Principal Engineer - Reliability Engineering, Cyber Security, Observability & Edge Delivery` with dates `Financial Times: February 2018 - March 2022`. Keep 5-7 best bullets across the three.
 2. **Compress oldest roles to Earlier Career section** — roles 10+ years old become one-line entries in a `# Earlier Career` section. Currently this means Labs Developer (FT Labs, Dec 2011 - Dec 2014) and Web Developer (Assanka, Nov 2010 - Dec 2011). Format: `- Company - **Role**: dates`.
@@ -133,7 +136,7 @@ Apply these standard cuts (each as its own commit):
 5. **Drop Education's A-levels and GCSEs** (`## A-levels and GCSEs` / Lagan College) — too old for any tech submission.
 6. **Drop `# Earlier Career` (pre-Assanka entries: Sainsbury's etc.) and `# Positions of Responsibility`** — per `feedback_cv_variant_content_rule.md`. *Exception*: pull forward any individual entry directly relevant to the target employer or industry (Luke's worked example: his Sainsbury's Customer Services role pulled into a Sainsbury's application).
 
-## Step 9: Wire into the build pipeline
+## Step 9: Wire into the build pipeline and commit everything together
 
 Update `~/sandboxes/lukeblaney_cv/Dockerfile`. Find the existing pandoc build block and append parallel lines for the new variant:
 
@@ -142,7 +145,7 @@ RUN pandoc cv-{role}.md -H pandoc-pdf-header.tex.template -V fontsize=10pt -o cv
 RUN pandoc cv-{role}.md --reference-doc=pandoc-docx-reference.docx.template -o cv-{role}.docx
 ```
 
-The `pandoc-docx-reference.docx.template` file in the repo tightens DOCX margins/font/spacing to match the PDF density. Without it, the DOCX renders as ~2x more pages than the PDF.
+The `pandoc-docx-reference.docx.template` file in the repo tightens DOCX margins/font/spacing to match the PDF density.
 
 Update `~/sandboxes/lukeblaney_cv/.circleci/config.yml` to add `store_artifacts` entries:
 
@@ -153,7 +156,15 @@ Update `~/sandboxes/lukeblaney_cv/.circleci/config.yml` to add `store_artifacts`
           path: cv-{role}.docx
 ```
 
-This is one commit.
+**Commit everything together in a single commit.** Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role}.md`, the Dockerfile changes, and the `.circleci/config.yml` changes; commit once.
+
+**Commit message must NOT name the target employer** (per `feedback_cv_application_privacy.md`). The CV repo is public. Use a generic message that names the role archetype only:
+
+> "Add cv-{role}.md submission variant" *(or similar)*
+> 
+> *Body can describe the JD-tuning approach in general terms, the standard cuts applied, and any specific framing decisions — but no company names, no JD URLs that include identifying parameters.*
+
+**Source-of-truth additions surfaced during the consultation** (e.g. a new bullet on `cv-extended.md` that should benefit all future variants) are still **their own commit, before the variant commit**. They're reusable; they get the small-commit treatment.
 
 ## Step 10: Build and verify
 

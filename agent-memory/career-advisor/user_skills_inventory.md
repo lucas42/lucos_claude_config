@@ -36,7 +36,7 @@ At architect / decision-making level (not necessarily hands-on configuration):
 - **Event-driven architecture** — was architect on the FT Universal Publishing Platform which used Apache Kafka. Made decisions about event flows and data contracts; configuration and operations owned by engineers.
 - **Microservices** — 100+ at the FT publishing platform
 - **API-first / REST APIs**
-- **Real-time data processing** — FT was high-traffic but the volume was substantially less than e.g. Partnerize's 1B events/day. Don't claim "billion-event-scale" without further confirmation.
+- **Real-time data processing** — FT was high-traffic but the volume was substantially less than the billion-events-per-day scale some platforms claim. Don't claim "billion-event-scale" without further confirmation.
 
 ## How to apply
 
