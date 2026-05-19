@@ -75,21 +75,28 @@ Present this before going further.
 
 ## Step 5: Gap consultation
 
-For each significant gap, ask Luke a focused question. Useful framings:
+**Before asking Luke anything, check the pre-confirmed facts loaded in Step 1:**
 
-- **Missing skill or technology**: "The JD asks for {X}. Your CV doesn't mention it. Do you have honest experience that could be claimed, evidence outside the CV (GitHub, personal projects, prior unlisted work), or should we accept this as a gap?"
-- **Level-positioning mismatch**: "You're applying for {level Y} but your most recent title is {level Z}. How do you want to frame this?"
+- For tech / language / database / methodology gaps: check `user_skills_inventory.md` first. If a JD asks for Python, Ruby, React, MySQL, Redis, TDD, DDD, etc., the inventory already says whether Luke claims it. Don't re-ask.
+- For level-positioning or framing gaps: check `user_role_framing.md`. Director→IC, Director→Director, career-break voice — all settled framings live here.
+
+Ask Luke only about gaps that aren't covered by those files.
+
+For genuinely new gaps, ask a focused question. Useful framings:
+
+- **Missing skill / technology not in inventory**: "The JD asks for {X}. Inventory doesn't cover it. Do you have honest experience that could be claimed, evidence outside the CV (GitHub, personal projects, prior unlisted work), or should we accept this as a gap?"
+- **Level-positioning mismatch not in framing memory**: "You're applying for {level Y} but your most recent title is {level Z}. How do you want to frame this?"
 - **Domain mismatch**: "The JD is in domain {D}. Your experience is mostly in {E}. Any directly-relevant work we should highlight?"
-- **Language / tech keyword absent**: "The JD specifies {language}. What can you honestly defend in a technical interview? List languages with rough recency for each."
-- **Career break framing**: if the recent career break is relevant, ask how Luke wants to position it for this audience.
+- **Anything not anticipated by the existing memories**: ask in prose if open-ended, `AskUserQuestion` if multi-choice.
 
-Use `AskUserQuestion` for structured choices where there are clear options; use prose questions where the answer is open-ended (e.g. specific dates, project details).
+**When Luke provides new information to fill a gap (default-save rules):**
 
-**When Luke provides new information to fill a gap:**
-
-1. Use it in the variant being built.
-2. **Decide whether it should also be added to `cv-extended.md`** for future applications. If the information is a true and useful fact about Luke's career/skills/experience that wasn't previously recorded, propose adding it. New facts in `cv-extended.md` go in as their own commit *before* the variant work, so future invocations of this skill inherit them. Get Luke's sign-off on the wording before committing.
-3. Consider whether the new information should also be recorded as a career-advisor memory (e.g. a project-context fact, a skill confirmation, or a feedback rule about how to position something).
+1. **Use it in the variant being built.**
+2. **Default-save to a user-type memory** unless trivially obvious or ephemeral:
+   - Tech / language / framework / database / methodology defensibility → append to `user_skills_inventory.md`
+   - Level-positioning / role-framing / voice preferences → append to `user_role_framing.md`
+   - Tell Luke in a one-line summary what's being saved as a courtesy ("Saving to inventory: Python confirmed comfortable, React excluded"). Don't block on confirmation for clearly-stable facts — Luke has explicitly OK'd default-save behaviour.
+3. **Also consider adding to `cv-extended.md`** for facts that should appear on the CV itself (e.g. Kafka exposure, a specific architectural achievement). New CV content goes in as its own commit *before* the variant work, so future invocations inherit it. Get Luke's sign-off on the exact wording before committing.
 
 ## Step 6: Propose drafts
 
