@@ -3,6 +3,8 @@
 ## User
 
 - [User profile](user_profile.md) — Luke Blaney, job hunting, blended SWE/cyber/leadership target, pragmatic
+- [User skills inventory](user_skills_inventory.md) — defensible languages/DBs/methodologies and what Luke won't claim. Check before asking gap-fill tech questions.
+- [User role framing](user_role_framing.md) — level-positioning, manager-vs-IC tilts, career-break voice. Check before drafting Summary paragraphs.
 
 ## Active projects
 

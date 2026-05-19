@@ -18,15 +18,22 @@ This is career-advisor work — it uses the career-advisor GitHub identity for c
   
   Then wait for the career-advisor to report back. Do not perform the work yourself.
 
-## Step 1: Load standing rules
+## Step 1: Load standing rules and pre-confirmed Luke-facts
 
-Read these memory files before starting — they carry standing rules for editing Luke's CV:
+Read these memory files before starting:
 
+**Standing rules** (how to work on the CV):
 - `~/.claude/agent-memory/career-advisor/feedback_cv_commit_discipline.md` — small targeted commits; source-only; gitignore artefacts
 - `~/.claude/agent-memory/career-advisor/feedback_cv_copy_editing_scope.md` — mechanical edits OK; copy changes need consultation
 - `~/.claude/agent-memory/career-advisor/feedback_cv_dialect_preference.md` — UK English, Northern Hiberno-English default, London-comprehensible, no Americanisms
 - `~/.claude/agent-memory/career-advisor/feedback_cv_variant_content_rule.md` — default-drop Earlier Career & Positions of Responsibility from submission variants; pull individual entries forward only when directly relevant to the target employer/industry
-- `~/.claude/agent-memory/career-advisor/project_cv_rebuild.md` — context for the CV pipeline rebuild
+
+**Pre-confirmed Luke-facts** (don't re-ask things settled here):
+- `~/.claude/agent-memory/career-advisor/user_skills_inventory.md` — defensible languages, databases, methodologies; what Luke will and won't claim
+- `~/.claude/agent-memory/career-advisor/user_role_framing.md` — level-positioning, manager-vs-IC tilts, career-break voice
+
+**Project context**:
+- `~/.claude/agent-memory/career-advisor/project_cv_rebuild.md` — CV pipeline rebuild context
 
 ## Step 2: Fetch the JD
 
