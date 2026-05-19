@@ -182,6 +182,10 @@ These are the most sensitive cryptographic material in the estate. `KEY_LUCOS_CR
 
 **Status (2026-05-09):** Runbook in lucos_creds#304 should include explicit callout: *"Rotating any credential present in LUCOS_DEPLOY_ENV_BASE64 without also updating the CircleCI env var will silently undo the rotation on the next deploy."* Architectural auto-sync is deferred (cost). lucos_creds#306 adds startup validation of SSH key material.
 
+## CodeQL Dismissal Capability
+
+See `codeql-dismissal-capability.md` — confirmed working 2026-05-19. Query PR alerts via `refs/pull/{N}/merge`, 280-char comment limit, no approval workflow enforced.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.
