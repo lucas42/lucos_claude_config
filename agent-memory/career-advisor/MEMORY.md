@@ -1,3 +1,5 @@
 # career-advisor Memory
 
-*(No memories saved yet — entries will appear here as they are recorded.)*
+## User
+
+- [User profile](user_profile.md) — Luke Blaney, job hunting, blended SWE/cyber/leadership target, pragmatic
