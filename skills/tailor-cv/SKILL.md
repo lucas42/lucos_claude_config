@@ -124,11 +124,11 @@ Apply these standard cuts (each as its own commit):
 Update `~/sandboxes/lukeblaney_cv/Dockerfile`. Find the existing pandoc build block and append parallel lines for the new variant:
 
 ```
-RUN pandoc cv-{role}.md -H pandoc-pdf-header.tex -V fontsize=10pt -o cv-{role}.pdf
-RUN pandoc cv-{role}.md --reference-doc=pandoc-docx-reference.docx -o cv-{role}.docx
+RUN pandoc cv-{role}.md -H pandoc-pdf-header.tex.template -V fontsize=10pt -o cv-{role}.pdf
+RUN pandoc cv-{role}.md --reference-doc=pandoc-docx-reference.docx.template -o cv-{role}.docx
 ```
 
-The `pandoc-docx-reference.docx` file in the repo tightens DOCX margins/font/spacing to match the PDF density. Without it, the DOCX renders as ~2x more pages than the PDF.
+The `pandoc-docx-reference.docx.template` file in the repo tightens DOCX margins/font/spacing to match the PDF density. Without it, the DOCX renders as ~2x more pages than the PDF.
 
 Update `~/sandboxes/lukeblaney_cv/.circleci/config.yml` to add `store_artifacts` entries:
 
