@@ -35,9 +35,12 @@
 ## Review Patterns — Common Mistakes to Avoid
 
 ### `head_sha` on check-runs — read the field directly, never alias from `.pull_requests[0].head.sha`
-- **The check-runs API response has a top-level `head_sha` field.** Do NOT alias it via `.pull_requests[0].head.sha` — that field is null when there is no PR cross-reference, which makes a real failing check-run look like an orphaned/stale entry.
-- Correct jq: `.check_runs[] | {id, name, status, conclusion, head_sha}` — `.head_sha` is the authoritative field.
-- Confirmed failure: lucos_media_seinn PR #460 — used `head_sha: (.pull_requests[0].head.sha // "no-pr-ref")` which returned null; incorrectly dismissed a real high-severity CodeQL XSS finding as an orphaned check-run, posted a false APPROVE, required correction.
+- **Use `.head_sha` directly from the check-run object.** `.pull_requests[0].head.sha` is null with no PR cross-reference, making a real failure look orphaned. Correct jq: `.check_runs[] | {id, name, status, conclusion, head_sha}`.
+- Confirmed failure: lucos_media_seinn PR #460 — aliasing returned null; dismissed a real CodeQL XSS finding, posted false APPROVE.
+
+### CodeQL inline suppression — same-line only in GitHub code scanning
+- **`// codeql[query-id]` must be on the SAME LINE as the alerted statement** — preceding-line placement is ignored by GitHub code scanning. Correct: `assert.doesNotThrow(() => document.createElement(tag)); // codeql[js/stored-xss]`
+- Confirmed: gave preceding-line guidance twice on PR #460; both failed. Inline only.
 
 ### Verify absence of a specific thing in the raw file before requesting changes
 - **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
@@ -45,10 +48,8 @@
 - Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
 
 ### Post code review immediately, then follow up if CI fails
-- **Do not wait for CI before posting your code review.** Read the diff, evaluate the code, and post your review (APPROVE or REQUEST_CHANGES) immediately based on code quality alone.
-- After posting, wait for CI to complete. If CI fails, post a second REQUEST_CHANGES review flagging the failure. If CI passes, nothing more needed.
-- **Why:** Waiting for CI before reviewing creates a window where the developer can push a new commit, making your diff stale. Posting immediately eliminates this race, and gives the author faster feedback.
-- Confirmed failure mode: lucos_configy PR #64 — read components.yaml diff, waited for CI, developer pushed scripts.yaml version in the meantime. Review was posted on a commit I hadn't examined.
+- **Post review (APPROVE or REQUEST_CHANGES) immediately based on code quality; handle CI separately.** Waiting first creates a race — developer may push while CI runs, making your diff stale.
+- After posting, wait for CI. If it fails, post a follow-up REQUEST_CHANGES. Confirmed failure: lucos_configy PR #64 — developer pushed a new version while CI was running; review landed on an unexamined commit.
 
 ### Always read the full function when reviewing error handling near changed lines
 - **Before raising a concern about missing error handling (e.g. a missing guard in a catch block), read the full function from the actual file** — not just the diff. Unchanged lines (like `if (err.name === 'AbortError') return;`) won't appear in the diff but directly affect the correctness of new code.
@@ -197,5 +198,3 @@ There are two distinct auto-merge workflows — do not conflate them:
 
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 - [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
-
-

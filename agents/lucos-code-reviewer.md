@@ -94,6 +94,23 @@ When a check-run has `conclusion: "failure"` (or `"action_required"`, `"cancelle
 
 Confirmed failure: lucos_media_seinn PR #460 — dismissed a real CodeQL XSS finding by misreading `head_sha: null` (a jq aliasing artefact) as evidence of an orphaned check-run. The check-run's own `head_sha` field was `3a8656c...` all along.
 
+### CodeQL alert suppression — inline only
+
+When advising a developer to suppress a CodeQL false positive using a comment, the **`// codeql[query-id]` directive must be on the same line** as the alerted statement. GitHub code scanning does not honour preceding-line placement.
+
+**Correct:**
+```js
+some_statement(); // codeql[js/stored-xss]
+```
+
+**Wrong (silently ignored):**
+```js
+// codeql[js/stored-xss]
+some_statement();
+```
+
+Explanatory comments may appear on preceding lines; only the `codeql[...]` directive must be inline. Confirmed: gave preceding-line guidance to a developer twice on PR #460; both attempts failed.
+
 ## Completion-Report State — Re-Fetch Before Writing
 
 **Always re-fetch every PR's current state immediately before composing a session-summary SendMessage.**
