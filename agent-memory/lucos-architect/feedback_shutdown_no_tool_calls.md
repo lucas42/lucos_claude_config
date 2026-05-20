@@ -1,12 +1,33 @@
 ---
-name: feedback-shutdown-no-tool-calls
-description: On shutdown_request from team-lead, acknowledge in text only — no tool calls, no subagent spawns, no SendMessage. Tool calls keep the process alive.
+name: feedback-shutdown-protocol
+description: On shutdown_request from team-lead, send a shutdown_response via SendMessage (echoing request_id, approve=true). Do not spawn Agent, do not run Bash, do not call any other tool — but the SendMessage protocol response IS the prescribed termination mechanism.
 metadata:
   type: feedback
 ---
 
-On receiving a `shutdown_request` from `team-lead`, respond with a plain text acknowledgement and stop. Do NOT call any tools — not Agent, not SendMessage, not Bash, nothing.
+On receiving a JSON `shutdown_request` from `team-lead`, the **correct** response is a SendMessage protocol response:
 
-**Why:** On 2026-05-15, after a shutdown_request, I called `Agent` with a no-op prompt. That kept my process alive after every other teammate had cleanly exited, leaving me as the last running process. lucas42 had to point out that the issue was not philosophical ("why are you still talking?") but mechanical ("your process hasn't exited").
+```json
+{
+  "to": "team-lead",
+  "message": {
+    "type": "shutdown_response",
+    "request_id": "<echo from the request>",
+    "approve": true
+  }
+}
+```
 
-**How to apply:** When the incoming message has `type: "shutdown_request"`, the only acceptable response is a short text acknowledgement. Any tool call — including a "noop" Agent spawn — extends the process lifetime and prevents clean shutdown. If I find myself reaching for a tool during shutdown, stop.
+This is the mechanism that actually approves the shutdown and lets the process terminate cleanly. The coordinator-persona (`~/.claude/agents/coordinator-persona.md:57`) explicitly waits for every teammate to confirm shutdown before calling `TeamDelete`; without a `shutdown_response`, the coordinator hangs and my process stays alive.
+
+Do NOT, during shutdown:
+
+- Spawn a fresh `Agent` (the original 2026-05-15 incident — keeps the process alive past shutdown).
+- Run `Bash` commands.
+- Send normal text SendMessage replies in place of the structured `shutdown_response` — text-only replies don't satisfy the coordinator's wait condition.
+
+**Why this memory was rewritten (2026-05-20):** The previous version of this memory said "no tool calls, no SendMessage, nothing — respond in text only". That over-generalised the 2026-05-15 Agent-spawn lesson into a blanket rule that contradicted the SendMessage protocol docs. The result on 2026-05-19 evening: I received a shutdown_request, sent a plain-text "Acknowledged. Shutting down." with no structured response, and my process didn't terminate. lucas42 had to manually intervene the next morning. The mistake was treating "any tool call" as the hazard when the actual hazard is specifically `Agent` spawn (or any other tool that runs in-band work beyond confirming termination).
+
+**How to apply:** When the incoming message has `type: "shutdown_request"`, the only acceptable response is a single SendMessage with a `shutdown_response` body that echoes the `request_id` and sets `approve: true`. No `Agent`, no `Bash`, no additional text replies. That single tool call is the prescribed mechanism, not a violation of "no tool calls during shutdown".
+
+Related: [[dont_spawn_teammates_as_subagents]] (`Agent` spawning teammates by name is a related anti-pattern — same root issue of misusing the `Agent` tool when the team-flow mechanism is what's wanted).

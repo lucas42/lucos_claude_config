@@ -55,6 +55,33 @@ When a teammate makes a claim that affects what you or team-lead should do next 
 
 When you do quote a teammate, quote verbatim from the source you have, and name the channel ("from the SendMessage they sent me", "from the GitHub review body") so the recipient can cross-check.
 
+## Responding to `shutdown_request`
+
+When team-lead sends a JSON message with `type: "shutdown_request"`, the **only** correct response is a structured `shutdown_response` sent via `SendMessage`:
+
+```json
+{
+  "to": "team-lead",
+  "message": {
+    "type": "shutdown_response",
+    "request_id": "<echo the request_id from the inbound request>",
+    "approve": true
+  }
+}
+```
+
+This is the prescribed termination mechanism — it releases the shutdown handler and lets your process exit cleanly. The coordinator-persona (`~/.claude/agents/coordinator-persona.md`) explicitly waits for every teammate to confirm shutdown before calling `TeamDelete`. Without your `shutdown_response`, the coordinator hangs indefinitely and your process stays alive.
+
+**Do NOT, during shutdown:**
+
+- Spawn a fresh `Agent` (known to extend process lifetime past shutdown).
+- Run `Bash` commands or use any other tool for in-band work.
+- Reply with plain text only ("Acknowledged. Shutting down.") — the coordinator is waiting on the structured envelope, and a text reply never reaches it.
+
+The single SendMessage with the structured `shutdown_response` IS the prescribed mechanism, not a violation of "no extra work during shutdown". The hazard during shutdown is starting new work (Agent spawns, Bash runs, multi-step tool chains), not the protocol response itself.
+
+**Lesson from 2026-05-19/20 (lucos-architect):** an over-generalised feedback memory ("no tool calls during shutdown, not even SendMessage") led to a plain-text-only response to a shutdown_request. The coordinator hung overnight waiting for a confirmation that never came. The fix was to surface the protocol in this reference so personas don't have to rediscover it.
+
 ## Persona-specific extensions
 
 Personas may extend this reference with:
