@@ -23,6 +23,16 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **Will not claim**: React (general JavaScript / Node.js is fine, but React specifically is not in Luke's history)
 
+## Containers / orchestration
+
+**Comfortable, defensible**: Docker — used routinely across SaaS migrations, observability platforms, and personal projects.
+
+**Architectural-only, NOT hands-on**: Kubernetes — Luke was Architect on the FT Universal Publishing Platform during the K8s migration and made the architectural decisions, but did not run clusters himself.
+
+- **Where it can appear**: in the Architect-Content role bullet on cv-extended.md ("Architected the move to Kubernetes…") because that's accurate to the role.
+- **Where it must NOT appear**: in a Skills section, alongside hands-on tools, or framed as "managed clusters" / "deployed to K8s" / "kubectl fluency".
+- **For JDs that emphasise Kubernetes**: lead with Docker in Skills, leave Kubernetes in the role bullet only, and flag the architecture-vs-operations distinction to Luke during gap consultation.
+
 ## Methodologies / engineering practices
 
 **Comfortable**: TDD · Agile · Scrum · CI/CD · API-first design
