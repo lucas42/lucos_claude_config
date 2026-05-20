@@ -147,16 +147,9 @@ RUN pandoc cv-{role}.md --reference-doc=pandoc-docx-reference.docx.template -o c
 
 The `pandoc-docx-reference.docx.template` file in the repo tightens DOCX margins/font/spacing to match the PDF density.
 
-Update `~/sandboxes/lukeblaney_cv/.circleci/config.yml` to add `store_artifacts` entries:
+The CircleCI config picks up all `.pdf` / `.docx` files emitted by the Dockerfile automatically (via a single `store_artifacts` entry on the `artifacts/` directory), so no `.circleci/config.yml` change is needed for a new variant.
 
-```yaml
-      - store_artifacts:
-          path: cv-{role}.pdf
-      - store_artifacts:
-          path: cv-{role}.docx
-```
-
-**Commit everything together in a single commit.** Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role}.md`, the Dockerfile changes, and the `.circleci/config.yml` changes; commit once.
+**Commit everything together in a single commit.** Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role}.md` and the Dockerfile changes; commit once.
 
 **Commit message must NOT name the target employer** (per `feedback_cv_application_privacy.md`). The CV repo is public. Use a generic message that names the role archetype only:
 

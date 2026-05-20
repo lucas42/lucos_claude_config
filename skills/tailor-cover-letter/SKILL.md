@@ -93,7 +93,7 @@ Confirm the mapping with Luke before drafting prose.
 
 Before writing anything in the private repo:
 
-1. **Company notes**: look for `~/sandboxes/lukeblaney_cv_tailored/{company-slug}/notes.md`. If it exists, Luke has applied to this company before — read it for cross-application context (hiring manager name, recruiter contact, prior outcomes, ATS in use, etc.). If not, plan to create the directory and notes file.
+1. **Company notes**: look for `~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/notes.md`. If it exists, Luke has applied to this company before — read it for cross-application context (hiring manager name, recruiter contact, prior outcomes, ATS in use, etc.). If not, plan to create the directory and notes file.
 2. **Tailored CV**: look in `~/sandboxes/lukeblaney_cv/` for any `cv-{role-archetype}.md` variant that matches this role. If one exists (e.g. `cv-staff-engineer.md` for a Staff Engineer JD), check the Summary section to keep the cover-letter framing consistent with the CV positioning. If no matching variant exists, consider whether `/tailor-cv` should be run first — flag this to Luke.
 
 ## Step 6: Draft all four paragraphs
@@ -172,7 +172,7 @@ For each piece of new content surfaced during the session, consider:
    → commits before the letter so future `/tailor-cv` invocations inherit it
 
 8. **Company-level context** (e.g. hiring manager name, recruiter, ATS in use, anything cross-cutting that applies if Luke applies to this company again)
-   → add to or update `{company-slug}/notes.md` in the private repo
+   → add to or update `orgs/{company-slug}/notes.md` in the private repo
    → commits as part of the per-application letter bundle in Step 10
 
 **Default-save vs ask-for-sign-off**:
@@ -186,10 +186,10 @@ This step is what makes each application strengthen the system. Skip it and the 
 
 Once Luke approves the final draft and any upstream propagation:
 
-1. **Working directory**: `~/sandboxes/lukeblaney_cv_tailored/`. If the clone isn't present, clone it: `cd ~/sandboxes && git clone git@github.com:lucas42/lukeblaney_cv_tailored.git`.
+1. **Working directory**: `~/sandboxes/lukeblaney_cv_tailored/`. If the clone isn't present, clone it: `cd ~/sandboxes && git clone git@github.com:lucas42/lukeblaney_cv_tailored.git`. Per-org directories live under `orgs/`.
 2. **Directory structure**:
-   - `{company-slug}/notes.md` — company-level context + per-role sections. Slug is lowercase-kebab of the company name.
-   - `{company-slug}/{role-slug}.md` — the letter draft for this specific role. Slug is lowercase-kebab of a descriptive role title (e.g. `staff-software-engineer-short-term-credit.md`).
+   - `orgs/{company-slug}/notes.md` — company-level context + per-role sections. Slug is lowercase-kebab of the company name.
+   - `orgs/{company-slug}/{role-slug}.md` — the letter draft for this specific role. Slug is lowercase-kebab of a descriptive role title (e.g. `staff-software-engineer-short-term-credit.md`).
 3. **If `notes.md` already exists**: append a new role section under `## Roles applied for`. Don't duplicate company-level notes.
 4. **If `notes.md` doesn't exist**: create it with company-level notes (industry, ATS, public job-board URL, API endpoint if useful) plus the role section.
 5. **Letter file** content: header line identifying the role + company, the date drafted, and the 4-paragraph letter body in markdown.
@@ -203,7 +203,7 @@ Once Luke approves the final draft and any upstream propagation:
 
 Tell Luke:
 
-- **File path** of the letter draft (`~/sandboxes/lukeblaney_cv_tailored/{company-slug}/{role-slug}.md`)
+- **File path** of the letter draft (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md`)
 - **Word count** of the final letter
 - **Library blocks used** — which opener, which story, which current-focus variant
 - **Upstream propagation that happened** — list each commit that landed in `lukeblaney_cv` or `~/.claude` as part of the session, with a one-line summary of why
