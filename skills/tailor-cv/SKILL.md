@@ -114,9 +114,18 @@ Get sign-off on each block before writing the variant file.
 
 Per `feedback_cv_commit_discipline.md`, **variant creation is a single bundled commit** — don't split it across multiple commits the way source-of-truth edits are split. Do all the steps below locally first, then commit once at the end of Step 9.
 
-Choose a filename matching the **role archetype, not the specific employer**: `cv-staff-engineer.md`, `cv-platform-architect.md`, `cv-security-engineering-manager.md`. (One file can serve many similar applications; the filename never names a specific employer — see `feedback_cv_application_privacy.md`.)
+Tailored CVs live in the **private** `lukeblaney_cv_tailored` repo alongside their matching cover letter and company notes — not in the public `lukeblaney_cv` repo. The path is:
 
-Create `~/sandboxes/lukeblaney_cv/cv-{role}.md` as a copy of `cv-extended.md`, then apply (still locally, not yet committed):
+```
+~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+```
+
+- `{company-slug}` matches the existing folder for that employer (or a new lowercase-kebab one if first application — also create `notes.md` per `/tailor-cover-letter` Step 5).
+- `{role-slug}` matches the role-slug used for the cover letter file, so the CV and letter pair naturally (e.g. `cv-staff-software-engineer-short-term-credit.md` next to `staff-software-engineer-short-term-credit.md`).
+
+Because the destination is private, the filename can describe the specific JD — no archetype-only privacy constraint applies (per `feedback_cv_application_privacy.md`, employer-naming is fine in the private repo).
+
+Create the variant file as a copy of `~/sandboxes/lukeblaney_cv/cv-extended.md`, then apply (still locally, not yet committed):
 
 1. Add Summary section between contact block and Employment (use `# Summary` heading)
 2. Add Career Break & Current Focus section (if applicable, before Skills)
@@ -125,7 +134,7 @@ Create `~/sandboxes/lukeblaney_cv/cv-{role}.md` as a copy of `cv-extended.md`, t
 
 ## Step 8: Apply standard cuts (still in the same uncommitted state)
 
-Variants land at **3 pages** by default — Luke's historical pattern across cv.tex, cv-tech.tex, cv-architect.tex, cv-security.tex. 2 pages is possible with more aggressive cuts but only when the audience demands it.
+Variants land at **3 pages** by default — Luke's historical pattern for submission CVs. 2 pages is possible with more aggressive cuts but only when the audience demands it. The new general-purpose `cv.md` in `lukeblaney_cv` is a worked example of these cuts applied.
 
 Apply these standard cuts (all as part of the single variant commit at the end of Step 9):
 
@@ -136,32 +145,42 @@ Apply these standard cuts (all as part of the single variant commit at the end o
 5. **Drop Education's A-levels and GCSEs** (`## A-levels and GCSEs` / Lagan College) — too old for any tech submission.
 6. **Drop `# Earlier Career` (pre-Assanka entries: Sainsbury's etc.) and `# Positions of Responsibility`** — per `feedback_cv_variant_content_rule.md`. *Exception*: pull forward any individual entry directly relevant to the target employer or industry (Luke's worked example: his Sainsbury's Customer Services role pulled into a Sainsbury's application).
 
-## Step 9: Wire into the build pipeline and commit everything together
+## Step 9: Commit the variant to the private repo
 
-Update `~/sandboxes/lukeblaney_cv/Dockerfile`. Find the existing pandoc build block and append parallel lines for the new variant:
+There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV); per-JD variants are rendered ad-hoc in Step 10 using the same pandoc templates and the rendered .pdf / .docx are gitignored in the private repo.
 
-```
-RUN pandoc cv-{role}.md -H pandoc-pdf-header.tex.template -V fontsize=10pt -o cv-{role}.pdf
-RUN pandoc cv-{role}.md --reference-doc=pandoc-docx-reference.docx.template -o cv-{role}.docx
-```
+**Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role-slug}.md` (plus any new `orgs/{company-slug}/notes.md` if this is a first-time application) and commit once.
 
-The `pandoc-docx-reference.docx.template` file in the repo tightens DOCX margins/font/spacing to match the PDF density.
+Because the private repo doesn't carry the public-employer-name constraint, the commit message **can** name the company freely. Suggested format:
 
-The CircleCI config picks up all `.pdf` / `.docx` files emitted by the Dockerfile automatically (via a single `store_artifacts` entry on the `artifacts/` directory), so no `.circleci/config.yml` change is needed for a new variant.
+> "Add {Company} {Role} tailored CV"
+>
+> *Body describes the JD-tuning approach, the standard cuts applied, and any specific framing decisions. Naming the JD URL is fine.*
 
-**Commit everything together in a single commit.** Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role}.md` and the Dockerfile changes; commit once.
-
-**Commit message must NOT name the target employer** (per `feedback_cv_application_privacy.md`). The CV repo is public. Use a generic message that names the role archetype only:
-
-> "Add cv-{role}.md submission variant" *(or similar)*
-> 
-> *Body can describe the JD-tuning approach in general terms, the standard cuts applied, and any specific framing decisions — but no company names, no JD URLs that include identifying parameters.*
-
-**Source-of-truth additions surfaced during the consultation** (e.g. a new bullet on `cv-extended.md` that should benefit all future variants) are still **their own commit, before the variant commit**. They're reusable; they get the small-commit treatment.
+**Source-of-truth additions surfaced during the consultation** (e.g. a new bullet on `cv-extended.md` that should benefit all future variants) are still **their own commit in `lukeblaney_cv`**, BEFORE the variant commit. They're reusable; they get the small-commit treatment and follow the public-repo privacy rule (no employer names in `lukeblaney_cv` commits).
 
 ## Step 10: Build and verify
 
-From the repo root: `rm -f *.pdf *.docx *.aux *.log *.out && docker build --output . .`
+The pandoc templates live in `lukeblaney_cv`; the variant source lives in `lukeblaney_cv_tailored`. Build via docker, mounting both:
+
+```bash
+cd ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}
+docker build --target build-stage -q -t cv-pandoc ~/sandboxes/lukeblaney_cv/  # cached after first run
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$PWD:/work" \
+  -w /work \
+  cv-pandoc \
+  sh -c "pandoc cv-{role-slug}.md -H /pandoc-pdf-header.tex.template -V fontsize=10pt -o cv-{role-slug}.pdf && \
+         pandoc cv-{role-slug}.md --reference-doc=/pandoc-docx-reference.docx.template -o cv-{role-slug}.docx"
+```
+
+Notes:
+- `--target build-stage` is required because the default final stage in the public `lukeblaney_cv` Dockerfile is `FROM scratch` (no shell, no pandoc — it's an export-only stage).
+- `--user $(id -u):$(id -g)` keeps the rendered files owned by you, not root, so you can edit/delete them without `sudo`.
+- The templates are baked into the `build-stage` image (copied during the public-repo build), so they're available at `/pandoc-pdf-header.tex.template` and `/pandoc-docx-reference.docx.template` inside the container — no mount needed.
+
+The .pdf and .docx land in the `orgs/{company-slug}/` directory and are **gitignored** in `lukeblaney_cv_tailored` — they're local artefacts only, regenerable. Don't commit them.
 
 Then run a Python verification:
 
@@ -173,7 +192,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_text
 import re
 
-path = '/home/lucas.linux/sandboxes/lukeblaney_cv/cv-{role}.pdf'
+path = '/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.pdf'
 with open(path,'rb') as f:
     pages = list(PDFPage.create_pages(PDFDocument(PDFParser(f))))
 text = extract_text(path)
@@ -206,17 +225,19 @@ If page count is 2 unintentionally (too aggressive), it's usually fine — but c
 ## Step 11: Push and report
 
 ```bash
-cd ~/sandboxes/lukeblaney_cv && git push origin main
+cd ~/sandboxes/lukeblaney_cv_tailored && git push origin main
+# Plus: cd ~/sandboxes/lukeblaney_cv && git push origin main  — only if Step 9 produced a source-of-truth commit there
 ```
 
 Report back to Luke with:
 
-- **Filename** of the new variant (`cv-{role}.md`, `.pdf`, `.docx`)
+- **File path** of the new variant (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md`)
+- **Local artefact paths** of the rendered .pdf and .docx (gitignored — they live alongside the markdown)
 - **Final page count and word count**
 - **ATS metrics** (cid / ligs / hyphens all 0)
 - **JD keyword check** (which top keywords confirmed present)
-- **Number of commits applied**, with messages
-- **Where to submit from**: the `.docx` is for ATS submissions; the `.pdf` is for human-to-human sending
+- **Commits applied**, naming both repos if `cv-extended.md` was also updated
+- **Where to submit from**: the local `.docx` is for ATS submissions; the local `.pdf` is for human-to-human sending
 - **Any new content added to cv-extended.md** during Step 5 — call this out so Luke knows the source-of-truth was updated
 
 If the role is one Luke is genuinely applying for, recommend reading the rendered PDF and DOCX once before submission.
@@ -230,7 +251,7 @@ All commits use the career-advisor GitHub App. Use the standard wrappers:
 ~/sandboxes/lucos_agent/gh-as-agent --app career-advisor ...
 ```
 
-Commit directly to `main` — there is no PR/review workflow on `lukeblaney_cv`. See `feedback_cv_commit_discipline.md` for full discipline (small commits, source-only, gitignore artefacts).
+Commit directly to `main` on both `lukeblaney_cv` and `lukeblaney_cv_tailored` — neither has a PR/review workflow. See `feedback_cv_commit_discipline.md` for full discipline (small commits, source-only, gitignore artefacts).
 
 ## When this skill is not the right tool
 
