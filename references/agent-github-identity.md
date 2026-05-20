@@ -109,6 +109,31 @@ cd ~/.claude && git add {changed files} && \
 
 If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
 
+### Keep instruction-file text lean — lesson narrative goes in the commit message
+
+When you add a rule, CHECKPOINT, or convention to a persona/reference/skill file, the body of the rule should state **what** to do and **why** in the abstract. The triggering incident — what mistake was made, what date, who pushed back, who was affected — belongs in the **commit message**, not the rule body.
+
+Bad (inline lesson narrative pollutes the rule):
+
+> **Never instruct lucos-security to dismiss alerts.** (Lesson from 2026-05-20 on `lucos_media_seinn#460`: told `lucos-security` "dismiss the alert directly" rather than asking them to decide; lucas42 pushed back: "If they're choosing to dismiss an alert, it should be their decision to do so, not yours or another teammate.")
+
+Good (rule body, commit message carries the lesson):
+
+> **Never instruct lucos-security to dismiss alerts.** Send the alert + context and ask for their assessment; the action decision is theirs.
+
+…with the incident narrative in the commit message:
+
+> ```
+> specialist-routing: never instruct security to dismiss alerts
+>
+> Today on lucos_media_seinn#460, the coordinator told lucos-security
+> "dismiss the alert directly" rather than asking them to decide.
+> lucas42 pushed back that the dismissal decision belongs to the
+> security persona, not the coordinator. Encoding the rule.
+> ```
+
+Why this matters: instruction files are loaded into every conversation that uses them. Every kilobyte of "Lesson from {date}" narrative costs attention budget on every load, even for readers who don't need the historical context. The commit log is the right home for "what triggered this change" — `git log` and `git blame` surface it on demand, but it doesn't tax the rule's primary readers.
+
 ## Persona-specific extensions
 
 Personas may extend this reference with:
