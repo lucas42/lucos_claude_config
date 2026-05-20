@@ -28,3 +28,4 @@
 - [Luke voice](feedback_luke_voice.md) — banned words ("leverage", "AI Native", corporate jargon) and tone rules; never claim passions Luke doesn't have
 - [Cover letter standalone](feedback_cover_letter_standalone.md) — assume the reader has NOT seen the CV; no sentences that require CV-derived facts to parse
 - [Circle-artifacts URL truncation](feedback_circle_artifacts_url_truncation.md) — never paste raw circle-artifacts.com URLs; they get truncated where they wrap and break the link
+- [Cover letter upload field](feedback_cover_letter_upload_field.md) — most ATSes take cover letters as a file upload, not text-area; .docx render is the default, not an edge case

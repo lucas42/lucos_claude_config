@@ -182,7 +182,7 @@ For each piece of new content surfaced during the session, consider:
 
 This step is what makes each application strengthen the system. Skip it and the same fixes get reinvented next time.
 
-## Step 10: Write to the private repo
+## Step 10: Write, render, and commit to the private repo
 
 Once Luke approves the final draft and any upstream propagation:
 
@@ -192,23 +192,61 @@ Once Luke approves the final draft and any upstream propagation:
    - `orgs/{company-slug}/{role-slug}.md` — the letter draft for this specific role. Slug is lowercase-kebab of a descriptive role title (e.g. `staff-software-engineer-short-term-credit.md`).
 3. **If `notes.md` already exists**: append a new role section under `## Roles applied for`. Don't duplicate company-level notes.
 4. **If `notes.md` doesn't exist**: create it with company-level notes (industry, ATS, public job-board URL, API endpoint if useful) plus the role section.
-5. **Letter file** content: header line identifying the role + company, the date drafted, and the 4-paragraph letter body in markdown.
-6. **Commit**: single bundled commit covering both files. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
-   > "Add {Company} {Role} cover letter draft"
+5. **Letter file structure** — use YAML frontmatter for internal metadata so it doesn't render into the submitted document, then the 4-paragraph letter body in plain markdown. Example:
+
+   ```markdown
+   ---
+   role: Staff Software Engineer (Short Term Credit)
+   company: Funding Circle
+   drafted: 2026-05-20
+   library-source: lucas42/lukeblaney_cv/cover-letters/
+   ---
+
+   Dear Funding Circle hiring team,
+
+   [opener paragraph...]
+
+   [evidence paragraph...]
+
+   [why-this-role paragraph...]
+
+   [current-focus + close paragraph...]
+
+   Kind Regards,
+
+   Luke Blaney
+   ```
+
+   Do **not** put a `# Cover letter — ...` H1 at the top of the body — it would render as a giant purple heading on the submitted document. All metadata lives in YAML.
+
+6. **Render the .docx submission artefact** via the helper script. Per `feedback_cover_letter_upload_field.md`, most ATSes take cover letters as file uploads, so the .docx is the primary submission format — produce it by default, not on demand.
+
+   ```bash
+   ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md
+   ```
+
+   This produces `{role-slug}.pdf` (gitignored, for human review) and `{role-slug}.docx` (committed, the submission artefact).
+
+7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `{role-slug}.md` letter source, and the rendered `{role-slug}.docx`. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
+   > "Add {Company} {Role} cover letter"
    >
    > Brief body summarising the opener pattern + evidence story used + any notable stylistic decisions.
-7. **Push**: `git push origin main`.
+8. **Push**: `git push origin main`.
 
 ## Step 11: Report back
 
 Tell Luke:
 
-- **File path** of the letter draft (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md`)
+- **File path** of the letter source (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md`)
+- **Path of the committed .docx** (same directory, same basename) — this is the file to upload to the ATS
+- **Path of the .pdf** (gitignored, alongside the .md) — for human review or email-attachment use
 - **Word count** of the final letter
 - **Library blocks used** — which opener, which story, which current-focus variant
 - **Upstream propagation that happened** — list each commit that landed in `lukeblaney_cv` or `~/.claude` as part of the session, with a one-line summary of why
 - **Any new memory captured** during the session (banned words flagged, framing preferences confirmed, etc.) so Luke knows what's been saved for future sessions
-- **Suggested submission route** — the letter is markdown; paste it into the application form, or copy into a `.docx` if the form requires file upload
+- **Suggested submission route** — most ATSes want the .docx as an upload; for a text-area field the markdown body is pasteable as-is
+
+If Luke needs to regenerate later (e.g. after a red-line edit), the manual path is the same script call as Step 10.6, followed by `git add` of the regenerated .docx and a commit.
 
 ## Git identity
 

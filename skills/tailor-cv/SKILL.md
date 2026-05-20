@@ -145,11 +145,23 @@ Apply these standard cuts (all as part of the single variant commit at the end o
 5. **Drop Education's A-levels and GCSEs** (`## A-levels and GCSEs` / Lagan College) — too old for any tech submission.
 6. **Drop `# Earlier Career` (pre-Assanka entries: Sainsbury's etc.) and `# Positions of Responsibility`** — per `feedback_cv_variant_content_rule.md`. *Exception*: pull forward any individual entry directly relevant to the target employer or industry (Luke's worked example: his Sainsbury's Customer Services role pulled into a Sainsbury's application).
 
-## Step 9: Commit the variant to the private repo
+## Step 9: Render and commit the variant to the private repo
 
-There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV); per-JD variants are rendered ad-hoc in Step 10 using the same pandoc templates and the rendered .pdf / .docx are gitignored in the private repo.
+There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV). Per-JD variants are rendered via the helper script `~/sandboxes/lukeblaney_cv/render-tailored.sh`, which produces the .pdf and .docx in the same directory as the source.
 
-**Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage the new `cv-{role-slug}.md` (plus any new `orgs/{company-slug}/notes.md` if this is a first-time application) and commit once.
+```bash
+~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+```
+
+The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. See Step 10 for verification.
+
+**Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage:
+
+- The new `cv-{role-slug}.md` (markdown source)
+- The new `cv-{role-slug}.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
+- Any new `orgs/{company-slug}/notes.md` if this is a first-time application to that company
+
+The `.pdf` is gitignored — regenerable for human review, not the submission artefact.
 
 Because the private repo doesn't carry the public-employer-name constraint, the commit message **can** name the company freely. Suggested format:
 
@@ -159,30 +171,9 @@ Because the private repo doesn't carry the public-employer-name constraint, the 
 
 **Source-of-truth additions surfaced during the consultation** (e.g. a new bullet on `cv-extended.md` that should benefit all future variants) are still **their own commit in `lukeblaney_cv`**, BEFORE the variant commit. They're reusable; they get the small-commit treatment and follow the public-repo privacy rule (no employer names in `lukeblaney_cv` commits).
 
-## Step 10: Build and verify
+## Step 10: Verify the rendered output
 
-The pandoc templates live in `lukeblaney_cv`; the variant source lives in `lukeblaney_cv_tailored`. Build via docker, mounting both:
-
-```bash
-cd ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}
-docker build --target build-stage -q -t cv-pandoc ~/sandboxes/lukeblaney_cv/  # cached after first run
-docker run --rm \
-  --user "$(id -u):$(id -g)" \
-  -v "$PWD:/work" \
-  -w /work \
-  cv-pandoc \
-  sh -c "pandoc cv-{role-slug}.md -H /pandoc-pdf-header.tex.template -V fontsize=10pt -o cv-{role-slug}.pdf && \
-         pandoc cv-{role-slug}.md --reference-doc=/pandoc-docx-reference.docx.template -o cv-{role-slug}.docx"
-```
-
-Notes:
-- `--target build-stage` is required because the default final stage in the public `lukeblaney_cv` Dockerfile is `FROM scratch` (no shell, no pandoc — it's an export-only stage).
-- `--user $(id -u):$(id -g)` keeps the rendered files owned by you, not root, so you can edit/delete them without `sudo`.
-- The templates are baked into the `build-stage` image (copied during the public-repo build), so they're available at `/pandoc-pdf-header.tex.template` and `/pandoc-docx-reference.docx.template` inside the container — no mount needed.
-
-The .pdf and .docx land in the `orgs/{company-slug}/` directory and are **gitignored** in `lukeblaney_cv_tailored` — they're local artefacts only, regenerable. Don't commit them.
-
-Then run a Python verification:
+The render step in Step 9 produces both `cv-{role-slug}.pdf` (for human review) and `cv-{role-slug}.docx` (for ATS submission). Run a Python verification on the PDF:
 
 ```bash
 /tmp/pdfvenv/bin/python3 <<'EOF'
@@ -232,15 +223,23 @@ cd ~/sandboxes/lukeblaney_cv_tailored && git push origin main
 Report back to Luke with:
 
 - **File path** of the new variant (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md`)
-- **Local artefact paths** of the rendered .pdf and .docx (gitignored — they live alongside the markdown)
+- **Path of the committed .docx** (same directory, same basename) — this is the file to upload to the ATS
+- **Path of the .pdf** (gitignored, alongside the .md) — for human-to-human sending or visual review
 - **Final page count and word count**
 - **ATS metrics** (cid / ligs / hyphens all 0)
 - **JD keyword check** (which top keywords confirmed present)
 - **Commits applied**, naming both repos if `cv-extended.md` was also updated
-- **Where to submit from**: the local `.docx` is for ATS submissions; the local `.pdf` is for human-to-human sending
 - **Any new content added to cv-extended.md** during Step 5 — call this out so Luke knows the source-of-truth was updated
 
 If the role is one Luke is genuinely applying for, recommend reading the rendered PDF and DOCX once before submission.
+
+If Luke needs to regenerate later (e.g. after a cv-extended.md change), the manual path is:
+
+```bash
+~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+```
+
+…then `git add` the regenerated .docx and commit. The .pdf is local-only.
 
 ## Git identity
 
