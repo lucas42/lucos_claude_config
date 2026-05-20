@@ -38,9 +38,9 @@
 - **Use `.head_sha` directly from the check-run object.** `.pull_requests[0].head.sha` is null with no PR cross-reference, making a real failure look orphaned. Correct jq: `.check_runs[] | {id, name, status, conclusion, head_sha}`.
 - Confirmed failure: lucos_media_seinn PR #460 — aliasing returned null; dismissed a real CodeQL XSS finding, posted false APPROVE.
 
-### CodeQL inline suppression — same-line only in GitHub code scanning
-- **`// codeql[query-id]` must be on the SAME LINE as the alerted statement** — preceding-line placement is ignored by GitHub code scanning. Correct: `assert.doesNotThrow(() => document.createElement(tag)); // codeql[js/stored-xss]`
-- Confirmed: gave preceding-line guidance twice on PR #460; both failed. Inline only.
+### CodeQL false-positive suppression — use config file, not inline comments
+- **`// codeql[query-id]` inline comments are unreliable** — the feature requires specific CodeQL action configuration and silently does nothing if not active. After 4 attempts on lucos_media_seinn PR #460 (preceding-line ×2, same-line ×2), the action never processed the suppression comments.
+- **Prefer:** `.github/codeql/codeql-config.yml` with a `query-filters` `paths`-based exclusion, OR dismissal via GitHub Security UI, OR refactoring to remove the taint path.
 
 ### Verify absence of a specific thing in the raw file before requesting changes
 - **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.

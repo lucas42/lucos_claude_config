@@ -94,22 +94,24 @@ When a check-run has `conclusion: "failure"` (or `"action_required"`, `"cancelle
 
 Confirmed failure: lucos_media_seinn PR #460 — dismissed a real CodeQL XSS finding by misreading `head_sha: null` (a jq aliasing artefact) as evidence of an orphaned check-run. The check-run's own `head_sha` field was `3a8656c...` all along.
 
-### CodeQL alert suppression — inline only
+### CodeQL false-positive suppression — prefer config file over inline comments
 
-When advising a developer to suppress a CodeQL false positive using a comment, the **`// codeql[query-id]` directive must be on the same line** as the alerted statement. GitHub code scanning does not honour preceding-line placement.
+**Do not recommend `// codeql[query-id]` inline comments as the primary fix for a CodeQL false positive.** The inline suppression feature requires specific configuration and is unreliable in lucos repos. After four attempts (preceding-line ×2, same-line ×2) on lucos_media_seinn PR #460, the action's post-processing step only added fingerprints — no suppression-comment processing occurred at all.
 
-**Correct:**
-```js
-some_statement(); // codeql[js/stored-xss]
-```
+**Recommended approaches (most reliable first):**
 
-**Wrong (silently ignored):**
-```js
-// codeql[js/stored-xss]
-some_statement();
-```
+1. **CodeQL config file (`paths`-based exclusion)** — add `.github/codeql/codeql-config.yml` excluding specific queries from test directories, and reference it in the workflow's `init` step. Definitive, documented, no comment syntax ambiguity.
+   ```yaml
+   query-filters:
+     - exclude:
+         id: js/stored-xss
+         paths:
+           - tests/**
+   ```
+2. **Dismiss via GitHub Security UI** — lucas42 navigates to the repo's Security → Code scanning and dismisses the alert as "false positive". No code change required; effective immediately.
+3. **Refactor the code** to remove the taint path entirely (e.g. break the `readdirSync` → DOM chain by getting tag names from the custom elements registry after import).
 
-Explanatory comments may appear on preceding lines; only the `codeql[...]` directive must be inline. Confirmed: gave preceding-line guidance to a developer twice on PR #460; both attempts failed.
+If you do recommend `// codeql[...]` inline comments, note that they require the feature to be active in the repo's CodeQL action configuration, and the directive must be on the **same line** as the alerted statement (not the preceding line).
 
 ## Completion-Report State — Re-Fetch Before Writing
 
