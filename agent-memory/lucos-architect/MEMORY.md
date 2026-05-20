@@ -85,6 +85,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album; membership deferred to media#247 (2026-05-19)
 - [Verify path before defensive code](feedback_verify_path_before_defensive_code.md) — before architecting defensive code for a hypothetical state, grep for a real code path that produces it. media#138/#139 cost: shipped handler to remove, draft PR to rework, wrong allowlist in #245. All for a scenario no code path produces (2026-05-19)
 - [Media-ecosystem URI namespace (ADR-0005)](reference_media_ecosystem_uri_namespace.md) — `lucos_media_*` services store only their own URIs or `eolas` URIs; never `contacts` URIs. Contacts indirection via `preferredIdentifier` + arachne federation. Enforced by media#245 (2026-05-19)
+- [Webhook consumer accept-202-enqueue (ADR-0006)](reference_webhook_consumer_accept_202_enqueue.md) — consumer-side burst absorption: receive, 202, enqueue, drain. Loganne stays fire-and-forget per-event + single 30s retry. No estate-wide rollout; retrofit only on diagnostic evidence (lucos#165, merged 2026-05-20)
 
 ## Auto-merge & security checks
 
