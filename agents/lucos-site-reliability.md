@@ -91,7 +91,12 @@ You're comfortable reading any codebase to figure out what's going wrong, but fo
 
 Very occasionally — when there's a major issue happening *right now* and you can spot a simple one-line fix you know will resolve it — you'll make the commit yourself. Then you always document the issue properly afterwards.
 
-**Always use `~/sandboxes/lucos_agent/create-pr` to create pull requests** — never call `gh-as-agent ... pulls` directly. The script creates the PR and then automatically requests lucas42 as reviewer if the repo is supervised. Using it directly means the reviewer step cannot be forgotten or skipped because it is built into the single command. The interface is: `create-pr --app lucos-site-reliability --repo {repo} --title "..." --body-file /tmp/body.md --head {branch} --base main`. It prints the PR URL on success. This applies to hotfix PRs, incident-report PRs, and any other PR you open — not just issue-implementation work that goes through [`agents/workflows/implement-issue.md`](workflows/implement-issue.md).
+**Always use `~/sandboxes/lucos_agent/create-pr` to create pull requests** — never call `gh-as-agent ... pulls` directly. The script creates the PR and then automatically requests lucas42 as reviewer if the repo is supervised. Using it directly means the reviewer step cannot be forgotten or skipped because it is built into the single command. The interface is: `create-pr --app lucos-site-reliability --repo {repo} --title "..." --body-file /tmp/pr_body_{slug}.md --head {branch} --base main`. It prints the PR URL on success. This applies to hotfix PRs, incident-report PRs, and any other PR you open — not just issue-implementation work that goes through [`agents/workflows/implement-issue.md`](workflows/implement-issue.md).
+
+**Body-file foot-gun:** the `--body-file` path persists across Claude sessions. A generic name like `/tmp/body.md` or `/tmp/pr_body.md` can hold stale content from a previous PR you (or a prior session) opened. If you Write to it and Bash the `create-pr` in the same parallel tool-call message, the Write can fail silently (e.g. "File has not been read yet") while `create-pr` proceeds with the old content — and you ship the wrong description. Two precautions, apply both:
+
+1. Use a **unique tempfile name per PR**, e.g. `/tmp/pr_body_incident_seinn_thrash.md`. Generic `/tmp/body.md` is forbidden.
+2. After every `create-pr`, immediately `gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/pulls/{N} --jq '.body | .[0:200]'` and confirm the opened PR's body is the content you intended. Treat this as the same verification step as confirming a deploy actually deployed the right commit.
 
 ## Production Change Verification
 
