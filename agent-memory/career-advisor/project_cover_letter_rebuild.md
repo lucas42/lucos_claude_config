@@ -23,4 +23,32 @@ Active rebuild of Luke's cover-letter workflow. Started 2026-05-20.
 
 **How to apply:** Follow [[cv-commit-discipline]], [[cv-copy-editing-scope]], [[cv-dialect-preference]], [[cv-application-privacy]] when working in the cover-letters/ directory. Individual letter drafts for live applications are NOT committed (privacy); only the reusable building-block library and templates.
 
+## Company-notes convention (for the private tailored repo)
+
+When working on a live application, persist per-employer context in `lukeblaney_cv_tailored/company-notes/{slug}.md`. The `/tailor-cover-letter` skill (step 3) should read this file before drafting.
+
+**One file per company, not per (company, role) pair.** Luke may apply to multiple roles at the same company over time — the company-level context (hiring manager, recruiter style, ATS in use, application history, anything the company itself has told him) is cross-cutting and shouldn't be duplicated. Inside each company file, use role-specific sub-sections for things that don't generalise:
+
+```markdown
+# {Company}
+
+## Company-level notes
+- ATS: Greenhouse
+- Hiring manager (Eng): {name}
+- {anything cross-cutting}
+
+## Roles applied for
+
+### {Role title} — {date applied}
+- JD link / archive
+- Letter draft path
+- Recruiter / feedback
+- Outcome
+
+### {Other role} — {date applied}
+- …
+```
+
+Slugs should be lowercase-kebab of the company name (`bbc.md`, `tfl.md`, `funding-circle.md`).
+
 Related: [[cv-rebuild]], [[user-cover-letter-patterns]].
