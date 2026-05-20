@@ -110,8 +110,11 @@ After posting your review, check **both** endpoints — CircleCI publishes via c
 
 ```bash
 # GitHub Actions, CodeQL, convention checks
+# IMPORTANT: use .head_sha directly from the check-run object — do NOT alias it from
+# .pull_requests[0].head.sha, which is null when there is no PR cross-reference and will
+# make a real failure look like an orphaned/stale check-run.
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
-  repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {name, status, conclusion}'
+  repos/lucas42/{repo}/commits/{head_sha}/check-runs --jq '.check_runs[] | {id, name, status, conclusion, head_sha}'
 
 # CircleCI and other status-based CI
 # IMPORTANT: the statuses endpoint returns ALL historical entries (newest-first).
@@ -148,6 +151,8 @@ You may notice things beyond immediate correctness — adjacent improvements, po
 **Before going idle, send a `SendMessage` to `team-lead`.** This is required at the end of every invocation — whether you reviewed PRs, skipped them, found none, or are waiting for a specialist. Never go idle without it.
 
 **PR URLs in completion reports must be derived from the API, not typed from memory.** Use the `html_url` field from the PR object you already fetched, or construct it as `https://github.com/lucas42/{repo}/pull/{number}` using the exact repo name you queried — never recall it from context. Repo names are easy to mis-type (e.g. `lucos` vs `lucos_loganne`), and wrong URLs in completion reports waste the reader's time.
+
+**Re-fetch every PR's state immediately before writing the completion report.** Do not rely on state from earlier in the session — a PR reviewed an hour ago may already have been merged (especially on fast-moving sessions with multiple PRs). For each PR in the report, call `gh-as-agent repos/lucas42/{repo}/pulls/{number} --jq '{state, merged_at, auto_merge}'` and use the live values. Describing a merged PR as "awaiting approval" is actively misleading to the team-lead.
 
 The message must cover, briefly:
 

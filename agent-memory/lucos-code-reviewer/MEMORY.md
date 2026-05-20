@@ -34,6 +34,11 @@
 
 ## Review Patterns — Common Mistakes to Avoid
 
+### `head_sha` on check-runs — read the field directly, never alias from `.pull_requests[0].head.sha`
+- **The check-runs API response has a top-level `head_sha` field.** Do NOT alias it via `.pull_requests[0].head.sha` — that field is null when there is no PR cross-reference, which makes a real failing check-run look like an orphaned/stale entry.
+- Correct jq: `.check_runs[] | {id, name, status, conclusion, head_sha}` — `.head_sha` is the authoritative field.
+- Confirmed failure: lucos_media_seinn PR #460 — used `head_sha: (.pull_requests[0].head.sha // "no-pr-ref")` which returned null; incorrectly dismissed a real high-severity CodeQL XSS finding as an orphaned check-run, posted a false APPROVE, required correction.
+
 ### Verify absence of a specific thing in the raw file before requesting changes
 - **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
 - Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard which was already in the file at the HEAD SHA. Resulted in a false REQUEST_CHANGES that wasted a review round-trip.
