@@ -94,9 +94,11 @@ During each triage pass, also check for issues with Status = Blocked whose depen
 
 ## Step 6: Summary for the User
 
-Once triage is done, compile a prioritised list of issues that need the user's attention. This means any open issue with Owner = lucas42 on the project board — these are issues where only the repo owner can unblock progress (e.g. product direction, priority calls, decisions between options).
+Once triage is done, compile a prioritised list of issues that need the user's attention. This means any open issue with Owner = lucas42 on the project board AND Status ∈ {Awaiting Decision, Ready} — these are issues where only the repo owner can unblock progress *right now* (e.g. product direction, priority calls, decisions between options, or a manual action only lucas42 can take).
 
-To find them, query the project board for items with Owner = lucas42 (option ID `f2527ea3`) that are not closed, sorted by priority:
+**Exclude Status = Blocked and Status = Ideation from the summary.** Blocked items are gated on something else clearing first — surfacing them as "needs you" is noise. Ideation items are exploratory and waiting for someone to revisit when ready — not actively gating on lucas42. Both will surface in their own time (Blocked via the unblocking check; Ideation when lucas42 chooses to revisit).
+
+To find them, query the project board for items with Owner = lucas42 (option ID `f2527ea3`) AND Status ∈ {Awaiting Decision (`cf5e250d`), Ready (`3aaf8e5e`)} that are not closed, sorted by priority:
 
 ```python
 import os, subprocess, json
@@ -143,15 +145,15 @@ while True:
             for fv in (node.get("fieldValues") or {}).get("nodes", [])
             if fv and "field" in fv and "name" in fv
         }
-        if fields.get("Owner") == "lucas42":
-            results.append({**c, "priority": fields.get("Priority", "")})
+        if fields.get("Owner") == "lucas42" and fields.get("Status") in ("Awaiting Decision", "Ready"):
+            results.append({**c, "priority": fields.get("Priority", ""), "status": fields.get("Status", "")})
     if not items["pageInfo"]["hasNextPage"]:
         break
     cursor = items["pageInfo"]["endCursor"]
 
 results.sort(key=lambda x: (PRIORITY_ORDER.get(x["priority"], 99), x.get("url", "")))
 for issue in results:
-    print(f"[{issue.get('priority', 'unprioritised')}] {issue['url']}  {issue['title']}")
+    print(f"[{issue.get('priority', 'unprioritised')}] [{issue.get('status', '')}] {issue['url']}  {issue['title']}")
 ```
 
 Present the list grouped and ordered by priority, consulting `~/sandboxes/lucos/docs/priorities.md` for the priority framework:
@@ -167,6 +169,6 @@ For each issue, show:
 - The issue title
 - A one-line summary of what decision or input is needed (based on the Status field and recent comments)
 
-If there are no Owner = lucas42 issues, say so — that means there is nothing blocking on the user right now.
+If there are no Owner = lucas42 issues with Status ∈ {Awaiting Decision, Ready}, say so — that means there is nothing actively gating on the user right now (Blocked and Ideation items, if any, are intentionally excluded; see the rule above).
 
 **Before listing any Owner = lucas42 issue in the summary, run the reaction check from Step 3 against it.** A `+1` from lucas42 on a question/design comment is an approval — re-process the issue rather than reporting it. This applies to every pass, not just to issues "actively discussed during the current session" (lucas42 may have reacted between passes).
