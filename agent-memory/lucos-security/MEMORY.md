@@ -182,9 +182,11 @@ These are the most sensitive cryptographic material in the estate. `KEY_LUCOS_CR
 
 **Status (2026-05-09):** Runbook in lucos_creds#304 should include explicit callout: *"Rotating any credential present in LUCOS_DEPLOY_ENV_BASE64 without also updating the CircleCI env var will silently undo the rotation on the next deploy."* Architectural auto-sync is deferred (cost). lucos_creds#306 adds startup validation of SSH key material.
 
-## CodeQL Dismissal Capability
+## CodeQL Dismissal Capability & False-Positive Policy
 
-See `codeql-dismissal-capability.md` — confirmed working 2026-05-19. Query PR alerts via `refs/pull/{N}/merge`, 280-char comment limit, no approval workflow enforced.
+See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_events: write`, confirmed working. Query PR alerts via `refs/pull/{N}/merge`, 280-char comment limit, no approval workflow enforced.
+
+**Policy (2026-05-20):** See `codeql-false-positive-policy.md` — GHAS dismissal is the **only** mechanism for false positives. No inline suppression comments (also non-functional in lucos repos), no `paths-ignore` config exclusions. Dismiss directly via API.
 
 ## Key People/Agents
 

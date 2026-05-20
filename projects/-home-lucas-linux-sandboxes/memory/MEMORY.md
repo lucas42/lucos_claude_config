@@ -64,6 +64,7 @@
 - [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's design question verbatim; never augment with my own option list or "options I see" framing, which biases the agent toward the obvious defaults
 - [No verbatim quotes on the ticket](feedback_no_verbatim_quotes_on_ticket.md) — triage-decision comments on a ticket should be brief and reference prior comments by position; verbatim quotes are for SendMessage (where the inbox doesn't show the thread), not for the ticket itself
 - [Dependabot recreate is deterministic](feedback_dependabot_recreate_deterministic.md) — never relay/endorse `@dependabot recreate` as a fix unless an input has demonstrably changed; recreate produces the same lockfile from the same inputs
+- [Verify permission claims before asserting](feedback_verify_permission_claims.md) — never write "{bot} doesn't have permission to X" or "only lucas42 can X" without probing the API or the App's permission listing; propagating unverified permission claims creates work for lucas42 that a bot could have done
 
 ## Active Projects
 
