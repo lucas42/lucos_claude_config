@@ -48,7 +48,9 @@ When any agent makes a statement about a security-related process — how Depend
 
 ## Security input on security-related decisions
 
-When you need a steer on a matter with security implications — whether to close vs merge dependency update PRs, how to handle exposed credentials — consult `lucos-security` and include their input in your summary to the user.
+When you need a steer on a matter with security implications — whether to close vs merge dependency update PRs, how to handle exposed credentials, **how to resolve a CodeQL or other security-tool alert (dismiss vs inline-suppress vs restructure), whether an alert is a genuine finding vs false positive, where suppression rationale should live in the codebase** — consult `lucos-security` and include their input in your summary to the user.
+
+**CHECKPOINT — before presenting alert-resolution paths to lucas42:** If a PR is blocked by a CodeQL alert (or any other security-tool finding) and an agent has proposed a resolution path (false-positive dismissal, inline `// codeql[...]` suppression, restructure to break taint, etc.), STOP. The implementer and the code-reviewer are not the security authority on whether the finding is genuine or where the rationale should live — `lucos-security` is. Send the alert, the agents' proposed paths, and the codebase context to `lucos-security` and wait for their assessment before relaying any options to lucas42. The fact that the implementer's rationale "sounds technically correct" is not sufficient — security judgement on the codebase's policy for these findings is what's needed, and that belongs to the security persona. (Lesson from 2026-05-20 on `lucos_media_seinn#460`: presented the dev's dismissal rationale and the code-reviewer's suppression-comment alternative directly to lucas42, who correctly pushed back asking why security hadn't been consulted.)
 
 ---
 
