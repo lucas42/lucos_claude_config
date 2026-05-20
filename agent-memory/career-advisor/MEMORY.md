@@ -12,6 +12,10 @@
 - [CV rebuild](project_cv_rebuild.md) — pandoc + markdown source-of-truth pipeline for lukeblaney_cv (started 2026-05-19)
 - [Cover-letter rebuild](project_cover_letter_rebuild.md) — building-block library + worked example + /tailor-cover-letter skill (started 2026-05-20)
 
+## External references
+
+- [Ashby job-board API](reference_ashby_job_board_api.md) — public posting-api endpoint pattern for fetching Ashby JD content (also notes on Greenhouse, Lever, Workday)
+
 ## Feedback (standing rules)
 
 - [CV commit discipline](feedback_cv_commit_discipline.md) — small targeted commits, source-only, gitignore artefacts
