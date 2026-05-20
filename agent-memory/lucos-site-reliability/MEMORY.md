@@ -18,6 +18,10 @@
 
 - [Silent fallbacks are a security risk, not just an operational one](feedback_silent_fallbacks_are_a_security_risk.md) — when weighing "remove fallback for loud failure" vs "keep fallback for defence-in-depth", state both perspectives. Silent fallbacks expose data-poisoning attack surface. lucos-security framing 2026-05-18.
 
+## ADR Scope
+
+- [ADR-0006 covers consumer-side only](reference_adr_0006_consumer_side_only.md) — webhook consumer accept-202-enqueue pattern. Does NOT remediate producer-side outbound-client saturation (e.g. loganne undici `fetch failed` bursts before any TCP connection reaches the consumer). Different failure class. Architect flagged 2026-05-20.
+
 ## Loganne — Webhook Retry API
 
 Loganne auto-retries failed webhooks only **once** (`src/webhooks.js`) then gives them up as permanent failures — so a downstream outage lasting more than ~20 seconds (e.g. a rolling monitoring redeploy) will leave events stranded in `status: failure`, which keeps `webhook-error-rate` red forever. **Restarting loganne does NOT clear them** — in-memory failure state survives restart via filesystem persistence, and there's no fresh-retry-on-boot path.
