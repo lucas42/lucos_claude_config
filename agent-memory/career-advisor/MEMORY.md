@@ -24,3 +24,5 @@
 - [CV variant content rule](feedback_cv_variant_content_rule.md) — default drop Earlier Career & Positions in submissions; pull forward entries directly relevant to the target employer/industry
 - [CV application privacy](feedback_cv_application_privacy.md) — no employer names in commit messages, memory files, or anything else that lands in a public repo
 - [Overlap years claim](feedback_overlap_years_claim.md) — sum of "[N] years of [domain]" claims in one document mustn't exceed Luke's actual years working, even if each claim is locally defensible
+- [Luke voice](feedback_luke_voice.md) — banned words ("leverage", "AI Native", corporate jargon) and tone rules; never claim passions Luke doesn't have
+- [Cover letter standalone](feedback_cover_letter_standalone.md) — assume the reader has NOT seen the CV; no sentences that require CV-derived facts to parse
