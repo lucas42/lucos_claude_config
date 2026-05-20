@@ -86,6 +86,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Verify path before defensive code](feedback_verify_path_before_defensive_code.md) — before architecting defensive code for a hypothetical state, grep for a real code path that produces it. media#138/#139 cost: shipped handler to remove, draft PR to rework, wrong allowlist in #245. All for a scenario no code path produces (2026-05-19)
 - [Media-ecosystem URI namespace (ADR-0005)](reference_media_ecosystem_uri_namespace.md) — `lucos_media_*` services store only their own URIs or `eolas` URIs; never `contacts` URIs. Contacts indirection via `preferredIdentifier` + arachne federation. Enforced by media#245 (2026-05-19)
 - [Webhook consumer accept-202-enqueue (ADR-0006)](reference_webhook_consumer_accept_202_enqueue.md) — consumer-side burst absorption: receive, 202, enqueue, drain. Loganne stays fire-and-forget per-event + single 30s retry. No estate-wide rollout; retrofit only on diagnostic evidence (lucos#165, merged 2026-05-20)
+- [Service-worker-backed UI is a system component](reference_service_worker_ui_as_system_component.md) — long-lived browser sessions have multi-hour degradation modes (caches, queues, bookkeeping); apply when reviewing SW-backed UI proposals. Trigger: seinn cache thrash incident 2026-05-19/20
+- [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md) — low-friction manual switch between interchangeable backends is a reliability affordance independent of any single backend; deviceSwitch was the resolution path on both seinn cache-thrash days
 
 ## Auto-merge & security checks
 

@@ -4,6 +4,10 @@
 
 - [Three-stage env-var wiring](review_envvar_wiring.md) — new `os:getenv`/`os.environ`/`process.env` reads need matching compose `environment:` entry AND lucos_creds value; `_ENDPOINT` path-append is a convention violation; flag until lucos_repos#387 lands
 - [Incomplete incident reports — request changes, don't approve with a note](feedback_incident_report_followups.md) — if analysis identifies a gap but actions table doesn't capture it, block until it's added
+- [JS async mutex asymmetry](review_js_async_mutex.md) — if a sibling function has a mutex and a related state-updater does not, flag it; confirmed root cause of seinn cache-thrash (2026-05-19/20)
+- [Loganne webhook subscriber hostnames](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467)
+- [Stale Dependabot regression PRs](feedback_dependabot_stale_regression.md) — `@dependabot recreate` is deterministic; net regression vs main = close it, not recreate
+- [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check
 - **Unchecked pre-merge checklist items = do not approve yet on unsupervised repos.** If a PR body contains an unchecked `[ ]` item framed as a pre-merge gate (e.g. "live triplestore confirms X count"), posting APPROVE on an unsupervised repo triggers auto-merge immediately when CI is already green — bypassing the gate. Either hold approval until the gate is cleared, or warn the developer explicitly before approving. lucos_arachne #476 merged with the triplestore count unverified.
 - **Specialist sign-offs must be GitHub artifacts.** A SendMessage confirmation from lucos-security or another specialist is NOT a sign-off. Ask them to post a GitHub review or comment on the PR, then wait for the URL before reporting "signed off" to the team-lead.
 - **Datetime timezone normalisation — parse first, then check `tzinfo is None`.** Never blindly append `+00:00` to non-Z timestamps; they may already carry an explicit offset (e.g. `+05:30`) and appending would produce a malformed string. Correct pattern: replace Z→`+00:00`, parse with `fromisoformat`, then `if dt.tzinfo is None: dt = dt.replace(tzinfo=timezone.utc)`. Missed this in lucos_media_weightings PR #192 v1; lucas42 caught it.
@@ -125,9 +129,6 @@
 - The security guard is `github.event.pull_request.user.login == 'dependabot[bot]'` in the reusable workflow — checks PR *author*, stable against maintainer re-runs.
 - Confirmed and validated via smoke test in lucas42/.github #14. Production rollout to ~33 repos still pending as of 2026-03-20.
 
-### NOTE: Prior memory was wrong
-- Earlier note said "`pull_request_target` is required, `pull_request` is insufficient" — this was incorrect. `pull_request` with a `permissions` block gives Dependabot the write token it needs, and avoids the `startup_failure` caused by `pull_request_target` + `uses:`.
-
 ## Auto-Merge: Two Separate Workflows
 
 There are two distinct auto-merge workflows — do not conflate them:
@@ -192,15 +193,4 @@ There are two distinct auto-merge workflows — do not conflate them:
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 - [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
 
-## Loganne Config Review
-
-- [Verify subscriber URL hostnames via /_info](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467 missed this)
-
-## Dependabot PR Diagnosis
-
-- [Stale regression PRs — diagnose before suggesting recreate](feedback_dependabot_stale_regression.md) — `@dependabot recreate` is deterministic; if PR is a net regression vs main, the fix is to close it, not recreate it
-
-## Credential / SSH Key Review Patterns
-
-- [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check; healthcheck depth (from 2026-05-09 lucos_creds incident)
 

@@ -197,3 +197,7 @@ jobs:
 ## Shell Scripts over SSH
 
 Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH on remote hosts. Caught in lucos_backups#269.
+
+## lucos_media_seinn
+
+- [forEach(async ...) is implicit parallelism](seinn_async_foreach_parallelism.md) — shared state mutations need serialisation; chain onto existing `evictionLock` rather than adding a second mutex
