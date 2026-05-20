@@ -196,6 +196,10 @@ There are two distinct auto-merge workflows — do not conflate them:
 
 - [Verify subscriber URL hostnames via /_info](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467 missed this)
 
+## Dependabot PR Diagnosis
+
+- [Stale regression PRs — diagnose before suggesting recreate](feedback_dependabot_stale_regression.md) — `@dependabot recreate` is deterministic; if PR is a net regression vs main, the fix is to close it, not recreate it
+
 ## Credential / SSH Key Review Patterns
 
 - [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check; healthcheck depth (from 2026-05-09 lucos_creds incident)
