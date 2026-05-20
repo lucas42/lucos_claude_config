@@ -68,6 +68,19 @@ Speculation about external state gets relayed forward as fact unless something s
 
 If you cannot verify because the system is unreachable, say so explicitly — "unverified: could not fetch tags" — rather than speculating.
 
+## Dependabot PR CI Failures
+
+**`@dependabot recreate` is deterministic — never recommend it as a fix to a CI failure unless an input has demonstrably changed since the original PR was opened.** Dependabot regenerates the PR using the same manifest (`package.json`, `Gemfile`, `pyproject.toml`, etc.) plus the current registry state. Unless one of those inputs has changed in a way that would alter the resolution (e.g. the manifest was edited, a new version was published, a yanked version was unyanked), recreate produces the same lockfile and the same failure.
+
+When a Dependabot PR's CI is red:
+
+1. **Diagnose *why* CI is failing** — read the build/test logs, don't assume.
+2. **Identify the actual root cause** — manifest constraint mismatch, missing version on registry, peer dep conflict, broken test, stale PR (main has moved past the PR's targets), etc.
+3. **For stale regression PRs specifically:** Compare key dep versions between the PR branch and main. If the PR resolves any package to a LOWER version than main (a net regression), the PR is stale and cannot be fixed by recreating — recommend closing it. Dependabot will generate a fresh PR against current main on its next scheduled run.
+4. **Recommend a concrete fix** that addresses the root cause — typically a manifest edit, a developer-applied lockfile rebase, or closing the PR with a routing decision.
+
+Use `@dependabot recreate` **only** when something has actually changed and you want Dependabot to pick it up — for example, after the user has manually edited `package.json` to fix a constraint mismatch. This is a recurring mistake agents make; lucas42 has corrected it multiple times.
+
 ## lucos Infrastructure Conventions
 
 Be alert to violations of lucos-specific patterns when reviewing. Key reference docs:
