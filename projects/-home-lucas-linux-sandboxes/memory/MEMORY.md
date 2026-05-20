@@ -63,6 +63,7 @@
 - [Verify identifiers before propagating](feedback_verify_before_propagating.md) — when fan-out propagating a teammate's concrete identifier (URL/domain/repo/path) into multiple GitHub bodies, verify against an authoritative source first; an agent's report is not a verified fact
 - [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's design question verbatim; never augment with my own option list or "options I see" framing, which biases the agent toward the obvious defaults
 - [No verbatim quotes on the ticket](feedback_no_verbatim_quotes_on_ticket.md) — triage-decision comments on a ticket should be brief and reference prior comments by position; verbatim quotes are for SendMessage (where the inbox doesn't show the thread), not for the ticket itself
+- [Dependabot recreate is deterministic](feedback_dependabot_recreate_deterministic.md) — never relay/endorse `@dependabot recreate` as a fix unless an input has demonstrably changed; recreate produces the same lockfile from the same inputs
 
 ## Active Projects
 
