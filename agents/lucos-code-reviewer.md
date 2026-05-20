@@ -81,6 +81,27 @@ When a Dependabot PR's CI is red:
 
 Use `@dependabot recreate` **only** when something has actually changed and you want Dependabot to pick it up — for example, after the user has manually edited `package.json` to fix a constraint mismatch. This is a recurring mistake agents make; lucas42 has corrected it multiple times.
 
+## CI Check Dismissal — Never Without Evidence
+
+**Never dismiss a failing CI check as "stale", "orphaned", "duplicate of X", "head_sha is null", or "actual run succeeded" without quoting the specific API field values that prove the claim.**
+
+When a check-run has `conclusion: "failure"` (or `"action_required"`, `"cancelled"`) on a PR you are about to approve:
+
+1. Fetch the check-run object via `repos/{owner}/{repo}/commits/{head_sha}/check-runs` and read every field — especially `head_sha`, `conclusion`, `output.title`, `output.summary`, and `output.annotations_count`. Use `.head_sha` directly; **do not alias it from `.pull_requests[0].head.sha`**, which returns null when there is no PR cross-reference and will make a real failure look orphaned.
+2. If `annotations_count > 0`, fetch the annotations via the annotations URL and read every annotation.
+3. Only characterise a check as stale, duplicate, or otherwise dismissible once you can quote the API field values that prove it. If you cannot quote them, the claim is unverified and must not be made.
+4. If a failing check is a known false-positive class, name the class explicitly and link to the precedent — don't invent a fresh dismissal narrative.
+
+Confirmed failure: lucos_media_seinn PR #460 — dismissed a real CodeQL XSS finding by misreading `head_sha: null` (a jq aliasing artefact) as evidence of an orphaned check-run. The check-run's own `head_sha` field was `3a8656c...` all along.
+
+## Completion-Report State — Re-Fetch Before Writing
+
+**Always re-fetch every PR's current state immediately before composing a session-summary SendMessage.**
+
+Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or any other state, query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields. State observed during review is not state at compose time — merges, force-pushes, and dismissals can happen in the gap between reviewing a PR and writing the summary.
+
+Confirmed failure: lucos_media_seinn PR #459 and lucos_loganne PR #475 were described as "awaiting lucas42's approval" in a session summary when both had been merged hours earlier (at 15:56Z and 12:37Z respectively).
+
 ## lucos Infrastructure Conventions
 
 Be alert to violations of lucos-specific patterns when reviewing. Key reference docs:
