@@ -5,17 +5,18 @@ metadata:
   type: feedback
 ---
 
-## CodeQL False Positive Resolution: GHAS Dismissal Only
+## CodeQL False Positive Resolution: GHAS Dismissal Only (with caveats)
 
-**Lucas42's stated preference (2026-05-20):** GHAS alert dismissal is the **only** mechanism to use for CodeQL false positives. Do not use:
+**Lucas42's stated preference (2026-05-20):** GHAS alert dismissal is the **primary** mechanism for CodeQL false positives. Inline suppression comments are also non-functional in lucos repos (code-reviewer verified empirically on PR #460 with four failed commits).
 
-- Inline suppression comments (`// codeql[js/stored-xss]`) — also confirmed non-functional in lucos repos (code-reviewer verified empirically on PR #460 with four failed commits).
-- `.github/codeql-config.yml` file-level or directory-level `paths-ignore` exclusions.
+**How to apply:** When a CodeQL alert is confirmed to be a false positive, dismiss it directly via the API (see [[codeql-dismissal-capability]]). `lucos-security[bot]` has this permission — no need to route to lucas42.
 
-**Why:** Lucas42 prefers the dismissal audit trail in GitHub Advanced Security over in-code annotations or config exclusions. Each false positive gets a per-alert conscious decision recorded in the security tab.
+**Important: dismissal whack-a-mole problem.** CodeQL fingerprints alerts by code location (file + line range + snippet). When line numbers shift between commits (e.g., due to insertions/deletions elsewhere in the file), a new alert instance is created at the new location — the old dismissal doesn't apply. This makes dismissal-only an ongoing maintenance burden for false positives in actively-edited files.
 
-**How to apply:** When a CodeQL alert is confirmed to be a false positive, dismiss it directly via the API (see [[codeql-dismissal-capability]]). Do not propose inline suppression or config exclusions as alternatives.
+**`query-filters` (rule-scoped) vs `paths-ignore` (blanket) — critical distinction:**
+- `paths-ignore: tests/**` = blanket exclusion of ALL CodeQL rules from test files. This IS silent security debt — real SQL injection, command injection etc. in test code would be suppressed.
+- `query-filters: exclude: id: js/stored-xss, paths: tests/**` = rule-scoped exclusion. Only that specific rule is suppressed; all other rules still run on test files. This is NOT silent security debt and is a defensible durable fix for false positives that recur due to line-shift churn.
 
-**Confirmed that `lucos-security[bot]` can do this autonomously** — `security_events: write` is granted. No need to route false-positive dismissals to lucas42 unless permission is revoked.
+For persistent false positives in frequently-edited files, the `query-filters` approach is the more practical long-term solution. This is lucas42's call to make (it's a workflow config change), but the security concern with blanket `tests/**` only applies to `paths-ignore`, not to rule-scoped `query-filters`.
 
 Note: the earlier claim that "dismissals must be by lucas42" was an unverified assumption — it was wrong. Always verify permission claims by probing the API rather than guessing.

@@ -125,3 +125,6 @@ CRLF/tilde/BOM all trigger libcrypto error. When fix survives live state but not
 
 ## Teammate quote verification rule (implemented lucos_claude_config#79)
 Run `verify-teammate-quote --sender <name> --quote <text>` before quoting any teammate verbatim. See `feedback_verify_teammate_quotes.md`.
+
+## Security tooling workflow changes: confirm lucos-security sign-off first
+Before applying any workflow change that wires in a security tool config (CodeQL config-file, secret-scanning exclusions, etc.), check the developer consulted lucos-security. See `feedback_security_tooling_check.md`.
