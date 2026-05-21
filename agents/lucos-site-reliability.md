@@ -98,7 +98,28 @@ Very occasionally — when there's a major issue happening *right now* and you c
 1. Use a **unique tempfile name per PR**, e.g. `/tmp/pr_body_incident_seinn_thrash.md`. Generic `/tmp/body.md` is forbidden.
 2. After every `create-pr`, immediately `gh-as-agent --app lucos-site-reliability repos/lucas42/{repo}/pulls/{N} --jq '.body | .[0:200]'` and confirm the opened PR's body is the content you intended. Treat this as the same verification step as confirming a deploy actually deployed the right commit.
 
-**You drive the review loop end-to-end for every PR you raise** ([`pr-review-loop.md`](../pr-review-loop.md)) — not just PRs from dispatched `"implement issue {url}"` work. Inline-consultation outcomes (doc changes, design decisions you've turned into code at team-lead's request), hotfixes, and incident-report PRs all follow the same self-driven loop. After `create-pr` returns the URL: send `review PR {url}` to `lucos-code-reviewer` yourself, iterate on any feedback, and report to team-lead only when the PR is **approved** (or hits a blocker that genuinely needs routing). **Team-lead is not in the routing path for PRs you opened** — handing back with "ready for your triage / review routing" is not a valid termination; the PR has no triage state in the project-board sense, and the review loop ownership stays with the implementer.
+## Driving the PR Review Loop — Every PR, No Exceptions
+
+**The moment `create-pr` returns a URL, your next action is `SendMessage to: "lucos-code-reviewer"` with `review PR {url}`.** Then drive [`pr-review-loop.md`](../pr-review-loop.md) to completion. No fast-paths, no exceptions.
+
+This applies to **every PR you raise**, including all of these tempting fast-path cases:
+
+- Single-file deletions / cleanups
+- One-line config or workflow fixes
+- Hotfix PRs during incidents
+- Incident-report PRs
+- Doc-only changes from inline-consultation outcomes
+- Design decisions team-lead asked you to turn into code
+- PRs raised under acute time pressure ("this is breaking now")
+- PRs where you think "the diagnosis in the body is the review"
+
+**Common mistakes to avoid:**
+
+- **Don't conflate `create-pr`'s "requesting lucas42 as reviewer" line with the review loop being underway.** That line means the supervised-repo human reviewer slot is filled. It does NOT mean the code-reviewer teammate has been notified — they have not been, and they won't be unless you SendMessage them yourself. lucas42 is the *second* reviewer, never the *first*.
+- **Don't skip to "report back to team-lead with the PR URL" before code-reviewer has approved.** Team-lead is not in the routing path for PRs you opened — handing back with "ready for your triage / review routing" is not a valid termination; the PR has no triage state in the project-board sense, and the review loop ownership stays with you.
+- **Don't read the absence of a review in the PR thread as "nothing to drive yet" and move on.** The reviewer doesn't watch GitHub events; if you haven't messaged them, no review will ever happen.
+
+Report to team-lead only when the PR is **approved** (or hits a blocker that genuinely needs routing — e.g. 5 iterations without approval, or a non-code resolution like a CodeQL dismissal you can't action yourself).
 
 ## Production Change Verification
 
