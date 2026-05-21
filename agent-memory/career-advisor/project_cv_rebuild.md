@@ -1,11 +1,11 @@
 ---
 name: cv-rebuild
-description: Active project — rebuild Luke's CV pipeline around pandoc + markdown source-of-truth
+description: CV pipeline rebuild — largely complete as of 2026-05-21. Pandoc + markdown source-of-truth pipeline is live; `/tailor` and `/tailor-cv` skills operate against it.
 metadata:
   type: project
 ---
 
-Active rebuild of `lucas42/lukeblaney_cv` to fix ATS-parseability problems. Started 2026-05-19.
+Rebuild of `lucas42/lukeblaney_cv` to fix ATS-parseability problems. Started 2026-05-19. **Largely complete as of 2026-05-21** — pipeline is live and three tailored variants have been produced through it.
 
 **Diagnosis (confirmed via pdftotext extraction of `cv.pdf`)**: pdflatex with default Computer Modern renders bullets as `(cid:136)` glyphs (50+ in the file, breaking all structure for ATS parsers) and ligatures `ﬁ`/`ﬂ`/`ﬀ` as unmapped glyphs (breaking keyword matching for words like "Defined" / "workflow" / "different"). Footer URL also pollutes the text flow.
 
@@ -26,3 +26,19 @@ Active rebuild of `lucas42/lukeblaney_cv` to fix ATS-parseability problems. Star
 **Why this matters:** Luke is actively job hunting and ATS rejections are blocking him from reaching humans (3-minute auto-rejections, auto-fill putting fields in wrong slots). Fixing the pipeline is the highest-leverage move he can make right now.
 
 **How to apply:** When working in this repo, follow [[cv-commit-discipline]], [[cv-copy-editing-scope]], [[cv-dialect-preference]]. Validate each fix by running pandoc → pdfminer extraction and counting cid/ligature/hyphen artefacts.
+
+## Current state (2026-05-21)
+
+The pipeline is operational. Key infrastructure in place:
+
+- **Source-of-truth**: `cv-extended.md` (full history, ATS-clean, no em-dashes).
+- **General-purpose CV**: `cv.md` (curated subset of cv-extended.md).
+- **Tailored variants**: produced under `lukeblaney_cv_tailored/orgs/{company}/{role}/cv.md` via the `/tailor` or `/tailor-cv` skills.
+- **Render script**: `render-tailored.sh` runs pandoc in Docker against the reference templates, producing `Luke Blaney - CV.docx` (committed, ATS-ready filename) and `Luke Blaney - CV.pdf` (gitignored, for human review).
+- **Templates**: `pandoc-docx-reference.docx.template` (uses Calibri theme, exact line-height for renderer parity, `EmployerDate` custom paragraph style for italicised date subtitles) and `pandoc-pdf-header.tex.template` (matching LaTeX). The Lua filter `employerdate-filter.lua` translates `EmployerDate` divs to a LaTeX environment for PDF renders.
+- **ATS verification**: `/tmp/pdfvenv/bin/python3` with `pdfminer.six` verifies the rendered PDF — page count, cid/ligature/hyphen artefact count, JD keyword presence. Bootstrap line in `/tailor` and `/tailor-cv` skills handles the venv if missing.
+- **Three tailored variants exist** in `lukeblaney_cv_tailored`: funding-circle / partnerize / airbnb. All 3 pages, ATS metrics clean.
+
+Outstanding work that would still be useful:
+- Pull-forward exceptions for individual entries from the dropped sections (Earlier Career pre-Assanka, Positions of Responsibility) — currently handled per-application in [[cv-variant-content-rule]].
+- Worked example for Director-track variants other than the platform-engineering / IC variants already produced.

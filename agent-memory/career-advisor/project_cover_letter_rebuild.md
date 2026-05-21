@@ -1,11 +1,11 @@
 ---
 name: cover-letter-rebuild
-description: Active project — build a reusable cover-letter library and tailoring workflow in the lukeblaney_cv repo
+description: Cover-letter library + tailoring workflow — largely complete as of 2026-05-21. Library, skills, and worked examples are live.
 metadata:
   type: project
 ---
 
-Active rebuild of Luke's cover-letter workflow. Started 2026-05-20.
+Rebuild of Luke's cover-letter workflow. Started 2026-05-20. **Largely complete as of 2026-05-21**.
 
 **Why:** Luke's existing letters share heavy boilerplate, miss "why this company" content, and don't surface his strongest evidence (which sits locked in a civil-service personal statement). Diagnostic patterns captured in [[user-cover-letter-patterns]].
 
@@ -25,7 +25,7 @@ Active rebuild of Luke's cover-letter workflow. Started 2026-05-20.
 
 ## Company-notes convention (for the private tailored repo)
 
-When working on a live application, persist per-employer context in `lukeblaney_cv_tailored/company-notes/{slug}.md`. The `/tailor-cover-letter` skill (step 3) should read this file before drafting.
+When working on a live application, persist per-employer context in `lukeblaney_cv_tailored/orgs/{company-slug}/notes.md`. The `/tailor` and `/tailor-cover-letter` skills read this file before drafting.
 
 **One file per company, not per (company, role) pair.** Luke may apply to multiple roles at the same company over time — the company-level context (hiring manager, recruiter style, ATS in use, application history, anything the company itself has told him) is cross-cutting and shouldn't be duplicated. Inside each company file, use role-specific sub-sections for things that don't generalise:
 
@@ -41,14 +41,34 @@ When working on a live application, persist per-employer context in `lukeblaney_
 
 ### {Role title} — {date applied}
 - JD link / archive
+- Tailored CV path
 - Letter draft path
 - Recruiter / feedback
 - Outcome
-
-### {Other role} — {date applied}
-- …
 ```
 
-Slugs should be lowercase-kebab of the company name (`bbc.md`, `tfl.md`, `funding-circle.md`).
+Slugs are lowercase-kebab of the company name. The role's CV / letter / .docx artefacts live in a `{role-slug}/` subdirectory under the company directory.
 
-Related: [[cv-rebuild]], [[user-cover-letter-patterns]].
+## Current state (2026-05-21)
+
+The cover-letter system is operational. Key infrastructure in place:
+
+- **Library** at `lucas42/lukeblaney_cv/cover-letters/`:
+  - `template.md` — 4-paragraph structural template + rules.
+  - `blocks/openers.md` — opener anchor patterns by role archetype (cyber leadership / platform leadership / Director-Head-VP of Engineering / IC-track / EM-TLM / company-is-the-hook).
+  - `blocks/evidence-stories.md` — 9 stories mined from Luke's civil-service personal statement; situation → action → result for each, plus a story-selection cheat sheet keyed by JD signal.
+  - `blocks/current-focus.md` — 4 variants: security-flavoured / platform-engineering-flavoured / IC-architect-flavoured / generalist-leadership-flavoured.
+  - `blocks/career-break-aside.md` — one-line default + sentence-form for travel-relevant JDs.
+  - `blocks/closes.md` — closing-line + sign-off options.
+  - All library prose is em-dash-clean (~zero per [[luke-voice]]).
+- **Skills**:
+  - `/tailor-cover-letter` — letter-only flow.
+  - `/tailor` — combined CV + cover letter flow with joint positioning decisions, cross-pollination between the two documents, and a single bundled commit.
+- **Three worked-example applications** in `lukeblaney_cv_tailored/orgs/`: funding-circle / partnerize / airbnb. Airbnb was the first `/tailor` invocation; surfaced the IC-architect current-focus variant, the EmployerDate paragraph style, and the em-dash voice rule.
+
+Backlog (would be useful but not blocking):
+- More evidence stories: CMDB rewrites, MFA solution, Kubernetes migration, mobile-apps cloud migration. Backlog list captured at the bottom of `evidence-stories.md`.
+- Gap-filling on existing stories: specific outcome numbers for stories #1, #2, #3, #4, #6, #7, #8, #9 (each story file has its `**Gaps**:` checklist).
+- Worked example for the EM / TLM opener and the "company is the hook" opener.
+
+Related: [[cv-rebuild]], [[user-cover-letter-patterns]], [[tailored-variant-freeze]].
