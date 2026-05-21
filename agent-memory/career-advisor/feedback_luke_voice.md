@@ -13,6 +13,17 @@ Style and tone rules to apply when drafting anything in Luke's voice.
 - **"AI Native"** — Luke's voice deliberately avoids this. If a JD uses it, engage with the underlying ambition (e.g. "transform engineering processes", "make GenAI part of how the team works") rather than parroting the phrase.
 - **"transformational change"**, **"synergies"**, **"step change"**, **"unlock value"** — corporate-jargon family. Same reasoning.
 - **Hyphenated "principal-engineer"** (as a compound adjective, e.g. "principal-engineer-level technical direction"). Luke prefers "Principal Engineer" treated as a noun phrase, capitalised as a job title, with no hyphen. Stated 2026-05-21 during the Airbnb Staff IC draft review. If the compound-adjective construction is needed, rewrite to a noun-noun construction instead ("Principal Engineer technical direction" rather than "principal-engineer-level technical direction").
+- **Em-dashes are exception, not default, in external-facing prose.** Hard limit: at most one em-dash per rendered document (CV body content, cover letter body content); anything above that needs trimming. Stated 2026-05-21 after I'd added 193 em-dashes across the CV/letter source files. A git-blame audit showed Luke's own usage rate in CV/letter prose is exactly **zero**: every em-dash in the system was mine. Luke describes the rule as "I'm partial to the occasional one, it can make me look sophisticated, but too many of them rings AI-slop alarm bells." So one occasional one for sophistication is fine; piling them up reads as LLM tic. **Replacement palette** when removing an em-dash:
+  - When the second clause expands or elaborates on the first → **colon** (`microservices — the central spine` becomes `microservices: the central spine`)
+  - For parenthetical asides bracketed by em-dashes → **commas** or **parentheses** (`travel the world — dozens of countries — and what I enjoyed` becomes `travel the world, dozens of countries, and what I enjoyed`)
+  - Between two distinct sentences → **full stop** (then start a new sentence)
+  - For a casual / informal break → **hyphen** with surrounding spaces (`discuss this - happy to share`); this is Luke's choice for the closing-line break in particular
+
+  **Scope of the rule**: external-facing prose only. That means:
+  - **Apply the rule to** the prose that ends up in the rendered .docx / .pdf: CV body content (Summary, Skills, role descriptions, bullets, Career Break section); cover-letter body (paragraphs 1–4, salutation, close); the example opener / evidence-story / current-focus prose in the library blocks because that's the prose that gets pasted into letters.
+  - **Don't apply the rule to** internal commentary that never reaches a recipient: library `**Tags**:` / `**Gaps**:` lines, "Pairs with" notes, framing-decision discussion, instructional bullets in `template.md`, `What to avoid` lists, README files, voice-memory files (including this one). Em-dashes there are fine and don't need trimming.
+
+  Stated 2026-05-21 after I trimmed em-dashes from every line of `evidence-stories.md` including the Gaps/Tags/Pairs-with commentary, when Luke only needed the external prose trimmed. Luke's clarification: "you went full-on there. Didn't need you to remove emdashes from your own internal notes. Just external facing copy." For future sweeps, ask "would this text appear verbatim in a rendered letter/CV?" before applying the rule. If no, leave it alone.
 
 ## Tone rules
 
