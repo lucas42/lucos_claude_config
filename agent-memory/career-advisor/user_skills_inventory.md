@@ -15,9 +15,30 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 ## Databases / data stores
 
-**Confirmed experience**: MySQL · PostgreSQL · Memcache
+**Relational, comfortable**: MySQL · PostgreSQL
 
-**Will not claim**: Redis (Memcache is the adjacent substitute) · Druid · MongoDB · Elasticsearch
+**Caching, comfortable**: Memcached (used on FT Integration Engineer)
+
+**NoSQL — architect / decision-maker level** (platform used it, Luke owned the architectural trade-offs but engineers operated it; same pattern as Kubernetes):
+- **GraphDB · MongoDB · Elasticsearch** — all used on the FT Universal Publishing Platform during the Architect - Content role. Confirmed 2026-05-21.
+
+**NoSQL — hands-on on an operated team platform**:
+- **Prometheus** — Reliability Engineering team. Time-series / metrics.
+- **Neo4j** — Reliability Engineering team. Graph.
+
+**NoSQL — hands-on on personal projects**:
+- **Fuseki** (triplestore / SPARQL)
+- **Typesense** (search)
+
+**Where it can appear**:
+- The "familiarity with SQL and NoSQL, and when to use each" type of JD ask: yes, fluently. Multiple NoSQL types across multiple roles.
+- In a Skills section: yes, listed under Data & Platform / Databases. Acceptable to enumerate without claiming hands-on operations of all of them.
+
+**Where it must NOT appear**:
+- Don't claim "operating MongoDB / Elasticsearch clusters" or "deployed Mongo replica sets" — those are platform-engineer-on-the-data-team claims, not architect-of-the-overall-platform claims.
+- For the Reliability Engineering ones (Prometheus, Neo4j) hands-on is fine but operations were a team activity, not individual.
+
+**Will not claim**: Redis (Memcached is the adjacent substitute) · Druid · DynamoDB · Cassandra · Bigtable
 
 ## Frontend / UI
 
