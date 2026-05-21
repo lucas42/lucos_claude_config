@@ -17,6 +17,22 @@ When the JD asks for "manager of managers" or formal EM-management experience:
 - **Don't claim**: managing formal Engineering Managers, multi-layer reporting hierarchy
 - **Can claim**: director-level scope, line-management of a mixed-discipline team (~12 people: engineers, risk analysts, IT governance), multi-team responsibility, mentorship
 
+## Don't overclaim regulatory experience from FT
+
+The UK media industry is laughably under-regulated. Stated 2026-05-21. Despite the FT's profile, Luke's tenure there did **not** involve operating under heavy regulatory burden in the way fintech / banking / pensions / healthcare roles do.
+
+**What's defensibly shared between FT and most other industries**: high-traffic public-facing platforms, reliability under load spikes (elections, budgets, market events), public-target organisations (nation-state actors), mission-critical systems, large-scale technical migrations.
+
+**What's not defensible without qualification**: claims about operating under significant regulatory constraints. The FT had GDPR like everyone else, but no MiFID, no FCA capital adequacy, no AML/KYC, no SOX-equivalent, no PCI-DSS at scale, etc. Even the cyber-security work — although Luke was Director — wasn't compliance-led in the regulated-industry sense.
+
+**How to apply:**
+
+- For fintech / banking / pensions / regulated-industry JDs, lead with reliability + scale + cyber-security-craft, **not** regulatory experience.
+- Honest framing: "fintech is a domain I haven't worked in before, but the broader pattern of [reliability / scale / public-target] is familiar territory."
+- If a JD specifically asks for regulatory experience, follow the existing pattern from the regulated-pensions letter: honest gap note + adjacent evidence (CyberEssentials, PCI-DSS in the SSO context, etc.) — don't dress up the gap.
+
+Related: [[user-cover-letter-patterns]], [[luke-voice]].
+
 ## Architect role family was phased out — architecture absorbed into PE remit
 
 The FT re-organised in 2017 to move architects into the same orgs as engineers (architecture stopped being a separate team). After that, the explicit Architect job titles were gradually phased out through backfilling with other titles. There isn't a single sharp date to point to — but the upshot is that **the architectural-decision-making work didn't stop; it was absorbed into the Principal Engineer remit**.

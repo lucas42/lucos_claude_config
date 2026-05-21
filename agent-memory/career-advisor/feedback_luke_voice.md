@@ -34,6 +34,30 @@ Style and tone rules to apply when drafting anything in Luke's voice.
 - **Don't conflate companies with domains.** Domains are business areas (travel, hospitality, fintech, publishing, media); companies are companies. Stated 2026-05-21 during the Airbnb draft after I wrote "Airbnb is a domain I'd be glad to work in" — the correct construction is "travel is a domain I'd be glad to work in" or "Airbnb is a company I'd be glad to work for". Pay attention to the antecedent of "it" in any "this is a domain I'd…" sentence — if "it" refers to the company rather than the business area, the sentence is wrong.
 - **Don't claim greenfield design on pre-existing systems Luke inherited.** Be specific about which work was greenfield vs which was ongoing architectural ownership of existing systems. Stated 2026-05-21 after I wrote "Designed an event-driven architecture using Apache Kafka…" for the UPP role — the Kafka backbone pre-dated Luke's Architect-Content tenure. Known greenfield work at the FT: the metadata management APIs (Architect-Content); the cloud-native zero-downtime deployment pipeline (Integration Engineer, Strategic Products). Known inherited systems where Luke's contribution was ongoing architectural decision-making rather than greenfield design: the UPP Kafka backbone. Use "Made architectural decisions on…" / "Worked on…" / "Worked within…" for inherited systems; reserve "Designed…" / "Architected…" for greenfield.
 
+## HR / talent-acquisition acronyms
+
+Stated 2026-05-21.
+
+**Avoid "JD"** (job description) in anything Luke writes that might be read by a hiring manager or wider audience. JD is fine when the document or message is explicitly only for a recruiter / talent acquisition team — but cover letters, application-form answers, and any other writing that might land in front of an engineering leader's eyes should use the full phrase.
+
+**Replacements**:
+- "JD" → "job description", "job posting", "role description", "the posting"
+- Often you can elide it entirely: "an unusual combination to see spelled out in a JD" → "an unusual combination to see spelled out in a job description", or restructure to "an unusual combination to see called out so explicitly"
+
+**Why**: JD is HR / TA jargon. Hiring managers and engineering leaders aren't HR people, and using HR acronyms back at them reads as either inside-baseball or distancing.
+
+**Scope**: applies to anything I write in Luke's voice for external audiences. Doesn't apply when I'm talking *to* Luke about a job description in our working conversation — that's fine.
+
+Related: [[user-cover-letter-patterns]].
+
+## Whitespace conventions
+
+Stated 2026-05-21. Apply to all of Luke's external-facing prose.
+
+1. **Double spaces between sentences.** Typewriter convention. Applies to all external-facing prose: cover letters, CV Summary, CV role-intro lines, CV Career Break section, application-form free-text answers, anywhere Luke's prose appears to a recipient. Source the markdown with `.  ` (period + two ASCII spaces) between sentences. Verify in the rendered docx/pdf that the spacing carries through; if pandoc collapses, switch to a non-breaking space hint between the period and the next sentence.
+
+2. **First-line indent on paragraph 1 after a salutation** (letters only — CVs have no salutation). The indent should visually align with the position of the comma in the greeting line above. When platform-specific font/spacing makes precise alignment impossible, fall back to a tab or two of indent. **Technical implementation in pandoc-markdown source**: a leading tab on a fresh paragraph line triggers a code block, so don't use a literal tab in the source. Instead use a run of Unicode non-breaking spaces (U+00A0) at the start of the first line of paragraph 1 — pandoc preserves these into both docx and pdf outputs. Roughly 16-20 of them approximates "Dear hiring team," width in Calibri 11pt; adjust per salutation length.
+
 ## How to apply
 
 Before showing Luke any drafted prose, scan for: "leverage", "AI Native", "synergies", "transformational", "genuinely motivating", "deeply passionate", "step change", "unlock", "principal-engineer" (hyphenated compound). If any appear, revise *before* showing. If a JD requires engaging with one of these concepts, rephrase the engagement into Luke's voice — don't parrot the phrase to score keyword points.
