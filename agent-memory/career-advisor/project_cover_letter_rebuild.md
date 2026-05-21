@@ -64,7 +64,7 @@ The cover-letter system is operational. Key infrastructure in place:
 - **Skills**:
   - `/tailor-cover-letter` — letter-only flow.
   - `/tailor` — combined CV + cover letter flow with joint positioning decisions, cross-pollination between the two documents, and a single bundled commit.
-- **Three worked-example applications** in `lukeblaney_cv_tailored/orgs/`: funding-circle / partnerize / airbnb. Airbnb was the first `/tailor` invocation; surfaced the IC-architect current-focus variant, the EmployerDate paragraph style, and the em-dash voice rule.
+- **Four worked-example applications** in `lukeblaney_cv_tailored/orgs/`: funding-circle / partnerize / airbnb / freetrade. Airbnb was the first `/tailor` invocation; surfaced the IC-architect current-focus variant, the EmployerDate paragraph style, and the em-dash voice rule. Freetrade (2026-05-21) was the first deployment of the Architect→PE absorption bridge (see [[user-role-framing]]) and the first variant with Luke's whitespace conventions applied end-to-end (double-spaces auto-preserved by the render-script pre-processor; first-line indent written manually as a 16-char U+00A0 run). Also surfaced the "don't overclaim FT regulatory experience" rule and the "avoid JD acronym" voice rule.
 
 Backlog (would be useful but not blocking):
 - More evidence stories: CMDB rewrites, MFA solution, Kubernetes migration, mobile-apps cloud migration. Backlog list captured at the bottom of `evidence-stories.md`.

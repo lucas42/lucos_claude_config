@@ -30,3 +30,5 @@
 - [Circle-artifacts URL truncation](feedback_circle_artifacts_url_truncation.md) — never paste raw circle-artifacts.com URLs; they get truncated where they wrap and break the link
 - [Cover letter upload field](feedback_cover_letter_upload_field.md) — most ATSes take cover letters as a file upload, not text-area; .docx render is the default, not an edge case
 - [Tailored variant freeze](feedback_tailored_variant_freeze.md) — sweeping changes apply to all of lukeblaney_cv; for lukeblaney_cv_tailored only the actively-worked items. Historic / submitted variants stay frozen by default, no need to ask.
+- [Check evidence recency](feedback_check_evidence_recency.md) — for senior IC variants, flag any headline evidence story ≥5 years old proactively before showing Luke a draft; look for absorption / continuity bridges
+- [Write tool flattens NBSP](feedback_write_tool_nbsp_flattening.md) — U+00A0 gets normalised to ASCII space through the Write tool; use Python post-write or Bash heredoc to write nbsp content reliably
