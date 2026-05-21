@@ -47,8 +47,8 @@ The `close-linked-issues` job is necessary because **GitHub does not process clo
 **Prerequisites for each repository:**
 
 1. **Repository secrets** — two secrets must be set:
-   - `CODE_REVIEWER_APP_ID` — the lucos-code-reviewer App ID (see `personas.json`)
-   - `CODE_REVIEWER_PRIVATE_KEY` — the lucos-code-reviewer RSA private key (from lucos_creds, with newlines restored from the space-flattened format)
+   - `LUCOS_CI_APP_ID` — the standard lucos CI GitHub App ID (already present on most repos)
+   - `LUCOS_CI_PRIVATE_KEY` — the standard lucos CI GitHub App private key (already present on most repos; ask lucos-system-administrator to provision if missing)
 2. **GitHub App permissions** — `lucos-code-reviewer` must have these permissions on its installation:
    - `Contents: Read & write` (required to merge PRs)
    - `Pull requests: Read & write` (required to enable auto-merge)
