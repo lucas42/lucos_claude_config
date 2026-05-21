@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-20
-resource_checks: 2026-05-14
-syslog_review: 2026-05-14
-software_updates: 2026-05-14
-sandbox_drift: 2026-05-14
-repos_dashboard: 2026-05-20
+container_status: 2026-05-21
+resource_checks: 2026-05-21
+syslog_review: 2026-05-21
+software_updates: 2026-05-21
+sandbox_drift: 2026-05-21
+repos_dashboard: 2026-05-21
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1030,6 +1030,33 @@ certificate_expiry: 2026-05-07
 ### 2026-05-20 (checks 1 + 6 due; weekly checks last ran 2026-05-14 — not due until 2026-05-21; monthly checks last ran 2026-05-07 — not due)
 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 0 failing conventions. Completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-05-21 (checks 1–6 due; monthly checks last ran 2026-05-07 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- Avalon: no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3.0→29.5.1, containerd 2.2.1→2.2.3, buildx 0.31.1→0.34.0, compose 5.1.0→5.1.3. All from `bookworm` (not `-security`). Routine.
+- Xwing: Docker CE 29.4.0→29.5.2, containerd, buildx, compose; kernel 6.12.47→6.18.29 (large jump), initramfs-tools, libcamera, libpisp, linux-libc-dev, raspi-firmware, rpi-connect, rpi-eeprom, rpi-loop-utils, rpi-swap, rpicam-apps, userconf-pi. All from `stable` / `trixie` (not `-security`). Routine.
+- Salvare: Docker CE 29.3.0→29.5.1, containerd, buildx, compose; kernel 6.12.25→6.12.87 (large jump from `oldstable`), linux-libc-dev, raspi-firmware, raspi-utils-core/dt, rpicam-apps-lite. All from `bookworm` / `oldstable` (not `-security`). Routine.
+- No security-tagged packages on any host. Growing backlog on xwing/salvare (ongoing pattern — no current tracking issue since #24 was closed).
+
+**Resources**:
+- Avalon: 3.7Gi available of 7.6Gi. Swap 452Mi/4.5Gi (10%). Disk 19%. Load 3.11/4.23/4.57 (elevated but acceptable). Journal 107.5M. Fine.
+- Xwing: 463Mi available of 906Mi. Swap 166Mi/905Mi (18%). Disk **71%** (80G/117G) — up from 62% on 2026-05-14 (+10G in 7 days). At current ~10G/week growth rate, will approach 80% around 2026-05-29. Watch item. Load was 9.69/8.58/6.31 at initial check but subsiding — re-check 5 min later showed 2.02/6.09/5.71; iowait only 0.13%; container CPU ≈0%. Transient spike (likely cron/backup), not a systemic concern. No issue raised.
+- Salvare: 3.4Gi available of 3.7Gi. No swap used. Disk 70% (39G/58G) — up from 67% on 2026-05-07. Acceptable growth (~2G/week). Load 0.18. Fine.
+- Local VM: disk 47% (45G/96G). Memory 4.2Gi available. Load 0.96. Docker images 30.26GB (22.65GB reclaimable), build cache 15.7GB (4.8GB reclaimable). Not urgent.
+
+**Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
 
 **Repos dashboard**: 0 failing conventions. Completely clean.
 
