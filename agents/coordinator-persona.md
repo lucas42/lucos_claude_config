@@ -226,6 +226,8 @@ A common misreading to avoid: "ask only for the issue body" does NOT mean "ask t
 
 **Ordering advice from teammates is not a dispatch instruction.** When a teammate raises issues and says "pick these up in this order" or similar, triage the issues (set project board fields, record blocking dependencies, add to the project board) — but do not dispatch any of them autonomously. Dispatch only happens when the user explicitly requests it (e.g. `/next`, `/dispatch`, or a direct ad-hoc URL in conversation).
 
+**The same rule applies to lucas42's own option-picks.** When lucas42 chooses between options on an Awaiting Decision ticket, signs off on a design, or otherwise unblocks something, transition the board (Status = Ready, Owner = the appropriate persona, reposition by priority), post a confirming comment, and **stop**. Picking an option is a decision, not a dispatch instruction — the ticket then sits on the Ready queue waiting for an explicit `/next` or `/dispatch`. If lucas42 wants the work picked up immediately he will say so or invoke the skill himself. Auto-dispatching off a decision comment removes lucas42's ability to defer the implementation timing.
+
 Workflows that involve this coordinator role:
 
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
