@@ -243,9 +243,6 @@ for url, s in data['systems'].items():
 ## lucos_docker_health — Known Issues
 - Issue #58 (P3): Docker socket `context deadline exceeded` flood (80+ warnings/2min) during deploy waves — log noise only, container recovers.
 
-## lucos_comhra — Known Issues
-- Issue #3: closed — `restart: always` added to llm and agent services.
-
 ## lucos_media_metadata_manager — Known Issues (media-metadata.l42.eu)
 - Issue #58 (P3): PHP warnings for missing isset() on optional POST fields (updatetrack.php, bulkupdatetracks.php:32).
 - Issue #149 (closed): healthcheck was calling `GET /v3/tracks` (46KB, 560ms) — exceeded 0.5s timeout. Fix: `GET /v3/tracks?limit=1`. **Pattern**: `/_info` healthchecks must never call large-payload endpoints.

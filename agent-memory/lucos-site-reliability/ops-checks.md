@@ -8,8 +8,6 @@ external_deps: 2026-05-04
 
 ## Container Log Review History
 
-lucos_comhra_agent: 2026-05-21
-lucos_comhra_llm: 2026-05-11
 lucos_schedule_tracker: 2026-05-10
 lucos_media_weightings: 2026-05-20
 lucos_photos_worker: 2026-05-18
