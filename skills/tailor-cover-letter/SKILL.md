@@ -94,7 +94,7 @@ Confirm the mapping with Luke before drafting prose.
 Before writing anything in the private repo:
 
 1. **Company notes**: look for `~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/notes.md`. If it exists, Luke has applied to this company before — read it for cross-application context (hiring manager name, recruiter contact, prior outcomes, ATS in use, etc.). If not, plan to create the directory and notes file.
-2. **Tailored CV**: look in `~/sandboxes/lukeblaney_cv/` for any `cv-{role-archetype}.md` variant that matches this role. If one exists (e.g. `cv-staff-engineer.md` for a Staff Engineer JD), check the Summary section to keep the cover-letter framing consistent with the CV positioning. If no matching variant exists, consider whether `/tailor-cv` should be run first — flag this to Luke.
+2. **Tailored CV**: look for an existing `~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md` matching this role. If one exists, check its Summary section to keep the cover-letter framing consistent with the CV positioning. If no matching variant exists, consider whether `/tailor-cv` should be run first — flag this to Luke.
 
 ## Step 6: Draft all four paragraphs
 
@@ -189,7 +189,7 @@ Once Luke approves the final draft and any upstream propagation:
 1. **Working directory**: `~/sandboxes/lukeblaney_cv_tailored/`. If the clone isn't present, clone it: `cd ~/sandboxes && git clone git@github.com:lucas42/lukeblaney_cv_tailored.git`. Per-org directories live under `orgs/`.
 2. **Directory structure**:
    - `orgs/{company-slug}/notes.md` — company-level context + per-role sections. Slug is lowercase-kebab of the company name.
-   - `orgs/{company-slug}/{role-slug}.md` — the letter draft for this specific role. Slug is lowercase-kebab of a descriptive role title (e.g. `staff-software-engineer-short-term-credit.md`).
+   - `orgs/{company-slug}/{role-slug}/cover-letter.md` — the letter draft for this specific role. `{role-slug}` is a lowercase-kebab subdirectory (e.g. `staff-software-engineer-short-term-credit/`) that holds both the cover-letter and the matching CV (`cv.md`). The filename inside is always `cover-letter.md` — role context comes from the directory.
 3. **If `notes.md` already exists**: append a new role section under `## Roles applied for`. Don't duplicate company-level notes.
 4. **If `notes.md` doesn't exist**: create it with company-level notes (industry, ATS, public job-board URL, API endpoint if useful) plus the role section.
 5. **Letter file structure** — use YAML frontmatter for internal metadata so it doesn't render into the submitted document, then the 4-paragraph letter body in plain markdown. Example:
@@ -222,12 +222,12 @@ Once Luke approves the final draft and any upstream propagation:
 6. **Render the .docx submission artefact** via the helper script. Per `feedback_cover_letter_upload_field.md`, most ATSes take cover letters as file uploads, so the .docx is the primary submission format — produce it by default, not on demand.
 
    ```bash
-   ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md
+   ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md
    ```
 
-   This produces `{role-slug}.pdf` (gitignored, for human review) and `{role-slug}.docx` (committed, the submission artefact).
+   Because the source is named `cover-letter.md`, the script outputs `Luke Blaney - Cover Letter.pdf` (gitignored, for human review) and `Luke Blaney - Cover Letter.docx` (committed, the submission artefact with ATS-ready filename).
 
-7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `{role-slug}.md` letter source, and the rendered `{role-slug}.docx`. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
+7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `cover-letter.md` letter source, and the rendered `Luke Blaney - Cover Letter.docx`. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
    > "Add {Company} {Role} cover letter"
    >
    > Brief body summarising the opener pattern + evidence story used + any notable stylistic decisions.
@@ -237,7 +237,9 @@ Once Luke approves the final draft and any upstream propagation:
 
 Tell Luke:
 
-- **File path** of the letter source (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}.md`)
+- **File path** of the letter source (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md`)
+- **Path of the committed .docx**: `…/{role-slug}/Luke Blaney - Cover Letter.docx` — submission-ready filename, upload as-is to the ATS
+- **Path of the .pdf**: `…/{role-slug}/Luke Blaney - Cover Letter.pdf` (gitignored, alongside the .md) — for email attachment or visual review
 - **Path of the committed .docx** (same directory, same basename) — this is the file to upload to the ATS
 - **Path of the .pdf** (gitignored, alongside the .md) — for human review or email-attachment use
 - **Word count** of the final letter

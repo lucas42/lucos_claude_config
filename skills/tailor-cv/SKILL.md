@@ -117,13 +117,14 @@ Per `feedback_cv_commit_discipline.md`, **variant creation is a single bundled c
 Tailored CVs live in the **private** `lukeblaney_cv_tailored` repo alongside their matching cover letter and company notes — not in the public `lukeblaney_cv` repo. The path is:
 
 ```
-~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
 ```
 
 - `{company-slug}` matches the existing folder for that employer (or a new lowercase-kebab one if first application — also create `notes.md` per `/tailor-cover-letter` Step 5).
-- `{role-slug}` matches the role-slug used for the cover letter file, so the CV and letter pair naturally (e.g. `cv-staff-software-engineer-short-term-credit.md` next to `staff-software-engineer-short-term-credit.md`).
+- `{role-slug}` is a lowercase-kebab subdirectory inside the company folder, holding both the CV and the cover letter for this specific role (e.g. `staff-software-engineer-short-term-credit/`).
+- The filename inside is always **`cv.md`** — the role context comes from the directory name, so the filename names only the document type. The matching cover letter sits next to it as `cover-letter.md`.
 
-Because the destination is private, the filename can describe the specific JD — no archetype-only privacy constraint applies (per `feedback_cv_application_privacy.md`, employer-naming is fine in the private repo).
+Because the destination is private, both directory and filename can describe the specific JD — no archetype-only privacy constraint applies (per `feedback_cv_application_privacy.md`, employer-naming is fine in the private repo).
 
 Create the variant file as a copy of `~/sandboxes/lukeblaney_cv/cv-extended.md`, then apply (still locally, not yet committed):
 
@@ -150,18 +151,18 @@ Apply these standard cuts (all as part of the single variant commit at the end o
 There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV). Per-JD variants are rendered via the helper script `~/sandboxes/lukeblaney_cv/render-tailored.sh`, which produces the .pdf and .docx in the same directory as the source.
 
 ```bash
-~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
 ```
 
-The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. See Step 10 for verification.
+The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. Because the source is named `cv.md`, the script outputs `Luke Blaney - CV.docx` and `Luke Blaney - CV.pdf` — submission-ready filenames that include Luke's name (recruiters bulk-download CVs and they're unidentifiable in a Downloads folder otherwise). See Step 10 for verification.
 
 **Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage:
 
-- The new `cv-{role-slug}.md` (markdown source)
-- The new `cv-{role-slug}.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
+- The new `orgs/{company-slug}/{role-slug}/cv.md` (markdown source)
+- The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
 - Any new `orgs/{company-slug}/notes.md` if this is a first-time application to that company
 
-The `.pdf` is gitignored — regenerable for human review, not the submission artefact.
+The `.pdf` ("Luke Blaney - CV.pdf") is gitignored — regenerable for human review or hand-share, not the canonical submission artefact.
 
 Because the private repo doesn't carry the public-employer-name constraint, the commit message **can** name the company freely. Suggested format:
 
@@ -173,7 +174,7 @@ Because the private repo doesn't carry the public-employer-name constraint, the 
 
 ## Step 10: Verify the rendered output
 
-The render step in Step 9 produces both `cv-{role-slug}.pdf` (for human review) and `cv-{role-slug}.docx` (for ATS submission). Run a Python verification on the PDF:
+The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. Run a Python verification on the PDF:
 
 ```bash
 /tmp/pdfvenv/bin/python3 <<'EOF'
@@ -183,7 +184,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_text
 import re
 
-path = '/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.pdf'
+path = '/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/Luke Blaney - CV.pdf'
 with open(path,'rb') as f:
     pages = list(PDFPage.create_pages(PDFDocument(PDFParser(f))))
 text = extract_text(path)
@@ -222,9 +223,9 @@ cd ~/sandboxes/lukeblaney_cv_tailored && git push origin main
 
 Report back to Luke with:
 
-- **File path** of the new variant (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md`)
-- **Path of the committed .docx** (same directory, same basename) — this is the file to upload to the ATS
-- **Path of the .pdf** (gitignored, alongside the .md) — for human-to-human sending or visual review
+- **File path** of the new variant (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md`)
+- **Path of the committed .docx**: `…/{role-slug}/Luke Blaney - CV.docx` — this is the file to upload to the ATS (submission-ready filename)
+- **Path of the .pdf**: `…/{role-slug}/Luke Blaney - CV.pdf` (gitignored, alongside the .md) — for human-to-human sending or visual review
 - **Final page count and word count**
 - **ATS metrics** (cid / ligs / hyphens all 0)
 - **JD keyword check** (which top keywords confirmed present)
@@ -236,10 +237,10 @@ If the role is one Luke is genuinely applying for, recommend reading the rendere
 If Luke needs to regenerate later (e.g. after a cv-extended.md change), the manual path is:
 
 ```bash
-~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/cv-{role-slug}.md
+~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
 ```
 
-…then `git add` the regenerated .docx and commit. The .pdf is local-only.
+…then `git add` the regenerated `Luke Blaney - CV.docx` and commit. The .pdf is local-only.
 
 ## Git identity
 
