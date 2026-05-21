@@ -257,6 +257,16 @@ Before showing Luke the final assembled output, run the checks below. Fix any fa
 
 Before committing the per-application work, scan the session for content worth propagating back so future invocations inherit it.
 
+### Pre-flight: ensure `lukeblaney_cv` is on `main` and up to date
+
+Before any commit to `lukeblaney_cv` (categories 4–7 below), run:
+
+```bash
+cd ~/sandboxes/lukeblaney_cv && git checkout main && git pull --ff-only origin main
+```
+
+The repo accepts non-career-advisor commits (CircleCI / Dockerfile / Docker-image work) via a PR workflow, so the local working copy can end up on a feature branch or behind `origin/main`. Checking out `main` + fast-forward-only pull prevents accidentally committing onto a stale feature branch or building on out-of-date state. The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, career-advisor is the only writer.
+
 For each piece of new content surfaced:
 
 1. **New defensible skill / language / methodology Luke confirmed**
@@ -399,9 +409,12 @@ cd ~/sandboxes/lukeblaney_cv && git push origin main
 
 ## Step 14: Verify the rendered CV
 
-Run the Python verification on the rendered PDF:
+Run the Python verification on the rendered PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`. The bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
 
 ```bash
+# Bootstrap pdfvenv if not present
+[ -x /tmp/pdfvenv/bin/python3 ] || (python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install -q pdfminer.six)
+
 /tmp/pdfvenv/bin/python3 <<'EOF'
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument

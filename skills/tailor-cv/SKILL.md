@@ -172,11 +172,22 @@ Because the private repo doesn't carry the public-employer-name constraint, the 
 
 **Source-of-truth additions surfaced during the consultation** (e.g. a new bullet on `cv-extended.md` that should benefit all future variants) are still **their own commit in `lukeblaney_cv`**, BEFORE the variant commit. They're reusable; they get the small-commit treatment and follow the public-repo privacy rule (no employer names in `lukeblaney_cv` commits).
 
-## Step 10: Verify the rendered output
-
-The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. Run a Python verification on the PDF:
+**Pre-flight before any commit to `lukeblaney_cv`**: the public repo accepts non-career-advisor commits (CircleCI / Dockerfile / Docker-image work) via a PR workflow, so the local working copy can end up on a feature branch or behind `origin/main`. Before editing or committing, run:
 
 ```bash
+cd ~/sandboxes/lukeblaney_cv && git checkout main && git pull --ff-only origin main
+```
+
+The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, career-advisor is the only writer.
+
+## Step 10: Verify the rendered output
+
+The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. Run a Python verification on the PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`; the bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
+
+```bash
+# Bootstrap pdfvenv if not present
+[ -x /tmp/pdfvenv/bin/python3 ] || (python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install -q pdfminer.six)
+
 /tmp/pdfvenv/bin/python3 <<'EOF'
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument

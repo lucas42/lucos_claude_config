@@ -175,6 +175,14 @@ For each piece of new content surfaced during the session, consider:
    → add to or update `orgs/{company-slug}/notes.md` in the private repo
    → commits as part of the per-application letter bundle in Step 10
 
+**Pre-flight before any commit to `lukeblaney_cv`** (categories 4–7 above): the public repo accepts non-career-advisor commits (CircleCI / Dockerfile / Docker-image work) via a PR workflow, so the local working copy can end up on a feature branch or behind `origin/main`. Before editing or committing, run:
+
+```bash
+cd ~/sandboxes/lukeblaney_cv && git checkout main && git pull --ff-only origin main
+```
+
+The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, career-advisor is the only writer.
+
 **Default-save vs ask-for-sign-off**:
 - Memory changes (categories 1–3): default-save with a one-line notification; Luke has explicitly OK'd this for stable facts.
 - Library and `cv-extended.md` changes (categories 4–7): ask for sign-off on the exact wording — these are prose Luke might want to red-line. Each gets its own commit, BEFORE the per-application letter commit, so it's reusable.
