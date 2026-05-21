@@ -81,6 +81,8 @@ When a Dependabot PR's CI is red:
 
 Use `@dependabot recreate` **only** when something has actually changed and you want Dependabot to pick it up — for example, after the user has manually edited `package.json` to fix a constraint mismatch. This is a recurring mistake agents make; lucas42 has corrected it multiple times.
 
+**Verifying whether an input has changed — do not infer from lock file discrepancies.** A lock file entry that can't satisfy the current manifest constraint does NOT mean the manifest was changed after the PR was created. The PR may simply have been generated with an inconsistent lock file. To verify whether a manifest constraint actually changed after the PR opened: check the manifest's git log (`repos/{repo}/commits?path=package.json&per_page=10`) and compare the date of the most recent constraint-changing commit against the PR's `created_at`. If the manifest hadn't changed since before the PR was created, recreating is deterministic and will produce the same stale lock file. Close the PR instead.
+
 ## CI Check Dismissal — Never Without Evidence
 
 **Never dismiss a failing CI check as "stale", "orphaned", "duplicate of X", "head_sha is null", or "actual run succeeded" without quoting the specific API field values that prove the claim.**
