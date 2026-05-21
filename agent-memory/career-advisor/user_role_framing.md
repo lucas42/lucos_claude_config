@@ -17,6 +17,21 @@ When the JD asks for "manager of managers" or formal EM-management experience:
 - **Don't claim**: managing formal Engineering Managers, multi-layer reporting hierarchy
 - **Can claim**: director-level scope, line-management of a mixed-discipline team (~12 people: engineers, risk analysts, IT governance), multi-team responsibility, mentorship
 
+## Architect role family was phased out — architecture absorbed into PE remit
+
+The FT re-organised in 2017 to move architects into the same orgs as engineers (architecture stopped being a separate team). After that, the explicit Architect job titles were gradually phased out through backfilling with other titles. There isn't a single sharp date to point to — but the upshot is that **the architectural-decision-making work didn't stop; it was absorbed into the Principal Engineer remit**.
+
+This matters for positioning because it means **architecture was a substantive part of Luke's Principal Engineer work (Feb 2018 – Mar 2022)** — a 4-year period of architectural decision-making across reliability engineering, observability, edge delivery and cyber security, in addition to the team-leadership work. Confirmed by Luke 2026-05-21.
+
+**How to apply:**
+
+- For Staff IC and Architect-track JDs, frame architecture as **continuous from 2016 to 2025**, not bounded to the Architect-Content role.
+- Add an explicit architecture-absorption bullet to the collapsed PE entry on IC variants: "the Principal Engineer remit absorbed system-architecture responsibility alongside engineering leadership; drove architectural decisions across reliability engineering, observability, edge delivery and cyber security".
+- In the Summary, "continuous architectural responsibility from 2016 to 2025" is a stronger anchor than "Principal Engineer technical direction since 2018".
+- **Phrasing**: don't anchor a sharp year for the dissolution — the phasing was fuzzy ("re-org in 2017 moved architects into engineering orgs; titles then gradually phased out"). Use "as the FT phased out Architect job titles…" or "after the Architect role family was wound down…" rather than "in 2018 the FT dissolved…".
+
+This is also a direct rebuttal to a recency objection a hiring manager might form ("the architecture work was 8+ years ago") — bringing the architecture story forward in time by 4 years inside the same documents.
+
 ## Unbackfilled Principal Engineer responsibilities (Apr 2022 – Mar 2025)
 
 Throughout the Director and Interim VP roles, Luke retained the **unbackfilled Principal Engineer technical-direction responsibilities** for Cyber Security — providing all the technical direction the role usually requires while delegating day-to-day team management to senior engineers.
