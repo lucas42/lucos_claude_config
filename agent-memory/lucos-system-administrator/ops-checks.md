@@ -16,6 +16,10 @@ backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
 ```
 
+## Decommissioned services
+
+- **lucos_comhra** — decommissioned 2026-05-21 per lucos#171. Containers stopped, repo archived. References in the run log below are historical only; no action needed.
+
 ## Known Limitations
 
 - Journal logs on xwing and salvare are inaccessible without sudo (no sudo available in non-interactive SSH). Syslog review only covers avalon fully.
