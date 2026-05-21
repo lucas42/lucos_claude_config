@@ -12,6 +12,16 @@
 
 - [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — adding prefLabel to a predicate/class definition pulls it into the doc-building loop, forcing label lookup on its rdf:types. Combined with the IGNORE_TYPES denylist gap this caused the 2026-05-18 incident. Watch until lucas42/lucos_arachne#544 replaces the denylist with a namespace filter.
 
+## linuxplayer phantom DELETE retries (open: lucos_media_linuxplayer#123)
+
+- [Linuxplayer phantom ?action=error DELETEs](pattern_linuxplayer_phantom_error_deletes.md) — bursts of 100+ DELETE/sec on ceol from `lucos_media_linuxplayer/<host>` for already-advanced-past playlist UUIDs. Saturates loganne outbound. Recurrence remediation: retry stranded webhooks, no new ticket. Watch until #123 fixes.
+
+## Webhook-burst diagnostic methodology
+
+- [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull avalon `lucos_router` nginx access log FIRST. Loganne's event record alone can't distinguish "downstream slow" from "outbound stalled" from "originating burst". Three filters: total host activity, sender user-agent, receiver+action originator.
+
+- [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — when two unusual things happen in the same window, default to "one caused the other" not "coincidence". Coincidence needs positive evidence. lucas42 corrected me 2026-05-21 on the linuxplayer/loganne burst.
+
 ## Standing Rules
 
 - [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — never use `[ -n "$x" ]` on `--jq` output for existence checks; use `--silent` + `$?`. Bit me on 2026-05-21 estate-wide stale-auto-merge sweep — categorised all 65 repos as hits.
