@@ -129,13 +129,6 @@ Use `state_reason="completed"` if the goal was achieved (e.g. via sub-tickets); 
 
 **STOP — specialist consultation checkpoint.** Before setting Status = Ready, check [`specialist-routing.md`](specialist-routing.md) for the four domains (security, observability, new data models, frontend/UX) that require specialist input first. If any apply, consult now and wait for their comment before continuing here.
 
-**STOP — unresolved-options checkpoint.** Before setting Status = Ready, scan the body AND your own draft triage comment for these signals — if any are present, STOP and reroute (Step 2's "Multiple options with no decision is a hard blocker"):
-
-- The body has a "Possible fixes" / "Options" / "Alternatives" / "Possible approaches" section with 2+ items, and the body does NOT explicitly mark one as chosen / decided / agreed.
-- Your draft triage comment contains "option N is cleanest", "I recommend X", "the implementer can pick", "pick when implementing", "sysadmin can pick", "any of them work" — or any other language that defers the choice to dispatch time.
-
-An agent's recommendation is not a decision — including your own as coordinator. Resolve now: (a) consult the appropriate specialist for a formal recommendation on the ticket (then sign off with lucas42 if it's a one-way-door), update the body to mark the chosen option, then set Status = Ready; or (b) set Status = Awaiting Decision + Owner = lucas42 directly. "Sysadmin can pick when implementing" was the exact failure mode on `lucos_deploy_orb#178` (triaged Ready with three options listed and a comment saying "sysadmin can pick when implementing") — this checkpoint exists to catch that pattern at the moment you're drafting the comment.
-
 1. **Update the issue body to reflect the current agreed scope and approach.** The implementer reads the body, not the comment history; stale body → wrong implementation. Not optional.
 2. Set Status = Ready on the project board. Remove any legacy workflow labels still present on the issue.
 3. Set the **Owner field** — see [`implementation-assignment.md`](implementation-assignment.md) for routing rules and option IDs.
