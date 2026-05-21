@@ -5,9 +5,9 @@ metadata:
   type: feedback
 ---
 
-When Luke says he's submitted an application (e.g. "I've submitted the Freetrade application"), the right response is to batch **all** durable memory updates from the session at that point, in the same turn as the notes.md submission-status update — not to wait for an end-of-session prompt.
+When Luke says he's submitted an application (e.g. "I've submitted the Acme Corp application"), the right response is to batch **all** durable memory updates from the session at that point, in the same turn as the notes.md submission-status update — not to wait for an end-of-session prompt.
 
-**Why:** Stated 2026-05-21 after the Freetrade session. I updated `notes.md` to record the submission, then waited until Luke asked at session-end to capture the durable lessons in memory. That meant two passes when one would do; Luke shouldn't have to prompt me to do the sweep. The submission moment is the natural reflection point — the application is locked in, the consultation is over, all the framings + voice rules + gotchas surfaced during the work are stable enough to commit to memory.
+**Why:** Stated 2026-05-21 after a fintech Staff IC application session (Acme Invest). I updated `notes.md` to record the submission, then waited until Luke asked at session-end to capture the durable lessons in memory. That meant two passes when one would do; Luke shouldn't have to prompt me to do the sweep. The submission moment is the natural reflection point — the application is locked in, the consultation is over, all the framings + voice rules + gotchas surfaced during the work are stable enough to commit to memory.
 
 **How to apply:**
 
@@ -37,5 +37,7 @@ When Luke reports a submission, in the same turn:
 - Any library-block (`cover-letters/blocks/`) additions or refinements?
 
 If yes to any: capture before reporting "done".
+
+**Privacy scan** (always run before committing memory files): per [[cv-application-privacy]], scan all memory file content for real employer names. Replace any with fictional entities (e.g. "Acme Corp", "Acme Invest" when industry matters) or role-archetype framings. The `~/.claude/agent-memory/` directory commits to a public repo; real employer names there leak Luke's job-hunt activity. The private `lukeblaney_cv_tailored` repo is where employer names belong.
 
 Related: [[cv-commit-discipline]], [[cover-letter-rebuild]].

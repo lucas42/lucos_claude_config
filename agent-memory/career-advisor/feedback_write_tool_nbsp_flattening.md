@@ -12,7 +12,7 @@ The Write tool flattens Unicode non-breaking spaces (U+00A0) to ASCII spaces (U+
 **How to apply:**
 
 - When writing a file that needs literal U+00A0 (or other non-ASCII whitespace), don't try to type it directly through the Write tool. Two reliable approaches:
-  1. **Write the file with ASCII placeholder content via the Write tool, then run a Python post-write to substitute the nbsp.** This is what worked for the Freetrade letter's 16-char first-line indent.
+  1. **Write the file with ASCII placeholder content via the Write tool, then run a Python post-write to substitute the nbsp.** This is what worked for the most recent cover-letter variant's 16-char first-line indent.
   2. **Use the Bash tool with a heredoc-fed Python script that writes the file directly.** Bash preserves UTF-8 bytes through heredocs (when the delimiter is quoted: `<<'PYEOF'`).
 
 - **Always verify** by reading the file as bytes and checking codepoints — don't assume the tool preserved what you typed.
@@ -26,6 +26,6 @@ new = NBSP * 16 + "I'm interested"
 content = content.replace(old, new)
 ```
 
-This came up because Luke's whitespace conventions require nbsp in cover-letter source files for the first-line indent. The sentence-end double-spaces problem is handled differently (the render-tailored.sh pre-processor converts ASCII `.  ` to `. \xa0` before pandoc), but the indent is still written into the source by hand and so always needs this workaround.
+This came up because Luke's whitespace conventions require nbsp in cover-letter source files for the first-line indent. The sentence-end double-spaces problem is handled differently (the render-tailored.sh pre-processor converts ASCII `.  ` to `. \xa0` before pandoc), but the indent is still written into the source by hand and so always needs this workaround. A worked example sits in one of the variants under `lukeblaney_cv_tailored/orgs/` (the private repo); look at any recent cover-letter.md for the `<nbsp>×16` opening run.
 
 Related: [[luke-voice]] (whitespace conventions), [[cover-letter-rebuild]].

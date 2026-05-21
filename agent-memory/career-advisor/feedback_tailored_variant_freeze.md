@@ -12,7 +12,7 @@ When making sweeping content, punctuation, or formatting changes (anything broad
 
 **Default to excluding historic / submitted tailored variants. Do NOT ask for confirmation; just don't touch them.** If Luke wants a historic variant re-rendered or rewritten, he'll ask explicitly.
 
-**Why** (Luke stated 2026-05-21 after the em-dash sweep, where I re-rendered Partnerize / Funding Circle CVs / letters along with the Airbnb work):
+**Why** (Luke stated 2026-05-21 after the em-dash sweep, where I re-rendered submitted variants from prior applications along with the actively-worked variant):
 
 1. **Maintenance burden scales with the tailored corpus.** Three variants is no big deal; thirty would be. Default-include grows linearly with applications, default-exclude stays constant.
 2. **Submitted variants are a historical record.** They represent what a specific recruiter saw on a specific date. Retroactively re-rendering them produces an idealised "wish-I'd-done-this" version that no longer matches the actual submission. The git history at the commit before the sweep is the source-of-truth for "what was sent"; re-rendering overwrites that with a rewrite. For audit / interview prep / "what did they read" purposes, the actual submitted version is the one that matters.
