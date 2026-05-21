@@ -29,3 +29,4 @@
 - [Cover letter standalone](feedback_cover_letter_standalone.md) — assume the reader has NOT seen the CV; no sentences that require CV-derived facts to parse
 - [Circle-artifacts URL truncation](feedback_circle_artifacts_url_truncation.md) — never paste raw circle-artifacts.com URLs; they get truncated where they wrap and break the link
 - [Cover letter upload field](feedback_cover_letter_upload_field.md) — most ATSes take cover letters as a file upload, not text-area; .docx render is the default, not an edge case
+- [Tailored variant freeze](feedback_tailored_variant_freeze.md) — sweeping changes apply to all of lukeblaney_cv; for lukeblaney_cv_tailored only the actively-worked items. Historic / submitted variants stay frozen by default, no need to ask.
