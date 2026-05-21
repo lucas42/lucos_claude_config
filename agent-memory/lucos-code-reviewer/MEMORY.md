@@ -188,13 +188,12 @@ There are two distinct auto-merge workflows — do not conflate them:
 - **Never use raw `curl`** to fetch GitHub Actions logs. `get-app-token` does not exist in this environment. An unauthenticated request may follow redirects to a cached/stale zip artifact with completely wrong content and wrong timestamps — exactly what happened when diagnosing lucos_repos PR #291 (reported `auto-merge-secrets` 403s from 2026-03-20; real failure was a rate limit at `fetchRepos` on 2026-04-06).
 - To get the job ID for a failing check-run: `gh-as-agent ... "repos/.../actions/runs/{run_id}/jobs?per_page=10" --jq '.jobs[] | {id, name, conclusion}'`
 
-## Repo-Specific Review Rules
-
-### lucos_repos
-- If a PR adds or changes a convention definition, compare it against the "Checklist for reviewing convention PRs" in `docs/convention-guide.md` in that repo.
-- **`RepoTypeScript` is NOT about the TypeScript language.** It refers to repos in configy's *scripts* list (tools designed to run locally). Do not confuse the two when raising issues or reviewing convention PRs.
+## Repo-Specific Review Rules — lucos_repos
+- Convention PRs: compare against checklist in `docs/convention-guide.md` in that repo.
+- **`RepoTypeScript` is NOT about the TypeScript language.** It refers to repos in configy's *scripts* list (tools designed to run locally).
 
 ## Repo-Specific Notes
 
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 - [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
+- [lucos_media_seinn mocha regression](lucos_media_seinn_mocha_regression.md) — recurring Dependabot major-group CI failure; do NOT close another PR, link to investigation #462
