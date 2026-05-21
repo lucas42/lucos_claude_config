@@ -129,9 +129,11 @@ Because the destination is private, both directory and filename can describe the
 Create the variant file as a copy of `~/sandboxes/lukeblaney_cv/cv-extended.md`, then apply (still locally, not yet committed):
 
 1. Add Summary section between contact block and Employment (use `# Summary` heading)
-2. Add Career Break & Current Focus section (if applicable, before Skills)
+2. Add Career Break & Current Focus section (if applicable, before Skills) — **wrap the date line (`March 2025 – present`) in `::: {custom-style="EmployerDate"} ... :::` so it picks up the italic, tight-spacing paragraph style. Existing Employment / Education subtitle lines in cv-extended.md are already wrapped; the Career Break section needs the wrapping applied during variant creation because cv-extended.md doesn't include that section.**
 3. Add Skills section with JD-tuned grouped keywords (use `# Skills` heading)
 4. Apply role-specific bullet reframes per Step 6
+
+The `EmployerDate` paragraph style is defined in the docx reference template; a matching `employerdate` LaTeX environment + Lua filter handles the PDF render. Anywhere a date subtitle appears under a heading, wrap it in this custom-style div. Don't add markdown italic `*...*` separately — the style supplies the italic itself.
 
 ## Step 8: Apply standard cuts (still in the same uncommitted state)
 

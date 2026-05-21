@@ -332,9 +332,11 @@ Slug rules: lowercase-kebab of company name; lowercase-kebab of role title.
 Start from `~/sandboxes/lukeblaney_cv/cv-extended.md`. Apply:
 
 1. Add Summary section between contact block and Employment
-2. Add Career Break & Current Focus section (before Skills)
+2. Add Career Break & Current Focus section (before Skills) — **wrap the date line (`March 2025 – present`) in `::: {custom-style="EmployerDate"} ... :::` so it picks up the italic, tight-spacing paragraph style. Existing Employment / Education subtitle lines are already wrapped in cv-extended.md; the Career Break section needs the wrapping applied during variant creation because cv-extended.md doesn't have that section.**
 3. Add Skills section with JD-tuned grouped keywords
 4. Apply role-specific bullet reframes per Step 9
+
+The `EmployerDate` paragraph style sits in the docx reference template; a matching `employerdate` environment in the LaTeX header (plus a Lua filter that translates the divs) gives the PDF the same treatment. Anywhere a date subtitle appears under a heading, wrap it in the custom-style div. Don't add `*...*` markdown italic — the style supplies the italic itself.
 
 Apply the standard cuts (variants land at 3 pages by default):
 
