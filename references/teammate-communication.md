@@ -47,13 +47,17 @@ When given multi-step work via SendMessage, take the first action before going i
 
 If the work is non-trivial, send a brief acknowledgement (`"starting now, will report back when X is done"`) before launching the first tool call; don't go silent between receiving the instruction and taking the first action. This is the inbox-processing analogue of the rule in [`references/incident-reporting.md` § "Don't gate drafting or shipping on long-running verification"](incident-reporting.md) — applied to your own queue rather than to verification windows. Same principle: durability of forward motion matters more than tidy batched updates.
 
-## Cross-check substantive claims before forwarding
+## Cross-check substantive claims from teammates
 
-Cross-check a teammate's substantive claims against the durable source of truth before forwarding them to team-lead. A teammate's SendMessage chat content can drift from the formal artifacts they post on GitHub (review bodies, PR comments, commit messages) — both are real, but they may carry different content.
+Cross-check a teammate's substantive claims against the durable source of truth before forwarding them to team-lead, concurring with them, signing off on work they describe, or building further work on top. A teammate's SendMessage chat content can drift from the formal artifacts they post on GitHub (review bodies, PR comments, commit messages) — both are real, but they may carry different content. The rule applies even when you have no specific reason to suspect the claim is wrong; that's exactly when stale claims slip through unchallenged.
 
-When a teammate makes a claim that affects what you or team-lead should do next (e.g. "this PR is supervised", "this issue is closed", "this commit landed at X"), and you have reason to suspect the claim might be wrong, verify against the durable source of truth (GitHub API for PR/repo state, git log for history) **before** flagging the claim — or any disagreement with it — to team-lead. Belt-and-braces against cross-channel mismatch: trust verifiable sources over secondary channels, even when the secondary channel is your own inbox.
+When a teammate makes a claim that affects what you or team-lead should do next — including past-tense reports of completed work ("pushed commit X", "amended PR Y", "filed ticket Z", "ran X and got Y") — verify against the durable source of truth (GitHub API for PR/repo state, `git log` for history, fetched issue/PR bodies for content claims) before flagging it, concurring with it, signing off on the work it describes, or building further work on top. The cheap-to-verify rule of thumb: if verification is one `gh api` call or one `git log`, do it. It's faster than recovering from a stale concurrence later. Belt-and-braces against cross-channel mismatch: trust verifiable sources over secondary channels, even when the secondary channel is your own inbox.
+
+Past-tense work claims are the easy-to-miss subspecies — "pushed", "amended", "merged", "filed", "ran", "updated" — because they read as confirmations rather than predictions. Treat them as predictions until verified. The "I almost concurred without checking" *near-miss* is itself a signal that the verification habit needs to fire — those are actionable too, not just the failures. If you catch yourself reaching for "thanks, looks good" before you've fetched the artifact, stop and fetch.
 
 When you do quote a teammate, quote verbatim from the source you have, and name the channel ("from the SendMessage they sent me", "from the GitHub review body") so the recipient can cross-check.
+
+This section is the canonical placement of a pattern that several personas have local memories for under different names (e.g. `feedback_verify_before_propagating.md`, `feedback_verify_past_tense_work_claims.md`, `feedback_no_unverified_endorsement.md`, `feedback_refetch_before_accusing.md`, `feedback_verify_sibling_repo_claims.md`). Persona-local memories may add specific application examples; the rule itself lives here.
 
 ## Responding to `shutdown_request`
 
