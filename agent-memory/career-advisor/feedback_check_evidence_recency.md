@@ -15,13 +15,15 @@ For senior IC roles (Staff Engineer, Principal Engineer, Architect, Staff+, IC-t
 
 1. When proposing evidence stories for a senior IC variant, calculate "years since story" against today's date.
 2. If headline story is ≥5 years old, surface it explicitly: "this story is from {N} years ago — could read as too old for a Staff IC role. Possible bridges:..."
-3. Look for **absorption / continuity arguments** that link the older story to more recent work:
-   - Roles where the older work's responsibilities continued under a different title (e.g. Architect role formally ended but architectural decision-making absorbed into Principal Engineer remit).
+3. Look for **continuity arguments** that link the older story to more recent work:
+   - Roles where the older work's responsibilities continued under a different title (e.g. architectural decision-making continued as part of the Principal Engineer remit after the Architect titles were phased out at the FT).
    - Ongoing maintenance / evolution of the same systems.
    - Carried-forward architectural decisions or standards.
    - "Unbackfilled" responsibilities pattern: the role formally moved on but specific responsibilities stayed with the same person.
-4. **Worked example**: the Architect→PE absorption pattern (see [[user-role-framing]]). When Luke's Architect-Content role formally ended in Feb 2018, the architectural decision-making didn't stop — it was absorbed into the Principal Engineer remit and continued for another four years across reliability engineering, observability, edge delivery and cyber security.
-5. **The framing belongs in three places** in the rendered documents: Summary opening line (continuous-arc framing), the collapsed PE entry's lead bullet (explicit absorption claim), and letter para 2 (story bridges from older anchor through to recent work).
+4. **Worked example (the corrected pattern, after 2026-05-22 sharpening — see [[user-role-framing]]):** the FT Architect-titles-phased-out → PE-remit continuity is fine to *use* as a private continuity argument, but **only surface the explicit "phased-out" / "absorbed" language in CV/letter copy for Architect-titled JDs**. For non-Architect-titled senior IC variants (Staff / Principal / Platform Engineer with architecture expectations), state the continuity plainly without explaining the transition: "the Principal Engineer remit included system-architecture responsibility alongside engineering leadership", and let the Summary anchor on "a decade of architecture and platform-engineering work at the Financial Times" without elaborating on title changes.
+5. **Where the continuity framing lands**:
+   - Architect-titled JDs: Summary opening line (continuous-arc framing with the title transition explained), PE entry lead bullet (the "absorbed-into-PE" claim), letter para 2 (story bridges through the transition).
+   - Non-Architect senior IC JDs: Summary opening line anchors on "a decade of architecture and platform-engineering work" without explaining title transitions; PE entry lead bullet states architectural responsibility plainly as part of the remit; letter para 2 (if applicable) bridges through the work, not through the org reshuffle.
 
 **Adjacent**: the same general principle applies to **management-track** variants, but with less urgency — hiring managers reading Director / Head / VP of Engineering JDs are more willing to accept older architecture exposure as a credential, as long as the *leadership* track has been continuous.
 

@@ -33,20 +33,22 @@ The UK media industry is laughably under-regulated. Stated 2026-05-21 during a f
 
 Related: [[user-cover-letter-patterns]], [[luke-voice]].
 
-## Architect role family was phased out — architecture absorbed into PE remit
+## Architecture continued under the Principal Engineer remit (2018–2022)
 
-The FT re-organised in 2017 to move architects into the same orgs as engineers (architecture stopped being a separate team). After that, the explicit Architect job titles were gradually phased out through backfilling with other titles. There isn't a single sharp date to point to — but the upshot is that **the architectural-decision-making work didn't stop; it was absorbed into the Principal Engineer remit**.
+The FT re-organised in 2017 to move architects into the same orgs as engineers, and the Architect job titles were gradually phased out. The architectural-decision-making work itself continued: it became part of the Principal Engineer remit. This means **architecture was a substantive part of Luke's Principal Engineer work (Feb 2018 – Mar 2022)** — a 4-year period of architectural decision-making across reliability engineering, observability, edge delivery and cyber security, alongside the team-leadership work. Confirmed by Luke 2026-05-21.
 
-This matters for positioning because it means **architecture was a substantive part of Luke's Principal Engineer work (Feb 2018 – Mar 2022)** — a 4-year period of architectural decision-making across reliability engineering, observability, edge delivery and cyber security, in addition to the team-leadership work. Confirmed by Luke 2026-05-21.
+**Critical scope rule (revised 2026-05-22):** for any JD whose role title is **NOT** "Architect", **do not** explain the Architect-titles-phased-out story or frame Luke's transition into Principal Engineer as something that happened to him. Two reasons:
 
-**How to apply:**
+1. **It reads as "Luke was forced out of architecture by the org reshuffle"** rather than as continuous senior IC work that included architecture throughout.
+2. **It explains the concept of "non-architects making architectural decisions" as if it's novel.** Any engineering org hiring a Staff / Principal / Platform Engineer with architecture expectations already operates this way; explaining it back to them reads as condescending or naive.
 
-- For Staff IC and Architect-track JDs, frame architecture as **continuous from 2016 to 2025**, not bounded to the Architect-Content role.
-- Add an explicit architecture-absorption bullet to the collapsed PE entry on IC variants: "the Principal Engineer remit absorbed system-architecture responsibility alongside engineering leadership; drove architectural decisions across reliability engineering, observability, edge delivery and cyber security".
-- In the Summary, "continuous architectural responsibility from 2016 to 2025" is a stronger anchor than "Principal Engineer technical direction since 2018".
-- **Phrasing**: don't anchor a sharp year for the dissolution — the phasing was fuzzy ("re-org in 2017 moved architects into engineering orgs; titles then gradually phased out"). Use "as the FT phased out Architect job titles…" or "after the Architect role family was wound down…" rather than "in 2018 the FT dissolved…".
+**How to apply (the corrected pattern):**
 
-This is also a direct rebuttal to a recency objection a hiring manager might form ("the architecture work was 8+ years ago") — bringing the architecture story forward in time by 4 years inside the same documents.
+- **Default (non-Architect-titled JDs):** Frame architectural responsibility as **plainly part of the Principal Engineer remit**, no transition story, no absorption-from-Architect language. The PE entry's lead bullet should say something like *"The Principal Engineer remit included system-architecture responsibility alongside engineering leadership: drove architectural decisions across reliability engineering, observability tooling, edge delivery and cyber security throughout this four-year period."* In the Summary, anchor on "a decade of architecture and platform-engineering work at the Financial Times" — letting the dates carry the continuity without explanation.
+- **Architect-titled JDs only (rare):** the phased-out story may be useful to explain why Luke doesn't have a recent "Architect" title despite continuous architecture work. Even here, prefer his preferred phrasing about the Content pivot ("I repositioned the architect role so that engineering squads were empowered to make their own architectural decisions"), and present the transition as something Luke drove, not something the org imposed on him.
+- **The Architect-Content "proudest-accomplishment" line** ("transforming a team heavily reliant on having an architect to one where engineers felt empowered to make their own architectural decisions") is fine to keep in the Architect-Content role section itself on any variant — it's role-scoped there, not generalised. Just don't elevate that pattern to the Summary or use it as a through-line for the post-Architect years.
+
+This rule was sharpened 2026-05-22 after I'd written a Summary for the Preply Staff Platform Engineer variant that used the "after Architect titles were phased out" framing. Luke pushed back: it sounded like he'd been forced into a PE title by the org, and it explained a concept (engineers making architectural decisions) that Preply already understands.
 
 ## Unbackfilled Principal Engineer responsibilities (Apr 2022 – Mar 2025)
 
