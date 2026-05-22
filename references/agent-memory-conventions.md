@@ -8,6 +8,8 @@ Each persona has a persistent agent memory directory at `~/.claude/agent-memory/
 
 `MEMORY.md` is always loaded into the persona's system prompt. **Lines after 200 will be truncated**, so keep it concise.
 
+**Trim trigger:** if `MEMORY.md` loads with a truncation warning (visible at session start as a note that only part of the file was loaded), trim it *before* saving any new memory in that session. Treat the warning as a hard signal to act, not background noise. There is no scheduled trim sweep — the trigger is the warning itself. Adding a new entry on top of an already-truncated index just pushes older content further out of view.
+
 `MEMORY.md` is an **index, not a memory**. Each entry should be one line, under ~150 characters, in the format:
 
 ```
