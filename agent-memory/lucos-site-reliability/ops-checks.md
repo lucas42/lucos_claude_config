@@ -8,7 +8,7 @@ external_deps: 2026-05-04
 
 ## Container Log Review History
 
-lucos_schedule_tracker: 2026-05-10
+lucos_schedule_tracker: 2026-05-22
 lucos_media_weightings: 2026-05-20
 lucos_photos_worker: 2026-05-18
 lucos_arachne_explore: 2026-05-16
@@ -35,8 +35,8 @@ lucos_locations_otfrontend: 2026-05-13
 lucos_locations_otrecorder: 2026-05-14
 lucos_mail_smtp: 2026-05-21
 lucos_photos_api: 2026-05-13
-lucos_arachne_ingestor: 2026-05-09
-lucos_arachne_search: 2026-05-09
+lucos_arachne_ingestor: 2026-05-22
+lucos_arachne_search: 2026-05-22
 lucos_arachne_triplestore: 2026-05-21
 lucos_mail_docs: 2026-05-12
 lucos_photos_postgres: 2026-05-14
@@ -48,7 +48,7 @@ lucos_media_metadata_api: 2026-05-12
 lucos_monitoring: 2026-05-21
 lucos_media_seinn: 2026-05-15
 tfluke: 2026-05-15
-lucos_media_metadata_api_exporter: 2026-05-09
+lucos_media_metadata_api_exporter: 2026-05-22
 lucos_media_metadata_manager: 2026-05-11
 lucos_notes: 2026-05-10
 lucos_root: 2026-05-11
@@ -57,7 +57,7 @@ semweb: 2026-05-11
 lucos_time: 2026-05-15
 lucos_arachne_mcp: 2026-05-10
 lukeblaney_blog: 2026-05-12
-lucos_docker_health_app: 2026-05-09
+lucos_docker_health_app: 2026-05-22
 
 lucos_docker_mirror_web: 2026-05-16
 lucos_docker_mirror_registry: 2026-05-16

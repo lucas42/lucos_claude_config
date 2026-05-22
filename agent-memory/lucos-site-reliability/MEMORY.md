@@ -1,9 +1,5 @@
 # SRE Agent Memory
 
-## Time-bounded heads-ups (delete when consumed)
-
-- [schedule_tracker v2 migration — expected alerts for 2026-05-15/16 ops checks](project_schedule_tracker_v2_migration_expected_alerts.md) — arachne cron 14:35→15:35 UTC 2026-05-14, caller blips 22:30 UTC→00:21 UTC, media_import deliberately stopped on xwing 23:00→00:21 UTC, monitoring restart on avalon 00:30→00:50 UTC, 410s on `/report-status` after 00:58 UTC are expected stragglers.
-
 ## Standing patterns from 2026-05-13 scheduled-jobs blackout
 
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
@@ -12,9 +8,9 @@
 
 - [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — adding prefLabel to a predicate/class definition pulls it into the doc-building loop, forcing label lookup on its rdf:types. Combined with the IGNORE_TYPES denylist gap this caused the 2026-05-18 incident. Watch until lucas42/lucos_arachne#544 replaces the denylist with a namespace filter.
 
-## linuxplayer phantom DELETE retries (open: lucos_media_linuxplayer#123)
+## linuxplayer phantom DELETE retries — RESOLVED 2026-05-21 (lucos_media_linuxplayer#123 closed)
 
-- [Linuxplayer phantom ?action=error DELETEs](pattern_linuxplayer_phantom_error_deletes.md) — bursts of 100+ DELETE/sec on ceol from `lucos_media_linuxplayer/<host>` for already-advanced-past playlist UUIDs. Saturates loganne outbound. Recurrence remediation: retry stranded webhooks, no new ticket. Watch until #123 fixes.
+- [Linuxplayer phantom ?action=error DELETEs](pattern_linuxplayer_phantom_error_deletes.md) — historical pattern: bursts of 100+ DELETE/sec on ceol from `lucos_media_linuxplayer/<host>` for already-advanced-past playlist UUIDs, saturating loganne outbound. Fixed via #123 (closed 2026-05-21). If the burst recurs, re-open the issue, don't refile.
 
 ## Webhook-burst diagnostic methodology
 
