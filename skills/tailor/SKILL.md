@@ -18,15 +18,13 @@ This is career-advisor work — uses the career-advisor GitHub identity for comm
 
   Then wait for the career-advisor to report back. Do not perform the work yourself.
 
-## Step 1: Ask whether to also generate a cover letter
+## Step 1: Defer the artefact-set question to after the form probe
 
-This skill **always generates a tailored CV**. Ask Luke up-front whether to also generate a cover letter for the same JD.
+This skill **always generates a tailored CV**. What ELSE it produces (a `.docx` cover letter, plain-text textarea answers for one or more custom questions, an Additional Information answer, or nothing else) depends on the shape of the actual application form — not on a default-cover-letter assumption.
 
-Use `AskUserQuestion`:
-- "CV + cover letter" (default / recommended) — runs the full coordinated flow
-- "CV only" — runs the CV path; letter-specific sub-steps marked `[LETTER]` below are skipped
+**Don't ask the CV-vs-CV-plus-letter question up front.** That question is now driven by Step 3.5 (form probe) and answered with the actual form fields in front of Luke. Asking up front guesses at the form and frequently produces over-rendered artefacts (e.g. a `.docx` cover letter for a form that only has a textarea).
 
-Sub-steps marked `[LETTER]` are no-ops when "CV only" is chosen. Everything else runs identically. Choosing CV-only doesn't significantly simplify the flow — the joint analysis still happens — but it skips letter drafting, library propagation paths specific to letters, and the cross-document consistency check.
+Sub-steps marked `[LETTER]` in this skill refer to whichever letter-shaped artefacts get produced after Step 3.5 — they may be a `.docx` letter, a plain-text textarea, a per-question free-text answer, or nothing. Letter-specific consultation (library blocks, voice rules, standalone-ness checks, year-claims) applies to all of them; only the rendering and file-naming differ.
 
 ## Step 2: Load standing rules, pre-confirmed Luke-facts, library, and source-of-truth
 
@@ -81,6 +79,39 @@ Extract:
 - Company name, team or department, location, employment type
 - Full JD text (responsibilities + requirements + nice-to-haves + culture blurb)
 - Salary / compensation if disclosed
+
+## Step 3.5: Probe the application form
+
+Before joint analysis, fetch the **application form structure** so the artefact set is driven by what the form actually accepts. The same API endpoints used in Step 3 expose form fields; the cost of probing them is one extra request.
+
+**Per-ATS endpoints:**
+
+- **Greenhouse**: append `?questions=true` to the boards-api URL. The response includes a `questions` array; each entry has `label`, `description` (HTML — often contains word-count or format guidance), `required`, and `fields[0].type` (e.g. `input_file`, `textarea`, `input_text`, `multi_value_single_select`). Example: `curl -s "https://boards-api.greenhouse.io/v1/boards/{org}/jobs/{id}?questions=true"`.
+- **Lever**: the posting JSON returned in Step 3 includes form metadata. For deeper detail, fetch `https://jobs.lever.co/{company}/{id}/apply` HTML and grep for custom field blocks (`data-qa="custom-question"` markers).
+- **Ashby**: the public posting-api response includes an `applicationFormDefinition` field per job listing the form's required / optional inputs and their types.
+- **Workday / iCIMS / Taleo / generic**: no public API. Ask Luke to paste a screenshot of the application form or list the fields by name. Don't guess.
+
+**Categorise each field** into one of these submission shapes:
+
+| Shape | Example field labels | What to produce |
+|---|---|---|
+| CV file upload | "Resume/CV", "CV", "Resume" (`input_file`) | `Luke Blaney - CV.docx` (always — this skill always produces a CV) |
+| Cover letter file upload | "Cover Letter" (`input_file`) | `Luke Blaney - Cover Letter.docx` via the standard 4-paragraph template |
+| Cover letter textarea | "Cover Letter" (`textarea`, no file alternative) | Cover letter body as **plain markdown** for the textarea; **no `.docx` render** |
+| Custom free-text question | "Why X?", "What interests you about this role?", "Tell us about a security project you led" (`textarea` with prompt) | A **short standalone answer per question**, sized to the description's word-count guidance |
+| Optional Additional Information | "Additional Information", "Anything else you'd like to share" (`textarea`) | Optional; offer to draft if the rest of the form doesn't carry the cover-letter material |
+| Non-content fields | Visa, location, start-date, demographic (`input_text`, `multi_value_single_select`) | Out of scope for `/tailor`; Luke completes himself |
+
+**Report findings to Luke** as a table of the content-bearing fields with their types, required-flags, word-count guidance (from the description), and what you'd produce. Get sign-off on the artefact set before continuing.
+
+**Critical: when multiple content-bearing textareas exist, plan a clean content split.** The same material must not be duplicated across fields. Default split when both a "Why X?" textarea and an "Additional Information" textarea exist:
+
+- **"Why X?" answer** = why-this-company + company-mission alignment + company-specific evidence (the cover-letter paras 3 + relevant pieces of 4).
+- **"Additional Information" answer** = role-fit framing + concrete CV evidence + brief career-break note (the cover-letter paras 1 + 2 + close).
+
+Adapt the split to the actual questions on the form. Whatever split is chosen, name the disjoint content split in the Step 3.5 sign-off message so Luke can spot duplication risk before drafting.
+
+**Save the form-probe findings** to `orgs/{company-slug}/notes.md` under a `## Application form` section, including the artefact-set decision. This persists across future invocations and informs follow-up applications to the same company.
 
 ## Step 4: Joint JD analysis
 
@@ -220,14 +251,39 @@ Per `feedback_cv_copy_editing_scope.md`, any new copy needs consultation. Show L
 
 Get sign-off on each block before continuing.
 
-## Step 10: Propose letter draft `[LETTER]`
+## Step 10: Propose letter-shaped content `[LETTER]`
 
-Draft all four paragraphs in a single pass, applying the joint positioning decisions from Step 8 and consistent with the CV Summary signed off in Step 9. Don't show Luke until the assembled letter is ready — he prefers reviewing the whole letter rather than paragraph-by-paragraph.
+The shape of this step depends on the artefact set chosen in Step 3.5. Draft each piece in a single pass, applying the joint positioning decisions from Step 8 and consistent with the CV Summary signed off in Step 9. Don't show Luke until the assembled output is ready — he prefers reviewing complete drafts rather than paragraph-by-paragraph.
+
+### Variant A: Full 4-paragraph cover letter (file upload OR letter-shaped textarea)
 
 1. **Paragraph 1 (Anchor, 40–60 words)** — based on the chosen opener pattern. Must stand alone per `feedback_cover_letter_standalone.md`.
 2. **Paragraph 2 (Evidence, 80–120 words)** — pull the chosen story from `evidence-stories.md`; adapt to the JD's specific signals. Don't quote verbatim — treat the library as a starting point.
 3. **Paragraph 3 (Why this role / company, 60–100 words)** — bespoke. Default to writing about why the *role-shape* is interesting, not the company's mission, unless Luke surfaced specific knowledge of the company in Step 4 or Step 7.
 4. **Paragraph 4 (Current focus + close, 80–130 words)** — start with the chosen current-focus variant from `current-focus.md`. Embed the career-break aside per Step 8 (single phrase, not its own sentence by default). End with the chosen close.
+
+For **file upload**: include salutation, paragraphs 1–4, close + sign-off. Render to `.docx` (see Step 13).
+For **letter-shaped textarea** (no file upload alternative): same structure but **omit salutation, sign-off, and first-line NBSP indent** — textareas don't render typographic conventions, and recipients see paragraphs directly. No `.docx` render.
+
+### Variant B: Per-question textarea answers
+
+Draft a separate standalone answer for each content-bearing question on the form (the split decided in Step 3.5). Each answer is self-contained — it doesn't reference the other answers or the CV. Apply the same library blocks selectively:
+
+- **"Why X?" answers (company-focused)** — typically 200–400 words depending on the field's guidance. Lead with the mission/alignment angle (the cover letter's paragraph 3 content), expand with current-focus material (paragraph 4) where it bridges to the company. Open with a sentence that engages with the question directly; don't open with "I'm an X who..." (same rule as cover-letter para 1).
+- **"What interests you about this role?" answers (role-focused)** — typically 150–300 words. Lead with the role-shape framing (the cover-letter paragraph 1 opener), bring in one evidence story (paragraph 2 content). No salutation, no sign-off.
+- **"Tell us about a project / challenge / experience..." answers (evidence-focused)** — typically 200–400 words. STAR / CAR-shaped concrete story; pick the most JD-relevant story from `evidence-stories.md`.
+- **"Additional Information" answers (optional, role-fit-focused when company-content lives elsewhere)** — typically 150–300 words. Covers whatever content the other textareas don't carry — usually role-fit framing + concrete evidence + brief career-break note. Skip entirely if the rest of the form already covers everything worth saying.
+
+**Disjoint content** is enforced from the split decided in Step 3.5. Before showing Luke any draft, re-check that the same facts / framings / library blocks aren't appearing in multiple answers. Where they overlap by accident, pick which answer owns each piece and trim the duplicate.
+
+All variant-B answers are plain markdown — no salutation, no sign-off, no first-line indent, no `.docx` render. They get pasted directly into form textareas.
+
+### Common to all variants
+
+- Library blocks (`openers.md`, `evidence-stories.md`, `current-focus.md`, `career-break-aside.md`, `closes.md`) apply to whichever variant is being drafted; pick the same ones the joint positioning decisions in Step 8 selected.
+- Em-dash rule (max 1 per document) applies to each drafted artefact independently — a "Why X?" answer and an "Additional Information" answer are separate documents, each gets up to 1 em-dash.
+- Banned-words and dialect rules apply to all variants.
+- Year-claims overlap rule applies *within each artefact independently*, then *across the artefact set together* — when multiple artefacts will be read together by the same recipient (e.g. all textareas in one application form), the year-claims total across them combined should still respect the ~15-year ceiling.
 
 ## Step 11: Self-checks
 
@@ -238,20 +294,25 @@ Before showing Luke the final assembled output, run the checks below. Fix any fa
 - ATS metrics (from Step 14 verification): `cid` / `ligs` / `hyphens` all 0 (non-negotiable)
 - JD top keywords: all present in the rendered text
 
-**Letter** `[LETTER]`:
+**Letter-shaped artefact(s)** `[LETTER]` — applied to each artefact independently:
 - **Banned words scan**: "leverage", "AI Native", "synergies", "step change", "unlock value", "transformational", "genuinely motivated", "deeply passionate". Any hit → revise.
 - **Standalone-ness check**: each sentence parseable without the CV.
-- **Word count**: target 250–350; 400 ceiling for senior roles with substantive technical content.
-- **Overlap-years check**: sum of "[N] years of [domain]" claims in the letter ≤ ~15 years.
+- **Em-dash count**: at most 1 per artefact. A "Why X?" answer and an "Additional Information" answer are separate documents, each gets up to 1.
+- **Word count**:
+  - Variant A cover letter: target 250–350; 400 ceiling for senior roles with substantive technical content.
+  - Variant B per-question textarea: target whatever the form's description suggests (often 200–400 for "Why X?", 150–300 for shorter prompts). When no guidance is given, default to 200–300.
+- **Overlap-years check**: sum of "[N] years of [domain]" claims ≤ ~15 years, *within each artefact independently AND across the whole artefact set together* (a recipient reads them all together in one form submission).
 - **Dialect check**: no Americanisms (`-ize`, "organization", "color", "behavior", "math", "specialty").
-- **Salutation present**, **close + sign-off present**.
+- **Variant A only**: salutation present (file-upload only); close + sign-off present (file-upload only). Skip if `form-shape: textarea`.
+- **Variant B only**: no salutation, no sign-off. Each answer opens by engaging the question directly.
 
-**Cross-document consistency** (when generating both):
-- Level-positioning in CV Summary and letter opener must match (e.g. both IC-track, or both Director-track).
-- Narrative tilt consistent across both.
-- Career-break treatment consistent: CV section and letter aside say the same thing in the same voice.
-- Current-focus framing (lucos_agent / multi-persona LLM fleet) described in the same register in both.
-- Year-claims totaled in the letter alone must not exceed ~15 years; the CV is structured (dates listed by role) so internal consistency isn't at risk there.
+**Cross-artefact consistency** (when more than one letter-shaped artefact is produced, OR alongside the CV):
+- Level-positioning in CV Summary and all letter-shaped artefacts must match (e.g. all IC-track, or all Director-track).
+- Narrative tilt consistent across all artefacts.
+- Career-break treatment consistent: same voice in CV section and any letter-shaped artefact that mentions it (typically one mention across the whole set, not multiple).
+- Current-focus framing (lucos_agent / multi-persona LLM fleet) described in the same register everywhere it appears.
+- **Disjoint content**: when multiple letter-shaped artefacts go in the same submission (e.g. "Why X?" + "Additional Information"), re-verify the content split decided in Step 3.5 actually holds in the drafts. List the key facts / framings each artefact contains; flag any that appear in more than one and decide which artefact owns it.
+- Year-claims totalled across the artefact set ≤ ~15 years; the CV is structured (dates listed by role) so internal consistency isn't at risk there.
 
 ## Step 12: Upstream propagation
 
@@ -321,11 +382,14 @@ cd ~/sandboxes && git clone git@github.com:lucas42/lukeblaney_cv_tailored.git
 ```
 
 **Directory structure**:
-- `orgs/{company-slug}/notes.md` — company-level context + per-role sections
+- `orgs/{company-slug}/notes.md` — company-level context + per-role sections + per-role `## Application form` block
 - `orgs/{company-slug}/{role-slug}/cv.md` — CV variant
-- `[LETTER]` `orgs/{company-slug}/{role-slug}/cover-letter.md` — letter
+- `[LETTER]` `orgs/{company-slug}/{role-slug}/cover-letter.md` — only when the form has a cover-letter file upload OR a single letter-shaped textarea (Variant A in Step 10)
+- `[LETTER]` `orgs/{company-slug}/{role-slug}/why-{company-slug}.md` — answer to a "Why X?" textarea (Variant B). Plain markdown, no YAML salutation/sign-off.
+- `[LETTER]` `orgs/{company-slug}/{role-slug}/additional-information.md` — answer to an "Additional Information" textarea (Variant B). Plain markdown.
+- `[LETTER]` `orgs/{company-slug}/{role-slug}/{question-slug}.md` — answer to any other custom-question textarea (Variant B). Slug from the question label (e.g. `what-interests-you.md`, `tell-us-about-a-project.md`).
 
-Slug rules: lowercase-kebab of company name; lowercase-kebab of role title.
+Slug rules: lowercase-kebab of company name; lowercase-kebab of role title; lowercase-kebab of the question label (shortened sensibly) for per-question textarea files.
 
 ### Write the CV variant
 
@@ -347,7 +411,11 @@ Apply the standard cuts (variants land at 3 pages by default):
 5. **Drop Education's A-levels and GCSEs**.
 6. **Drop `# Earlier Career` (pre-Assanka) and `# Positions of Responsibility`** unless individual entries are directly relevant to the target employer/industry (per `feedback_cv_variant_content_rule.md`).
 
-### `[LETTER]` Write the letter
+### `[LETTER]` Write the letter-shaped artefact(s)
+
+The shape depends on Variant A vs Variant B from Step 10.
+
+**Variant A: 4-paragraph cover letter** (`cover-letter.md`)
 
 YAML frontmatter for internal metadata, then 4-paragraph body in plain markdown. **No `# Cover letter — …` H1** in the body (would render as a giant purple heading).
 
@@ -360,6 +428,7 @@ library-source: lucas42/lukeblaney_cv/cover-letters/
 opener-pattern: {section > pattern}
 evidence-story: "#N {story name}"
 current-focus-variant: {flavour}
+form-shape: file-upload   # or: textarea
 ---
 
 Dear {salutation},
@@ -371,25 +440,54 @@ Kind Regards,
 Luke Blaney
 ```
 
+If `form-shape: textarea`: omit salutation, sign-off, and first-line NBSP indent from the body — textareas don't render typographic conventions. The YAML metadata still goes in for record-keeping.
+
+**Variant B: per-question textarea answer(s)** (`why-{company-slug}.md` / `additional-information.md` / `{question-slug}.md`)
+
+YAML frontmatter records which question this answers and the library-block sources; body is plain markdown, no salutation or sign-off.
+
+```markdown
+---
+question: {exact question label from form}
+form-field-type: textarea
+required: {true|false}
+word-target: {200-400 from form description, or sensible default}
+drafted: {YYYY-MM-DD}
+library-source: lucas42/lukeblaney_cv/cover-letters/
+content-from-paragraph: {3 | 4 | 1+2 | custom}
+---
+
+{answer body}
+```
+
 ### Update or create notes.md
 
 - If `notes.md` exists: append a new role section under `## Roles applied for`. Don't duplicate company-level notes.
 - If not: create with company-level notes (industry, ATS, public job-board URL, API endpoint if useful) + first role section.
+- Include a `## Application form` block under the role section listing the form fields, their types, and the content-split decision from Step 3.5.
 
 ### Render
 
 ```bash
+# CV: always rendered to .docx
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
-# [LETTER]:
+
+# Cover letter for file-upload form fields: render to .docx
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md
+
+# Cover letter for textarea form fields, and per-question textarea answers: DO NOT render to .docx.
+# The markdown source IS the submission artefact (Luke copy-pastes into the form).
 ```
 
-The script renders the `.docx` only by default — that's the canonical submission artefact for every ATS Luke has encountered. Pass `--pdf` (before the markdown path) only when an application or recipient specifically asks for a PDF; the PDF is gitignored either way.
+The script renders the `.docx` only by default — that's the canonical submission artefact for ATSes with a file-upload field. Pass `--pdf` (before the markdown path) only when an application or recipient specifically asks for a PDF; the PDF is gitignored either way.
+
+**Don't render a `.docx`** for cover letters whose form field is a textarea, or for per-question textarea answers. Doing so produces a misleading artefact (Luke would be submitting the markdown text, not a `.docx` upload). The markdown file is the canonical source-and-submission for textarea content.
 
 Outputs (in the role-slug directory):
-- `Luke Blaney - CV.docx` (committed, ATS-ready submission name)
-- `[LETTER]` `Luke Blaney - Cover Letter.docx` (committed)
-- With `--pdf`: `Luke Blaney - CV.pdf` / `Luke Blaney - Cover Letter.pdf` (both gitignored)
+- `Luke Blaney - CV.docx` (always — committed, ATS-ready submission name)
+- `[LETTER]` `Luke Blaney - Cover Letter.docx` (only when form has a CL file upload — committed)
+- `[LETTER]` `cover-letter.md` / `why-{company-slug}.md` / `additional-information.md` / `{question-slug}.md` (plain markdown for textarea fields — committed)
+- With `--pdf` on the CV: `Luke Blaney - CV.pdf` (gitignored)
 
 ### Commit
 
@@ -459,6 +557,10 @@ Targets:
 
 (The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked; even then it's for human review only and its page count is not authoritative for the submission.)
 
+**Cover-letter `.docx` verification** (Variant A file-upload only): same round-trip-via-LibreOffice procedure on `Luke Blaney - Cover Letter.docx`. Targets: 1 page (hard limit 2), cid/ligs both 0, em-dash count ≤ 1 in extracted text.
+
+**Textarea-content verification** (Variant A textarea form-shape, or any Variant B answer): no LibreOffice round-trip needed (no `.docx`). Word count on the markdown source against the form's target; em-dash count via grep against U+2014; banned-words grep; standalone-ness re-read. Disjoint-content cross-check across multiple textarea answers per Step 11.
+
 ## Step 15: Report back
 
 Tell Luke:
@@ -469,10 +571,23 @@ Tell Luke:
 - Page count, word count, ATS metrics, JD keyword check result
 - (Mention the `--pdf` flag only if Luke asked for a PDF; default is docx-only.)
 
-**`[LETTER]` Letter artefacts**:
+**`[LETTER]` Letter-shaped artefact(s)** — one entry per artefact produced:
+
+For Variant A cover letter (file upload):
 - Source path: `…/cover-letter.md`
 - ATS upload (.docx): `…/Luke Blaney - Cover Letter.docx`
 - Word count, library blocks used (opener, story, current-focus variant)
+
+For Variant A cover letter (textarea form-shape):
+- Source path: `…/cover-letter.md`
+- **What to do with it**: paste the markdown body (without the YAML frontmatter) into the form's cover-letter textarea
+- Word count, library blocks used
+
+For each Variant B per-question textarea answer:
+- Source path: `…/why-{company-slug}.md` / `…/additional-information.md` / `…/{question-slug}.md`
+- **Which form field it answers** (verbatim label from the form)
+- **What to do with it**: paste the markdown body (without the YAML frontmatter) into that textarea
+- Word count, library blocks used, content split (which paragraphs of the cover-letter template it draws from)
 
 **Joint positioning summary** — what was decided at Step 8:
 - Level-positioning
@@ -485,17 +600,22 @@ Tell Luke:
 
 **Any new memory captured** during the session, so Luke knows what's been saved for future invocations.
 
-**Suggested submission route**: upload both `.docx` files to the ATS as file attachments. Most ATSes provide separate upload fields for the CV and cover letter.
+**Suggested submission route**: walk Luke through the form-field-by-form-field mapping from Step 3.5. For each content-bearing field, name the artefact that fills it and the format (`.docx` upload vs paste-the-markdown-body). For non-content fields (visa, location, start date, demographic), Luke completes himself.
 
 If Luke needs to regenerate later (e.g. after a red-line edit):
 
 ```bash
+# CV (always renders to .docx):
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
-# and/or
+
+# Cover letter for file-upload forms (renders to .docx):
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md
+
+# Textarea content (no .docx render needed — markdown source IS the submission artefact;
+# just edit the .md and commit).
 ```
 
-…then `git add` the regenerated `.docx` and commit.
+…then `git add` the regenerated `.docx` (or the edited `.md`) and commit.
 
 ## Git identity
 
@@ -510,7 +630,7 @@ Commit directly to `main` on both `lukeblaney_cv` and `lukeblaney_cv_tailored` �
 
 ## When this skill is not the right tool
 
-- **Luke wants only a CV, no letter** — still use `/tailor` and answer "CV only" at Step 1. Or invoke `/tailor-cv` directly for the leaner standalone flow.
+- **Luke wants only a CV, no letter or textareas** — Step 3.5 will naturally produce a CV-only artefact set if the form has no letter file upload, no letter textarea, and no custom content questions. Otherwise: invoke `/tailor-cv` directly for the leaner CV-only flow.
 - **Luke wants only a letter, no CV** — use `/tailor-cover-letter` directly. This skill always generates a CV.
 - **Luke wants to update the cover-letter library or `cv-extended.md` itself** (add a new story, change the template, rewrite an opener) — that's a normal career-advisor edit, not a per-application task. Skip the JD-analysis steps.
 - **Luke wants analysis of a JD without producing artefacts** — do Steps 1–6 and stop; don't write any files.

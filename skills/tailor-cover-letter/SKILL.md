@@ -65,6 +65,22 @@ Extract:
 - Full JD text (responsibilities + requirements + nice-to-haves + culture blurb)
 - Salary / compensation if disclosed
 
+### Probe the application form too
+
+Same per-ATS API extension as in `/tailor` Step 3.5 — fetch the form structure to confirm what the cover-letter content should actually fill:
+
+- **Greenhouse**: append `?questions=true` to the boards-api URL; check `questions[]` for `input_file` (Cover Letter) vs `textarea` fields ("Cover Letter", "Why X?", "Additional Information", or other custom-question textareas).
+- **Lever**: posting JSON includes form metadata.
+- **Ashby**: `applicationFormDefinition` in the posting-api response.
+- **Workday / iCIMS / Taleo**: ask Luke to paste / describe form fields.
+
+The cover-letter content drafted by this skill may end up shaped as:
+- a `.docx` cover letter (file-upload field present) — default rendering
+- a single plain-text body (cover-letter textarea, no file alternative) — skip `.docx` render
+- a set of per-question textarea answers (no cover-letter field at all, but content-bearing custom questions present) — split letter content across answers with disjoint coverage (see `/tailor` Step 10 Variant B for the per-question framing rules and Step 11 for the disjoint-content cross-check)
+
+If the form doesn't accept a cover letter in any shape AND has no custom content-bearing textareas, stop and ask Luke: there may be no useful artefact for this skill to produce on this application. Don't render an unused `.docx`.
+
 ## Step 3: Analyse the JD
 
 Present a short analysis to Luke covering:

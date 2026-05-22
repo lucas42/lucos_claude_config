@@ -1,19 +1,25 @@
 ---
 name: feedback-cover-letter-upload-field
-description: Most ATS systems take cover letters as a file upload (.docx / .pdf), not a paste-into-textbox field. The render pipeline is a first-class part of the cover-letter workflow, not an edge case.
+description: Don't assume the cover-letter format from the JD URL — probe the application form first. Defaults span file-upload (.docx), single textarea, and per-question textareas with disjoint-content requirements.
 metadata:
   type: feedback
 ---
 
-ATS application forms more often than not present cover letters as a **file upload** field rather than a text-area paste-in. Treat .docx render as the default submission format for cover letters, not as an exotic edge case.
+**Probe the application form before deciding the cover-letter format.** ATS application forms vary widely in how they accept letter-shaped content:
 
-**Why:** I'd initially scoped the cover-letter render pipeline as a "rare exception" thing, with markdown-only as the default. Luke flagged (2026-05-21) that the upload-field shape is in fact common — he's seen it on many ATS pages.
+- **File upload** (e.g. Greenhouse `input_file` labelled "Cover Letter"): submit a `.docx`.
+- **Single cover-letter textarea** (e.g. Lever roles with a `textarea` cover-letter field, no file alternative): submit the letter body as plain text.
+- **Per-question textareas with no cover-letter field at all** (e.g. Anthropic's Greenhouse form has a required "Why Anthropic?" textarea + optional "Additional Information" textarea, no cover-letter file or textarea per se): split the would-be-letter content across the answers with disjoint coverage.
+- **Combination** (e.g. cover-letter file upload + custom "Why X?" textarea): produce both, with cleanly disjoint content split between them.
+
+**Why:** Stated 2026-05-23. Initial version of this rule (2026-05-21) said file-upload was the default and Luke had to flag textareas. That was wrong twice over: (a) it assumed which format the form uses without checking; (b) it didn't cover the per-question textarea case at all, leading to a wasted `.docx` cover letter for an Anthropic Greenhouse form whose actual fields were "Why Anthropic?" + "Additional Information". The correct default is "probe first, decide format from what the form actually accepts" — not "guess file-upload and adjust later".
 
 **How to apply:**
-- `/tailor-cover-letter` should produce a .docx alongside the markdown by default, not as an opt-in extra step.
-- Treat the .docx as the submission artefact (same status as for tailored CVs).
-- Markdown remains the source of truth and what gets committed for content review.
-- .pdf is for human review (e.g. emailing a hiring manager directly).
-- For applications that DO take a text-area (minority case), the markdown source is still pastable as-is.
+- `/tailor` Step 3.5 (and equivalent step in `/tailor-cover-letter`) probes the application form via the same ATS API endpoint used for the JD content. For Greenhouse: `?questions=true`. For Lever: posting JSON includes form metadata. For Ashby: `applicationFormDefinition` in posting-api. For Workday / iCIMS / Taleo: ask Luke to paste / describe.
+- Categorise each content-bearing field as CV-file / cover-letter-file / cover-letter-textarea / per-question-textarea / additional-information / non-content.
+- Render to `.docx` ONLY when the field is a file-upload. For textarea fields the markdown source IS the submission artefact (Luke copy-pastes); don't render an unused `.docx`.
+- When multiple textareas exist, plan a disjoint content split BEFORE drafting. Re-verify in self-checks that the same facts/framings don't appear in two answers.
+- Markdown remains the source of truth and what gets committed for content review, regardless of submission format.
+- For applications where the form has no cover-letter-shaped field AND no content-bearing custom questions, stop and ask Luke before drafting anything letter-shaped — there may be no place to put it.
 
 Related: [[project-cover-letter-rebuild]], [[cv-rebuild]].
