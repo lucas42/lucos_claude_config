@@ -61,6 +61,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Don't assume from service name](feedback_dont_assume_from_service_name.md)
 - [Design merge/aggregation layers for all consumers, not just the originating one](feedback_design_for_all_consumers.md) — arachne#539 scoped to search-index only; explorer item page was a missed consumer (arachne#566+#567, 2026-05-22)
 - [Pressure-test detectors for the inverse failure mode](feedback_detector_inverse_failure_mode.md) — happy-path success counter + swallowing catch = structurally blind to operation-throwing (seinn#470, 2026-05-22)
+- [Verify past-tense work claims against git](feedback_verify_past_tense_work_claims.md) — "pushed commit", "amended PR", "filed ticket" are not verified facts; check before concurring (lucos#189 amendment didn't land, 2026-05-22)
 
 ## Reference memories
 
