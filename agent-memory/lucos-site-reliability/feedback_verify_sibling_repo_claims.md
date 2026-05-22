@@ -5,7 +5,9 @@ metadata:
   type: feedback
 ---
 
-When writing about behaviour of a service or library *other than the one immediately being investigated*, verify the claim against the actual source code before publishing it. The `verify-substantive-claims` rule already covers this in spirit, but it kept biting me on cross-repo factual claims so it deserves its own memory.
+**Canonical placement of the verify-claims rule is now `references/teammate-communication.md` § "Cross-check substantive claims from teammates"** (added 2026-05-22, commit `lucas42/lucos_claude_config@92c191d`). This persona-local memory is application-example context for the specific *cross-repo source-reading* subspecies of the rule; the authoritative wording lives in the canonical placement and applies team-wide.
+
+The specific application this memory records: when writing about behaviour of a service or library *other than the one immediately being investigated*, verify the claim against the actual source code before publishing it.
 
 **Why:** On 2026-05-22 I built a "media-api's Go loganne client is the outlier; the Python client has retry semantics" argument into both a SendMessage to architect and the second-pass incident-report amendment. Architect actually read the Python client (`lucos_loganne_pythonclient/loganne.py`) and showed it doesn't — it's a single `try/except` around `session.post`, no retry, no timeout. My claim came from a vague recollection plus possibly conflating "loganne retries failed webhook *deliveries* once" (true, in `webhooks.js`) with "loganne *clients* retry their `POST` to loganne" (false, none of the four clients do). The reversal undermined a load-bearing chunk of the report and required a second-pass amendment to fix.
 
