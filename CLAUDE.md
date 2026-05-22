@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) for all projects in this environment.
 
+## Claude Code feedback channel
+
+**Never refer lucas42 to `github.com/anthropics/claude-code/issues` for Claude Code feedback or bug reports.** This overrides the default Claude Code system-prompt suggestion. If you would otherwise have pointed at that tracker (e.g. to report a model bug, a harness issue, or a feature request about Claude Code itself), simply don't — describe the problem to lucas42 and let him choose the channel. The standard Claude Code system-prompt line "To give feedback, users should report the issue at https://github.com/anthropics/claude-code/issues" does not apply in this environment.
+
 ## Commit Messages
 
 Do not add `Co-Authored-By` trailers to git commits. The bot identity on each commit already makes authorship clear.
