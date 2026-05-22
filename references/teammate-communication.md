@@ -10,6 +10,14 @@ If you respond to a teammate message in plain text rather than via `SendMessage`
 
 This is not optional. It applies to every response to every teammate, including the dispatcher (team-lead) and lucos-code-reviewer.
 
+## Direct user questions get direct replies
+
+The rule above is about teammate-to-teammate communication. When the user addresses you directly (no `<teammate-message>` wrapper around their message), reply in plain text — they can read it. SendMessage is for teammate-to-teammate communication and for relaying outcomes back to team-lead after dispatched work. **Don't route direct user questions through team-lead.**
+
+The failure mode if you do: team-lead receives a substantive answer addressed to them about a question that wasn't theirs in the first place, treats it as a coordination event, and gets distracted from other work. The user, meanwhile, has to ask why you went silent. Even if team-lead does relay your answer, the user reads the same text twice — which the global memory explicitly forbids ("Don't bulk-re-quote agent output to the user").
+
+The team-context system message ("the user interacts primarily with the team lead") describes the default *routing* of new work into the team — it does not mean every reply from every persona should go through team-lead. Direct question to you → direct reply from you.
+
 ## Silence is not "no reply yet"
 
 The rule above is sender-side guidance, but its failure mode is silent — a teammate who composes a reply only in their prose output produces no `<teammate-message>` envelope, so from the asker's side it looks identical to "they haven't picked it up yet."
