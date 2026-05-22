@@ -304,7 +304,7 @@ Before showing Luke the final assembled output, run the checks below. Fix any fa
 - **Overlap-years check**: sum of "[N] years of [domain]" claims ≤ ~15 years, *within each artefact independently AND across the whole artefact set together* (a recipient reads them all together in one form submission).
 - **Dialect check**: no Americanisms (`-ize`, "organization", "color", "behavior", "math", "specialty").
 - **Variant A only**: salutation present (file-upload only); close + sign-off present (file-upload only). Skip if `form-shape: textarea`.
-- **Variant B only**: no salutation, no sign-off. Each answer opens by engaging the question directly.
+- **Variant B (and Variant A textarea form-shape)**: no salutation, no sign-off. Each answer opens by engaging the question directly. **URLs include the scheme** (`https://example.com/path`, not `example.com/path`) — see [[textarea-url-scheme]]. Bare-host URLs only work in rendered formats where the display text and underlying link can differ.
 
 **Cross-artefact consistency** (when more than one letter-shaped artefact is produced, OR alongside the CV):
 - Level-positioning in CV Summary and all letter-shaped artefacts must match (e.g. all IC-track, or all Director-track).

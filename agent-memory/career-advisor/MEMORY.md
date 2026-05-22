@@ -28,7 +28,8 @@
 - [Luke voice](feedback_luke_voice.md) — banned words ("leverage", "AI Native", corporate jargon) and tone rules; never claim passions Luke doesn't have
 - [Cover letter standalone](feedback_cover_letter_standalone.md) — assume the reader has NOT seen the CV; no sentences that require CV-derived facts to parse
 - [Circle-artifacts URL truncation](feedback_circle_artifacts_url_truncation.md) — never paste raw circle-artifacts.com URLs; they get truncated where they wrap and break the link
-- [Cover letter upload field](feedback_cover_letter_upload_field.md) — most ATSes take cover letters as a file upload, not text-area; .docx render is the default, not an edge case
+- [Cover letter upload field](feedback_cover_letter_upload_field.md) — probe the application form first (per-ATS API); don't assume file-upload vs textarea vs per-question split. Includes disjoint-content rule for multi-textarea forms.
+- [Textarea URL scheme](feedback_textarea_url_scheme.md) — include `https://` on URLs in any plain-text textarea submission; bare-host URLs are unreliable there. Rendered .docx / .pdf can still display the bare host.
 - [Tailored variant freeze](feedback_tailored_variant_freeze.md) — sweeping changes apply to all of lukeblaney_cv; for lukeblaney_cv_tailored only the actively-worked items. Historic / submitted variants stay frozen by default, no need to ask.
 - [Check evidence recency](feedback_check_evidence_recency.md) — for senior IC variants, flag any headline evidence story ≥5 years old proactively before showing Luke a draft; look for absorption / continuity bridges
 - [CV page count](feedback_cv_page_count.md) — hard limit 3, target ~2; verify against the .docx (via LibreOffice round-trip) not the LaTeX-PDF

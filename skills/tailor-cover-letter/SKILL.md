@@ -79,6 +79,8 @@ The cover-letter content drafted by this skill may end up shaped as:
 - a single plain-text body (cover-letter textarea, no file alternative) — skip `.docx` render
 - a set of per-question textarea answers (no cover-letter field at all, but content-bearing custom questions present) — split letter content across answers with disjoint coverage (see `/tailor` Step 10 Variant B for the per-question framing rules and Step 11 for the disjoint-content cross-check)
 
+For any textarea-shaped artefact (Variant A textarea form-shape OR Variant B per-question answers), **include the scheme on URLs** (`https://example.com/path`, not `example.com/path`) — see [[textarea-url-scheme]]. Bare-host URLs only work in rendered formats where the display text and underlying link can differ.
+
 If the form doesn't accept a cover letter in any shape AND has no custom content-bearing textareas, stop and ask Luke: there may be no useful artefact for this skill to produce on this application. Don't render an unused `.docx`.
 
 ## Step 3: Analyse the JD
