@@ -105,7 +105,7 @@ Per `feedback_cv_copy_editing_scope.md`, any new copy needs consultation. Show L
 
 1. **Summary line / paragraph** (2-4 sentences positioning him for this specific role, addressing any level-positioning concerns)
 2. **Career Break / Current Focus** (if relevant — see his existing voice in cv-extended.md's "Career Break & Current Focus" section)
-3. **Skills section** (grouped categories, comma-separated keywords, JD-tuned). Categories to consider: Technical Leadership, Programming & Systems, Engineering Practice, Cloud & Platform, Generative AI, Cyber Security. Reorder or substitute categories based on the JD's emphasis.
+3. **Skills section** — target **~5 categories** (not 8) of grouped, comma-separated keywords, JD-tuned. Categories to consider: Technical Leadership, Programming & Systems, Engineering Practice, Cloud & Platform, Generative AI, Cyber Security. Pick ~5 by consolidating adjacent themes for the specific JD; reorder so the most JD-relevant category leads. **Layout**: structure as a single paragraph with hard line breaks between categories (`\` at end of each line except the last), not as separate paragraphs — this avoids inter-paragraph spacing bloat. See [[cv-skills-section]] for the rule and the markdown template.
 4. **Bullet reframes** (any existing bullets that should be reordered or rephrased — e.g. moving the unbackfilled-Principal-Engineer bullet to the front of the Director and Interim VP roles for an IC-track variant)
 
 Get sign-off on each block before writing the variant file.
@@ -184,11 +184,16 @@ The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, ca
 
 ## Step 10: Verify the rendered output
 
-The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. Run a Python verification on the PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`; the bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
+The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. **Verify against the .docx, not the LaTeX-PDF** — the .docx is what gets submitted, and its layout (Word/LibreOffice's, not LaTeX's) is what determines true page count for ATS purposes. The LaTeX-PDF's page count can differ from the .docx's by a page or more. Round-trip the .docx → PDF via LibreOffice in docker, then run the Python verification on that intermediate PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`; the bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
 
 ```bash
 # Bootstrap pdfvenv if not present
 [ -x /tmp/pdfvenv/bin/python3 ] || (python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install -q pdfminer.six)
+
+# Round-trip .docx → PDF via LibreOffice in docker
+DIR="/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}"
+docker run --rm -v "$DIR:/data" --entrypoint /bin/bash linuxserver/libreoffice:latest \
+  -c "libreoffice --headless --convert-to pdf --outdir /tmp '/data/Luke Blaney - CV.docx' >/dev/null 2>&1 && cp '/tmp/Luke Blaney - CV.pdf' '/data/Luke Blaney - CV (from docx).pdf'"
 
 /tmp/pdfvenv/bin/python3 <<'EOF'
 from pdfminer.pdfparser import PDFParser
@@ -197,11 +202,12 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_text
 import re
 
-path = '/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/Luke Blaney - CV.pdf'
+# Use the LibreOffice-rendered PDF for page count + content checks — reflects actual .docx layout.
+path = '/home/lucas.linux/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/Luke Blaney - CV (from docx).pdf'
 with open(path,'rb') as f:
     pages = list(PDFPage.create_pages(PDFDocument(PDFParser(f))))
 text = extract_text(path)
-print(f'Pages: {len(pages)}, words: {len(text.split())}')
+print(f'DOCX pages: {len(pages)}, words: {len(text.split())}')
 print(f'cid={len(re.findall(r"(cid:\\d+)", text))}  '
       f'ligs={sum(text.count(c) for c in [chr(0xFB01),chr(0xFB02),chr(0xFB00)])}  '
       f'hyphens={len(re.findall(r"\\w-\\n\\w", text))}')
@@ -214,18 +220,16 @@ print(f'JD keywords missing: {missing if missing else "none"}')
 EOF
 ```
 
+The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s `.gitignore` already excludes `*.pdf` so it won't be staged.
+
 Targets:
-- **Pages**: 3 (acceptable: 2). If 4+, propose further cuts below.
+- **DOCX pages**: hard limit 3, target ~2.
+  - If 4+: propose cuts and re-render before showing Luke. Standard cuts in priority order: drop Publications, drop Talks & Panels (or trim to 2 entries), trim Architect-Content bullets to 4, collapse Platform Architect to intro + 2 bullets, tighten Career Break, combine Director + Interim VP entries if a single intro line works.
+  - If exactly 3: ask Luke whether to keep at 3 or push toward 2. Don't unilaterally cut more — pushing to 2 may require dropping JD-relevant content (Talks & Panels, multi-bullet roles) and Luke should decide the trade-off.
 - **cid / ligs / hyphens**: all 0 (these are non-negotiable; if any are >0 the geometry/header is broken)
 - **JD keywords**: all top-tier keywords present
 
-If page count is over 3, propose further cuts to Luke before applying:
-- Drop Talks & Panels entirely (~0.5 page)
-- Combine Director + Interim VP into a single "Senior Cyber Security Leadership" entry
-- Tighten Career Break paragraph to two sentences
-- Trim less-differentiating bullets in recent roles
-
-If page count is 2 unintentionally (too aggressive), it's usually fine — but check the rendered output reads with enough density of substance.
+(The LaTeX-PDF (`Luke Blaney - CV.pdf`) co-output from `render-tailored.sh` is for human review only — its page count is not authoritative for the submission. See [[cv-page-count]].)
 
 ## Step 11: Push and report
 
