@@ -81,7 +81,7 @@ Stated 2026-05-22. The FT used **multiple / varied formats** across teams — so
 
 - **Can claim**: "architectural decision records", "technical proposals", "design documents", or umbrella phrasings like "wrote and reviewed technical proposals across teams".
 - **Don't claim**: that the FT had a single RFC process or single ADR process.
-- **For JDs that ask for RFCs specifically** (like Preply): use "RFCs / technical proposals" or "written-decision-document processes" rather than asserting a specific format.
+- **For JDs that ask for RFCs specifically**: use "RFCs / technical proposals" or "written-decision-document processes" rather than asserting a specific format.
 
 ## Architecture areas
 

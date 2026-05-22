@@ -43,3 +43,12 @@ The pipeline is operational. Key infrastructure in place:
 Outstanding work that would still be useful:
 - Pull-forward exceptions for individual entries from the dropped sections (Earlier Career pre-Assanka, Positions of Responsibility) — currently handled per-application in [[cv-variant-content-rule]].
 - Worked example for Director-track variants other than the platform-engineering / IC variants already produced.
+
+## First-time deployments (2026-05-22)
+
+A Staff Platform Engineer variant produced via `/tailor` deployed four new conventions for the first time:
+
+1. **Cyber-as-platform-enablement framing** (see [[user-role-framing]]) — reframed the cyber years as a platform / enablement function with engineering teams as customers, rather than as traditional cyber-security leadership. Honest because the FT cyber team genuinely operated that way (democratisation of security data, advice across engineering teams, SSO paved path). Applicable to any platform-engineering JD where cyber is part of Luke's recent surface but not the primary draw.
+2. **Sharpened scope on the Architect-titles-phased-out framing** (see [[user-role-framing]], [[check-evidence-recency]]) — the "Architect role phased out, architecture absorbed into PE remit" narrative is now scoped to Architect-titled JDs only. For non-Architect senior IC variants it reads as "Luke was forced out of architecture by the org reshuffle" and explains a concept (engineers making architectural decisions) the target org already operates by. Default for non-Architect senior IC variants: state architectural continuity plainly as part of the PE remit.
+3. **`.docx`-as-truth verification** (see [[cv-page-count]]) — `/tailor` and `/tailor-cv` now round-trip the rendered `.docx` to PDF via LibreOffice in docker (`linuxserver/libreoffice` image) before counting pages. The previously-trusted LaTeX-PDF page count is no longer authoritative because the `.docx` and LaTeX-PDF use different layout engines and can disagree by a page or more.
+4. **Skills section: 5-category, single-paragraph layout** (see [[cv-skills-section]]) — categories collapsed from ~8 to ~5; layout uses pandoc hard-line-breaks (`\` line-continuation) to produce one paragraph rather than N paragraphs. Removes the inter-paragraph spacing in the `.docx` that was taking roughly a third of a page in older 8-category variants.

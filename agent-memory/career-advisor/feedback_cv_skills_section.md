@@ -11,7 +11,7 @@ When drafting the Skills section of a tailored CV variant:
 
 **Rule 2 — single-paragraph layout**: structure the Skills section as **one paragraph with hard line breaks between categories** (using pandoc's backslash-line-break: `\` at end of line), not as N separate paragraphs. The default pandoc rendering of separate paragraphs adds paragraph-spacing-after between each category, wasting vertical space; the hard-line-break form gives tight single-line spacing between categories.
 
-**Why:** Stated 2026-05-22 by Luke after a Preply Staff Platform Engineer CV came out at 4 .docx pages — the Skills section was 8 categories rendered as separate paragraphs, taking up nearly half of page 1. Luke called both issues out as the main bloat contributors: too many categories AND the inter-paragraph spacing.
+**Why:** Stated 2026-05-22 by Luke after a Staff Platform Engineer CV came out at 4 .docx pages — the Skills section was 8 categories rendered as separate paragraphs, taking up nearly half of page 1. Luke called both issues out as the main bloat contributors: too many categories AND the inter-paragraph spacing.
 
 **How to apply:**
 

@@ -48,7 +48,7 @@ The FT re-organised in 2017 to move architects into the same orgs as engineers, 
 - **Architect-titled JDs only (rare):** the phased-out story may be useful to explain why Luke doesn't have a recent "Architect" title despite continuous architecture work. Even here, prefer his preferred phrasing about the Content pivot ("I repositioned the architect role so that engineering squads were empowered to make their own architectural decisions"), and present the transition as something Luke drove, not something the org imposed on him.
 - **The Architect-Content "proudest-accomplishment" line** ("transforming a team heavily reliant on having an architect to one where engineers felt empowered to make their own architectural decisions") is fine to keep in the Architect-Content role section itself on any variant — it's role-scoped there, not generalised. Just don't elevate that pattern to the Summary or use it as a through-line for the post-Architect years.
 
-This rule was sharpened 2026-05-22 after I'd written a Summary for the Preply Staff Platform Engineer variant that used the "after Architect titles were phased out" framing. Luke pushed back: it sounded like he'd been forced into a PE title by the org, and it explained a concept (engineers making architectural decisions) that Preply already understands.
+This rule was sharpened 2026-05-22 after I'd written a Summary for a Staff Platform Engineer variant that used the "after Architect titles were phased out" framing. Luke pushed back: it sounded like he'd been forced into a PE title by the org, and it explained a concept (engineers making architectural decisions) that the target engineering org already operated by.
 
 ## Unbackfilled Principal Engineer responsibilities (Apr 2022 – Mar 2025)
 
