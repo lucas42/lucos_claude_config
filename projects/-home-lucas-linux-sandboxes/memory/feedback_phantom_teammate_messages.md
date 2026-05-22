@@ -59,6 +59,5 @@ This also explains lucas42's earlier UI observation that teammate messages appea
 8. **Structural fixes still worth raising to lucas42** (not implementable by me):
    - Harness-level filter that strips `Human:` and `<teammate-message ...>` opening tokens from assistant output before they re-enter the model's context.
    - API-level `stop_sequences: ["\nHuman:"]` on the assistant generation call so the model halts before emitting the phantom turn. This is the standard mitigation for "model continues past its turn into a fake user turn" and is more likely to actually fire than any in-prompt rule. Whether Claude Code's harness uses stop sequences against assistant output is not visible from inside the model.
-   - **Not** worth raising on github.com/anthropics/claude-code/issues per the override in CLAUDE.md.
 
 Related: `lucas42`'s earlier "in my UI it was prefixed with 'Human:'" observation — now fully explained as a downstream symptom of this same generation pattern, not an independent UI bug. Worth re-reading [[feedback_no_unverified_endorsement]] and [[feedback_refetch_before_accusing]] in this light: the verify-before-accusing principle was correct, but the verification mechanism I was using (re-reading my own context) was structurally inadequate against this failure mode.
