@@ -69,6 +69,26 @@ Following content can describe the agentic work: multi-persona LLM agent fleet f
 - Use "time travelling" phrasing — accidentally ambiguous pun
 - Overhype with buzzwords like "AI Native" or "transformational change" — Luke prefers measured framing that signals his cyber-security-leader instincts around emerging-tech risk
 
+## Cyber as platform-enablement framing (for platform-engineering JDs)
+
+For platform-engineering JDs (where cyber isn't the primary draw but excluding the cyber years would shrink the recent-work surface), reframe the cyber experience as **a platform / enablement function with engineers as customers** rather than as a traditional cyber-security function. Confirmed by Luke 2026-05-22 for a Staff Platform Engineer role.
+
+The cyber team at the FT genuinely worked this way — concrete evidence already in cv-extended.md that supports the reframe:
+
+- PE-Cyber: "Led the strategy and implementation of democratisation of security data: enabling engineering teams to make better decisions around their own risks" — self-service for engineering teams
+- PE-Cyber: "Advised on security related concerns across all the FT's engineering teams" — enablement, not gatekeeping
+- Director: "Senior stakeholder management — acting as a bridge between business colleagues and engineers"
+- PE-Cyber: SSO migration delivered across all of engineering — paved-path infrastructure
+
+**How to apply** (platform-engineering JDs only):
+
+- In the Summary, frame the cyber years as "platform / enablement work with engineering teams as customers" rather than as cyber leadership.
+- Reorder cyber bullets to lead with the enablement / self-service ones (democratisation of security data, advisor-across-engineering-teams, company-wide SSO) and de-emphasise the strategy / governance bullets.
+- Keep the cyber-security domain language present (it's a real specialism) but subordinate it to the platform-engineering narrative.
+- This is a Staff/Platform-IC framing; don't deploy it for Director/Head/VP of Engineering variants where the leadership narrative is what's being sold.
+
+Related: [[user-skills-inventory]], [[check-evidence-recency]].
+
 ## Level-positioning when the JD level doesn't match recent titles
 
 - **Director → Staff IC** (e.g. cv-staff-engineer.md for a fintech Staff Engineer JD): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.
