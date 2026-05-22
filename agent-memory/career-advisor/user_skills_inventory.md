@@ -13,6 +13,10 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **Dabbled, will not claim**: Ruby · Java · Haskell · Prolog (and likely others — confirm before claiming if a JD requires a specific one).
 
+## Web frameworks
+
+**Django** — heavy use on personal projects (current / ongoing); some professional exposure on the FT Operational Intelligence team (~2015–2016). Confirmed 2026-05-22. Acceptable to list in Skills under Programming / Frameworks for JDs that name Django. **Don't claim** recent professional Django work; the personal-projects depth is what carries the weight today, so for JDs that probe specifics (years of Django at scale, specific Django features), hedge to "ongoing personal-project use plus earlier professional exposure".
+
 ## Databases / data stores
 
 **Relational, comfortable**: MySQL · PostgreSQL
@@ -54,11 +58,30 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Where it must NOT appear**: in a Skills section, alongside hands-on tools, or framed as "managed clusters" / "deployed to K8s" / "kubectl fluency".
 - **For JDs that emphasise Kubernetes**: lead with Docker in Skills, leave Kubernetes in the role bullet only, and flag the architecture-vs-operations distinction to Luke during gap consultation.
 
+## Cloud platforms
+
+**AWS — architectural / strategic level only**: Luke's hands-on AWS work is the FT mobile-app cloud migration (Jan–Nov 2015), which is now 10+ years old. Since then AWS has been in his vocabulary at the architectural-decision / strategic level (not running infrastructure day-to-day). Confirmed 2026-05-22.
+
+- **Can claim**: AWS architectural decisions, cloud-infra strategy, DevOps principles, cloud-native migrations.
+- **Must NOT claim**: active hands-on AWS operations, current production AWS exposure, day-to-day `aws cli` / Terraform / CloudFormation work.
+- **Where it can appear**: Skills section under Cloud & Platform; Integration Engineer role bullet (where the hands-on work happened).
+- **Where it must NOT appear**: as a current / recent operational tool, or in a Career Break bullet claiming current AWS use (career-break agent fleet is self-hosted, not on AWS).
+
 ## Methodologies / engineering practices
 
 **Comfortable**: TDD · Agile · Scrum · CI/CD · API-first design
 
 **Loosely seen — hedge if claiming**: DDD (Domain-Driven Design) — has seen it in practice but hasn't personally led DDD adoption
+
+**SLOs / SRE-book practices — DO NOT claim explicit SLO practice at FT**: The FT Reliability Engineering team (which Luke founded, Feb 2018 – Aug 2020) predates SRE-book adoption at the FT and operated in monitoring / availability / incident-response vocabulary, not explicit SLO / error-budget vocabulary. Confirmed by Luke 2026-05-22. For JDs asking for SLO experience, stick to "monitoring", "observability", "availability", "incident response" framing. Don't put "SLOs" in Skills sections or claim SLO design/rollout.
+
+## Technical decision-making documentation at FT
+
+Stated 2026-05-22. The FT used **multiple / varied formats** across teams — some used ADRs, some used RFCs, some used informal design docs, some used none. There was no single house standard.
+
+- **Can claim**: "architectural decision records", "technical proposals", "design documents", or umbrella phrasings like "wrote and reviewed technical proposals across teams".
+- **Don't claim**: that the FT had a single RFC process or single ADR process.
+- **For JDs that ask for RFCs specifically** (like Preply): use "RFCs / technical proposals" or "written-decision-document processes" rather than asserting a specific format.
 
 ## Architecture areas
 
