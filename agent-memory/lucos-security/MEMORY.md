@@ -188,6 +188,10 @@ See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_eve
 
 **Policy (2026-05-20):** See `codeql-false-positive-policy.md` — GHAS dismissal is the **only** mechanism for false positives. No inline suppression comments (also non-functional in lucos repos), no `paths-ignore` config exclusions. Dismiss directly via API.
 
+## Risk Pattern: Zombie Credentials in Downstream Keystores
+
+See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_KEYS does NOT revoke pre-registered keys in downstream stores (typesense, etc.). Decommission checklist gap.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.
