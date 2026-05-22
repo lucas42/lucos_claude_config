@@ -18,3 +18,5 @@ When another teammate reports past-tense completion of work I can verify (a push
 This generalises [[feedback-verify-before-propagating]] (verify identifiers before fan-out) and [[feedback-no-unverified-endorsement]] (no editorial praise without checking substance) — both of which I had but neither of which explicitly covered "past-tense report of completed work". The shape was a blind spot until 2026-05-22.
 
 **The cheap-to-verify rule of thumb:** if the verification is one `gh api` call or one `git log`, do it. It's faster than recovering from a stale concurrence later.
+
+**Canonical placement:** the cross-persona rule itself now lives in [`references/teammate-communication.md` § "Cross-check substantive claims from teammates"](../../references/teammate-communication.md). That section is the source of truth; this persona-local memory exists for the specific 2026-05-22 application example, not for the rule's authoritative wording.
