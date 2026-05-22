@@ -92,6 +92,31 @@ At architect / decision-making level (not necessarily hands-on configuration):
 - **API-first / REST APIs**
 - **Real-time data processing** — FT was high-traffic but the volume was substantially less than the billion-events-per-day scale some platforms claim. Don't claim "billion-event-scale" without further confirmation.
 
+## Software supply-chain security (SLSA, signed attestations, SBOM, dependency verification)
+
+Confirmed 2026-05-22. **Conceptually current, not deep hands-on.** Luke is familiar with modern supply-chain hardening concepts (SLSA, signed attestations / commits, SBOM, dependency pinning, isolated build environments) at the architectural / decision-maker level, but has not shipped a SLSA programme at scale.
+
+**Defensible adjacent evidence**:
+- The personal agent fleet has supply-chain-adjacent discipline: per-app GitHub App credentials (scoped permissions per agent), audit-trailed commits, sandboxed VMs per persona, version-controlled instruction surfaces. This is the bridge to "I think this way about supply-chain security" even where the specific SLSA stack isn't in his fingers.
+- General CI/CD experience across FT (cloud-native zero-downtime deploy pipeline, on-prem-to-SaaS dev-tooling migrations).
+
+**For JDs that explicitly want SLSA / supply-chain hardening hands-on**: frame as honest gap with adjacent evidence (agent-fleet discipline + general CI/CD), same pattern as the regulated-pensions ISO 27001 honest-gap framing. Don't claim SLSA implementation at scale.
+
+## AI / LLM platforms — concrete daily-use reference
+
+Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claude (Anthropic API / Claude Code)**. This gives Luke a concrete, daily, hands-on reference point for:
+- Anthropic specifically (for Anthropic applications)
+- Generic "experience using LLM platforms / GenAI tools" any JD asks for
+- Agentic-AI guardrails framing (the work *is* on top of Claude)
+
+**Where it can appear**:
+- Cover-letter "why this company" paragraph for Anthropic applications: the lucos_agent fleet IS Claude, so the work of wrapping deterministic structure around a non-deterministic actor is Claude-specific in Luke's hands today.
+- CV Career Break section / Skills under Generative AI: acceptable to mention the Claude/Anthropic API as the underlying platform when the JD wants concrete tooling.
+
+**Don't overclaim**:
+- Not a Claude API power-user in the "I've shipped a Claude-API-backed product" sense — this is personal-estate orchestration work.
+- Not Constitutional AI / Responsible Scaling Policy / interpretability research expertise. Luke comes at AI safety from the security-engineering and platform-engineering side, not from the ML research side.
+
 ## How to apply
 
 Before asking Luke a gap-fill question about tech in any CV-tailoring consultation, **check this file first**. If a JD requires something that's already settled here (Luke does or doesn't claim it), apply that — don't re-ask. If a JD asks for something not on this list at all, it's a genuine gap — ask Luke whether honest evidence exists, then update this file with the answer.
