@@ -1,14 +1,50 @@
 ---
-name: failThreshold lives in /_info, not lucos_monitoring
-description: Per-system check thresholds (failThreshold, etc.) are declared by each service in its /_info response — lucos_monitoring holds no system-specific config
+name: checks (not just thresholds) live in /_info, not lucos_monitoring
+description: Per-system checks — declaration, `ok` evaluation, thresholds, failThreshold, dependsOn — all live in the service's own `/_info`. lucos_monitoring is a polling/aggregation layer with no system-specific logic except three synthetic cross-cutting checks.
 type: feedback
 ---
 
-System-specific check thresholds (failThreshold and any equivalents) belong in the service's `/_info` response, not in lucos_monitoring config. lucos_monitoring is generic — it holds no system-specific logic.
+Per-system checks belong **entirely** in the service's own `/_info` response, not in lucos_monitoring config. lucos_monitoring is a polling/aggregation layer — it holds no system-specific logic, no per-system thresholds, and no per-system `ok` evaluation. Each service declares both:
 
-**Why:** lucas42 corrected this 2026-05-05 when I proposed raising a `failThreshold` issue against lucos_monitoring. Quoting: "the failThreshold config comes from the /_info endpoint, so it'll need to be raised against [the service] - we don't hold any system-specific logic in lucos_monitoring." Architectural rule: each system owns config that's specific to its own checks.
+- its **metrics** in `/_info.metrics` (raw values + `techDetail`), and
+- its **checks** in `/_info.checks` (`ok: bool` already evaluated by the service's own handler, plus `techDetail`, optional `failThreshold`, optional `dependsOn`).
 
-**How to apply:** When proposing changes to per-check thresholds, check suppression behaviour, or any per-system tuning of monitoring sensitivity, raise the issue against the **service repo** (whose `/_info` declares the check) — not against lucos_monitoring.
+lucos_monitoring just polls `/_info`, reports `ok: false` as alerts, and applies `failThreshold` / `dependsOn` suppression per what the `/_info` itself declared. The check's *evaluation logic*, *threshold value*, and *suppression policy* are all the service's own — none of them are configurable from lucos_monitoring's side.
+
+**Why I keep getting this wrong:**
+
+Two distinct corrections from lucas42:
+
+- 2026-05-05: I proposed raising a `failThreshold` issue against lucos_monitoring. lucas42: "the failThreshold config comes from the /_info endpoint, so it'll need to be raised against [the service] — we don't hold any system-specific logic in lucos_monitoring." That corrected the *threshold* layering — the original wording of this memory.
+- 2026-05-22: I filed `lucos_loganne#484` with a section titled "Proposed monitoring-side check" — i.e. I put the *entire check evaluation* on the wrong layer, not just the threshold. lucas42 (via team-lead): "The framing of lucos_loganne#484 is wrong. lucos_monitoring doesn't hold per-system check config. Those need to be exposed as checks in `/_info`, not just metrics." That corrected the *check itself* layering.
+
+The second correction generalises the first: the principle isn't just about thresholds, it's about *anything system-specific in the monitoring path*.
+
+**How to apply:**
+
+When proposing any per-system observability or alerting change, decide layering by this question: *is this signal specific to the service, or is it a generic cross-cutting probe?*
+
+- **Service-specific signal** (anything that names the service's internal state, its data model, its own thresholds, etc.) → declare it in the service's own `/_info`, as both a metric (raw value) and a check (`ok` evaluated against the threshold inside the service's `/_info` handler). The issue goes against the **service repo**.
+- **Generic cross-cutting probe** (something that applies identically to *every* monitored system regardless of what it does) → goes in lucos_monitoring. The current three are `fetch-info`, `tls-certificate`, `circleci`. The issue goes against **`lucos_monitoring`**.
+
+The shape of a service-side check in `/_info`:
+
+```json
+{
+  "checks": {
+    "my-check-name": {
+      "ok": true,
+      "techDetail": "Latest value 42 vs threshold 100",
+      "failThreshold": 2,
+      "dependsOn": "lucos_some_dependency"
+    }
+  }
+}
+```
+
+The `ok` field is evaluated by the service's `/_info` handler against whatever logic it likes — threshold comparison, set-membership, recent-error-rate, etc. lucos_monitoring just receives the boolean.
+
+**Exception — monitoring-synthesised checks:** Three checks are NOT declared by services; lucos_monitoring stamps them onto every system itself: `fetch-info` and `tls-certificate` (in `src/fetcher_info.erl` lines 43-46) and `circleci` (in `src/fetcher_circleci.erl`). For these three names, `failThreshold` IS configured inside lucos_monitoring — the in-file precedent is the existing `maps:put(<<"failThreshold">>, 2, ...)` pattern. PR lucos_monitoring#195 added it for fetch-info/tls-certificate; the same shape applies to circleci (issue #226 2026-05-12).
 
 **Exception — monitoring-generated synthetic checks:** Three checks are NOT declared by services; lucos_monitoring stamps them onto every system itself: `fetch-info` and `tls-certificate` (in `src/fetcher_info.erl` lines 43-46) and `circleci` (in `src/fetcher_circleci.erl`). For these three names, `failThreshold` IS configured inside lucos_monitoring — the in-file precedent is the existing `maps:put(<<"failThreshold">>, 2, ...)` pattern. PR lucos_monitoring#195 added it for fetch-info/tls-certificate; the same shape applies to circleci (issue #226 2026-05-12).
 
