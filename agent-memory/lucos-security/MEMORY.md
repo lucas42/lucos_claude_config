@@ -192,6 +192,10 @@ See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_eve
 
 See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_KEYS does NOT revoke pre-registered keys in downstream stores (typesense, etc.). Decommission checklist gap.
 
+## Risk Pattern: Webhook Fan-out Amplification
+
+See `risk-webhook-fanout-amplification.md` — client-side error bursts amplify ~2× via loganne fan-out (seinn incident 2026-05-22). Low risk currently but monitor if retry multiplier or subscriber count grows.
+
 ## Key People/Agents
 
 See `relationships.md` for notes on working with other lucos agents.
