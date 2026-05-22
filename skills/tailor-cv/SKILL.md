@@ -150,13 +150,13 @@ Apply these standard cuts (all as part of the single variant commit at the end o
 
 ## Step 9: Render and commit the variant to the private repo
 
-There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV). Per-JD variants are rendered via the helper script `~/sandboxes/lukeblaney_cv/render-tailored.sh`, which produces the .pdf and .docx in the same directory as the source.
+There is **no Dockerfile or CircleCI change** for new variants. The public `lukeblaney_cv` Dockerfile only renders `cv-extended.md` and `cv.md` (the source-of-truth + the general-purpose CV). Per-JD variants are rendered via the helper script `~/sandboxes/lukeblaney_cv/render-tailored.sh`, which by default outputs only the .docx in the same directory as the source. Pass `--pdf` (before the markdown path) only when a specific application or recipient asks for a PDF.
 
 ```bash
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
 ```
 
-The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. Because the source is named `cv.md`, the script outputs `Luke Blaney - CV.docx` and `Luke Blaney - CV.pdf` — submission-ready filenames that include Luke's name (recruiters bulk-download CVs and they're unidentifiable in a Downloads folder otherwise). See Step 10 for verification.
+The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. Because the source is named `cv.md`, the script outputs `Luke Blaney - CV.docx` — a submission-ready filename that includes Luke's name (recruiters bulk-download CVs and they're unidentifiable in a Downloads folder otherwise). See Step 10 for verification.
 
 **Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage:
 
@@ -164,7 +164,7 @@ The script reuses the same pandoc templates and brand colour as the public-repo 
 - The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
 - Any new `orgs/{company-slug}/notes.md` if this is a first-time application to that company
 
-The `.pdf` ("Luke Blaney - CV.pdf") is gitignored — regenerable for human review or hand-share, not the canonical submission artefact.
+Any `.pdf` ("Luke Blaney - CV.pdf") produced via `--pdf` is gitignored — regenerable for human review or hand-share if an application explicitly asks for one; not the canonical submission artefact.
 
 Because the private repo doesn't carry the public-employer-name constraint, the commit message **can** name the company freely. Suggested format:
 
@@ -184,7 +184,7 @@ The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, ca
 
 ## Step 10: Verify the rendered output
 
-The render step in Step 9 produces both `Luke Blaney - CV.pdf` (for human review) and `Luke Blaney - CV.docx` (for ATS submission) in the role-slug directory. **Verify against the .docx, not the LaTeX-PDF** — the .docx is what gets submitted, and its layout (Word/LibreOffice's, not LaTeX's) is what determines true page count for ATS purposes. The LaTeX-PDF's page count can differ from the .docx's by a page or more. Round-trip the .docx → PDF via LibreOffice in docker, then run the Python verification on that intermediate PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`; the bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
+The render step in Step 9 produces `Luke Blaney - CV.docx` (the ATS submission artefact) in the role-slug directory. **Verify against the .docx** — its layout (Word/LibreOffice's, not LaTeX's) is what determines true page count for ATS purposes. (If `--pdf` was passed, a LaTeX-rendered `Luke Blaney - CV.pdf` will also exist, but its page count can differ from the .docx's by a page or more and is not authoritative.) Round-trip the .docx → PDF via LibreOffice in docker, then run the Python verification on that intermediate PDF. The verification uses `pdfminer.six` in a dedicated venv at `/tmp/pdfvenv`; the bootstrap line below is idempotent — it only does the install on first use and is a no-op afterwards:
 
 ```bash
 # Bootstrap pdfvenv if not present
@@ -229,7 +229,7 @@ Targets:
 - **cid / ligs / hyphens**: all 0 (these are non-negotiable; if any are >0 the geometry/header is broken)
 - **JD keywords**: all top-tier keywords present
 
-(The LaTeX-PDF (`Luke Blaney - CV.pdf`) co-output from `render-tailored.sh` is for human review only — its page count is not authoritative for the submission. See [[cv-page-count]].)
+(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked; even then it's for human review only and its page count is not authoritative for the submission. See [[cv-page-count]].)
 
 ## Step 11: Push and report
 
@@ -242,22 +242,21 @@ Report back to Luke with:
 
 - **File path** of the new variant (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md`)
 - **Path of the committed .docx**: `…/{role-slug}/Luke Blaney - CV.docx` — this is the file to upload to the ATS (submission-ready filename)
-- **Path of the .pdf**: `…/{role-slug}/Luke Blaney - CV.pdf` (gitignored, alongside the .md) — for human-to-human sending or visual review
 - **Final page count and word count**
 - **ATS metrics** (cid / ligs / hyphens all 0)
 - **JD keyword check** (which top keywords confirmed present)
 - **Commits applied**, naming both repos if `cv-extended.md` was also updated
 - **Any new content added to cv-extended.md** during Step 5 — call this out so Luke knows the source-of-truth was updated
-
-If the role is one Luke is genuinely applying for, recommend reading the rendered PDF and DOCX once before submission.
+- (Mention the `--pdf` flag only if Luke asked for a PDF; default is docx-only.)
 
 If Luke needs to regenerate later (e.g. after a cv-extended.md change), the manual path is:
 
 ```bash
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md
+# add --pdf before the path if a PDF is also needed
 ```
 
-…then `git add` the regenerated `Luke Blaney - CV.docx` and commit. The .pdf is local-only.
+…then `git add` the regenerated `Luke Blaney - CV.docx` and commit.
 
 ## Git identity
 

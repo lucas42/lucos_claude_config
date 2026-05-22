@@ -231,9 +231,10 @@ Once Luke approves the final draft and any upstream propagation:
 
    ```bash
    ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md
+   # add --pdf before the path if a PDF is also needed (rare — ATSes overwhelmingly want the .docx)
    ```
 
-   Because the source is named `cover-letter.md`, the script outputs `Luke Blaney - Cover Letter.pdf` (gitignored, for human review) and `Luke Blaney - Cover Letter.docx` (committed, the submission artefact with ATS-ready filename).
+   Because the source is named `cover-letter.md`, the script outputs `Luke Blaney - Cover Letter.docx` (committed, the submission artefact with ATS-ready filename) by default. A `Luke Blaney - Cover Letter.pdf` (gitignored, for human review) is also produced if `--pdf` is passed.
 
 7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `cover-letter.md` letter source, and the rendered `Luke Blaney - Cover Letter.docx`. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
    > "Add {Company} {Role} cover letter"
@@ -247,9 +248,7 @@ Tell Luke:
 
 - **File path** of the letter source (`~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md`)
 - **Path of the committed .docx**: `…/{role-slug}/Luke Blaney - Cover Letter.docx` — submission-ready filename, upload as-is to the ATS
-- **Path of the .pdf**: `…/{role-slug}/Luke Blaney - Cover Letter.pdf` (gitignored, alongside the .md) — for email attachment or visual review
-- **Path of the committed .docx** (same directory, same basename) — this is the file to upload to the ATS
-- **Path of the .pdf** (gitignored, alongside the .md) — for human review or email-attachment use
+- (Mention the `--pdf` flag only if Luke asked for a PDF; default is docx-only.)
 - **Word count** of the final letter
 - **Library blocks used** — which opener, which story, which current-focus variant
 - **Upstream propagation that happened** — list each commit that landed in `lukeblaney_cv` or `~/.claude` as part of the session, with a one-line summary of why

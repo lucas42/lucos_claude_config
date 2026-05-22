@@ -384,11 +384,12 @@ Luke Blaney
 ~/sandboxes/lukeblaney_cv/render-tailored.sh ~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cover-letter.md
 ```
 
+The script renders the `.docx` only by default — that's the canonical submission artefact for every ATS Luke has encountered. Pass `--pdf` (before the markdown path) only when an application or recipient specifically asks for a PDF; the PDF is gitignored either way.
+
 Outputs (in the role-slug directory):
 - `Luke Blaney - CV.docx` (committed, ATS-ready submission name)
-- `Luke Blaney - CV.pdf` (gitignored, for human review)
 - `[LETTER]` `Luke Blaney - Cover Letter.docx` (committed)
-- `[LETTER]` `Luke Blaney - Cover Letter.pdf` (gitignored)
+- With `--pdf`: `Luke Blaney - CV.pdf` / `Luke Blaney - Cover Letter.pdf` (both gitignored)
 
 ### Commit
 
@@ -456,7 +457,7 @@ Targets:
 - **cid / ligs / hyphens**: all 0 (non-negotiable — if any are >0 the geometry/header is broken).
 - **JD keywords**: all top-tier keywords present.
 
-(The LaTeX-PDF (`Luke Blaney - CV.pdf`) co-output from `render-tailored.sh` is for human review only — its page count is not authoritative for the submission.)
+(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked; even then it's for human review only and its page count is not authoritative for the submission.)
 
 ## Step 15: Report back
 
@@ -465,13 +466,12 @@ Tell Luke:
 **CV artefacts**:
 - Source path: `~/sandboxes/lukeblaney_cv_tailored/orgs/{company-slug}/{role-slug}/cv.md`
 - ATS upload (.docx): `…/Luke Blaney - CV.docx`
-- PDF (gitignored): `…/Luke Blaney - CV.pdf`
 - Page count, word count, ATS metrics, JD keyword check result
+- (Mention the `--pdf` flag only if Luke asked for a PDF; default is docx-only.)
 
 **`[LETTER]` Letter artefacts**:
 - Source path: `…/cover-letter.md`
 - ATS upload (.docx): `…/Luke Blaney - Cover Letter.docx`
-- PDF (gitignored): `…/Luke Blaney - Cover Letter.pdf`
 - Word count, library blocks used (opener, story, current-focus variant)
 
 **Joint positioning summary** — what was decided at Step 8:
