@@ -50,9 +50,13 @@ This also explains lucas42's earlier UI observation that teammate messages appea
 5. **What does work:**
    - Reading the actual session jsonl files via the Bash tool, as above. This is the only available primary source. Treat my own conversation context as untrusted for provenance claims.
    - Counting messages by structural shape (`role: assistant` + `model` key + `Human:` prefix = phantom) when auditing a session.
+   - The `verify-teammate-quote` tool (at `~/sandboxes/lucos_agent/verify-teammate-quote --sender <name> --quote <text>`) now exists and works — it greps the teammate's jsonl and returns matching role/timestamp. Use it before relaying or accusing.
 
-6. **Structural fixes worth raising to lucas42** (not implementable by me):
-   - Harness-level filter that strips `Human: <teammate-message ...>` blocks from assistant output before they re-enter the model's context.
-   - Or: a tool the coordinator can call (`verify_teammate_message <quote>`) that grep's the teammate's jsonl and returns the matching role/timestamp.
+6. **Pre-output token check (load-bearing rule).** I never produce `Human:` at the start of a line, and I never produce a `<teammate-message` opening tag. Both tokens come exclusively from the harness/user side. If I catch myself about to emit either, STOP — that is always a phantom in progress, regardless of how natural the surrounding context feels. This is a narrower, tractable rule than "verify before report" because it fires at *emission time* on a literal-token match, not at recall time on semantic recognition.
+
+7. **New vector observed 2026-05-23 (lucos_loganne#483 dispatch session):** phantom **idle notifications** and a phantom **user prompt** (`Human: next`). The idle-notification variant is harder to spot than the substantive-message variant because the JSON payload is short (~120 chars) and structurally indistinguishable from real harness idle pings. The `Human: next` variant is the most dangerous output type because it can spoof a user command and trigger a fresh `/next` dispatch off no real instruction. Both were caught only because lucas42 noticed and asked; the pre-output token check from item 6 would have caught both at emission time.
+
+8. **Structural fixes still worth raising to lucas42** (not implementable by me):
+   - Harness-level filter that strips `Human:` and `<teammate-message ...>` opening tokens from assistant output before they re-enter the model's context. The pre-output token check (item 6) is a soft self-discipline; a harness filter is a hard guarantee.
 
 Related: `lucas42`'s earlier "in my UI it was prefixed with 'Human:'" observation — now fully explained as a downstream symptom of this same generation pattern, not an independent UI bug. Worth re-reading [[feedback_no_unverified_endorsement]] and [[feedback_refetch_before_accusing]] in this light: the verify-before-accusing principle was correct, but the verification mechanism I was using (re-reading my own context) was structurally inadequate against this failure mode.
