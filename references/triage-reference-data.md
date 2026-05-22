@@ -140,7 +140,7 @@ You **do** need to set status to the correct value immediately after adding (sin
 - **Every triage action MUST update the project board.** No exceptions.
 - Always call `addProjectV2ItemById` first (idempotent safety net).
 - Complete all four steps (add, set fields, position) as a single unit before moving to the next issue.
-- **Always reposition items by priority.** Critical/High: move to top (no `afterId`). Medium: place after the last High item (or move to top if unknown). Low: leave at bottom.
+- **Always reposition items by priority, then by strategic tier within priority.** Critical/High: move to the correct position among same-priority items — strategic tier #1 work above tier #2 above no-tier (see `~/sandboxes/lucos/docs/priorities.md` for current tiers). Medium: place below the last High item, then ordered by strategic tier within Medium. Low: ordered by strategic tier within Low, bottom otherwise. Use `afterId` set to the item that should immediately precede yours, or omit `afterId` to move to the absolute top.
 - **Always paginate board queries.** The board has 180+ items; use `pageInfo.hasNextPage` and cursors.
 - **DANGER: `updateProjectV2Field` with `singleSelectOptions` regenerates ALL option IDs.** Avoid this mutation.
 

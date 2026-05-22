@@ -12,7 +12,7 @@ Consult the **strategic priorities file** at `~/sandboxes/lucos/docs/priorities.
 
 Issues without a Priority field set have **not yet been prioritised** — this is distinct from Medium.
 
-When picking up work, agents process issues in priority order: High first, then Medium, then Low. Within the same priority level, oldest issues first.
+When picking up work, agents process issues in priority order: High first, then Medium, then Low. Within the same priority level, sort by **strategic tier** (active priority #1 above #2 above no-tier — see `~/sandboxes/lucos/docs/priorities.md`), then by **age** (oldest first) within the same tier.
 
 ## Re-assessment after lucas42 input
 
