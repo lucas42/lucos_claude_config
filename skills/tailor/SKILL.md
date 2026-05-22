@@ -234,7 +234,7 @@ Draft all four paragraphs in a single pass, applying the joint positioning decis
 Before showing Luke the final assembled output, run the checks below. Fix any failure before showing.
 
 **CV**:
-- **Page count**: hard limit 3, target ~2. Verified against the **.docx** (via LibreOffice round-trip — see Step 14), NOT the LaTeX-PDF. The .docx is the document under the constraint because it's what gets submitted; the LaTeX-PDF's page count can differ by a page or more. Anything over 3 → propose further cuts before showing Luke. If at exactly 3 → ask Luke whether to keep at 3 or push toward 2 (don't unilaterally cut more, since pushing to 2 may require dropping JD-relevant content). See [[cv-page-count]].
+- **Page count**: hard limit 3, target ~2. Verified against the **.docx** (via LibreOffice round-trip — see Step 14), NOT the LaTeX-PDF. The .docx is the document under the constraint because it's what gets submitted; the LaTeX-PDF's page count can differ by a page or more. Anything over 3 → propose further cuts before showing Luke. **If at 3 or fewer pages, proceed without asking** — 3 is within the hard limit and Luke has confirmed it's acceptable; don't make him re-confirm on every variant. See [[cv-page-count]].
 - ATS metrics (from Step 14 verification): `cid` / `ligs` / `hyphens` all 0 (non-negotiable)
 - JD top keywords: all present in the rendered text
 
@@ -453,7 +453,7 @@ The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a de
 Targets:
 - **DOCX pages**: hard limit 3, target ~2.
   - If 4+: propose cuts and re-render before showing Luke. Standard cuts in priority order: drop Publications, drop Talks & Panels (or trim to 2 entries), trim Architect-Content bullets to 4, collapse Platform Architect to intro + 2 bullets, tighten Career Break, combine Director + Interim VP entries if a single intro line works.
-  - If exactly 3: ask Luke whether to keep at 3 or push toward 2. Don't unilaterally cut more — pushing to 2 may require dropping JD-relevant content (Talks & Panels, multi-bullet roles) and Luke should decide the trade-off.
+  - **If 3 or fewer: proceed without asking.** 3 is within the hard limit and acceptable. Don't make Luke re-confirm on every variant.
 - **cid / ligs / hyphens**: all 0 (non-negotiable — if any are >0 the geometry/header is broken).
 - **JD keywords**: all top-tier keywords present.
 

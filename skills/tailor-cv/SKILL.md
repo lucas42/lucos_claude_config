@@ -225,7 +225,7 @@ The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a de
 Targets:
 - **DOCX pages**: hard limit 3, target ~2.
   - If 4+: propose cuts and re-render before showing Luke. Standard cuts in priority order: drop Publications, drop Talks & Panels (or trim to 2 entries), trim Architect-Content bullets to 4, collapse Platform Architect to intro + 2 bullets, tighten Career Break, combine Director + Interim VP entries if a single intro line works.
-  - If exactly 3: ask Luke whether to keep at 3 or push toward 2. Don't unilaterally cut more — pushing to 2 may require dropping JD-relevant content (Talks & Panels, multi-bullet roles) and Luke should decide the trade-off.
+  - **If 3 or fewer: proceed without asking.** 3 is within the hard limit and acceptable. Don't make Luke re-confirm on every variant.
 - **cid / ligs / hyphens**: all 0 (these are non-negotiable; if any are >0 the geometry/header is broken)
 - **JD keywords**: all top-tier keywords present
 
