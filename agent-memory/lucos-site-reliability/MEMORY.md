@@ -3,6 +3,7 @@
 ## Standing patterns from 2026-05-13 scheduled-jobs blackout
 
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
+- [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — link 4 (container) empty does not imply link 1 (lucos_creds) missing; usually it's link 3 (docker-compose.yml). Walk in order. lucas42 corrected me 2026-05-23 on lucos_loganne#490.
 
 ## arachne ingestor surprises
 

@@ -20,13 +20,23 @@ source ~/sandboxes/lucos_agent/.env && \
 
 ## Investigating missing env vars in a container
 
-Check **both** lucos_creds **and** `docker-compose.yml`. A credential can exist in lucos_creds but never reach the container if `docker-compose.yml` doesn't pass it through in `environment:`.
+The chain from a secret to a running container has **four** links, and any one of them can independently be the gap:
+
+1. **lucos_creds** holds the value per environment (development / production).
+2. **CI build / scp** writes the `.env` file into the deployment directory at deploy time.
+3. **`docker-compose.yml`** must reference the var (typically as a bare name under `environment:`) so the compose env-file → container-env passthrough fires.
+4. **Container** sees the var at runtime.
+
+When you observe link 4 is empty (`docker exec printenv NAME` returns empty), **verify all the preceding links before concluding which one is the gap** — never jump from "container env empty" straight to "lucos_creds is missing the value". The most common cause of an empty link 4 is actually link 3 (var not in `docker-compose.yml`'s `environment:` block), not link 1 — and a missing link 3 is a code-repo change anyone can do via PR, whereas a missing link 1 needs lucas42 to write a production credential. Misrouting these wastes a creds-write ask.
 
 Diagnostic sequence:
 
-1. Check container env: `docker inspect <name> --format '{{range .Config.Env}}{{println .}}{{end}}'`.
-2. If absent, check `docker-compose.yml` in the GitHub repo to see if the variable is wired up.
-3. Only if missing from both should you conclude it's absent from lucos_creds.
+1. **Container env (link 4):** `ssh <host> "docker exec <name> sh -c 'echo \${VAR_NAME:+set} \${#VAR_NAME}'"` (avoid printing the value).
+2. **Compose passthrough (link 3):** `grep VAR_NAME ~/sandboxes/<service>/docker-compose.yml`. If the var is not listed under `environment:`, this is the gap — file a one-line PR to add it. **Stop here.**
+3. **.env at deploy time (link 2):** harder to inspect directly; usually inferable from CI build logs. If link 3 is fine and link 1 is fine but link 4 is still empty, this is the next place to look.
+4. **lucos_creds (link 1):** only conclude this is the gap when 2 and 3 have been verified present. Writing production creds requires lucas42 — so be sure before routing there.
+
+The same fix-once-fail-everywhere pattern lives in the [pattern_three_stage_env_var_wiring.md](../agent-memory/lucos-site-reliability/pattern_three_stage_env_var_wiring.md) memory; use this as the live checklist when symptoms match.
 
 ## Investigating "which lucos service is sending these requests?"
 
