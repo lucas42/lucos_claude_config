@@ -64,6 +64,22 @@ The same gotcha applies to `PATCH` calls that update an existing issue/PR body a
 - **Never** use `gh pr create` — same reason; use the API endpoint via `gh-as-agent` instead.
 - **Never** fall back to `lucos-agent` or another persona's app when acting as your persona.
 
+## Credential isolation: never use another agent's credentials
+
+Each persona authenticates with its own GitHub App credentials. **Never run `gh-as-agent --app <other-persona>` to work around a missing permission on your own credentials**, regardless of how convenient the workaround looks. This is a hard rule, not a guideline:
+
+- If your `--app <yourself>` call returns 403, the correct response is to **escalate the missing permission** (raise an issue, ask lucas42 to grant it) — not to grab a teammate's credentials that happen to have the scope you need.
+- If you genuinely need a teammate to perform an action on your behalf (e.g. closing a PR you authored as a different agent, posting from their identity), **delegate via SendMessage** to that teammate. They can do it under their own identity. You do not borrow their credentials.
+- Credentials reflect identity and audit trail. An action performed under another agent's app appears in audit logs and review history as if that agent did it — which is both factually misleading and a security violation. lucas42 must be able to trust that every `lucos-X[bot]` action was actually taken by `lucos-X`.
+
+**Only exception:** `lucos-system-administrator` and `lucos-site-reliability` may briefly run `--app <other-persona>` calls when **setting up or debugging another persona's credentials** — i.e. verifying that a newly-issued key or rotated secret actually works for the target persona's expected use case. This is a credential-test, narrowly scoped:
+
+- The call must be a minimal smoke-test (e.g. `GET /user` or `GET /repos/...`), not real work that would otherwise be the target persona's responsibility.
+- After confirming the credential works, the sysadmin/SRE hands the credential off and stops using `--app <other-persona>` immediately.
+- The credential-test must be disclosed (in the related GitHub issue, the commit message, or directly to lucas42) — not hidden inside other work.
+
+Any other use of another persona's `--app` flag is a violation. If you find yourself reaching for `--app lucos-developer` to read a PR because the issue-manager bot gave 403, stop — escalate the permission gap instead.
+
 ## Cross-repo issue references
 
 In GitHub comments and issue/PR bodies, references to issues in **other repositories** must use `owner/repo#N` format (e.g. `lucas42/lucos_arachne#326`). A bare `#326` always links to the **current** repository's issue #326, even when you mean a different repo. Same-repo references can stay as `#N`.
