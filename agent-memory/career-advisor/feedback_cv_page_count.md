@@ -25,6 +25,6 @@ When generating a tailored CV variant for Luke:
 2. Count pages on the resulting `Luke Blaney - CV (from docx).pdf` using pdfminer — that's the .docx's true page count for submission purposes.
 3. Add `Luke Blaney - CV (from docx).pdf` to `.gitignore` — it's a verification artefact, not a deliverable.
 4. If page count > 3: propose cuts and re-render before showing Luke the result. Pursue the standard cuts first ([[cv-variant-content-rule]], drop Talks & Panels, drop Publications, trim oldest-role bullets) before touching senior-role content.
-5. If page count ≤ 3: proceed without asking. 3 is within the hard limit and Luke has already stated 3 is acceptable; don't make him re-confirm it on every variant. 2 is a target, not a gate. Stated 2026-05-23 after I asked Luke to choose between 3 and 2 on the Anthropic Senior SWSE variant and he flagged that the question was unnecessary.
+5. If page count ≤ 3: proceed without asking. 3 is within the hard limit and Luke has already stated 3 is acceptable; don't make him re-confirm it on every variant. 2 is a target, not a gate. Stated 2026-05-23 after I asked Luke to choose between 3 and 2 on a senior IC variant and he flagged that the question was unnecessary.
 
 **Related**: [[cv-skills-section]], [[cv-variant-content-rule]], [[cv-rebuild]].

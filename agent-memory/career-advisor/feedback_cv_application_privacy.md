@@ -28,6 +28,15 @@ Stated 2026-05-20. Tightened from a narrower "currently applying to" rule after 
 
 Before writing any commit message, memory file content, or repo file content, scan for employer names. If any are present and not on the exempt list, **stop and ask Luke**. Don't assume "this one's fine because [reason]" — the default is to redact.
 
+**Critical: the scan applies to EVERY public-repo write, not just at submission-sweep time.** The submission memory sweep ([[submission-memory-sweep]]) includes a privacy scan as its final pre-commit step, but that's a backstop — by the time you're at submission, mid-session writes may already have leaked. The scan must run BEFORE each individual commit to `~/.claude/agent-memory/` or `~/.claude/skills/` (or any other public repo), not only at sweep time. Specifically:
+
+- Writing a new feedback memory mid-session → scan it before committing.
+- Updating an existing memory mid-session (e.g. appending a new defensible skill, framing rule, or voice nuance during a per-application consultation) → scan the addition before committing.
+- Updating a skill file (e.g. /tailor, /tailor-cover-letter) with example-based language → scan for employer names in the examples.
+- Writing a commit message that describes per-application work → scan the message body before committing.
+
+Stated 2026-05-23 after I leaked the target employer's name into 3 memory files and 2 commit messages during the form-probe-driven /tailor work, on the implicit (wrong) assumption that the privacy scan only applied at submission sweep. The rule was loaded, but I deferred it until the wrong moment. The correct moment is "before every public-repo write", with the submission sweep as the final backstop catching anything that slipped through.
+
 Replacement framings — two styles, both acceptable; pick whichever fits the example:
 
 **Style A — role-archetype / industry-archetype**:

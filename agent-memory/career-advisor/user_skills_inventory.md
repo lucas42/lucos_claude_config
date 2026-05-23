@@ -104,14 +104,14 @@ Confirmed 2026-05-22. **Conceptually current, not deep hands-on.** Luke is famil
 
 ## AI / LLM platforms — concrete daily-use reference
 
-Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claude (Anthropic API / Claude Code)**. This gives Luke a concrete, daily, hands-on reference point for:
-- Anthropic specifically (for Anthropic applications)
+Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claude (Claude API / Claude Code)**. This gives Luke a concrete, daily, hands-on reference point for:
+- The LLM-platform vendor itself (for applications to that specific vendor — Acme AI Lab in worked examples)
 - Generic "experience using LLM platforms / GenAI tools" any JD asks for
 - Agentic-AI guardrails framing (the work *is* on top of Claude)
 
 **Where it can appear**:
-- Cover-letter "why this company" paragraph for Anthropic applications: the lucos_agent fleet IS Claude, so the work of wrapping deterministic structure around a non-deterministic actor is Claude-specific in Luke's hands today.
-- CV Career Break section / Skills under Generative AI: acceptable to mention the Claude/Anthropic API as the underlying platform when the JD wants concrete tooling.
+- Cover-letter "why this company" paragraph for applications to the LLM-platform vendor itself: the lucos_agent fleet IS Claude, so the work of wrapping deterministic structure around a non-deterministic actor is the vendor's own product in Luke's hands today.
+- CV Career Break section / Skills under Generative AI: acceptable to mention Claude (or the relevant LLM API) as the underlying platform when the JD wants concrete tooling.
 
 **Don't overclaim**:
 - Not a Claude API power-user in the "I've shipped a Claude-API-backed product" sense — this is personal-estate orchestration work.
