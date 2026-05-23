@@ -128,3 +128,6 @@ Run `verify-teammate-quote --sender <name> --quote <text>` before quoting any te
 
 ## Security tooling workflow changes: confirm lucos-security sign-off first
 Before applying any workflow change that wires in a security tool config (CodeQL config-file, secret-scanning exclusions, etc.), check the developer consulted lucos-security. See `feedback_security_tooling_check.md`.
+
+## hosts.yaml: ipv4_nat ≠ that host's IP
+`ipv4_nat` is the shared NAT gateway address (e.g. xwing's IP). SSH to `ipv4_nat` reaches the NAT host, not the named host. Only `ipv4` (no suffix) is a direct address. Salvare and virgon-express have no direct IPv4 — only IPv6. See `hosts-ipv4-nat.md`.
