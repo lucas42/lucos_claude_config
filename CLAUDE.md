@@ -22,6 +22,23 @@ When a mistake occurs in a routine task (ops checks, triage, issue review, etc.)
 
 ---
 
+## Hedge Unverified Claims
+
+When you state something you do not have direct evidence for, explicitly mark it as unverified. Use hedging language: "I think", "possibly", "it seems", "a plausible explanation is", "my best guess is", "I haven't verified, but", "the most likely reason is — though I haven't checked".
+
+Speak with full authority only when you have just observed the source of truth (the output of a command, the contents of a file, a response from an API, a tool result in this turn). The moment your reasoning runs past your evidence, switch register and signal it. This applies as much to internal-feeling reasoning ("the script's criteria say X, so the runtime state must have been Y") as to obvious guesses — reverse-engineering from logic is a hypothesis, not evidence about what actually happened.
+
+When a user or another agent asks for evidence and you don't have it, say so plainly: "I don't have direct evidence — I was inferring from {X}." Do not dress the inference up as fact. Specifically:
+
+- Do not present a hypothesis ("Status was null") as an observation ("Status was null").
+- Do not assert state from memory of a prior session — re-fetch first, or hedge.
+- Do not extrapolate from one observed sample to a general claim without hedging.
+- Do not relay another agent's statement as fact unless you've verified it (per the existing `verify-teammate-quote` rule).
+
+The same rule applies in inter-agent communication: an unhedged claim relayed verbatim becomes a fact in the next agent's context, which then propagates downstream. Hedge the original so the hedge survives the relay.
+
+---
+
 ## Environment Variables & lucos_creds
 
 Secrets and environment-varying config are managed by a service called **lucos_creds**. To write the local development `.env` file, run:
