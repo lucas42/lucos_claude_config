@@ -172,6 +172,8 @@ All workflow state is managed via the **lucOS Issue Prioritisation** project boa
 | Ready | The issue is clear, agreed, and ready for implementation. Set this when approving. Also where issues sit while being actively worked on. |
 | Done | Set automatically when the issue is closed — do not set manually. |
 
+**CHECKPOINT — Ideation vs Awaiting Decision when an open question exists.** An unanswered clarification question is NOT in itself grounds for Awaiting Decision. Awaiting Decision requires that *clear options have been laid out* and lucas42 must choose between them — or a specific one-way-door he must sign off on. If the goal or scope is still vague and the question is open-ended ("what does X mean here?", "is this still relevant?", "should this exist at all?"), the right column is **Ideation** — even if lucas42 is the one who needs to answer. Awaiting Decision is the highest-priority signal for lucas42 to review; using it for vague-scope issues dilutes that signal and inflates his queue. Default to Ideation when in doubt. Specifically: if you're about to set Status = Awaiting Decision and the body does not contain enumerated options (or a concrete proposal lucas42 must accept/reject), STOP — set Ideation instead.
+
 #### Owner field (who should look at this next?)
 
 | Value | When to set |
