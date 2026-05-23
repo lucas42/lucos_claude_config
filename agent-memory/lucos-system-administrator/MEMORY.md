@@ -131,3 +131,9 @@ Before applying any workflow change that wires in a security tool config (CodeQL
 
 ## hosts.yaml: ipv4_nat ≠ that host's IP
 `ipv4_nat` is the shared NAT gateway address (e.g. xwing's IP). SSH to `ipv4_nat` reaches the NAT host, not the named host. Only `ipv4` (no suffix) is a direct address. Salvare and virgon-express have no direct IPv4 — only IPv6. See `hosts-ipv4-nat.md`.
+
+## Docker fixed-cidr-v6 IPAM persistence — flush network/files/ to pick up changes
+`fixed-cidr-v6` in daemon.json only applies on bridge creation. Flush `/var/lib/docker/network/files/` + restart to change it. See `docker-fixed-cidr-v6-ipam-persistence.md`.
+
+## Linux IPv6 route metric: linkdown at metric 256 beats UP at metric 600
+Lower metric wins even if linkdown. docker0 with public /64 silently swallows all traffic. See `linux-ipv6-route-metric-linkdown.md`.
