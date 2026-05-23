@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-22
+container_status: 2026-05-23
 resource_checks: 2026-05-21
 syslog_review: 2026-05-21
 software_updates: 2026-05-21
 sandbox_drift: 2026-05-21
-repos_dashboard: 2026-05-22
+repos_dashboard: 2026-05-23
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1063,6 +1063,16 @@ certificate_expiry: 2026-05-07
 **Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
 
 **Repos dashboard**: 0 failing conventions. Completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-05-23 (checks 1 + 6 due; weekly checks last ran 2026-05-21 — not due; monthly checks last ran 2026-05-07 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 1 failing convention — `lucos_media_seinn` `required-status-checks-coherent`: "Analyze (javascript)" not reported on recent Dependabot PRs. Rerun confirmed real failure (not stale cache). Issue #468 already auto-raised by audit system. Ongoing CodeQL stale check name issue, noted for dispatcher.
 
 **No new issues raised.**
 
