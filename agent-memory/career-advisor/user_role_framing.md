@@ -17,6 +17,18 @@ When the JD asks for "manager of managers" or formal EM-management experience:
 - **Don't claim**: managing formal Engineering Managers, multi-layer reporting hierarchy
 - **Can claim**: director-level scope, line-management of a mixed-discipline team (~12 people: engineers, risk analysts, IT governance), multi-team responsibility, mentorship
 
+### BCDR / crisis-management responsibility (Cyber Security Director)
+
+Confirmed 2026-05-23. As Cyber Security Director, Luke was part of the **company-wide crisis management team responsible for business-continuity planning across the organisation**. This is the most senior crisis-management seat in his career and the strongest BCDR / business-continuity evidence point available.
+
+Business continuity has been touched at several earlier points (CMDB rewrites at Platform Architect-OpsIntel; office moves at PE-Reliability Engineering as departmental rep) but the crisis-management-team membership during the Director role is the headline.
+
+**How to apply:**
+
+- For JDs that name **BCDR, business continuity, disaster recovery, crisis management, or compliance automation** as a responsibility (e.g. a developer-platform Deploys-team JD listing "BCDR planning, compliance automation, and security upgrades"): foreground the crisis-management-team line in the Director-Cyber bullet. The default cv-extended.md phrasing is "contributed to a new company-wide crisis management team"; sharpen for BCDR-focused JDs to "was part of the new company-wide crisis management team responsible for business-continuity planning across the organisation".
+- For JDs that don't specifically name BCDR / business continuity: keep the cv-extended.md default phrasing.
+- The earlier CMDB-rewrite / office-move touchpoints are not strong enough to mention on their own; subordinate to the Director-role crisis-management evidence unless a JD specifically asks about pre-crisis-management-team BC/DR experience.
+
 ## Don't overclaim regulatory experience from FT
 
 The UK media industry is laughably under-regulated. Stated 2026-05-21 during a fintech Staff IC consultation (Acme Invest). Despite the FT's profile, Luke's tenure there did **not** involve operating under heavy regulatory burden in the way fintech / banking / pensions / healthcare roles do.

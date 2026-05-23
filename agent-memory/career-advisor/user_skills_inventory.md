@@ -11,7 +11,9 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **Comfortable, defensible on a CV**: Python · JavaScript / Node.js · PHP · Golang · Unix/Linux
 
-**Dabbled, will not claim**: Ruby · Java · Haskell · Prolog (and likely others — confirm before claiming if a JD requires a specific one).
+**Dabbled, will not claim**: Java · Haskell · Prolog (and likely others — confirm before claiming if a JD requires a specific one).
+
+**Ruby — hedge, don't list in Skills**: confirmed 2026-05-23 during a developer-platform Staff IC consultation. Luke has some FT exposure (enough to mention as adjacent if a JD asks) but would NOT pass a hard Ruby code-screen. Don't put Ruby in any CV's Skills section. For JDs that name Ruby as a primary language (the consultation's JD said "primarily in Go and Ruby"), treat it as a real gap with honest framing — adjacent only, don't claim.
 
 ## Web frameworks
 
@@ -34,6 +36,8 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Fuseki** (triplestore / SPARQL)
 - **Typesense** (search)
 
+**FT observability stack (for reference)**: confirmed 2026-05-23. The FT's observability stack across Luke's tenure was a mix of **Nagios, CloudWatch, Graphite, Grafana, and Prometheus**. **Datadog was NOT used** at the FT — don't claim Datadog as defensible based on FT-team experience. If a JD requires Datadog specifically, treat as a real gap (Luke ran the Observability team, so adjacent monitoring-tool fluency is defensible, but the specific Datadog product is not in his fingers).
+
 **Where it can appear**:
 - The "familiarity with SQL and NoSQL, and when to use each" type of JD ask: yes, fluently. Multiple NoSQL types across multiple roles.
 - In a Skills section: yes, listed under Data & Platform / Databases. Acceptable to enumerate without claiming hands-on operations of all of them.
@@ -47,6 +51,12 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 ## Frontend / UI
 
 **Will not claim**: React (general JavaScript / Node.js is fine, but React specifically is not in Luke's history)
+
+## Configuration management / IaC
+
+**Puppet — defensible**: confirmed 2026-05-23. Luke used Puppet extensively in two FT roles: Labs Developer at FT Labs (Dec 2011 – Dec 2014) and Integration Engineer at FT Strategic Products (Jan 2015 – Nov 2015). Acceptable to list in Skills under Programming & Systems for JDs that name Puppet. The Varnish User Group Berlin 2013 talk "One VCL to rule all our environments" specifically discusses Puppet-driven config consolidation across environments and is the strongest public reference point for this work.
+
+**Other IaC tools (Terraform, Ansible, Chef, CloudFormation)**: not on the inventory; ask Luke before claiming if a JD requires a specific one.
 
 ## Containers / orchestration
 
@@ -66,6 +76,10 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Must NOT claim**: active hands-on AWS operations, current production AWS exposure, day-to-day `aws cli` / Terraform / CloudFormation work.
 - **Where it can appear**: Skills section under Cloud & Platform; Integration Engineer role bullet (where the hands-on work happened).
 - **Where it must NOT appear**: as a current / recent operational tool, or in a Career Break bullet claiming current AWS use (career-break agent fleet is self-hosted, not on AWS).
+
+**Azure — will not claim**: confirmed 2026-05-23 during a Staff IC consultation for a Microsoft-owned employer. Luke has no Azure exposure on record. For Microsoft-owned employers (where Azure is often the primary cloud), the honest framing is "AWS-architecturally at FT, cloud-native architecture generally" — don't list Azure in Skills, don't claim hands-on Azure use. The reliability + platform + container-orchestration framing carries the JD signal without needing to claim a specific Microsoft cloud.
+
+**GCP — will not claim**: not on the inventory. Same rule as Azure — if a JD requires GCP, treat as a real gap.
 
 ## Methodologies / engineering practices
 
