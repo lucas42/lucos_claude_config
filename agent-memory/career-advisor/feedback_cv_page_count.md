@@ -27,4 +27,8 @@ When generating a tailored CV variant for Luke:
 4. If page count > 3: propose cuts and re-render before showing Luke the result. Pursue the standard cuts first ([[cv-variant-content-rule]], drop Talks & Panels, drop Publications, trim oldest-role bullets) before touching senior-role content.
 5. If page count ≤ 3: proceed without asking. 3 is within the hard limit and Luke has already stated 3 is acceptable; don't make him re-confirm it on every variant. 2 is a target, not a gate. Stated 2026-05-23 after I asked Luke to choose between 3 and 2 on a senior IC variant and he flagged that the question was unnecessary.
 
+**Advisory — headless render can be off-by-one vs other word-processors.** Observed 2026-05-23 on a developer-platform Staff IC variant: the same `.docx` rendered as 3 pages in headless LibreOffice (the rule's authoritative measure) but 4 pages in Apple Pages 15.2.1, with the Publications section spilling onto the extra page. Cutting Publications brought Pages's view down to 3 pages while headless stayed at 3. Microsoft Word may behave similarly to Pages (untested).
+
+This doesn't change the rule (≤ 3 in headless = ship without asking), but it's worth knowing that what Luke sees in his viewer and what a recruiter sees in Word may exceed the headless count by a page. Variants where headless shows content well-distributed across page 3 are higher-risk for off-by-one spill than variants where page 3 is sparsely filled. If Luke flags a discrepancy after shipping, the first cut to consider is the Publications section (lowest content-relevance) — it tends to be the section that spills.
+
 **Related**: [[cv-skills-section]], [[cv-variant-content-rule]], [[cv-rebuild]].
