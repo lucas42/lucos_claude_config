@@ -328,11 +328,14 @@ cd ~/sandboxes/lukeblaney_cv && git checkout main && git pull --ff-only origin m
 
 The repo accepts non-career-advisor commits (CircleCI / Dockerfile / Docker-image work) via a PR workflow, so the local working copy can end up on a feature branch or behind `origin/main`. Checking out `main` + fast-forward-only pull prevents accidentally committing onto a stale feature branch or building on out-of-date state. The `lukeblaney_cv_tailored` repo doesn't have this issue — no PR workflow, career-advisor is the only writer.
 
+**Privacy gate** (applies to every commit to a public repo, not just at submission sweep): per [[cv-application-privacy]], scan the diff for employer names before each individual commit to `~/.claude/agent-memory/`, `~/.claude/skills/`, `~/sandboxes/lukeblaney_cv/`, or any other public repo. Replace target-employer mentions with fictional placeholders ("Acme Corp", "Acme AI Lab", "Acme Invest" — whichever encodes the industry signal). Tool / product names that are already public information (e.g. "Claude", "Anthropic API" as a product, "GitHub", "Okta") may stay; what gets redacted is anything that signals Luke is *applying to* the named employer. The submission sweep ([[submission-memory-sweep]]) runs the same scan as a final backstop, but per-commit scanning is the primary gate — by submission time, mid-session leaks are already public.
+
 For each piece of new content surfaced:
 
 1. **New defensible skill / language / methodology Luke confirmed**
    → append to `~/.claude/agent-memory/career-advisor/user_skills_inventory.md`
    → default-save with a one-line notification
+   → apply the privacy gate before the auto-commit fires
 
 2. **New framing / level-positioning rule Luke confirmed**
    → append to `~/.claude/agent-memory/career-advisor/user_role_framing.md`
