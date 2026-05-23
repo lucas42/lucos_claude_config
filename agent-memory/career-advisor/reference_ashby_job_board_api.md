@@ -19,6 +19,7 @@ Ashby's careers pages at `https://jobs.ashbyhq.com/{org}/{job-id}` are client-re
 **Other ATS platforms** (capture as discovered):
 - *Greenhouse*: typically `https://boards-api.greenhouse.io/v1/boards/{org}/jobs/{job-id}` — public, no auth.
 - *Lever*: typically `https://api.lever.co/v0/postings/{org}/{posting-id}` — public, no auth.
-- *Workday / iCIMS / Taleo*: usually session-bound — no simple public API. May need raw HTML scrape with a different user agent, or ask Luke to paste the JD content.
+- *Workday / iCIMS / Taleo*: usually session-bound — no simple public API for application-form structure. May need raw HTML scrape with a different user agent, or ask Luke to paste the JD content.
+- *Jibe Apply (front-end for iCIMS)*: hosts at `{org}.jibeapply.com/jobs/{id}`. The page is client-rendered but the **full JD content is embedded** as `<script type="application/ld+json">` (schema.org JobPosting), extractable via `curl` + regex without auth — `directApply: true` in the JSON confirms iCIMS-direct-apply. The application form itself is session-bound (no public API). Observed 2026-05-23 on one Staff IC submission: the post-CV-profile questions were short-form / single-word answers, no free-text "Why X?" / "Tell us about a project" textareas — so a CV-only `/tailor` artefact set was sufficient. Single data-point; other iCIMS deployments may include letter-shaped textareas.
 
 Related: [[cover-letter-rebuild]].
