@@ -54,6 +54,8 @@ So documentation-style placeholders in a comment body (e.g. ``GET /repos/{owner}
    rm "$BODY_FILE"
    ```
 
+   The `@`-prefix tells `gh api` to read the field's value from the file. **Do not use `--field body-file=$FILE` or `--field body=$FILE`** — those send the literal path string (or with `body-file=`, silently create a `body-file` field the GitHub API ignores), so the issue/PR/comment gets created with `body: null`. The wrapper does not error; the failure is silent until you re-fetch the body and find it empty.
+
 2. **Avoid the placeholder syntax in prose entirely** — name the endpoint by its docs title (e.g. "the List repository Dependabot secrets endpoint") rather than the path template.
 
 The same gotcha applies to `PATCH` calls that update an existing issue/PR body and to comments. See [`references/issue-creation.md`](issue-creation.md) for the canonical issue-creation patterns.
