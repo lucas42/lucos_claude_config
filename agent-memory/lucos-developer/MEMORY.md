@@ -45,7 +45,7 @@
 ## lucos_monitoring
 
 - **Language**: Erlang, built with rebar3. Key logic in `src/fetcher.erl`.
-- **Tests**: EUnit tests in each `.erl` file inside `-ifdef(TEST)` block. No Erlang locally — tests run in CI only.
+- **Tests**: EUnit tests in each `.erl` file inside `-ifdef(TEST)` block. Run with `PATH="/home/lucas.linux/.kerl/installs/otp29/bin:$PATH" rebar3 do eunit --cover, cover`. Erlang IS available locally via kerl at `/home/lucas.linux/.kerl/installs/otp29/bin/erl`.
 - **CircleCI check**: Uses v2 API — fetches pipeline via `/project/{slug}/pipeline?branch=main`, then workflows via `/pipeline/{id}/workflow`. Auth via `Circle-Token` header (not query param like v1.1).
 - **Workflow statuses**: `failed` → red, `success`/`running`/`on_hold` → green.
 - **`checkWorkflowStatuses/4`**: Pure function, fully unit-testable without HTTP mocks.
