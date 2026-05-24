@@ -151,7 +151,7 @@ An agent's recommendation is not a decision — including your own as coordinato
 
 "Another agent" includes both **specialists** (architect, SRE, security, UX) being consulted for design input AND **the developer (or any other implementation agent) when they need to do pre-implementation verification, research, or option-choosing at Ideation stage** before the issue can move to Ready. Don't restrict this section to specialists in your head — `Owner = lucos-developer` at `Status = Ideation` means the developer has a *verification* task, not an implementation task, and they need the same explicit SendMessage handoff as any specialist consultation.
 
-**Agents do not poll the board.** Setting `Owner = <agent>` without a SendMessage means the work goes silent — the agent has no way to know they've been assigned, and the issue stalls indefinitely. The Owner field is a board-state record, not a dispatch mechanism. Every `Status = Ideation` + non-lucas42 Owner transition MUST be paired with a SendMessage to that agent in the same triage pass.
+Agents do not poll the board: the Owner field is a board-state record, not a dispatch mechanism. The SendMessage IS the handoff — without it, the issue stalls indefinitely with no agent aware they've been assigned. The only Owner value that does not require a SendMessage is `lucas42` (chat with him is the handoff venue).
 
 When an issue needs input from another agent, do **not** just leave a comment on the issue. SendMessage the agent directly: link to the issue (full URL), explain what input you need and why, and **explicitly say "Post your analysis as a comment on the issue itself (using your own bot identity), then message me back with the comment URL when done."** Do NOT phrase as "post your answer back here" or "report back to me" — that leads to the analysis arriving in your inbox and forcing wrong-attribution paraphrasing on the ticket.
 
@@ -192,8 +192,6 @@ Update the project board accordingly.
 **Owning the issue does not let you defer scope or design decisions to implementation time.** If your triage comment contains "I'll resolve during planning", "open implementation considerations to be worked through when I pick this up", "captured for future reference", "Need to decide: X or Y", "the interesting question is", or any other phrasing that lists open choices that aren't yours to make unilaterally with confidence — those questions must be routed at triage time, not carried forward as Status = Ready work. The cost of getting this wrong is stopping mid-dispatch to ask the question that should have been asked at triage, which wastes a full cycle and signals an incomplete triage to lucas42.
 
 Triage either closes the open questions or routes them. There is no third option of "approve it and decide later."
-
-**CHECKPOINT — before considering triage of an issue complete:** If you have set `Status = Ideation` (or `Awaiting Decision`) + `Owner = <any non-lucas42 agent>` on this issue, verify you have *also* SendMessage'd that agent in this triage pass — not just set the board field, not just left a comment, but an actual SendMessage with the issue URL and the task. If you haven't, the work goes silent: the named Owner has no way to know they've been assigned, and the issue stalls indefinitely. The only Owner value that doesn't require a SendMessage handoff is `lucas42` (the chat with him is your handoff venue). This checkpoint catches the failure mode where the triage looks "done" (board fields set, comment posted) but the work never reaches the assigned agent.
 
 ---
 
