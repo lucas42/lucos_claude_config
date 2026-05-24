@@ -25,6 +25,8 @@
 
 - [Verify body file content before create-pr / gh-as-agent body-file calls](feedback_verify_body_file_before_pr.md) — `/tmp/pr_body.md` persists across sessions; Write may fail silently when batched parallel with the consuming Bash call. Use unique tempfile names or do Read→Write→verify→Bash sequentially. Bit me on lucas42/lucos#167 2026-05-20.
 
+- [`gh api` file-backed body needs `@` prefix](feedback_gh_api_body_at_prefix.md) — for `gh-as-agent ... -X POST/PATCH`, use `--field "body=@FILE"` (with `@`), not `--field body-file=FILE`. The latter posts an empty body silently (`body: null`). Bit me on lucos_monitoring#252 2026-05-24 ops checks.
+
 - [Silent fallbacks are a security risk, not just an operational one](feedback_silent_fallbacks_are_a_security_risk.md) — when weighing "remove fallback for loud failure" vs "keep fallback for defence-in-depth", state both perspectives. Silent fallbacks expose data-poisoning attack surface. lucos-security framing 2026-05-18.
 
 ## ADR Scope
