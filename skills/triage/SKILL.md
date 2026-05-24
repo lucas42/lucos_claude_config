@@ -79,6 +79,14 @@ After processing all issues in Step 3, verify that no items remain in the "Needs
 
 **Every issue must end triage in one of these columns: Ideation, Awaiting Decision, Blocked, Ready, or Done.** "Needs Triage" is a transient processing state, not a destination. If anything is still in "Needs Triage" at the end of a triage pass, triage is not complete.
 
+## Step 4.5: Handoff Verification — SendMessage for Every Non-Lucas42 Owner Routed This Pass
+
+For every issue you triaged in Step 3 that ended at Status ∈ {Ideation, Awaiting Decision} with Owner ≠ lucas42, verify you SendMessage'd that agent in this triage pass with the issue URL and ask. Setting the Owner field is board-state bookkeeping — it does not notify the agent. Without the SendMessage, the work goes silent and the issue stalls indefinitely.
+
+For each such issue, self-attest explicitly in your response: "SendMessage to <agent> for <issue URL>: sent / not sent." If "not sent", SendMessage now (with full context — issue URL, the design/verification ask, problem statement verbatim from lucas42 if applicable per triage-procedure.md). Do not consider triage complete until every non-lucas42 owner on a triaged-this-pass Ideation/Awaiting Decision item has received their SendMessage.
+
+This step exists because the "set Owner = <agent>" board mutation feels like the action when it isn't — the actual action is the SendMessage. The board update is purely the audit record. Setting Owner without SendMessage produces a perfectly-triaged-looking ticket that no agent knows about.
+
 ## Step 5: Unblocking Check
 
 During each triage pass, also check for issues with Status = Blocked whose dependencies may have been resolved. Before setting Status away from Blocked on an issue:
