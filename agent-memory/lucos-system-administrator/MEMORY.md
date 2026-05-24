@@ -123,6 +123,9 @@ See `volume-removal-image-verify.md`.
 ## `Load key … error in libcrypto` is a class; Docker Healthy ≠ end-to-end proof
 CRLF/tilde/BOM all trigger libcrypto error. When fix survives live state but not redeploy, check for snapshot-based deploys (`grep DEPLOY_ENV_BASE64` in CI). `Healthy` status only proves the healthcheck.test — read it before citing as recovery proof. See `incident-2026-05-09-libcrypto.md`.
 
+## Audit-finding issues: never auto-closed by the audit tool
+Coordinator closes them once convention passes. See `feedback_audit_finding_no_autoclose.md`.
+
 ## Teammate quote verification rule (implemented lucos_claude_config#79)
 Run `verify-teammate-quote --sender <name> --quote <text>` before quoting any teammate verbatim. See `feedback_verify_teammate_quotes.md`.
 

@@ -175,6 +175,10 @@ For each failing convention:
 
 Do not fix violations that touch application logic or security configuration — note those in the summary for routing to the appropriate specialist.
 
+**Audit-finding issue lifecycle**: The audit tool **only creates issues — it never closes them.** Closing `audit-finding` issues is the coordinator's responsibility once the convention passes on the dashboard. Do NOT write "the audit tool will auto-close this" or similar in completion comments — that is factually wrong. See `~/.claude/references/audit-finding-handling.md` for the full lifecycle.
+
+**Eventual consistency**: `/api/repos` may lag behind `/api/rerun` results by several seconds. If you query `/api/repos` immediately after a rerun and still see `fail`, wait a few seconds and re-query. The rerun's own JSON response (`status: pass`) is authoritative in the moment.
+
 **Investigating CircleCI required check coherence:** If you manually inspect a `required-status-checks-coherent` result and find "no CircleCI check runs" on recent commits/PR SHAs, check whether there are any open PRs on that repo. If there are **no open PRs**, checking PR-head SHAs will always return zero results — that's not evidence the check is stale, it just means no PR branches have been pushed recently. Instead, check the commit SHA statuses on recent main branch commits:
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-system-administrator \
