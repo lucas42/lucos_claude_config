@@ -1088,6 +1088,14 @@ certificate_expiry: 2026-05-07
 
 **No new issues raised.**
 
+### 2026-05-24 (SECOND RUN — checks 1 + 6)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 0 failing conventions. 57 repos — completely clean. `lucos_media_seinn` `required-status-checks-coherent` is now passing; issue #468 was already closed 2026-05-23T11:58Z. No action needed.
+
+**No new issues raised.**
+
 ---
 
 ### 2026-05-11 (checks 1 + 6 due; weekly checks last ran 2026-05-07 — not due; monthly checks last ran 2026-05-07 — not due)
