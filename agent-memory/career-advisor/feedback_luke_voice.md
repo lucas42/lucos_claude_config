@@ -19,6 +19,12 @@ Style and tone rules to apply when drafting anything in Luke's voice.
   - Between two distinct sentences → **full stop** (then start a new sentence)
   - For a casual / informal break → **hyphen** with surrounding spaces (`discuss this - happy to share`); this is Luke's choice for the closing-line break in particular
 
+  **Don't reflexively reach for the colon when removing an em-dash.** Stated 2026-05-26 during a Principal Product Security IC consultation, after I'd dropped from 4 colons to 2 across a cover letter and Luke called out two more in P2 as colon-overuse. The palette options are alternatives, not a hierarchy with colon at the top. Picking rule:
+  - If the elaboration is long enough to stand as its own sentence, prefer the **full stop** and split. (One specific failure mode: a colon following a long subordinate clause stretches the sentence further when the cleaner move is to split — e.g. "As Cyber Security Director I took on enterprise-wide technical standards governance, an area that had previously lacked ownership: deprecated a substantial number of obsolete standards..." reads better split at the colon into two sentences.)
+  - If the "X: Y" preamble doesn't add anything beyond the list/clause that follows (e.g. "The hands-on side: SAST, SCA, secret-scanning..."), drop the preamble entirely rather than colon-rescuing it.
+  - Aim for at most ~2 prose colons per cover letter as a rough ceiling. If you're at 3+, audit — odds are you're reflexively substituting for em-dashes rather than picking the colon deliberately.
+  - URL colons (`https:`) don't count toward the ceiling.
+
   **Scope of the rule**: external-facing prose only. That means:
   - **Apply the rule to** the prose that ends up in the rendered .docx / .pdf: CV body content (Summary, Skills, role descriptions, bullets, Career Break section); cover-letter body (paragraphs 1–4, salutation, close); the example opener / evidence-story / current-focus prose in the library blocks because that's the prose that gets pasted into letters.
   - **Don't apply the rule to** internal commentary that never reaches a recipient: library `**Tags**:` / `**Gaps**:` lines, "Pairs with" notes, framing-decision discussion, instructional bullets in `template.md`, `What to avoid` lists, README files, voice-memory files (including this one). Em-dashes there are fine and don't need trimming.

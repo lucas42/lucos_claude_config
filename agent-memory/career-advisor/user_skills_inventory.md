@@ -116,6 +116,32 @@ Confirmed 2026-05-22. **Conceptually current, not deep hands-on.** Luke is famil
 
 **For JDs that explicitly want SLSA / supply-chain hardening hands-on**: frame as honest gap with adjacent evidence (agent-fleet discipline + general CI/CD), same pattern as the regulated-pensions ISO 27001 honest-gap framing. Don't claim SLSA implementation at scale.
 
+## DevSecOps tooling (SAST, SCA, secret scanning)
+
+Confirmed 2026-05-26 during a Principal Product Security IC consultation. **Defensible to claim** as hands-on FT experience, not just architectural.
+
+Luke had strategic ownership of the SAST / SCA / secret-scanning rollouts at the FT cyber team (rolled out across engineering's CI/CD pipelines, cyber team setting direction, engineering teams owning configuration). Critically: Luke was much more closely involved in the operational rollout discussions than he was with Kubernetes — so this is a different framing pattern from the Kubernetes-stays-architectural rule. The DevSecOps tools are operationally claimable, not just architecturally.
+
+**Where it can appear**:
+- Skills section under Cyber Security as explicit listed keywords ("SAST, SCA, secret scanning").
+- CV bullets at PE-Cyber (now in cv-extended.md as of 2026-05-26 commit).
+- Cover-letter prose where DevSecOps tooling is a JD signal.
+
+**Preferred phrasing**: "rolled out SAST, SCA and secret-scanning across engineering's CI/CD pipelines" with the hedge "with the cyber team setting direction and engineering teams owning configuration" — that's the substantive-but-honest framing.
+
+## Bug bounty programme management
+
+Confirmed 2026-05-26. **Defensible to claim** as bug bounty programme management experience.
+
+The FT had a bug bounty programme during Luke's cyber-leadership years (PE-Cyber onwards). Luke oversaw it: managed the vendor relationship and was the escalation point for tricky triage and payout decisions. The defensible claim is "oversaw" (not "ran personally"), but the vendor + escalation involvement is substantive enough to count as programme management on a CV or in a cover letter.
+
+**Where it can appear**:
+- Skills section under Cyber Security as "bug bounty programmes" or "bug bounty programme management".
+- CV bullets at PE-Cyber (now in cv-extended.md as of 2026-05-26 commit).
+- Cover-letter prose where bug bounty management is a JD signal. Concise letter version: "vendor management and escalation oversight on the FT's bug bounty programme". CV version mentions the triage and payout decisions explicitly.
+
+**For JDs that explicitly want bug bounty programme management**: this is a defensible claim, not a gap. Use the "oversaw / vendor relationship / escalation point" framing rather than overclaiming day-to-day triage.
+
 ## AI / LLM platforms — concrete daily-use reference
 
 Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claude (Claude API / Claude Code)**. This gives Luke a concrete, daily, hands-on reference point for:
