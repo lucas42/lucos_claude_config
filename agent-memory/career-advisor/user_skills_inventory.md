@@ -89,6 +89,23 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **SLOs / SRE-book practices — DO NOT claim explicit SLO practice at FT**: The FT Reliability Engineering team (which Luke founded, Feb 2018 – Aug 2020) predates SRE-book adoption at the FT and operated in monitoring / availability / incident-response vocabulary, not explicit SLO / error-budget vocabulary. Confirmed by Luke 2026-05-22. For JDs asking for SLO experience, stick to "monitoring", "observability", "availability", "incident response" framing. Don't put "SLOs" in Skills sections or claim SLO design/rollout.
 
+**DORA metrics — defensible at "started the foundational data work" level**: Confirmed 2026-05-26. During the PE-Reliability Engineering period (Feb 2018 – Aug 2020), Luke began work on enabling DORA metrics tracking across the FT's engineering teams. The focus was foundational — getting solid, dependable, standardised data in place so that individual team leaders could make decisions off the back of it — rather than rolling out DORA scorecards centrally or improving DORA outcomes at scale.
+
+**Where it can appear**:
+- Skills section under Developer Experience / Platform Engineering as "DORA metrics" or "developer-experience metrics".
+- Cover-letter prose for DevEx / platform / SRE-leadership JDs that name DORA explicitly.
+- Possible new evidence-story candidate for `evidence-stories.md`.
+
+**Preferred phrasing**: "started the foundational data-standardisation work to enable DORA metrics tracking across the FT's engineering teams" / "set up dependable, standardised engineering data so individual team leaders could measure and act on DORA-style metrics". Honest framing: started, not delivered-at-scale.
+
+**Don't claim**: "we improved DORA scores by X%", "we measured DORA across the engineering org", or "I rolled out DORA scorecards". The work was foundational data infrastructure, not end-to-end DORA delivery.
+
+**SPACE metrics — not on inventory**: Luke didn't select SPACE in the gap-fill (2026-05-26). For JDs naming SPACE specifically, treat as familiar-with-the-framework gap.
+
+**Lean / Value Stream Mapping — not on inventory**: Same gap-fill (2026-05-26). For JDs explicitly naming Lean/VSM as required methodology, treat as honest gap.
+
+**Backstage / internal developer platforms — not on inventory**: Same gap-fill (2026-05-26). For JDs naming Backstage / Roadie / Port specifically, treat as honest gap (FT had its own internal tooling but Luke didn't claim Backstage-equivalent IDP experience).
+
 ## Technical decision-making documentation at FT
 
 Stated 2026-05-22. The FT used **multiple / varied formats** across teams — some used ADRs, some used RFCs, some used informal design docs, some used none. There was no single house standard.
