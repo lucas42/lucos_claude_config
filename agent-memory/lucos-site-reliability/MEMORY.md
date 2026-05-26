@@ -17,6 +17,10 @@
 
 - [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — `decodeAudioData` / `fetch` failures in `playTrack` produce a 2.4s thrash loop the cache-thrash banner (#460/#473) doesn't detect. Diagnostic: 100s of `trackUpdated` "errored" events with webhooks all `success` and `lastErrorMessage` ∈ {`Unable to decode audio data`, `Failed to fetch`}. Tracked in lucas42/lucos_media_seinn#482 (filed 2026-05-26).
 
+## GitHub Actions outage diagnosis
+
+- [Check GitHub status page early](pattern_github_actions_outage_diagnosis.md) — when Actions workflows aren't triggering on new PRs, hit `githubstatus.com/api/v2/components.json` and `/incidents/unresolved.json` BEFORE chasing per-repo theories. Smoking gun: PR commit SHA has CircleCI statuses + `claude` check-suite but ZERO `github-actions` check-suites. During an outage, do NOT close/reopen or push empty commits — events get dropped too, or queue and duplicate-fire on recovery. Bit me on lucas42/lucos_photos#407 / #408 (2026-05-26 Actions+Pages outage starting 10:57:13 UTC).
+
 ## Webhook-burst diagnostic methodology
 
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull avalon `lucos_router` nginx access log FIRST. Loganne's event record alone can't distinguish "downstream slow" from "outbound stalled" from "originating burst". Three filters: total host activity, sender user-agent, receiver+action originator.
