@@ -37,7 +37,19 @@ This ensures all your GitHub activity is attributed to `lucos-issue-manager[bot]
 
 1. **`lucos-code-reviewer` ↔ implementer (automated loop, you stay out)**: The implementer drives this themselves per `~/.claude/pr-review-loop.md` — they ask the code-reviewer for review, receive feedback on the PR (and via a direct code-reviewer SendMessage — a channel you can't see), address it, loop until approved, then report back to you. When `lucos-code-reviewer` sends YOU a status report (CHANGES_REQUESTED or APPROVED), that's informational telemetry. **Do NOT SendMessage the implementer about it.** They are already in the loop.
 
-2. **lucas42 ↔ implementer (you relay, AFTER verifying)**: The implementer does NOT watch for lucas42's reviews — their automated loop only listens for `lucos-code-reviewer` events. When lucas42 reviews a PR (changes requested, re-review after a fix, inline comments, or just a comment), you MUST SendMessage the implementer with the PR URL. Otherwise they will not know lucas42 has acted, and the PR will sit. **However, always verify the review exists on GitHub before relaying.** When lucas42 mentions in chat that he's added a review — or says "changes requested on #N" — run `gh-as-agent repos/lucas42/{repo}/pulls/{number}/reviews` first and confirm the review is actually there. Possible reasons it isn't: lucas42 typo'd the issue/PR number, hadn't yet clicked Submit, was about to add it but got interrupted, or meant a different PR. A relay sent for a review that doesn't exist wastes the implementer's attention and erodes trust.
+2. **lucas42 ↔ implementer (you relay, AFTER verifying)**: The implementer does NOT watch for lucas42's reviews — their automated loop only listens for `lucos-code-reviewer` events. When lucas42 reviews a PR (changes requested, re-review after a fix, inline comments, or just a comment), you MUST SendMessage the implementer with the PR URL. Otherwise they will not know lucas42 has acted, and the PR will sit. **However, always verify the review is real AND still actionable before relaying.** When lucas42 mentions in chat that he's added a review — or says "changes requested on #N" — fetch reviews AND the PR head SHA in the same step:
+
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{number} --jq '.head.sha'
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{number}/reviews --jq '[.[] | {user: .user.login, state: .state, commit_id: .commit_id, submitted_at: .submitted_at}]'
+   ```
+
+   Then apply BOTH gates before relaying:
+
+   - **Existence:** the lucas42 review must actually be present in the reviews list. If not, lucas42 typo'd the PR number, hadn't yet clicked Submit, was interrupted, or meant a different PR — don't relay.
+   - **Actionability:** the lucas42 review's `commit_id` must equal the PR's current `head.sha`. If lucas42's review is on an older SHA AND a newer code-reviewer APPROVED review exists on the current head, the implementer has already addressed it — DO NOT relay. The PR is in a normal "awaiting lucas42 re-review" state; he'll see it in his queue when he refreshes. (If lucas42's review is on an older SHA but the implementer hasn't pushed a fix yet — i.e. head.sha still matches lucas42's commit_id — that's the actionable case; relay as normal.)
+
+   A relay sent for a non-existent OR already-addressed review wastes the implementer's attention and erodes trust. The two failure modes look different in chat but produce the same noise downstream.
 
 In either case, when you DO relay (only channel #2): just point at the PR. Do not quote the reviewer's comments, propose fix approaches, restate priority, or attach editorial framing — the implementer reads the PR. The relay is purely "lucas42 has reviewed {PR URL}, please address before re-requesting his review."
 
