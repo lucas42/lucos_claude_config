@@ -64,4 +64,28 @@ Worked example (an advisory-consultancy DevEx tailoring session):
 
 **Rule of thumb**: before each role bullet, check the JD for the brand name. If it's named, keep. If not, drop.
 
+## Don't conflate sub-role domains within a combined CV entry
+
+When the `/tailor` standard cuts combine multiple Principal Engineer entries into one block (titled e.g. "Principal Engineer - Reliability Engineering, Cyber Security, Observability & Edge Delivery", covering Feb 2018 – Mar 2022), individual bullets within that block describe specific sub-roles or specific teams.  **Each bullet is scoped to its own sub-role's time-period, not to the combined-entry's broader span.**
+
+Stated 2026-05-26 after I described the Reliability Engineering team (Feb 2018 – Aug 2020) as owning "observability tooling, edge delivery" — but Edge Delivery was only Luke's remit from Sep 2021 (the later PE-Observability/Edge-Delivery/Cyber Security sub-role within the combined span).  Luke flagged it: "where did you get the idea that the Reliability Engineering team was responsible for edge delivery?  I don't think I ever wrote that."
+
+**Cause of the slip**: I pulled "Edge Delivery" from the combined-entry title into a bullet describing a specific earlier team.  The combined-entry title spans all domains across the period, but each domain only belonged to a specific sub-role within that span.
+
+**Rule**: when writing or reviewing a bullet inside a combined entry, ask "which sub-role / team is this bullet describing?", then only reference domains that belonged to that sub-role.  Don't import domains from the combined-entry title into a bullet about a specific sub-role.
+
+## FT sub-role domain timeline (Feb 2018 – Mar 2022, the PE-combined period)
+
+For reference when writing bullets inside a combined PE entry:
+
+| Sub-role period | Sub-role title | Domains owned |
+|---|---|---|
+| Feb 2018 – Aug 2020 | PE - Reliability Engineering | Reliability, observability tooling, monitoring aggregation platform, tech migration tracker, change management system, cross-team SaaS migrations (Code Hosting, Issue Tracking) |
+| Sep 2020 – Sep 2021 | PE - Cyber Security | SSO migration to Okta, DevSecOps tooling rollout (SAST/SCA/secret-scanning), security data democratisation, bug bounty oversight, advising-across-engineering |
+| Sep 2021 – Mar 2022 | PE - Observability, Edge Delivery & Cyber Security | Strategic direction for observability + edge delivery + cyber security; vendor management of suppliers in those domains |
+
+Edge Delivery was specifically Luke's third PE sub-role's domain (Sep 2021 – Mar 2022), not the earlier Reliability Engineering team's domain.  Observability appears in both the Reliability Engineering era (as platforms the team owned) and the later strategic-direction era; SaaS migrations were Reliability Engineering era; cyber-security topics from PE-Cyber Security era onwards.
+
+Architecture-decision responsibility ran throughout the entire PE period per [[user-role-framing]] (architects-titles phased out, architectural responsibility absorbed into the PE remit).
+
 Related: [[cv-page-count]], [[cv-rebuild]], [[cv-copy-editing-scope]], [[cv-skills-section]].
