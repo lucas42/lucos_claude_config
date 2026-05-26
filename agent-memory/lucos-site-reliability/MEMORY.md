@@ -13,6 +13,10 @@
 
 - [Linuxplayer phantom ?action=error DELETEs](pattern_linuxplayer_phantom_error_deletes.md) — historical pattern: bursts of 100+ DELETE/sec on ceol from `lucos_media_linuxplayer/<host>` for already-advanced-past playlist UUIDs, saturating loganne outbound. Fixed via #123 (closed 2026-05-21). If the burst recurs, re-open the issue, don't refile.
 
+## seinn thrash failure modes — distinguish before diagnosing
+
+- [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — `decodeAudioData` / `fetch` failures in `playTrack` produce a 2.4s thrash loop the cache-thrash banner (#460/#473) doesn't detect. Diagnostic: 100s of `trackUpdated` "errored" events with webhooks all `success` and `lastErrorMessage` ∈ {`Unable to decode audio data`, `Failed to fetch`}. Tracked in lucas42/lucos_media_seinn#482 (filed 2026-05-26).
+
 ## Webhook-burst diagnostic methodology
 
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull avalon `lucos_router` nginx access log FIRST. Loganne's event record alone can't distinguish "downstream slow" from "outbound stalled" from "originating burst". Three filters: total host activity, sender user-agent, receiver+action originator.
