@@ -66,9 +66,14 @@ This rule was sharpened 2026-05-22 after I'd written a Summary for a Staff Platf
 
 Throughout the Director and Interim VP roles, Luke retained the **unbackfilled Principal Engineer technical-direction responsibilities** for Cyber Security — providing all the technical direction the role usually requires while delegating day-to-day team management to senior engineers.
 
-- For **IC-track variants** (Staff Engineer, Principal Engineer, etc.): pull this forward as the **first bullet** of both Director and Interim VP entries.
+When (and whether) to surface this on a CV variant:
+
+- For **IC-track variants** (Staff Engineer, Principal Engineer, Architect — roles whose deliverable is hands-on technical depth): pull this forward as the **first bullet** of both Director and Interim VP entries. Justifies the "decade of technical work" claim despite the Director/VP titles.
 - For **management-track variants** (Director / Head / VP of Engineering): include as the **tail bullet** so the leadership-progression narrative still leads.
-- In `cv-extended.md` itself: it sits as the final bullet of both roles.
+- For **advisory / consulting variants** (Senior Consultant / Principal Consultant at a strategy or advisory house, where the deliverable is client-facing engagements rather than IC technical output): **drop the chip entirely.** Stated 2026-05-26. The platform-engineering-decade framing in the Summary already carries the technical credentials needed for this audience; the unbackfilled-PE bullet adds noise about an internal staffing arrangement that doesn't translate to consulting hire decisions. Luke's framing: "I don't [think] for this role we need to lead with the backfilling for Principal Engineer in the director / VP jobs.  I'd question if they're valuable at all, but definitely wouldn't put them first."
+- In `cv-extended.md` itself: it sits as the final bullet of both roles, so it's available to pull forward when the variant calls for it.
+
+**Rule of thumb when deciding**: ask "does the JD's reader care about hands-on IC technical work?" If yes (Staff IC, Principal IC, Architect) → pull forward. If the role is mostly leadership-and-people → tail bullet. If the role is advisory / consulting / client-facing → drop entirely; the decade of FT platform-engineering work carries the technical credentials without needing the internal-staffing context.
 
 ## Career break (March 2025 – present)
 

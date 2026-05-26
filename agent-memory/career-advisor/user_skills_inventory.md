@@ -64,9 +64,10 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **Architectural-only, NOT hands-on**: Kubernetes — Luke was Architect on the FT Universal Publishing Platform during the K8s migration and made the architectural decisions, but did not run clusters himself.
 
-- **Where it can appear**: in the Architect-Content role bullet on cv-extended.md ("Architected the move to Kubernetes…") because that's accurate to the role.
-- **Where it must NOT appear**: in a Skills section, alongside hands-on tools, or framed as "managed clusters" / "deployed to K8s" / "kubectl fluency".
-- **For JDs that emphasise Kubernetes**: lead with Docker in Skills, leave Kubernetes in the role bullet only, and flag the architecture-vs-operations distinction to Luke during gap consultation.
+- **Where it can appear**: in the Architect-Content role bullet on cv-extended.md (the K8s-migration framing) because that's accurate to the role — the bullet is about the migration project, not a claim of hands-on Kubernetes knowledge.
+- **Where it must NOT appear**: in a Skills section by default, alongside hands-on tools, or framed as "managed clusters" / "deployed to K8s" / "kubectl fluency".
+- **Skills-section default = OMIT**: stated 2026-05-26. **Never list Kubernetes in the CV Skills section unless the JD explicitly names Kubernetes.** Default is to omit. Luke's stated framing: "It's one of my most tenuous claims, so let's only include it when actually asked for." When the JD does name Kubernetes, list "Kubernetes" plainly (no qualifier) but keep the role-bullet phrasing focused on the migration rather than on hands-on operations.
+- **Tighter rule than previously held**: an earlier version of this rule said "for JDs that emphasise Kubernetes, lead with Docker in Skills" — that allowed Kubernetes-in-Skills for K8s-emphasising JDs. The tightened rule is stricter: omit by default, include only when the JD explicitly names Kubernetes, and even then keep the role-bullet honestly framed as migration-coordination rather than operations.
 
 ## Cloud platforms
 
@@ -76,6 +77,7 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Must NOT claim**: active hands-on AWS operations, current production AWS exposure, day-to-day `aws cli` / Terraform / CloudFormation work.
 - **Where it can appear**: Skills section under Cloud & Platform; Integration Engineer role bullet (where the hands-on work happened).
 - **Where it must NOT appear**: as a current / recent operational tool, or in a Career Break bullet claiming current AWS use (career-break agent fleet is self-hosted, not on AWS).
+- **Don't add "(architectural)" parenthetical when listing AWS in Skills**: stated 2026-05-26. List "AWS" plainly; the FT Integration Engineer (Jan–Nov 2015) hands-on history is the warranty for the unqualified Skills listing, even though that work is now dated. The "architectural-only" caveat is preserved by NOT claiming current AWS operations elsewhere in the CV / cover letter; it doesn't need to be hedged in the Skills section itself. Adding "(architectural)" understates Luke's actual history.
 
 **Azure — will not claim**: confirmed 2026-05-23 during a Staff IC consultation for a Microsoft-owned employer. Luke has no Azure exposure on record. For Microsoft-owned employers (where Azure is often the primary cloud), the honest framing is "AWS-architecturally at FT, cloud-native architecture generally" — don't list Azure in Skills, don't claim hands-on Azure use. The reliability + platform + container-orchestration framing carries the JD signal without needing to claim a specific Microsoft cloud.
 
