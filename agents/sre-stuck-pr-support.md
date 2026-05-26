@@ -30,3 +30,19 @@ SRE responsibility covers **infrastructure-level** stuck PRs — not code-level 
 ## Verification after infrastructure fixes
 
 After any remediation action, re-check the PR's CI status, `mergeable_state`, and auto-merge status. Report the result — do not assume success. If the fix didn't work, investigate further or re-escalate.
+
+## Verify secondary-PR state before claiming anything about it
+
+When an investigation surfaces a "while you're at it" or "the same may apply to..." secondary PR, fetch that PR's **current** state in the same investigation pass before mentioning it in a report or SendMessage. Do not reason from the state-at-the-time-of-the-event you originally investigated — the secondary PR may have moved on hours or days ago.
+
+Include `merged`, `merged_at`, and `state` in every PR-state fetch — not just `mergeable` / `mergeStateStatus`. A merged PR shows `mergeable: UNKNOWN`, `mergeStateStatus: UNKNOWN`, `autoMergeRequest: null` — superficially identical to an open PR mid-computation. Inspecting only the latter cluster produces confidently-stated false-negative claims like "this PR isn't merged yet."
+
+Canonical safe pre-claim fetch:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  repos/lucas42/<repo>/pulls/<N> \
+  --jq '{state, merged, merged_at, merged_by: .merged_by.login, mergeable_state}'
+```
+
+This applies to **every** secondary-PR mention in a report or message — whether proposing close+reopen, predicting it'll-stick-too-when-approved, or any other forward-looking framing about a PR you're not already actively driving.
