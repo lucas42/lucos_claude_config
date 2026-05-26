@@ -31,4 +31,17 @@ When drafting the Skills section of a tailored CV variant:
 
 The freetrade variant (committed 2026-05-21) was written before this rule existed and uses 8 categories with separate paragraphs. It's the previous template that all of `lukeblaney_cv_tailored/orgs/*` derive from. New variants should use the 5-categories + single-paragraph format; do not retro-edit committed variants unless asked.
 
-Related: [[cv-page-count]], [[cv-rebuild]].
+## Rule 3 — Section labels aren't framing
+
+Stated 2026-05-26.  The Skills section's category labels should be **neutral** — just the discipline name ("Cyber Security", "Engineering Leadership", "Architecture & Distributed Systems").  **Don't** append cover-letter framing as a label suffix.
+
+**Bad**: `**Cyber Security (Engineering-Enablement)**: DevSecOps tooling rollout...`
+**Good**: `**Cyber Security**: DevSecOps tooling rollout...`
+
+**Why**: framing belongs in cover-letter prose, where it earns its weight by explaining the angle of the evidence.  In the Skills section it's just label noise — the reader is scanning keywords, not absorbing positioning narrative.  A parenthetical framing on a category label also implies that the underlying skill is somehow qualified or limited (e.g. "this is cyber but only the platform-enablement kind"), which understates the actual experience.
+
+**Triggered by**: 2026-05-26.  I had pasted the "cyber-as-platform-enablement" framing (from `[[user-role-framing]]`) directly into the Cyber Security Skills label.  Luke pushed back: "Stating 'Engineering-Enablement' after Cyber Security is odd: just because we've discussed that as the framing doesn't mean you should go pasting it in the skills section."
+
+**Rule of thumb**: if a category label has a parenthetical, ask whether the parenthetical is *part of the discipline name* (e.g. "Generative AI" is a discipline name; "(Engineering-Enablement)" is framing).  If framing, drop it.  The framing belongs in the cover letter para 2/3 prose.
+
+Related: [[cv-page-count]], [[cv-rebuild]], [[user-role-framing]].

@@ -26,9 +26,21 @@ When generating a tailored CV variant for Luke:
 3. Add `Luke Blaney - CV (from docx).pdf` to `.gitignore` — it's a verification artefact, not a deliverable.
 4. If page count > 3: propose cuts and re-render before showing Luke the result. Pursue the standard cuts first ([[cv-variant-content-rule]], drop Talks & Panels, drop Publications, trim oldest-role bullets) before touching senior-role content.
 5. If page count = 2: ship it. 2 is the target.
-6. If page count = 3: **don't satisfice — actively look for cuts to get to 2 before showing Luke.** 3 is the hard limit, not the goal. Apply the standard cuts ([[cv-variant-content-rule]], drop Talks & Panels descriptions, drop Publications, drop Earlier Career section, drop Platform Architect / Operational Intelligence role if it's not directly relevant to the JD, trim Director / Interim VP bullets to 3-4 each, drop the unbackfilled-PE chip if the variant isn't strictly IC-track per [[user-role-framing]]) before showing Luke. **Stated 2026-05-26**: tightened after I shipped a 3-page draft when 2 was achievable with one more cut, and Luke flagged it: "It feels like you're targetting 3 pages, when I've said 3 is the absolute max limit and the target should be 2."
-7. If page count = 3 *after* exhausting reasonable cuts AND the remaining content is genuinely load-bearing for this JD, then proceed with 3 (within hard limit). But this should be the exception, not the default outcome.
-8. If page count > 3: propose more cuts and re-render before showing Luke.
+6. If page count = 3: **look at the page-3 fill** before deciding.  Sparse spillover (e.g. just an Education line, or a couple of Talks entries) is acceptable — Luke calls this "spilling a bit into the third page is fine and shouldn't be treated the same as a jam-packed page 3" (2026-05-26).  A jam-packed page 3 (multiple paragraphs of content) needs cuts.
+7. If page count > 3: propose more cuts and re-render before showing Luke.
+
+**Cutting technique — prefer surgical word-edits over section-deletions.**  Stated 2026-05-26 after I dropped a whole role section to force 2 pages and Luke pushed back: "Overall, I think you've been too aggressive on cutting down the length and you've focused on the wrong places... look for sentences where only or two words run onto a new line and see if you can reword them so that whole line is saved."
+
+**Line-wrap orphan analysis** (the right first move before chopping content):
+
+1. Extract per-line text from the rendered PDF with pdfminer's `extract_pages` + `LTTextLine`.
+2. Find lines containing 1-3 words that aren't bullet markers, dates, or section headings.  Each such line is an "orphan" — a paragraph or bullet whose last few words wrapped to their own line, costing a full line of vertical space for two or three words of content.
+3. For each orphan, rewrite the source sentence to shave 2-5 words from elsewhere in the same sentence.  That often pulls the orphan back onto the previous line, saving a full line of vertical space.
+4. Typical wording moves: combine two short sentences with a semicolon; replace "led to better-aligned X" with "improved X"; drop articles ("a", "the"); compress parentheticals; merge prepositional phrases.
+
+This works much better than dropping content.  A surgical session can shave 3-5 lines from a CV without losing any signal — often enough to fit Education back onto page 2, or to push a stuck bullet down to the previous page.
+
+**The page-count progression**: section-deletion is the heaviest tool; bullet-trimming is the middle tool; line-wrap-orphan rewording is the surgical tool.  **Try surgical first.**  Section-deletion is the last resort, and per [[cv-variant-content-rule]] it must not create chronological gaps (compress in place rather than delete).
 
 **Advisory — headless render can be off-by-one vs other word-processors.** Observed 2026-05-23 on a developer-platform Staff IC variant: the same `.docx` rendered as 3 pages in headless LibreOffice (the rule's authoritative measure) but 4 pages in Apple Pages 15.2.1, with the Publications section spilling onto the extra page. Cutting Publications brought Pages's view down to 3 pages while headless stayed at 3. Microsoft Word may behave similarly to Pages (untested).
 
