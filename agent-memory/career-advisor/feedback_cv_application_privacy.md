@@ -28,14 +28,22 @@ Stated 2026-05-20. Tightened from a narrower "currently applying to" rule after 
 
 Before writing any commit message, memory file content, or repo file content, scan for employer names. If any are present and not on the exempt list, **stop and ask Luke**. Don't assume "this one's fine because [reason]" — the default is to redact.
 
-**Critical: the scan applies to EVERY public-repo write, not just at submission-sweep time.** The submission memory sweep ([[submission-memory-sweep]]) includes a privacy scan as its final pre-commit step, but that's a backstop — by the time you're at submission, mid-session writes may already have leaked. The scan must run BEFORE each individual commit to `~/.claude/agent-memory/` or `~/.claude/skills/` (or any other public repo), not only at sweep time. Specifically:
+**Critical: the scan applies BEFORE every Write/Edit tool call, not at commit time.** Auto-commit hooks on `~/.claude` can fire between a Write/Edit and a follow-up redaction — once the file is on disk with an employer name, a hook may commit it before you get a chance to clean up. The submission memory sweep ([[submission-memory-sweep]]) includes a privacy scan as its final backstop, but by then mid-session writes may already have leaked into history. **Write with the placeholder from the start; never write the real name and "redact later".**
 
-- Writing a new feedback memory mid-session → scan it before committing.
-- Updating an existing memory mid-session (e.g. appending a new defensible skill, framing rule, or voice nuance during a per-application consultation) → scan the addition before committing.
-- Updating a skill file (e.g. /tailor, /tailor-cover-letter) with example-based language → scan for employer names in the examples.
-- Writing a commit message that describes per-application work → scan the message body before committing.
+This applies to BEFORE each Write or Edit tool call that touches:
 
-Stated 2026-05-23 after I leaked the target employer's name into 3 memory files and 2 commit messages during the form-probe-driven /tailor work, on the implicit (wrong) assumption that the privacy scan only applied at submission sweep. The rule was loaded, but I deferred it until the wrong moment. The correct moment is "before every public-repo write", with the submission sweep as the final backstop catching anything that slipped through.
+- `~/.claude/agent-memory/` (any career-advisor memory file)
+- `~/.claude/skills/` (any skill file, especially examples)
+- Any other public repo
+
+Specifically:
+
+- Writing a new feedback memory mid-session → write the redacted version directly. Don't write with the real name "and clean it up later" — the auto-commit hook may have committed before you get to the redaction.
+- Updating an existing memory mid-session (e.g. appending a new defensible skill, framing rule, or voice nuance during a per-application consultation) → write the redacted addition. Don't put the real name in the Edit's `new_string` thinking you'll fix it before commit.
+- Updating a skill file with example-based language → scan for employer names BEFORE the Write/Edit call.
+- Writing a commit message that describes per-application work → scan the message body before passing to `git commit`.
+
+Stated 2026-05-23 after I leaked the target employer's name into 3 memory files and 2 commit messages during the form-probe-driven /tailor work, on the implicit (wrong) assumption that the privacy scan only applied at submission sweep. **Tightened 2026-05-26** after an auto-commit hook fired between a memory-file Write call and my follow-up redaction Edit, leaking an employer name to public history for ~30 minutes. The fix: don't write the real name then redact — write with the placeholder from the start, so there's no window in which the real name exists on disk in a public-repo working tree.
 
 Replacement framings — two styles, both acceptable; pick whichever fits the example:
 
