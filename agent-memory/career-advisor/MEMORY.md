@@ -37,3 +37,4 @@
 - [CV skills section](feedback_cv_skills_section.md) — target ~5 categories; single-paragraph layout with hard line breaks (`\` at line end) to avoid inter-paragraph spacing bloat
 - [Write tool flattens NBSP](feedback_write_tool_nbsp_flattening.md) — U+00A0 gets normalised to ASCII space through the Write tool; use Python post-write or Bash heredoc to write nbsp content reliably
 - [Submission memory sweep](feedback_submission_memory_sweep.md) — when Luke says an application is submitted, batch all durable memory updates at that point alongside notes.md; don't wait for end-of-session prompt
+- [AskUserQuestion phrasing](feedback_askuserquestion_phrasing.md) — use clear "tick to approve" semantics with multi-select; never use ambiguous "any objections" framings
