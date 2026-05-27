@@ -11,6 +11,7 @@
 
 - [CV rebuild](project_cv_rebuild.md) — pandoc + markdown source-of-truth pipeline for lukeblaney_cv (started 2026-05-19)
 - [Cover-letter rebuild](project_cover_letter_rebuild.md) — building-block library + worked example + /tailor-cover-letter skill (started 2026-05-20)
+- [Applications tracker](project_applications_tracker.md) — central pipeline tracker at lukeblaney_cv_tailored/applications/ (started 2026-05-27)
 
 ## External references
 
@@ -40,3 +41,4 @@
 - [AskUserQuestion phrasing](feedback_askuserquestion_phrasing.md) — use clear "tick to approve" semantics with multi-select; never use ambiguous "any objections" framings
 - [Opinion textarea drafting](feedback_opinion_textarea_drafting.md) — for textareas asking Luke's *views* (not evidence), elicit first or draft with: specific observation > abstract categories, concrete primitives > concept-names, tied to platform-engineering craft
 - [Role-duration precision](feedback_role_duration_precision.md) — verify "[N] years" / "[X] months" claims tied to a named role against cv-extended.md before stating; don't round up
+- [Source vs ATS](feedback_source_vs_ats.md) — application "Source" is the discovery channel (LinkedIn, recruiter, direct), not the ATS that processes the submission; never conflate
