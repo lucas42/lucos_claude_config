@@ -88,7 +88,7 @@ Before joint analysis, fetch the **application form structure** so the artefact 
 
 - **Greenhouse**: append `?questions=true` to the boards-api URL. The response includes a `questions` array; each entry has `label`, `description` (HTML — often contains word-count or format guidance), `required`, and `fields[0].type` (e.g. `input_file`, `textarea`, `input_text`, `multi_value_single_select`). Example: `curl -s "https://boards-api.greenhouse.io/v1/boards/{org}/jobs/{id}?questions=true"`.
 - **Lever**: the posting JSON returned in Step 3 includes form metadata. For deeper detail, fetch `https://jobs.lever.co/{company}/{id}/apply` HTML and grep for custom field blocks (`data-qa="custom-question"` markers).
-- **Ashby**: the public posting-api response includes an `applicationFormDefinition` field per job listing the form's required / optional inputs and their types.
+- **Ashby**: the public posting-api response includes an `applicationFormDefinition` field per job listing the form's required / optional inputs and their types — but this field can be `null` on some boards (observed 2026-05-27).  When null, fall back to asking Luke to inspect the form manually, same as the Workday/iCIMS/Taleo path below.
 - **Workday / iCIMS / Taleo / generic**: no public API. Ask Luke to paste a screenshot of the application form or list the fields by name. Don't guess.
 
 **Categorise each field** into one of these submission shapes:
@@ -302,6 +302,7 @@ Before showing Luke the final assembled output, run the checks below. Fix any fa
   - Variant A cover letter: target 250–350; 400 ceiling for senior roles with substantive technical content.
   - Variant B per-question textarea: target whatever the form's description suggests (often 200–400 for "Why X?", 150–300 for shorter prompts). When no guidance is given, default to 200–300.
 - **Overlap-years check**: sum of "[N] years of [domain]" claims ≤ ~15 years, *within each artefact independently AND across the whole artefact set together* (a recipient reads them all together in one form submission).
+- **Role-duration check**: any "[N] years" or "[X] months" claim tied to a NAMED specific role (e.g. "For two years I was architect on X") — cross-check against the date range for that role in cv-extended.md before showing Luke.  Don't round up.  Different failure mode from overlap-years; see [[role-duration-precision]].
 - **Dialect check**: no Americanisms (`-ize`, "organization", "color", "behavior", "math", "specialty").
 - **Variant A only**: salutation present (file-upload only); close + sign-off present (file-upload only). Skip if `form-shape: textarea`.
 - **Variant B (and Variant A textarea form-shape)**: no salutation, no sign-off. Each answer opens by engaging the question directly. **URLs include the scheme** (`https://example.com/path`, not `example.com/path`) — see [[textarea-url-scheme]]. Bare-host URLs only work in rendered formats where the display text and underlying link can differ.

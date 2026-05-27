@@ -162,6 +162,30 @@ For any role at a vendor whose product Luke would have evaluated or operated at 
 
 Related: [[user-skills-inventory]], [[check-evidence-recency]], [[user-cover-letter-patterns]].
 
+## Backend IC roles at vendors whose product Luke would have evaluated as a buyer
+
+Confirmed 2026-05-27 during a Staff Backend Engineer consultation at a risk-intelligence vendor whose product is buyer-side third-party DD.
+
+**Distinct from the vendor-side customer-facing technical roles framing above** (which centres buyer-side empathy as the *central pitch* of a CTA / SA / SE archetype).  For a backend IC role at the same archetype of vendor, the role criteria (backend engineering at scale, distributed systems, AI tooling, specific stack) are what gets Luke screened in; the buyer-side empathy is the **differentiator** that lifts the application above other qualified candidates rather than being the central pitch itself.
+
+### Positioning approach
+
+- **Lead the textarea / cover-letter opener with the buyer-side angle.**  It answers the implicit "what makes you different from other qualified backend engineers?" question with concrete evidence the recruiter can't easily anticipate.  For risk-intelligence / DD vendors, story #10 in `evidence-stories.md` is the strongest opener.
+- **Back it up with the backend-engineering credibility in the second beat.**  UPP-scale microservices, distributed systems, platform engineering — this is what the JD's role criteria actually screen for.  Don't skip it.
+- **Keep the role's primary technical signals foregrounded in the CV Summary and Skills.**  Architecture, distributed systems, AI tooling — whatever the JD prioritises.  The buyer-side angle is for the textarea / cover-letter prose, not for the CV's top-of-page positioning.
+
+### What NOT to do
+
+- **Don't lead the CV Summary with the buyer-side angle.**  Recruiters scan the Summary for the role criteria first.  If the Summary opens with "I have been your customer" framing, it reads as a domain-fit pitch rather than a technical-IC pitch and risks screening out on tech-stack assumptions.
+- **Don't say "I have been your customer" in those words.**  Lead with the evidence and let the reader draw the inference.  Same pattern as the customer-facing-technical-roles framing.
+- **Don't claim depth in the vendor's specific product.**  Buyer-side empathy is about the problem space, not their product.  If Luke didn't evaluate or use the specific vendor's product, don't pretend otherwise.
+
+### Worked example (textarea answer for a risk-intelligence vendor Staff Backend Engineer)
+
+Opening paragraph led with the third-party cyber due-diligence workstream Luke owned at the FT (story #10 in the library), framing it as "the buyer side of the problem [the vendor] is solving."  Second paragraph backed it with UPP-scale platform-engineering credibility (story #3 — microservices, Kafka, K8s migration).  Third paragraph was the AI-tooling current focus (the JD's #1 signal: Claude Code as daily driver).  No "I have been your customer" phrase used — the evidence carried the inference.
+
+Related: [[user-skills-inventory]] (third-party cyber DD section), [[user-cover-letter-patterns]], [[check-evidence-recency]].
+
 ## Level-positioning when the JD level doesn't match recent titles
 
 - **Director → Staff IC** (e.g. cv-staff-engineer.md for a fintech Staff Engineer JD): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.

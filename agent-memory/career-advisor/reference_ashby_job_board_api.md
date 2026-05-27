@@ -13,6 +13,7 @@ Ashby's careers pages at `https://jobs.ashbyhq.com/{org}/{job-id}` are client-re
 - Returns all currently-open jobs for the org as JSON, including full descriptions.
 - Filter by job ID (`90ad6d40-1b8e-4f41-91da-a287f17ec212` etc.) to find the specific posting.
 - The per-job endpoint (`/posting-api/job-board/{org}/{job-id}`) returns 401 Unauthorized — don't use this one.
+- **Form-probe gotcha**: `applicationFormDefinition` can be `null` on some Ashby boards (observed 2026-05-27 on a risk-intelligence scale-up's board).  When null, the public API gives no form-field-structure information.  Fall back to asking Luke to click "Apply" on the marketing posting and report the form fields manually — same fallback pattern as Workday/iCIMS/Taleo.  The JD description content itself is still in the response; only the form structure is missing.
 
 **How to apply**: When Luke shares an Ashby URL of the form `https://jobs.ashbyhq.com/{org}/{job-id}`, fetch the org-level API endpoint and filter to the job ID in the prompt to WebFetch. Save raw JSON output to the private repo's company-notes file if useful for later reference.
 

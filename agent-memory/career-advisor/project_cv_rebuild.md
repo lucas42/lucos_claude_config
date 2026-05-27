@@ -75,6 +75,18 @@ Also surfaced 2026-05-27:
 
 - **3-page tailored CV with moderate page-3 fill is acceptable for a recruiter-direct-share submission**. The page-3 content (end of OpsIntel + Integration Engineer + Earlier Career + 4 Talks entries + Education + Publications) was substantial but not jam-packed, and shipping at 3 was the right call. Recruiter-direct-share has slightly different page-count economics than ATS upload (no upload-tool word/page filtering; recruiter reads the whole thing). Rule unchanged ([[cv-page-count]]: ≤3 in headless = ship), but worth noting that the recruiter-share path has more latitude for content-rich page 3 than the ATS-upload path.
 
+## First-time deployments (2026-05-27, second submission)
+
+A Staff Backend Engineer variant produced via `/tailor` for a risk-intelligence scale-up (Ashby-based application form, third-party-DD product domain) deployed four patterns for the first time:
+
+1. **Buyer-side empathy at backend IC roles** (see [[user-role-framing]] — new section).  Distinct from the customer-facing-technical-roles framing already in memory: for a backend IC role at a vendor whose product Luke would have evaluated as a buyer, the buyer-side angle is the **differentiator** (lifts above other qualified candidates), not the central pitch.  Lead the textarea / cover-letter opener with the buyer-side angle; back it with backend-engineering credibility; keep the CV Summary anchored on the role criteria.  Pattern captured for any future application to a vendor whose product Luke would have evaluated as a buyer in a backend IC role shape.
+
+2. **Evidence story #10 — third-party cyber due-diligence and procurement revamp** (see `evidence-stories.md`).  First use of this story, drafted same-day from Luke's Director-era cyber DD workstream.  Used as the primary opener in the textarea answer.  CV-extended.md also got a corresponding new Director bullet so future variants inherit the work.
+
+3. **Ashby `applicationFormDefinition: null` fallback** (see [[ashby-job-board-api]] and `/tailor` Step 3.5).  First Ashby application where the public posting-api returned `null` for the form definition.  Fallback was the manual-inspection-by-Luke path (same as Workday / iCIMS / Taleo).  Skill and reference both updated to document the gotcha.
+
+4. **Role-duration precision check** (see [[role-duration-precision]] — new feedback memory).  Slip caught in post-submission memory sweep: I wrote "For two years I was architect on UPP" when Architect-Content was ~17 months.  New skill Step 11 check added: scan drafted prose for any "[N] years" / "[X] months" tied to a named role, verify against `cv-extended.md` dates before showing Luke.
+
 ## First-time deployments (2026-05-23, second submission)
 
 A developer-platform Staff IC variant produced via `/tailor` deployed three patterns for the first time:
