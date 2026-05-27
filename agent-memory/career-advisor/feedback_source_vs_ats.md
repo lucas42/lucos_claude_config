@@ -13,9 +13,10 @@ The ATS (Greenhouse, Ashby, Lever, Teamtailor, Workday, iCIMS, etc.) is where th
 
 **How to apply:**
 
-- When populating a Source field, only write what is directly known. If the JD URL has a tracking parameter that's reliably channel-attributing (e.g. `gh_src=LinkedIn`, `iisn=LinkedIn`, `lever-source=LinkedinPosting`), it's reasonable to mark "LinkedIn (inferred from JD URL tracking)" — but mark the inference.
-- Generic Greenhouse tracking codes (e.g. `gh_src=34ewj2`) are opaque hashes that do not identify a channel — do not infer LinkedIn or any other source from them.
-- If the source isn't recorded in `orgs/{slug}/notes.md` and can't be inferred, write `TODO — confirm with Luke` and ask him in the next session. Never fabricate.
+- **`utm_source` is authoritative.** It's set by the platform that exposed the link (the click origin self-identifying), so a value like `utm_source=hackajob` is reliable. Use it directly as the Source, title-cased for readability. The `/spotted` skill applies this automatically; ad-hoc work should do the same.
+- Other ATS-specific tracking parameters (`gh_src=LinkedIn`, `iisn=LinkedIn`, `lever-source=LinkedinPosting`) are weaker — they can be set by anyone sharing the link. If using them, mark the inference: `"LinkedIn (inferred from JD URL tracking)"`. The `/spotted` skill deliberately does NOT consult these.
+- Opaque hashes (e.g. `gh_src=34ewj2`, `utm_source=q2kltu4g1us`) don't identify a channel — don't infer anything from them; treat as if no tracking exists.
+- If no usable tracking exists and the source isn't recorded in `orgs/{slug}/notes.md`, write `TODO — confirm with Luke` and ask him. Never fabricate.
 - When migrating data from per-org notes into the tracker, audit any Source field I populate from the ATS field — they should never be the same.
 
 Related: [[project-applications-tracker]].

@@ -1,6 +1,6 @@
 ---
 name: spotted
-description: Add a role to lukeblaney_cv_tailored/applications/spotted.md from a JD URL. Fetches the JD, derives Company/Role/Location/Comp, asks for the discovery Source via multi-choice, appends the entry and commits.
+description: Add a role to lukeblaney_cv_tailored/applications/spotted.md from a JD URL. Fetches the JD, derives Company/Role/Location/Comp; reads the Source from the URL's utm_source parameter when present, otherwise asks via multi-choice. Appends the entry and commits.
 disable-model-invocation: false
 ---
 
@@ -42,14 +42,18 @@ The org slug is the kebab-case company name matching the existing `orgs/{slug}/`
 
 Check whether `~/sandboxes/lukeblaney_cv_tailored/orgs/{slug}/` already exists. The Notes link in the entry points at `../orgs/{slug}/notes.md` either way — if the folder doesn't exist yet, it'll be created on first tailoring.
 
-## Step 4: Ask for the Source
+## Step 4: Determine the Source
 
-Use AskUserQuestion with these four options (Other is auto-provided):
+Parse the JD URL's query string for `utm_source`.
 
-1. **LinkedIn**
-2. **Direct (company careers page)**
-3. **Recruiter outreach** (note in-house vs third-party in the entry if known)
-4. **Referral**
+- **If present**: use the value as the Source, title-cased for readability (`utm_source=hackajob` → "Hackajob"; `utm_source=linkedin` → "LinkedIn"). Do **not** ask the user — `utm_source` is authoritative (it's the platform that exposed the link, self-identifying). Skip straight to Step 5.
+- **If absent or empty**: ask via AskUserQuestion with these four options (Other is auto-provided):
+  1. **LinkedIn**
+  2. **Direct (company careers page)**
+  3. **Recruiter outreach** (note in-house vs third-party in the entry if known)
+  4. **Referral**
+
+Do not consult other ATS-specific tracking parameters (`gh_src`, `iisn`, `lever-source`, etc.) in this skill — they're weaker signals and can produce false attributions. If `utm_source` is missing, just ask.
 
 ## Step 5: Append the entry
 
