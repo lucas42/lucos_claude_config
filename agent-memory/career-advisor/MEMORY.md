@@ -38,3 +38,4 @@
 - [Write tool flattens NBSP](feedback_write_tool_nbsp_flattening.md) — U+00A0 gets normalised to ASCII space through the Write tool; use Python post-write or Bash heredoc to write nbsp content reliably
 - [Submission memory sweep](feedback_submission_memory_sweep.md) — when Luke says an application is submitted, batch all durable memory updates at that point alongside notes.md; don't wait for end-of-session prompt
 - [AskUserQuestion phrasing](feedback_askuserquestion_phrasing.md) — use clear "tick to approve" semantics with multi-select; never use ambiguous "any objections" framings
+- [Opinion textarea drafting](feedback_opinion_textarea_drafting.md) — for textareas asking Luke's *views* (not evidence), elicit first or draft with: specific observation > abstract categories, concrete primitives > concept-names, tied to platform-engineering craft

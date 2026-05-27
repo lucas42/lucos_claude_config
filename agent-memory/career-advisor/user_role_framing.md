@@ -62,6 +62,26 @@ The FT re-organised in 2017 to move architects into the same orgs as engineers, 
 
 This rule was sharpened 2026-05-22 after I'd written a Summary for a Staff Platform Engineer variant that used the "after Architect titles were phased out" framing. Luke pushed back: it sounded like he'd been forced into a PE title by the org, and it explained a concept (engineers making architectural decisions) that the target engineering org already operated by.
 
+## Build-from-scratch positioning
+
+When a JD asks for "built end-to-end from scratch and scaled" or similar (a common senior-IC signal), Luke's strongest stories are **platform / team / internal-tooling builds, not customer-facing products**.
+
+**Lead-with options**:
+
+- **Reliability Engineering team from scratch** (Feb 2018 onwards): team build with internal-customer-platform mandate.  Strongest story.
+- **Internal tooling shipped by Reliability Engineering** (monitoring aggregation platform, tech migration tracker, change management system): from-scratch products built during his tenure for engineering-team internal customers.
+- **Centralised cyber security function** (Interim VP, 2022): organisational / function build.
+- **Cloud-native zero-downtime deployment pipeline** (Integration Engineer, 2015): from-scratch infrastructure, but old.
+- **Multifactor authentication solution** (FT Labs, post-2013 attack): from-scratch security infrastructure, very old.
+
+**FastFT** (FT Labs, 2011–2014) — confirmed 2026-05-27 — was a customer-facing product built end-to-end, BUT Luke was a team contributor and not leading the build.  Acceptable to mention in passing (cv-extended.md already does); **don't position FastFT as a "I led a customer product from scratch" story** — that overclaims his role on it.
+
+**UPP** is inherited architectural ownership of an existing platform (the Kafka backbone pre-dated his Architect-Content tenure), not greenfield design.  Per `[[luke-voice]]` 'don't claim greenfield on pre-existing systems': use "made architectural decisions on" / "worked on" framings, not "designed" / "architected".
+
+**Rule of thumb**: for "product built end-to-end" JD signals, lean into the internal-platform / internal-tooling builds with honest framing ("built and scaled engineering platforms for internal customers — the FT's Reliability Engineering team and the tools it shipped, the centralised cyber security function, the monitoring aggregation platform").  Don't reach for FastFT as the lead-with story unless the JD specifically asks for very-old customer-product experience.
+
+Related: [[user-skills-inventory]], [[luke-voice]], [[check-evidence-recency]].
+
 ## Unbackfilled Principal Engineer responsibilities (Apr 2022 – Mar 2025)
 
 Throughout the Director and Interim VP roles, Luke retained the **unbackfilled Principal Engineer technical-direction responsibilities** for Cyber Security — providing all the technical direction the role usually requires while delegating day-to-day team management to senior engineers.
