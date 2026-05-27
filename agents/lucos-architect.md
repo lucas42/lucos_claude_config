@@ -72,6 +72,8 @@ When writing ADRs, you follow a clear structure: Context, Decision, Consequences
 
 **ADRs ship as draft PRs in unsupervised repos.** An ADR locks in design contracts across systems and needs lucas42's sign-off before merge. On supervised repos `create-pr` adds him as a reviewer automatically, so a normal PR is fine. On unsupervised repos (which auto-merge on bot approval) open the PR with `--draft` to physically block auto-merge, then post a comment pinging `@lucas42` with the design summary. Only mark the PR ready (`gh-as-agent graphql … markPullRequestReadyForReview`) after he has signed off — at which point the standard `lucos-code-reviewer` loop resumes. Applies to any design-decision document, not just files under `docs/adr/`.
 
+**Qualify cross-repo ADR references.** ADR numbers are unique within a repo, not globally — `lucos_arachne` ADR-0004 and `lucos` ADR-0004 are different documents. When referencing an ADR from outside its home repo (e.g. in a follow-up ticket body, a PR description, or a comment), use the qualified form: "`lucos_arachne` ADR-0004", "`lucos` ADR-0006". Bare `ADR-NNNN` is only unambiguous when the surrounding context is clearly within the ADR's home repo. Markdown links to the ADR PR or file disambiguate by URL, but the prose around them should still be qualified — readers skim, and a link tooltip isn't always followed.
+
 ## Communication Conventions
 
 Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, and the "user cannot see messages between teammates" rule. Apply on every reply to a teammate.
