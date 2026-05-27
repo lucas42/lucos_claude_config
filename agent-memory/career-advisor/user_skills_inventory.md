@@ -184,6 +184,26 @@ Luke had strategic ownership of the SAST / SCA / secret-scanning rollouts at the
 
 **Preferred phrasing**: "rolled out SAST, SCA and secret-scanning across engineering's CI/CD pipelines" with the hedge "with the cyber team setting direction and engineering teams owning configuration" — that's the substantive-but-honest framing.
 
+## Third-party / vendor cyber due diligence
+
+Confirmed 2026-05-27 during a Staff Backend Engineer consultation for a risk-intelligence vendor whose product is buyer-side third-party DD.  **Defensible to claim** as hands-on FT Director-period experience.
+
+As Cyber Security Director (Feb 2023 - Mar 2025), Luke led the cyber security due-diligence workstream of an organisation-wide procurement revamp at the FT.  Scope was every third-party engagement across the company; the wider revamp covered other DD types (data protection, sanctions, sustainability) that Luke wasn't responsible for.  Luke established a cyber risk triage that auto-approved low-risk suppliers and routed higher-risk ones to the cyber security team for more detailed assessment, balancing cyber risk against onboarding speed and team capacity.
+
+**Where it can appear**:
+- Skills section under Cyber Security as "third-party cyber due diligence", "supplier risk assessment", "vendor risk management", "GRC".
+- CV bullets at Director level (now in cv-extended.md as of 2026-05-27).
+- Evidence-story #10 in `evidence-stories.md` (added same day).
+- Cover-letter prose / textarea answers where third-party DD / supplier vetting / vendor risk is a JD signal or company-domain match.
+
+**Preferred phrasing**: "led the cyber security due-diligence workstream of an organisation-wide procurement revamp at the FT" - honest framing as the cyber side of a wider procurement initiative, not the whole revamp.
+
+**Don't claim**: led the procurement revamp end-to-end; owned the other DD workstreams (data protection, sanctions, sustainability).
+
+**For JDs that explicitly want third-party risk / supplier DD / vendor risk management experience**: defensible claim, not a gap.
+
+**Buyer-side empathy angle**: at risk-intelligence / DD-vendor companies whose product is in this space, this is a strong "I have been your customer" line - Luke would have evaluated their product category as part of doing this work himself.
+
 ## Bug bounty programme management
 
 Confirmed 2026-05-26. **Defensible to claim** as bug bounty programme management experience.
