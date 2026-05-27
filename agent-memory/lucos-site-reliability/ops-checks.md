@@ -13,10 +13,10 @@ lucos_media_weightings: 2026-05-20
 lucos_photos_worker: 2026-05-18
 lucos_arachne_explore: 2026-05-16
 lucos_arachne_web: 2026-05-18
-lucos_backups: 2026-05-14
+lucos_backups: 2026-05-27
 lucos_authentication: 2026-05-25
 lucos_repos_app: 2026-05-16
-lucos_dns_bind: 2026-05-15
+lucos_dns_bind: 2026-05-27
 lucos_loganne: 2026-05-26
 lucos_configy: 2026-05-26
 lucos_contacts_app: 2026-05-18
@@ -39,9 +39,9 @@ lucos_arachne_ingestor: 2026-05-22
 lucos_arachne_search: 2026-05-22
 lucos_arachne_triplestore: 2026-05-21
 lucos_mail_docs: 2026-05-24
-lucos_photos_postgres: 2026-05-14
+lucos_photos_postgres: 2026-05-27
 lucos_photos_redis: 2026-05-24
-lucos_scenes: 2026-05-15
+lucos_scenes: 2026-05-27
 lukeblaney_co_uk: 2026-05-26
 lucos_media_manager: 2026-05-23
 lucos_media_metadata_api: 2026-05-25
@@ -54,7 +54,7 @@ lucos_notes: 2026-05-23
 lucos_root: 2026-05-24
 lucos_router: 2026-05-21
 semweb: 2026-05-24
-lucos_time: 2026-05-15
+lucos_time: 2026-05-27
 lucos_arachne_mcp: 2026-05-23
 lukeblaney_blog: 2026-05-24
 lucos_docker_health_app: 2026-05-22

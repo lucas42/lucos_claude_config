@@ -15,7 +15,11 @@
 
 ## seinn thrash failure modes — distinguish before diagnosing
 
-- [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — `decodeAudioData` / `fetch` failures in `playTrack` produce a 2.4s thrash loop the cache-thrash banner (#460/#473) doesn't detect. Diagnostic: 100s of `trackUpdated` "errored" events with webhooks all `success` and `lastErrorMessage` ∈ {`Unable to decode audio data`, `Failed to fetch`}. Tracked in lucas42/lucos_media_seinn#482 (filed 2026-05-26).
+- [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — `decodeAudioData` / `fetch` failures in `playTrack` produce a 2.4s thrash loop the cache-thrash banner (#460/#473) doesn't detect. Diagnostic: 100s of `trackUpdated` "errored" events with webhooks all `success` and `lastErrorMessage` ∈ {`Unable to decode audio data`, `Failed to fetch`}. Tracked in lucas42/lucos_media_seinn#482, fix shipped in PR #483 (2026-05-26). Incident report: lucos `docs/incidents/2026-05-26-seinn-playback-error-thrash.md`.
+
+## loganne event-loop-lag-low daily 02:00Z flap pattern
+
+- [Daily 02:00Z bulk weighting recompute → loganne flap](pattern_daily_weighting_cron_loganne_flap.md) — known recurring 1-2 brief alerts/day at 02:13-02:25Z UTC from the `lucos_media_weightings` daily bulk recompute (~220 trackWeightingUpdated → ~660 outbound fires in 30 min). Within calibration trade-off; do NOT refile or re-diagnose during ops checks.
 
 ## GitHub Actions outage diagnosis
 
