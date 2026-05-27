@@ -143,6 +143,22 @@ Confirmed 2026-05-22. **Conceptually current, not deep hands-on.** Luke is famil
 
 **For JDs that explicitly want SLSA / supply-chain hardening hands-on**: frame as honest gap with adjacent evidence (agent-fleet discipline + general CI/CD), same pattern as the regulated-pensions ISO 27001 honest-gap framing. Don't claim SLSA implementation at scale.
 
+## Monitoring protocols (SNMP, WMI, JMX, JDBC, PerfMon)
+
+Confirmed 2026-05-27 during a Senior Customer Technical Architect consultation at a hybrid-observability vendor. **Default rule: skip protocol-specific listings in Skills sections** for observability-vendor JDs that name them.
+
+**Why:** The FT's monitoring stack was Nagios / CloudWatch / Graphite / Grafana / Prometheus — protocol fluency would have been adjacent (Luke ran the FT's monitoring strategy across all teams) but not in-the-fingers. Listing the protocols in Skills risks overclaiming hands-on competence in interviews.
+
+**Where they DON'T appear**:
+- CV Skills section by default — even when an observability-vendor JD lists them explicitly.
+- CV role bullets — never.
+
+**Where the absence is OK to compensate for**:
+- Cover-letter prose can mention "the protocol landscape as the monitoring strategist" without claiming protocol-tinkerer depth.
+- ATS keyword density: the observability / monitoring / metrics / log-aggregation / mixed-estate keyword cluster does the work the protocols would otherwise do.
+
+**For JDs that demand specific protocol fluency**: treat as a real gap (same pattern as Datadog / Kubernetes / regulated-pensions ISO 27001). Frame as "protocol-aware from the buyer side" if asked, but don't claim depth.
+
 ## Active Directory / directory services / SSO
 
 Confirmed 2026-05-27 during a Senior Customer Technical Architect consultation at a hybrid-observability vendor. **Defensible adjacency** via the FT's company-wide SSO migration to Okta during PE-Cyber (Sep 2020 – Sep 2021), which Luke "took over responsibility for... delivered on time and on budget" per cv-extended.md.

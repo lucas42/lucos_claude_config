@@ -128,6 +128,40 @@ The cyber team at the FT genuinely worked this way — concrete evidence already
 
 Related: [[user-skills-inventory]], [[check-evidence-recency]].
 
+## Vendor-side customer-facing technical roles (Customer Technical Architect, Solutions Architect, Sales Engineer)
+
+Confirmed 2026-05-27 during a consultation for a Senior Customer Technical Architect role at a hybrid-observability vendor (Acme Observability in worked-example terms).
+
+This is a role archetype Luke is positioning for as part of broadening the funnel. The deliverable is a customer-facing trusted-advisor engagement (post-sales solutioning, advisory, demos, training, troubleshooting, product-feedback-loop) rather than IC engineering or people management. The 10-15-years-experience bar fits Luke's senior IC tier.
+
+### Positioning approach
+
+**Lead with domain expertise, no title-trajectory narrative.** Skip the "deliberate technical re-focus" / "Director → IC" framing. Anchor the Summary on the domain match (observability, monitoring, cyber, IAM — whatever the vendor sells) and let the dates carry seniority. Trying to explain Director → Customer Technical Architect adds noise; recruiters at vendors read Luke's history as a buyer-side credential, not a title-step-down.
+
+**Reframe internal-advisory as customer-facing-adjacent.** Luke has substantial internal-advisory evidence: "advised on security concerns across all the FT's engineering teams" (PE-Cyber), "senior stakeholder management, acting as a bridge between business and engineers" (Director), conference talks, panel moderation, cross-functional partnership with Editorial / B2B / Tech (Architect-Content). None of this is external-paying-customer experience — but it's adjacent enough to carry the reframe. **Don't add an honest-gap line** about external-customer-newness in the CV; let the evidence stand and address the gap conversationally if the recruiter probes.
+
+**Skills section pattern: include a "Cross-functional Practice" category** as the fifth/last slot. Populate with "technical advisory across engineering teams, senior stakeholder management, conference-style technical communication, vendor relationship management, [domain-specific IAM / IaC / etc.]". This is the keyword-density layer for the customer-facing reframe.
+
+### Buyer-side empathy framing
+
+For any role at a vendor whose product Luke would have evaluated or operated at the FT, the unfair-advantage angle is **"I have been your customer"** — implicitly. Examples of buyer-side history Luke can draw on:
+
+- **Monitoring / observability vendors** (Datadog, New Relic, Dynatrace, Splunk, Acme Observability): FT Reliability Engineering team, monitoring aggregation platform, QCon 2020 "Monitoring All the Things" talk, end-of-life roadmaps for monitoring tools.
+- **Code hosting / DevTools vendors** (GitHub, GitLab, Atlassian): the FT's Code Hosting and Issue Tracking SaaS migrations, vendor evaluation.
+- **IAM vendors** (Okta, Auth0): the FT's SSO migration to Okta.
+- **Security tooling vendors** (Snyk, Veracode, GitGuardian, Endor Labs): the FT's SAST / SCA / secret-scanning rollouts.
+- **AI platform vendors**: the personal agent fleet (already settled in [[user-skills-inventory]]).
+
+**How to deploy:** don't say "I have been your customer" in those words — too sales-pitchy. Lead the Summary with the buyer-side story and trust the reader to draw the inference. Worked example from this consultation: *"Spoke at QCon London 2020 on Monitoring All the Things - the mixed-estate observability problem hybrid-monitoring vendors exist to solve."*  One sentence; reader draws the inference on their own.
+
+### What NOT to do
+
+- **Don't lean on "Director" or "VP" as the headline credential.** Vendors hiring customer-facing technical architects care about technical and customer credibility, not org-chart altitude. Older titles (Principal Engineer, Architect) often carry more weight than recent management titles for this archetype.
+- **Don't claim external-customer-facing experience Luke doesn't have.** Reframe internal-advisory as adjacent; don't dress it up as paying-customer engagement.
+- **Don't apologise for the gap in the CV.** Let the adjacent evidence carry the weight and leave the external-customer-is-new conversation for the recruiter call.
+
+Related: [[user-skills-inventory]], [[check-evidence-recency]], [[user-cover-letter-patterns]].
+
 ## Level-positioning when the JD level doesn't match recent titles
 
 - **Director → Staff IC** (e.g. cv-staff-engineer.md for a fintech Staff Engineer JD): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.
