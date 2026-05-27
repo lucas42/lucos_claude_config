@@ -31,3 +31,5 @@ Central application tracker lives at `lukeblaney_cv_tailored/applications/`, cre
 - When Luke reports a closure: move entry from `in-progress.md` to top of `closed.md`, remove from README at-a-glance, write outcome line.
 - Luke updates almost always come through laptop sessions (he confirmed this 2026-05-27); the workflow assumes I'm in the loop for any edits. No phone-sync surface is needed.
 - Honour [[feedback-cv-application-privacy]]: this directory lives in the private `lukeblaney_cv_tailored` repo. Never propagate company names into the public `lukeblaney_cv` repo, commits, or memory files outside this scope.
+
+**Next planned action (2026-05-28):** bulk import from Luke's LinkedIn job tracker. Format / shape of the input not yet known — ask Luke when he kicks it off whether he'll export, screenshot, or paste. Each entry routes to spotted/in-progress/closed based on its LinkedIn status; default Source for these is LinkedIn unless the entry says otherwise.
