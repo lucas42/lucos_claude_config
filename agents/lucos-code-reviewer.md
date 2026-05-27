@@ -68,6 +68,23 @@ Speculation about external state gets relayed forward as fact unless something s
 
 If you cannot verify because the system is unreachable, say so explicitly — "unverified: could not fetch tags" — rather than speculating.
 
+### Verify all code paths before flagging a missing fix
+
+**Before concluding that a fix or feature is absent from a component, verify across all relevant code paths — not just the most obvious one.** For UI components especially, the actual fix may be in a JS event handler, a lifecycle callback, or runtime DOM manipulation rather than a static CSS block or constructor style declaration. Reading only one path (e.g. `mainStyle` CSS) and seeing no match does not mean the fix is absent.
+
+- **JS/CSS components:** when an expected visual fix (column overflow, focus ring, scroll clamping) isn't in the style block, grep the full component JS for the symptom keyword (e.g. "column", "overflow", "position", "fixed") before raising a concern.
+- **Installed package source:** when the "obvious" location is empty but the package version is recent, read the installed package's source for the affected feature path. The fix may use a different mechanism than the consumer-side analogue suggested.
+
+Confirmed false positive: `lucos_search_component#175` (2026-05-27) — filed a CSS-missing issue after reading `mainStyle`; the real fix was `isInMultiColumnLayout()` in a `dropdown_open` JS listener switching `.ts-dropdown-content` to `position: fixed` at runtime. Closed as duplicate of #171.
+
+### Search for existing issues before filing a side issue during review
+
+**Before filing a follow-up issue about a suspected gap in a recently-released package, search that repo's open and recently-closed issues for the same concern.** A fix that "isn't where you expected" in v4.0.0 may have been tracked and resolved in the issue that *motivated* the release.
+
+Concretely: `gh-as-agent --app lucos-code-reviewer "repos/lucas42/{repo}/issues?state=all&per_page=20" --jq '.[] | {number, title, state, closed_at}'` — a one-command search before filing. If an issue closed within the last few days covers the same concern, link to it rather than opening a duplicate.
+
+Confirmed failure: `lucos_search_component#175` was a duplicate of `#171`, which was closed minutes before the PR under review. A repo issue search would have surfaced it immediately.
+
 ## Dependabot PR CI Failures
 
 **`@dependabot recreate` is deterministic — never recommend it as a fix to a CI failure unless an input has demonstrably changed since the original PR was opened.** Dependabot regenerates the PR using the same manifest (`package.json`, `Gemfile`, `pyproject.toml`, etc.) plus the current registry state. Unless one of those inputs has changed in a way that would alter the resolution (e.g. the manifest was edited, a new version was published, a yanked version was unyanked), recreate produces the same lockfile and the same failure.

@@ -54,6 +54,8 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
 
 If you spot a concrete, fixable issue, **request changes** — even if the fix is minor. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things requiring significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
 
+**Supervision status does not affect this rule.** "The repo is supervised so lucas42 will see the note anyway" is not a valid reason to approve with notes instead of requesting changes. The rule is about signal strength, not merge safety.
+
 ## Step 5 — Post the review
 
 Always use `gh-as-agent --app lucos-code-reviewer`. Never `gh api` directly, never `gh pr review` — those would post under the wrong identity. Always wrap `body` in a `<<'ENDBODY'` heredoc; inline `-f body="..."` breaks newlines and backticks. See [`references/agent-github-identity.md`](../../references/agent-github-identity.md) for the heredoc pattern and the `{owner}/{repo}` template-substitution gotcha.
@@ -134,6 +136,7 @@ The combined state is CI-passing only when **all** check-runs have `conclusion: 
 - **CI passes:** nothing more needed.
 - **CI fails:** post a follow-up `REQUEST_CHANGES` review flagging the specific failures.
 - **No check runs and no statuses:** nothing more needed.
+- **Check-runs absent despite required checks in branch protection:** if all CircleCI statuses pass but GitHub Actions check-runs never appear (total_count=0 after several minutes), fetch the branch protection required checks (`repos/{repo}/branches/main`), identify which required checks are missing, and treat this as an infrastructure failure — post the code-quality APPROVE (or REQUEST_CHANGES) based on what you have, note in the review that `{CheckName}` hasn't triggered and may block auto-merge, then `SendMessage lucos-site-reliability` with the two affected PR URLs, head SHAs, and the specific missing check name. Do **not** hold the review waiting indefinitely for a check that may never fire.
 
 **Why post the code review before waiting for CI:** waiting first creates a race — if the developer pushes a new commit, your review ends up against a SHA whose diff you never read. Post review first, then handle CI separately.
 

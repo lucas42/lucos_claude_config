@@ -46,8 +46,8 @@
 
 ### Verify absence of a specific thing in the raw file before requesting changes
 - **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
-- Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard which was already in the file at the HEAD SHA. Resulted in a false REQUEST_CHANGES that wasted a review round-trip.
-- Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
+- Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard already in the file. Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
+- **Shadow DOM components: check JS event handlers, not just CSS.** [[feedback-js-component-css-inspection]] — `mainStyle` CSS absence ≠ fix absent; the fix may be in a `dropdown_open`/lifecycle handler. Grep the full JS source before filing.
 
 ### Post code review immediately, then follow up if CI fails
 - **Post review (APPROVE or REQUEST_CHANGES) immediately based on code quality; handle CI separately.** Waiting first creates a race — developer may push while CI runs, making your diff stale.
