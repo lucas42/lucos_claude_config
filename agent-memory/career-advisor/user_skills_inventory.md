@@ -135,6 +135,18 @@ Confirmed 2026-05-22. **Conceptually current, not deep hands-on.** Luke is famil
 
 **For JDs that explicitly want SLSA / supply-chain hardening hands-on**: frame as honest gap with adjacent evidence (agent-fleet discipline + general CI/CD), same pattern as the regulated-pensions ISO 27001 honest-gap framing. Don't claim SLSA implementation at scale.
 
+## Active Directory / directory services / SSO
+
+Confirmed 2026-05-27 during a Senior Customer Technical Architect consultation at a hybrid-observability vendor. **Defensible adjacency** via the FT's company-wide SSO migration to Okta during PE-Cyber (Sep 2020 – Sep 2021), which Luke "took over responsibility for... delivered on time and on budget" per cv-extended.md.
+
+**Where it can appear**:
+- Skills section as "identity and access management", "SSO / directory services", "Okta", or "directory integration" — for JDs that name Active Directory, AD, identity management, or directory services.
+- Cover-letter prose for IAM-touching JDs as adjacent evidence.
+
+**Don't claim**: AD administration, Windows-admin depth, day-to-day directory operations. The honest claim is strategic-direction-and-delivery of SSO migration that touched directory integration, not hands-on AD configuration.
+
+**Useful framing**: "led the FT's company-wide SSO migration to Okta" or "delivered identity and access management programmes touching directory integration" — both are accurate to what's in cv-extended.md.
+
 ## DevSecOps tooling (SAST, SCA, secret scanning)
 
 Confirmed 2026-05-26 during a Principal Product Security IC consultation. **Defensible to claim** as hands-on FT experience, not just architectural.
