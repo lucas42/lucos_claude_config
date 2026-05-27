@@ -13,7 +13,11 @@ When editing files in `lucas42/lukeblaney_cv`:
 
    Subsequent tweaks to an existing variant (proofreading edits, small content swaps) follow the small-commit rule again.
 
-3. **Only commit source, documentation, and build config.** Generated artefacts (`.pdf`, `.docx`, LaTeX intermediates `.aux`/`.log`/`.out`) must be excluded via `.gitignore` and never staged.
+3. **Artefact-commit policy differs by repo:**
+   - **Public `lukeblaney_cv`**: all rendered artefacts (`cv*.pdf`, `cv*.docx`, `.aux`/`.log`/`.out`) gitignored and never staged. The markdown source + pandoc templates regenerate them deterministically; committing them adds binary noise to a public history.
+   - **Private `lukeblaney_cv_tailored`**: rendered submission artefacts ARE committed alongside their markdown source as the durable record of what was actually sent — both `Luke Blaney - CV.docx` (always) and `Luke Blaney - CV.pdf` (when produced via `render-tailored.sh --pdf` for direct share with a recruiter or for an application that asked for PDF). PDFs are only generated when the flag is passed deliberately, so any PDF in the tree is a real submission artefact, not incidental noise. Same logic for `Luke Blaney - Cover Letter.docx` / `.pdf`. The verification-only LibreOffice round-trip PDF (`*(from docx).pdf`) is gitignored via a specific pattern, as are LaTeX intermediates.
+
+   Tightened 2026-05-27 after the LogicMonitor submission, where the gitignore was excluding `*.pdf` blanket and Luke flagged that any deliberate `--pdf` output should be commit-worthy.
 
 **Why:** The CV lives in source control and Luke wants a clean, readable history he can review change-by-change for the durable / reusable stuff. But per-application variant creation is a single conceptual unit — splitting it adds noise without informational value, and each variant's history isn't going to be reviewed bullet-by-bullet anyway.
 

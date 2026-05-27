@@ -252,9 +252,9 @@ Once Luke approves the final draft and any upstream propagation:
    # add --pdf before the path if a PDF is also needed (rare — ATSes overwhelmingly want the .docx)
    ```
 
-   Because the source is named `cover-letter.md`, the script outputs `Luke Blaney - Cover Letter.docx` (committed, the submission artefact with ATS-ready filename) by default. A `Luke Blaney - Cover Letter.pdf` (gitignored, for human review) is also produced if `--pdf` is passed.
+   Because the source is named `cover-letter.md`, the script outputs `Luke Blaney - Cover Letter.docx` (committed, the submission artefact with ATS-ready filename) by default. A `Luke Blaney - Cover Letter.pdf` is also produced if `--pdf` is passed — when deliberately invoked (e.g. a recruiter has asked for a PDF for direct share) that PDF is also a real submission artefact and should be committed alongside the .docx.
 
-7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `cover-letter.md` letter source, and the rendered `Luke Blaney - Cover Letter.docx`. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
+7. **Commit**: single bundled commit covering all changed files in this session — the new/updated `notes.md`, the `cover-letter.md` letter source, the rendered `Luke Blaney - Cover Letter.docx`, and `Luke Blaney - Cover Letter.pdf` if `--pdf` was used. Commit message can name the company freely — this is a private repo per `feedback_cv_application_privacy.md`. Suggested format:
    > "Add {Company} {Role} cover letter"
    >
    > Brief body summarising the opener pattern + evidence story used + any notable stylistic decisions.

@@ -162,9 +162,10 @@ The script reuses the same pandoc templates and brand colour as the public-repo 
 
 - The new `orgs/{company-slug}/{role-slug}/cv.md` (markdown source)
 - The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
+- The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.pdf` **if `--pdf` was passed** to the render script (e.g. a recruiter asked for a PDF for direct share). Any PDF in the tree is a deliberate `--pdf` output and is a real submission artefact — commit it alongside the .docx.
 - Any new `orgs/{company-slug}/notes.md` if this is a first-time application to that company
 
-Any `.pdf` ("Luke Blaney - CV.pdf") produced via `--pdf` is gitignored — regenerable for human review or hand-share if an application explicitly asks for one; not the canonical submission artefact.
+The only artefact that stays out of the commit is the LibreOffice verification PDF `Luke Blaney - CV (from docx).pdf` produced in Step 10 — the `.gitignore` pattern `*(from docx).pdf` keeps it out automatically.
 
 Because the private repo doesn't carry the public-employer-name constraint, the commit message **can** name the company freely. Suggested format:
 
@@ -220,7 +221,7 @@ print(f'JD keywords missing: {missing if missing else "none"}')
 EOF
 ```
 
-The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s `.gitignore` already excludes `*.pdf` so it won't be staged.
+The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s `.gitignore` has a specific `*(from docx).pdf` pattern that keeps it out of `git add`. Other PDFs (the `Luke Blaney - CV.pdf` from `render-tailored.sh --pdf`) are NOT gitignored and should be committed alongside the .docx when present.
 
 Targets:
 - **DOCX pages**: hard limit 3, target ~2.
@@ -229,7 +230,7 @@ Targets:
 - **cid / ligs / hyphens**: all 0 (these are non-negotiable; if any are >0 the geometry/header is broken)
 - **JD keywords**: all top-tier keywords present
 
-(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked; even then it's for human review only and its page count is not authoritative for the submission. See [[cv-page-count]].)
+(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked. When invoked deliberately — e.g. a recruiter has asked for a PDF for direct share — that PDF IS a real submission artefact and should be committed alongside the .docx. The page count check still runs against the LibreOffice round-trip of the .docx, not the LaTeX-PDF, because the .docx is the format under the ATS-page-count constraint. See [[cv-page-count]].)
 
 ## Step 11: Push and report
 

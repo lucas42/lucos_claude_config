@@ -482,7 +482,7 @@ content-from-paragraph: {3 | 4 | 1+2 | custom}
 # The markdown source IS the submission artefact (Luke copy-pastes into the form).
 ```
 
-The script renders the `.docx` only by default — that's the canonical submission artefact for ATSes with a file-upload field. Pass `--pdf` (before the markdown path) only when an application or recipient specifically asks for a PDF; the PDF is gitignored either way.
+The script renders the `.docx` only by default — that's the canonical submission artefact for ATSes with a file-upload field. Pass `--pdf` (before the markdown path) only when an application or recipient specifically asks for a PDF (e.g. a recruiter wants to share the file directly rather than receive an upload). Any PDF produced this way IS a deliberate submission artefact and should be committed alongside the .docx — see the Outputs list below.
 
 **Don't render a `.docx`** for cover letters whose form field is a textarea, or for per-question textarea answers. Doing so produces a misleading artefact (Luke would be submitting the markdown text, not a `.docx` upload). The markdown file is the canonical source-and-submission for textarea content.
 
@@ -490,7 +490,8 @@ Outputs (in the role-slug directory):
 - `Luke Blaney - CV.docx` (always — committed, ATS-ready submission name)
 - `[LETTER]` `Luke Blaney - Cover Letter.docx` (only when form has a CL file upload — committed)
 - `[LETTER]` `cover-letter.md` / `why-{company-slug}.md` / `additional-information.md` / `{question-slug}.md` (plain markdown for textarea fields — committed)
-- With `--pdf` on the CV: `Luke Blaney - CV.pdf` (gitignored)
+- With `--pdf` on the CV: `Luke Blaney - CV.pdf` (committed alongside the .docx — see commit list below)
+- With `--pdf` on the cover letter: `Luke Blaney - Cover Letter.pdf` (committed alongside)
 
 ### Commit
 
@@ -549,7 +550,7 @@ print(f'JD keywords missing: {missing if missing else "none"}')
 EOF
 ```
 
-The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s top-level `.gitignore` already excludes `*.pdf` so it won't be staged.
+The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s top-level `.gitignore` has a specific `*(from docx).pdf` pattern that keeps it out of `git add`. Other PDFs (the `Luke Blaney - CV.pdf` from `render-tailored.sh --pdf`) are NOT gitignored and should be committed alongside the .docx when present.
 
 Targets:
 - **DOCX pages**: hard limit 3, target ~2.
@@ -558,7 +559,7 @@ Targets:
 - **cid / ligs / hyphens**: all 0 (non-negotiable — if any are >0 the geometry/header is broken).
 - **JD keywords**: all top-tier keywords present.
 
-(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked; even then it's for human review only and its page count is not authoritative for the submission.)
+(The LaTeX-PDF (`Luke Blaney - CV.pdf`) is only produced when `render-tailored.sh --pdf` is invoked. When invoked deliberately — e.g. a recruiter has asked for a PDF for direct share — that PDF IS a real submission artefact and should be committed alongside the .docx. The page count check still runs against the LibreOffice round-trip of the .docx, not the LaTeX-PDF, because the .docx is the format under the ATS-page-count constraint.)
 
 **Cover-letter `.docx` verification** (Variant A file-upload only): same round-trip-via-LibreOffice procedure on `Luke Blaney - Cover Letter.docx`. Targets: 1 page (hard limit 2), cid/ligs both 0, em-dash count ≤ 1 in extracted text.
 
