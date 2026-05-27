@@ -52,6 +52,14 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **Will not claim**: React (general JavaScript / Node.js is fine, but React specifically is not in Luke's history)
 
+## Web servers / reverse proxies
+
+**Apache and nginx — defensible**: confirmed 2026-05-27. Used extensively in two FT roles (Labs Developer Dec 2011 – Dec 2014; Integration Engineer Jan – Nov 2015) and still used today in personal projects. Acceptable to list in Skills under Cloud / Infrastructure or a Web Servers grouping for any JD that names Apache, nginx, or "web servers / reverse proxies" generically.
+
+**Varnish — also defensible** (separately): two Varnish-related talks on cv-extended.md (Varnish User Group Berlin 2013; Varnish Summit LA 2016 where Luke collected the Varnish Innovation Award). Used heavily at FT Labs and in the FT's edge delivery layer.
+
+**Will not claim**: IIS (no Windows-stack history); Tomcat (no Java-stack history).
+
 ## Configuration management / IaC
 
 **Puppet — defensible**: confirmed 2026-05-23. Luke used Puppet extensively in two FT roles: Labs Developer at FT Labs (Dec 2011 – Dec 2014) and Integration Engineer at FT Strategic Products (Jan 2015 – Nov 2015). Acceptable to list in Skills under Programming & Systems for JDs that name Puppet. The Varnish User Group Berlin 2013 talk "One VCL to rule all our environments" specifically discusses Puppet-driven config consolidation across environments and is the strongest public reference point for this work.
