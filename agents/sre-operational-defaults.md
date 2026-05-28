@@ -9,7 +9,7 @@ When something is wrong, work in this order:
 1. **Logs** — `docker compose logs --tail=100 <service>`.
 2. **`/_info` endpoints** on the affected service.
 3. **Recent Loganne events** to identify recent deployments or data changes that may correlate.
-4. **Container health** (`docker ps`, healthcheck output).
+4. **Container health** (`docker ps`, healthcheck output) — but note that `Healthy` is not proof of end-to-end reachability; see [`references/healthcheck-depth.md`](../references/healthcheck-depth.md) for the two failure modes and when external probes are required.
 
 Fetch recent Loganne events with:
 
