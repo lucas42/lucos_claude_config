@@ -21,6 +21,10 @@
 
 - [Daily 02:00Z bulk weighting recompute → loganne flap](pattern_daily_weighting_cron_loganne_flap.md) — known recurring 1-2 brief alerts/day at 02:13-02:25Z UTC from the `lucos_media_weightings` daily bulk recompute (~220 trackWeightingUpdated → ~660 outbound fires in 30 min). Within calibration trade-off; do NOT refile or re-diagnose during ops checks.
 
+## lucos_repos deploy mechanics
+
+- [Deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — `Start() → TriggerSweep()` means deploy → recovery is ~17-18min, not the 6h scheduled cadence. Also: `POST /api/sweep` (no auth) is the manual trigger; returns 409 if sweep in progress. I got the 6h recovery time wrong on 2026-05-28; lucas42 caught it.
+
 ## GitHub Actions outage diagnosis
 
 - [Check GitHub status page early](pattern_github_actions_outage_diagnosis.md) — when Actions workflows aren't triggering on new PRs, hit `githubstatus.com/api/v2/components.json` and `/incidents/unresolved.json` BEFORE chasing per-repo theories. Smoking gun: PR commit SHA has CircleCI statuses + `claude` check-suite but ZERO `github-actions` check-suites. During an outage, do NOT close/reopen or push empty commits — events get dropped too, or queue and duplicate-fire on recovery. Bit me on lucas42/lucos_photos#407 / #408 (2026-05-26 Actions+Pages outage starting 10:57:13 UTC).
