@@ -64,6 +64,8 @@ Canonical LinkedIn URL: `https://www.linkedin.com/jobs/view/{jobId}/`
 - **No applied-at / archived-at / saved-at timestamps.** No move-history.
 - **No `previousStage`, `wasApplied`, `applicationStatus`, `withdraw...`** — once a job is moved between buckets, the trail is erased. Archived bucket cannot be subdivided into "applied-then-archived" vs "saved-then-archived" from the data alone.
 - **Per-bucket overlap is zero** — LinkedIn moves jobs, never duplicates. Set intersection of Saved/Applied/Archived jobIds = ∅ across all three.
+- **Same role posted to multiple locations = multiple jobIds.** Companies that target both a city-specific and a country-wide audience (e.g. "London (Remote)" + "United Kingdom (Remote)") get two distinct jobIds for the same role. After dedup, also check the (company, title) tuple for collisions inside a single bucket — merge into one tracker entry that lists both jobIds.
+- **Job re-listings produce new jobIds.** A role posted, expired, then re-listed will have two jobIds weeks apart. If the user applied to the old posting and saved the re-listing, you'll see the same (company, title) tuple straddling buckets (e.g. one in Saved, one in Archived/Applied). Worth flagging as a heads-up rather than auto-merging — could be either a re-list of the same role or a fresh requisition.
 
 ## Parsing notes
 
