@@ -43,9 +43,10 @@ A healthcheck that only tests the HTTP server's loopback (`wget http://127.0.0.1
 ```yaml
 healthcheck:
   test: ["CMD-SHELL", "python -c \"import redis, os; r = redis.from_url(os.environ['REDIS_URL']); r.ping()\""]
-  interval: 30s
+  interval: 10s
   timeout: 5s
   retries: 3
+  start_period: 15s
 ```
 Explicitly probes the cache dependency rather than just the HTTP server. If Redis is down, `Healthy` correctly flips to `(unhealthy)`.
 
@@ -54,8 +55,9 @@ Explicitly probes the cache dependency rather than just the HTTP server. If Redi
 healthcheck:
   test: ["CMD-SHELL", "find \"$$RDF_OUTPUT_PATH\" -mmin -120 | grep -q ."]
   interval: 60s
-  timeout: 10s
+  timeout: 5s
   retries: 3
+  start_period: 2m
 ```
 Probes mounted-volume access and pipeline freshness (file modified within last 2 hours). Catches a stale or missing output file — the invisible failure mode for this service.
 
