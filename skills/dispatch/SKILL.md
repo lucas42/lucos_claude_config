@@ -103,9 +103,10 @@ If a PR was created and approved:
    # exit 0 → confirmed dependent; exit 1 → not dependent
    ```
 
-   The script enforces cross-repo-aware matching rules:
+   The script enforces cross-repo-aware matching rules (following GitHub's autolinker):
+   - **Backtick code spans are stripped first.** A reference inside backticks (e.g. `` `#254` `` or `` `lucas42/lucos_eolas#254` ``) is rendered as code by GitHub, not a link — it is never treated as a dependency.
    - **Same-repo** (`closed_repo == blocked_repo`): bare `#N` (not preceded by an alphanumeric/underscore/slash character) **or** a github.com URL for the closed issue.
-   - **Cross-repo** (`closed_repo != blocked_repo`): `{closed_repo}#N`, `{owner}/{closed_repo}#N`, or a github.com URL — bare `#N` alone does **not** match.
+   - **Cross-repo** (`closed_repo != blocked_repo`): only `{owner}/{closed_repo}#N` (fully-qualified) or a github.com URL — the short form `{closed_repo}#N` (no owner prefix) does **not** match (GitHub does not autolink it); bare `#N` alone does **not** match either.
 
    This prevents false positives when a blocked ticket in repo A references `repo_C#N` and the just-closed issue is `repo_A#N` (different issue, same number in a different repo). Run `~/.claude/skills/dispatch/check-dependent --test` to verify the rules and see the regression examples.
 

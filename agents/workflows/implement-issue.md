@@ -8,7 +8,17 @@ The dispatch contract — only work on issues you have been explicitly assigned,
 
 ## Step 1 — Read the issue first
 
-Before any code changes, **read the full issue body AND all comments (including reactions)**. Comments often contain critical context — agreed approaches, corrections, additional scope discovered after filing.
+Before any code changes, **read the full issue body AND all comments**. Make two separate API calls — the body and comments are different endpoints:
+
+```bash
+# 1a. Body
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{number}
+
+# 1b. Comments — must be fetched separately, not as a jq field on the body response
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{number}/comments
+```
+
+A jq-scoped body fetch (e.g. `--jq '{title: .title, body: .body}'`) does not include comments — they are on a separate endpoint. Skipping the comments call means you miss corrective context posted after the issue was filed (agreed approaches, scope changes, acceptance criteria additions).
 
 Follow the **latest agreed direction**: this might be a comment from `lucas42`, or a suggestion from another commenter that `lucas42` has approved (via a +1 reaction or explicit agreement). When earlier suggestions conflict with later consensus, follow the later consensus. If in doubt about which direction was agreed, ask team-lead before proceeding.
 
