@@ -52,6 +52,8 @@ ssh <host> "docker ps --format 'table {{.Names}}\t{{.Status}}' | grep 'unhealthy
 
 Any container showing `Exited`, `Restarting`, or `(unhealthy)` is a concern. Observe and raise a GitHub issue on the relevant repo if not already tracked. Do not restart containers yourself — that's incident response.
 
+**`Healthy` is not proof of reachability.** A container can show `(healthy)` while externally unreachable (broken docker network, absent docker-proxy). For any host that has recently had docker-daemon or network changes, supplement `docker ps` with an external `curl https://<domain>/_info` per service. See [`references/healthcheck-depth.md`](../references/healthcheck-depth.md).
+
 If a crash-looping container might have an application-level root cause (e.g. an unhandled exception rather than resource exhaustion), note this in the issue body for lucos-site-reliability to cross-check.
 
 ---

@@ -81,6 +81,8 @@ Always set `restart: always` on persistent service containers. Without it, conta
 
 ## Healthchecks
 
+> **`Healthy` ≠ end-to-end working.** Docker's status only proves the healthcheck command returned 0 — not that the service is reachable or its dependencies are up. See [`references/healthcheck-depth.md`](healthcheck-depth.md) for the two failure modes, author-side guidance (probe real dependencies, not just loopback), and verifier-side rules (external `curl /_info`).
+
 - Every service with a `build:` key in `docker-compose.yml` should have a `healthcheck:` defined (the `lucos_repos` convention check enforces this)
 - **Always use `CMD-SHELL`** for healthchecks that need env var expansion (e.g. `${PORT}`). `CMD` array form skips the shell — `${PORT}` stays as a literal string.
 - **Never use `localhost` in healthcheck probe URLs — always use `127.0.0.1`.** Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. Services typically bind only `0.0.0.0:PORT` (IPv4), so the healthcheck gets "Connection refused" on `::1` and reports `(unhealthy)` even though the service is externally functional. This is a silent false-negative — the container stays "Up" but shows unhealthy, accumulating thousands of consecutive failures. Seen in production: [lucos_arachne#91](https://github.com/lucas42/lucos_arachne/issues/91), [lucos_contacts#534](https://github.com/lucas42/lucos_contacts/issues/534).
