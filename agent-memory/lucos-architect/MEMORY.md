@@ -65,6 +65,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Read the PR not the description of it](feedback_read_the_pr_not_the_description.md) — when an argument hinges on what a referenced PR does, read the PR; report-phrasing is a pointer, not a substitute (seinn#483 detector-keying misread, 2026-05-27)
 - [Check special cases before extending a pipeline](feedback_check_special_cases_before_extending_pipeline.md) — when proposing a new walk/lookup on top of existing logic, start from the post-special-case output, not raw input (ADR-0004 LanguageFamily catch, 2026-05-27)
 - [Qualify cross-repo ADR references](feedback_qualify_cross_repo_adr_refs.md) — ADR numbers are unique within a repo, not globally; write `lucos_arachne ADR-0004`, not bare `ADR-0004` (2026-05-27)
+- [GitHub cc / @-mentions don't notify agents](feedback_no_github_cc_as_delivery.md) — `cc'ing @lucos-foo` in an issue body is signage for humans, not delivery; pair with SendMessage (2026-05-28)
 
 ## Reference memories
 
