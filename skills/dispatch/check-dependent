@@ -1,0 +1,155 @@
+#!/bin/bash
+# check-dependent — cross-repo-aware dependency matching for /dispatch
+#
+# Usage:
+#   printf '%s\n%s' "$body" "$comments" | check-dependent {owner}/{closed_repo}#{N} {blocked_repo}
+#
+# Arguments:
+#   $1 — closed issue reference, e.g. "lucas42/lucos_media_metadata_api#254"
+#   $2 — repo containing the blocked issue, e.g. "lucos_media_metadata_api"
+#   stdin — body text + comments of the blocked issue to search
+#
+# Exit codes:
+#   0 — text references the closed issue as a dependency (match)
+#   1 — no match
+#   2 — usage error
+#
+# Matching rules (lucos_claude_config#92):
+#
+#   Same-repo (closed_repo == blocked_repo):
+#     - Bare #N not preceded by an alphanumeric/underscore/slash character
+#     - URL: github.com/{owner}/{closed_repo}/issues/{N}  or  .../pull/{N}
+#
+#   Cross-repo (closed_repo != blocked_repo):
+#     - {closed_repo}#N   (short form, not preceded by alphanumeric/underscore/slash)
+#     - {owner}/{closed_repo}#N  (fully-qualified, not preceded by alphanumeric/underscore/slash)
+#     - URL: github.com/{owner}/{closed_repo}/issues/{N}  or  .../pull/{N}
+#     - Bare #N does NOT match in the cross-repo case.
+#
+# Regression (lucos_claude_config#92 concrete failure mode):
+#   Closed: lucas42/lucos_media_metadata_api#254
+#   Blocked repo: lucos_media_metadata_api
+#   Body: "Blocked on lucas42/lucos_eolas#254"
+#   Expected: exit 1  (eolas#254 != metadata_api#254 — false positive avoided)
+
+set -euo pipefail
+
+# --- Self-test mode ---
+if [ "${1-}" = "--test" ]; then
+    SCRIPT="$0"
+    PASS=0
+    FAIL=0
+
+    run_test() {
+        local desc="$1"
+        local expected="$2"
+        local closed="$3"
+        local blocked_repo="$4"
+        local body="$5"
+        local result
+        result=$(printf '%s' "$body" | "$SCRIPT" "$closed" "$blocked_repo" >/dev/null 2>&1; echo $?)
+        if [ "$result" = "$expected" ]; then
+            echo "PASS: $desc"
+            PASS=$((PASS + 1))
+        else
+            echo "FAIL: $desc  (expected=$expected, got=$result)"
+            FAIL=$((FAIL + 1))
+        fi
+    }
+
+    # --- Same-repo cases ---
+    run_test "same-repo: bare #N matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "Blocked on #42"
+    run_test "same-repo: #N in prose matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "depends on #42 being merged"
+    run_test "same-repo: #N at end of line matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "prerequisite: #42"
+    run_test "same-repo: issue URL matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "See https://github.com/lucas42/lucos_photos/issues/42"
+    run_test "same-repo: pull URL matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "Blocked on https://github.com/lucas42/lucos_photos/pull/42"
+    run_test "same-repo: no match for wrong N" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "Blocked on #43"
+    run_test "same-repo: bare #N does not match when preceded by repo name" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "other_repo#42"
+    run_test "same-repo: no match for empty body" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" ""
+
+    # --- Cross-repo cases ---
+    run_test "cross-repo: short form matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucos_eolas#254"
+    run_test "cross-repo: fully-qualified form matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucas42/lucos_eolas#254"
+    run_test "cross-repo: issue URL matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "https://github.com/lucas42/lucos_eolas/issues/254"
+    run_test "cross-repo: pull URL matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "blocked by https://github.com/lucas42/lucos_eolas/pull/254"
+    run_test "cross-repo: bare #N does NOT match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on #254"
+    run_test "cross-repo: wrong repo short form does not match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucos_contacts#254"
+    run_test "cross-repo: wrong N in short form does not match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucos_eolas#255"
+
+    # --- Regression: the concrete false positive from lucos_claude_config#92 ---
+    run_test "REGRESSION: metadata_api#254 closed; blocked body refs eolas#254 — must NOT match" \
+        1 "lucas42/lucos_media_metadata_api#254" "lucos_media_metadata_api" \
+        "Blocked on lucas42/lucos_eolas#254"
+    run_test "REGRESSION: same-repo body with only a cross-repo #254 ref (no bare #254) — must NOT match" \
+        1 "lucas42/lucos_media_metadata_api#254" "lucos_media_metadata_api" \
+        "See lucos_eolas#254 for context — that is the only blocker here"
+
+    # --- Edge: same-repo #N prefix check ---
+    run_test "same-repo: #N with letter immediately before is not a match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "issue42"
+    run_test "same-repo: #N preceded by slash (repo context) is not a bare match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "otherrepo#42"
+
+    echo ""
+    echo "Results: $PASS passed, $FAIL failed"
+    [ "$FAIL" = "0" ] && exit 0 || exit 1
+fi
+
+# --- Normal mode ---
+if [ $# -ne 2 ]; then
+    echo "Usage: check-dependent {owner}/{closed_repo}#{N} {blocked_repo}" >&2
+    exit 2
+fi
+
+CLOSED_ISSUE="$1"
+BLOCKED_REPO="$2"
+
+# Parse {owner}/{closed_repo}#{N}
+OWNER="${CLOSED_ISSUE%%/*}"
+REMAINDER="${CLOSED_ISSUE#*/}"
+CLOSED_REPO="${REMAINDER%%#*}"
+N="${REMAINDER##*#}"
+
+if [ -z "$OWNER" ] || [ -z "$CLOSED_REPO" ] || [ -z "$N" ]; then
+    echo "Error: could not parse closed issue reference '$CLOSED_ISSUE'" >&2
+    echo "Expected format: {owner}/{repo}#{number}" >&2
+    exit 2
+fi
+
+# Read body from stdin
+BODY=$(cat)
+
+# URL patterns apply to both same-repo and cross-repo cases
+match_url() {
+    echo "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/issues/${N}" 2>/dev/null && return 0
+    echo "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/pull/${N}" 2>/dev/null && return 0
+    return 1
+}
+
+if [ "$CLOSED_REPO" = "$BLOCKED_REPO" ]; then
+    # Same-repo: bare #N (not preceded by alphanumeric/underscore/slash) or URL
+    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" 2>/dev/null && exit 0
+    match_url && exit 0
+else
+    # Cross-repo: qualified forms or URL only — bare #N does NOT match
+    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
+    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
+    match_url && exit 0
+fi
+
+exit 1
