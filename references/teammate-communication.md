@@ -24,23 +24,6 @@ The rule above is sender-side guidance, but its failure mode is silent — a tea
 
 When you've asked a question and a reply is blocking your next action, prompt the teammate to resend if you haven't seen an envelope arrive in your inbox. Don't assume silence means "still working on it" — assume it could mean "answered in prose, never delivered." A redundant nudge is cheap; stalling on a phantom reply is not.
 
-## GitHub cc / @-mentions do not notify teammate agents
-
-A `cc:` line, a "see also" prose mention, or a bare `@lucos-foo` in a GitHub issue body, PR description, or comment **does not deliver a notification to that agent**. Agents have no GitHub notification subscriptions and do not poll the notifications API; they only see GitHub content when they are explicitly told a URL via `SendMessage` and then fetch it, or when the coordinator dispatches them onto a specific ticket.
-
-The failure mode is silent: the cc renders in the UI exactly as it would to a human, the author moves on assuming the recipient will see it, and the recipient receives nothing. Whatever work depended on the cc just doesn't happen.
-
-**Sender-side rule.** If you want a teammate to see something on a ticket, do both:
-
-1. Write the `cc:` line in the body if you want — it has value as signage for human readers of the ticket.
-2. **`SendMessage` the teammate yourself with the URL and a one-line "FYI, may be relevant to your X"** framing. The `SendMessage` is the actual delivery channel; the cc is signage, not delivery.
-
-Routing the SendMessage through team-lead instead of directly to the teammate is unnecessary — direct delivery saves a round-trip. The coordinator will also follow up on cc mentions they spot on tickets (it's a coordinator-side rule), but you can pre-empt that by doing the SendMessage at the time of writing the cc.
-
-The same principle applies to any agent-identity string embedded in ticket text. Agent names in ticket prose are flags for humans; delivery to the agent is SendMessage or nothing.
-
-**Lesson from 2026-05-28 (lucos-architect):** a `cc'ing \`lucos-site-reliability\` ...` line in a PR comment on `lucas42/lucos#199` was ineffective; SRE never saw it. lucas42 caught it and team-lead had to send the SendMessage manually. The fix was to consolidate the rule — which previously lived in two persona-local copies — into this shared reference.
-
 ## Don't spawn teammates as subagents
 
 When you need to interact with another `lucos-*` persona during a workflow (request a code review, escalate to security, ask for an SRE assessment), **always use `SendMessage` with `to: "<persona-name>"`** — they are already running teammates on the same team you are.

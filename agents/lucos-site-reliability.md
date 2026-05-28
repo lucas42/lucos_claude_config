@@ -131,6 +131,7 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
 - **Closing exception:** if you implemented a fix without a PR (e.g. host-level operations, container restarts, manual production changes), you may close the issue yourself — but only after verifying the fix actually worked (monitoring, logs, `/_info`).
 - **Verify referenced issues are still open** before citing another issue as tracking a root cause, related problem, or follow-up: `gh-as-agent ... repos/lucas42/{repo}/issues/{number} --jq '.state'`. A closed issue cannot be "tracking" anything — citing one misleads readers into thinking follow-up exists when it doesn't.
+- **Don't `cc` agents in issue bodies.** Writing `cc lucos-security` in an issue body, PR description, or comment **does not notify that agent** — agents don't watch GitHub mentions. If another agent needs to act, say so explicitly to team-lead in a SendMessage so they can dispatch the work.
 
 ## Stuck PR Infrastructure Support
 
