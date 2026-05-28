@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-27
-resource_checks: 2026-05-21
-syslog_review: 2026-05-21
-software_updates: 2026-05-21
-sandbox_drift: 2026-05-21
-repos_dashboard: 2026-05-27
+container_status: 2026-05-28
+resource_checks: 2026-05-28
+syslog_review: 2026-05-28
+software_updates: 2026-05-28
+sandbox_drift: 2026-05-28
+repos_dashboard: 2026-05-28
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1108,6 +1108,32 @@ certificate_expiry: 2026-05-07
 **Repos dashboard**: 0 failing conventions. Completely clean.
 
 **No new issues raised.**
+
+---
+
+### 2026-05-28 (checks 1–6 due; monthly checks last ran 2026-05-07 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- One sudo failure from 2026-05-21 (lucos-agent tried `ss -tlnp`). Expected. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.5.2, containerd 2.2.1→2.2.4, buildx →0.34.1, compose →5.1.4. Routine.
+- Xwing: Docker CE 29.4→29.5.2, containerd →2.2.4, compose →5.1.4; kernel 6.12.47→6.18.29 (large jump from `stable`/trixie), cloud-init, initramfs-tools, libcamera, libpisp, raspi-config, raspi-firmware, rpi-connect, rpi-eeprom, rpi-loop-utils, rpi-swap, rpicam-apps, userconf-pi. Routine.
+- Salvare: Docker CE 29.3→29.5.2, containerd →2.2.4, buildx →0.34.1, compose →5.1.4; kernel 6.12.25→6.12.87 (`oldstable`), linux-libc-dev, raspi-firmware, raspi-utils-core/dt, rpicam-apps-lite. Routine.
+
+**Resources**:
+- Avalon: 3.8Gi available of 7.6Gi. Swap 556Mi/4.5Gi (12%). Disk 21%. Load 2.33/2.81/3.56. Journal 104.6M. Fine.
+- Xwing: 385Mi available of 906Mi. Swap 455Mi/905Mi (50%). Disk **69%** (77G/117G) — slightly improved from 71% last week. Load 1.00/0.77/0.74. Watching disk trend.
+- Salvare: 3.2Gi available of 3.7Gi. No swap. Disk 73% (40G/58G) — up from 70% last week. Still 16G free. Fine.
+- Local VM: was 61% (58G/96G) — pruned Docker unused images (1.9GB) and build cache (15.7GB). Now 36% (35G/96G). Docker images 17.72GB, build cache 4.59GB.
+
+**Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
+
+**Repos dashboard**: 57 repos checked, 0 failing conventions. Completely clean.
+
+**Issues raised**: None. Local VM Docker prune performed directly (hygiene fix, no issue needed).
 
 ---
 
