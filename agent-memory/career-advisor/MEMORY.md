@@ -43,3 +43,4 @@
 - [Opinion textarea drafting](feedback_opinion_textarea_drafting.md) — for textareas asking Luke's *views* (not evidence), elicit first or draft with: specific observation > abstract categories, concrete primitives > concept-names, tied to platform-engineering craft
 - [Role-duration precision](feedback_role_duration_precision.md) — verify "[N] years" / "[X] months" claims tied to a named role against cv-extended.md before stating; don't round up
 - [Source vs ATS](feedback_source_vs_ats.md) — application "Source" is the discovery channel (LinkedIn, recruiter, direct), not the ATS that processes the submission; never conflate
+- [Borderline ethical deferral](feedback_borderline_ethical_deferral.md) — don't pre-emptively withdraw from borderline-ethical companies; flag once, then wait until they actually respond
