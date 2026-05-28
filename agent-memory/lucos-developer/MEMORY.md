@@ -149,6 +149,10 @@ jobs:
 
 - [Check for deferred intent before raising TODO as an issue](feedback_todo_deferred_intent.md) — "For now", "until X", "placeholder", "reserved for future" signals mean the author intentionally deferred; don't raise as actionable without design input
 
+## Migration Script Patterns
+
+- [Slug vs display name in eolas migrations](feedback_migration_slug_vs_name.md) — DB stores slugs (`"domestic-abuse"`), eolas stores display names (`"Domestic Abuse"`); always embed a `slugToName` table; caught in PR #268
+
 ## PR Process
 
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
