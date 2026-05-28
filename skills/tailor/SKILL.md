@@ -494,9 +494,15 @@ Outputs (in the role-slug directory):
 - With `--pdf` on the CV: `Luke Blaney - CV.pdf` (committed alongside the .docx — see commit list below)
 - With `--pdf` on the cover letter: `Luke Blaney - Cover Letter.pdf` (committed alongside)
 
+### Update the applications tracker (before commit)
+
+Per the standing persona rule on pipeline-state changes: if the user is using this `/tailor` session to ship an application now (the default outcome), move the entry from `applications/spotted.md` to `applications/in-progress.md` under `## Applied`, and update the README's `## At a glance — in progress` table + counts. If no `spotted.md` entry existed (the role was found and tailored in this same session without going through spotted first), create the `in-progress.md` entry directly. Include the JD URL, comp band (if disclosed), location, source channel, and a `Next action: —` placeholder. The tracker update is bundled into the per-application commit below (Step 12 / 13 changes have already been or will be committed separately).
+
+If the user is using `/tailor` for *analysis only* (no submission this session — e.g. drafting to see what the application would look like), don't move the tracker entry — leave it in `spotted.md` and only update if they later confirm submission.
+
 ### Commit
 
-**Single bundled commit** covering everything from this application — `cv.md`, `Luke Blaney - CV.docx`, `cover-letter.md` (if present), `Luke Blaney - Cover Letter.docx` (if present), and the new/updated `notes.md`. Per `feedback_cv_commit_discipline.md`, application work is one commit (not split). Commit message can name the company freely — this is the private repo per `feedback_cv_application_privacy.md`.
+**Single bundled commit** covering everything from this application — `cv.md`, `Luke Blaney - CV.docx`, `cover-letter.md` (if present), `Luke Blaney - Cover Letter.docx` (if present), the new/updated `notes.md`, and the tracker file changes (`applications/spotted.md` removal + `applications/in-progress.md` addition + `applications/README.md` count update). Per `feedback_cv_commit_discipline.md`, application work is one commit (not split). Commit message can name the company freely — this is the private repo per `feedback_cv_application_privacy.md`.
 
 Suggested commit message:
 > "Add {Company} {Role} tailored CV [and cover letter]"
