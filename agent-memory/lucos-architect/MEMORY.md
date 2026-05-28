@@ -83,6 +83,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
 - [Dependabot security updates are independent of dependabot.yml schedule](reference_dependabot_security_vs_version_feeds.md)
+- [Deployment model has no on-host source of truth](reference_no_onhost_source_of_truth.md) — compose files live transiently on CI; recovery requires CI redeploy, not local recreate (xwing 2026-05-28)
+- [Docker Healthy ≠ network reachability — recurring estate-wide pattern](reference_docker_healthy_not_reachability.md) — 2 of last 3 incidents (creds CRLF 2026-05-09, xwing 2026-05-28); systemic healthcheck-design concern
 
 ## Project memories
 
