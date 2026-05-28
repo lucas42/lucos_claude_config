@@ -31,7 +31,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Check repo history before SSH/transport changes](feedback_check_history_before_proposing_ssh.md)
 - [SPARQL OPTIONAL chains cross-product on labels](feedback_sparql_optional_crossproduct.md)
 - [Sequence labels in multi-issue series autolink to real unrelated issues](feedback_no_sequence_label_issue_refs.md)
-- [Verify CI mechanism before claiming it gives sequencing](feedback_verify_ci_mechanism_before_relying_on_it.md)
+- [Verify the mechanism's properties before designing around them](feedback_verify_ci_mechanism_before_relying_on_it.md) — generalised from CI-sequencing incident (2026-04-29) to cover lucos_repos warning-tier fiction (2026-05-28)
 - [Reference-implementation defects propagate with confidence amplification](feedback_reference_implementation_propagation.md)
 - [Compare channels honestly when proposing instrumentation](feedback_compare_channels_for_instrumentation.md) — don't anchor on Loganne
 - [Apply frame-review to your own prior reasoning](feedback_apply_frame_review_to_own_reasoning.md)
