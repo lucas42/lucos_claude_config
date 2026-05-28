@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Docker daemon recovery
+
+- [Docker live-restore: true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — `sudo systemctl restart docker` silently fails to recreate missing built-in `bridge`/`host`/`none` networks if any containers are running. Daemon emits `there are running containers, updated network configuration will not take affect` (sudo to see). Fix: `docker stop` all containers → daemon restart → redeploy. Bit me on 2026-05-28 xwing recovery (Stage 5 of incident report).
+
 ## Standing patterns from 2026-05-13 scheduled-jobs blackout
 
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
