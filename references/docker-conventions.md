@@ -105,3 +105,31 @@ Doing only stage 1 is the failure mode from the 2026-05-13 scheduled-jobs monito
 Until the CI convention check in `lucos_repos` ships, there is no automated guard — it is on the implementer to verify all three stages before pushing. **Before opening a PR that introduces a new env var:** (a) confirm it's in the `environment:` block in docker-compose.yml, (b) confirm a value has been written to lucos_creds for `development` at minimum, (c) update `.env.example` if present.
 
 **Beware empty-string defaults masking wiring failures.** A `getenv("X", "")` followed by an HTTP call fails quietly (e.g. `{no_scheme}` warnings) rather than crashing at startup. Prefer a startup crash over silent degradation when config is missing — quiet warnings delay detection.
+
+## Live-restore: recovering missing built-in networks
+
+When a host has `live-restore: true` in `daemon.json` and Docker's network database has been flushed (e.g. during a `fixed-cidr-v6` repair), the daemon restart will **not** recreate the built-in `bridge`/`host`/`none` networks if any containers are running. Docker emits:
+
+```
+there are running containers, updated network configuration will not take affect
+```
+
+and skips all network initialisation to protect live-restored workloads. Subsequent restarts hit the same wall — as long as containers are running, the built-ins won't come back.
+
+### Diagnostic
+
+```bash
+docker network ls          # bridge/host/none absent = this failure mode
+# Confirm with daemon logs (requires sudo):
+sudo journalctl -u docker --since "5 minutes ago" | grep "take affect"
+```
+
+### Recovery sequence
+
+1. Send a `plannedMaintenance` Loganne event before stopping anything.
+2. `docker stop` all running containers — no sudo required.
+3. `sudo systemctl restart docker` — with no running containers, Docker initialises fully and recreates `bridge`/`host`/`none`.
+4. Retrigger CI redeploys for every service that was running. Each `docker compose up -d` recreates its declared user-defined network and reattaches its container. **Do not use `docker network create` manually** — lucos compose files are deployed transiently via CI and are not present on the host after deploy; there is no on-host source of truth (see [ADR-0008](https://github.com/lucas42/lucos/pull/199)).
+5. Verify: `docker network ls` shows all built-ins + user-defined networks; `curl https://<domain>/_info` returns HTTP 200 for each service. See [`references/healthcheck-depth.md`](healthcheck-depth.md) for the full verifier-side checklist.
+
+The planned brief outage (step 2) is the unavoidable cost of a clean restart. On lucos, where all compose files are CI-managed and CI deploys are fast, the downtime window is typically under 10 minutes.
