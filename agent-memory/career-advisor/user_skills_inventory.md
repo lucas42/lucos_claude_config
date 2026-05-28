@@ -78,6 +78,12 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Tighter rule than previously held**: an earlier version of this rule said "for JDs that emphasise Kubernetes, lead with Docker in Skills" — that allowed Kubernetes-in-Skills for K8s-emphasising JDs. The tightened rule is stricter: omit by default, include only when the JD explicitly names Kubernetes, and even then keep the role-bullet honestly framed as migration-coordination rather than operations.
 - **JD-triage signal — DO NOT weight Kubernetes mentions as positive fit indicators when prioritising spotted.md / new applications.** Stated 2026-05-28. Luke's architecture-only experience makes him less confident on K8s than the inventory's "can claim under conditions" framing might suggest. When ranking which roles to actively pursue, a JD that emphasises Kubernetes operations should NOT pull Luke toward applying — it's a tenuous claim, not a differentiator. Same applies to **Kafka / event-driven architecture** (see the Architecture areas section below for the same rule).
 
+**Architectural-only, NOT hands-on**: AWS ECS — confirmed 2026-05-28. ECS was used by several FT teams Luke was on, especially the Reliability Engineering team. Luke took an architectural role on ECS adoption decisions; he was not hands-on with task definitions, service updates, or `aws ecs` CLI operations.
+
+- **Where it can appear**: CV Skills section when a JD explicitly names ECS (or asks for advanced AWS container services). Same JD-triggered inclusion pattern as Kubernetes.
+- **Where it must NOT appear**: claims of hands-on ECS operations ("deployed services to ECS", "wrote task definitions", "managed ECS clusters").
+- **Skills-section default = OMIT**: include only when the JD names ECS specifically. Otherwise rely on Docker / generic "containerisation" framing.
+
 ## Cloud platforms
 
 **AWS — architectural / strategic level only**: Luke's hands-on AWS work is the FT mobile-app cloud migration (Jan–Nov 2015), which is now 10+ years old. Since then AWS has been in his vocabulary at the architectural-decision / strategic level (not running infrastructure day-to-day). Confirmed 2026-05-22.
