@@ -1,5 +1,8 @@
 # lucos-system-administrator Memory
 
+## Docker live-restore skips ALL network init (incl. built-ins) when containers running
+`docker restart` will never recreate bridge/host/none while containers are up. Stop all containers first. See `docker-live-restore-network-init-skip.md`.
+
 ## configy null serialisation — use `get(key) or default`, not `get(key, default)`
 configy returns explicit `null` for absent fields — `dict.get(key, default)` passes `None` through. See `configy-null-serialisation.md`.
 
