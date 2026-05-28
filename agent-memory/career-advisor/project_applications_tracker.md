@@ -26,7 +26,7 @@ Central application tracker lives at `lukeblaney_cv_tailored/applications/`, cre
 
 **How to apply:**
 
-- When Luke reports an application submitted: move entry from `spotted.md` to `in-progress.md` under "Applied", update README at-a-glance table.
+- When Luke reports an application submitted: **re-fetch `spotted.md` live** before deciding move-or-create — an earlier in-session read of spotted.md can be stale because the `/spotted` skill, LinkedIn-import flows, or parallel agent sessions modify the tracker between the initial check and the submission moment.  Don't cite "no spotted entry" from in-context memory.  Then move the entry from `spotted.md` to `in-progress.md` under "Applied", update README at-a-glance table + counts (spotted count decrements when an entry moves out, in-progress count increments).
 - When Luke reports a stage change (recruiter contact, HM screen scheduled, etc.): update the stage line in `in-progress.md` and the README "Last change" date.
 - When Luke reports a closure: move entry from `in-progress.md` to top of `closed.md`, remove from README at-a-glance, write outcome line.
 - Luke updates almost always come through laptop sessions (he confirmed this 2026-05-27); the workflow assumes I'm in the loop for any edits. No phone-sync surface is needed.
