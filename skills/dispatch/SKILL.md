@@ -18,7 +18,9 @@ Read the full issue body.
 
 ## Step 2: Pre-dispatch dependency check
 
-Look for references to other issues described as dependencies, prerequisites, or blockers -- including cross-repo references (e.g. `lucas42/other_repo#N`). Check task-list items in a `## Dependencies` section, prose mentions like "depends on", "blocked by", "requires", or any other phrasing that indicates a prerequisite.
+Look for references to other issues described as dependencies, prerequisites, or blockers — including cross-repo references (e.g. `lucas42/other_repo#N`). Check task-list items in a `## Dependencies` section, prose mentions like "depends on", "blocked by", "requires", or any other phrasing that indicates a prerequisite.
+
+**When interpreting references:** a bare `#N` in this issue's body means issue `N` in **this** repo. A `other_repo#N` or `owner/other_repo#N` reference means issue `N` in that **other** repo. Don't conflate them — `lucos_eolas#254` and `lucos_media_metadata_api#254` are distinct issues even though they share the number.
 
 For every issue referenced as a dependency, check whether it is closed:
 
@@ -89,7 +91,25 @@ If a PR was created and approved:
    ```
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
-3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Query the project board for all items with Status = Blocked (option ID `d79b6b67`), paginating until exhausted. For each Blocked item, fetch the issue body **and all comments** to check whether the closing issue is referenced as a dependency. Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), and a blocking dependency is often added in a comment after the issue was originally raised — so checking only the body will miss real dependents. For confirmed dependents, verify that **all** their dependencies are resolved before unblocking — not just the one that was just closed.
+3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Query the project board for all items with Status = Blocked (option ID `d79b6b67`), paginating until exhausted. For each Blocked item, fetch the issue body **and all comments**. Then pipe the combined text into `~/.claude/skills/dispatch/check-dependent` to determine whether the closing issue is a dependency:
+
+   ```bash
+   BODY_AND_COMMENTS="..."   # concatenated body + all comment bodies
+   CLOSED_REF="{owner}/{closed_repo}#{N}"   # e.g. "lucas42/lucos_media_metadata_api#254"
+   BLOCKED_REPO="{blocked_repo}"             # repo of the candidate blocked issue
+
+   printf '%s' "$BODY_AND_COMMENTS" \
+     | ~/.claude/skills/dispatch/check-dependent "$CLOSED_REF" "$BLOCKED_REPO"
+   # exit 0 → confirmed dependent; exit 1 → not dependent
+   ```
+
+   The script enforces cross-repo-aware matching rules:
+   - **Same-repo** (`closed_repo == blocked_repo`): bare `#N` (not preceded by an alphanumeric/underscore/slash character) **or** a github.com URL for the closed issue.
+   - **Cross-repo** (`closed_repo != blocked_repo`): `{closed_repo}#N`, `{owner}/{closed_repo}#N`, or a github.com URL — bare `#N` alone does **not** match.
+
+   This prevents false positives when a blocked ticket in repo A references `repo_C#N` and the just-closed issue is `repo_A#N` (different issue, same number in a different repo). Run `~/.claude/skills/dispatch/check-dependent --test` to verify the rules and see the regression examples.
+
+   Dependencies can be cross-repo (e.g. an issue on `lucos_media_metadata_api` blocked by an issue on `lucos_media_metadata_manager`), and a blocking dependency is often added in a comment after the issue was originally raised — so checking only the body will miss real dependents. For confirmed dependents, verify that **all** their dependencies are resolved before unblocking — not just the one that was just closed.
 
    **When unblocking an issue, you MUST do all three of the following — updating the Status without repositioning leaves the issue stranded at the bottom of the queue:**
    1. Update the project board Status field from Blocked → Ready (option ID `3aaf8e5e`).
