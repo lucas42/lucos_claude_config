@@ -6,6 +6,7 @@
 - [User skills inventory](user_skills_inventory.md) — defensible languages/DBs/methodologies and what Luke won't claim. Check before asking gap-fill tech questions.
 - [User role framing](user_role_framing.md) — level-positioning, manager-vs-IC tilts, career-break voice. Check before drafting Summary paragraphs.
 - [User cover-letter patterns](user_cover_letter_patterns.md) — boilerplate problem, civil-service-statement-holds-the-gold, what's working and what isn't in his existing letters
+- [User autonomy as floor](user_autonomy_as_floor.md) — title-indifferent; real psychological floor is technical autonomy. Use as the primary funnel-fit signal ahead of title/comp/domain match.
 
 ## Active projects
 
