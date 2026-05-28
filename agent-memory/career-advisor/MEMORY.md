@@ -17,6 +17,7 @@
 
 - [Ashby job-board API](reference_ashby_job_board_api.md) — public posting-api endpoint pattern for fetching Ashby JD content (also notes on Greenhouse, Lever, Workday)
 - [Repo access check](reference_repo_access_check.md) — try the operation, don't infer from `gh-as-agent` API permissions metadata; SSH-key access and GitHub App permissions don't always agree
+- [LinkedIn job tracker export](reference_linkedin_job_tracker_export.md) — browser-console snippet to dump Saved/Applied/Archived buckets; per-job fields available (no JD body, no ATS URL, no move-history); Archived isn't subdividable
 
 ## Feedback (standing rules)
 
