@@ -16,13 +16,17 @@
 #
 # Matching rules (lucos_claude_config#92):
 #
+#   All matching is performed after stripping backtick code spans (`...`), so
+#   references inside code spans — e.g. `#254` or `lucas42/lucos_eolas#254` —
+#   are never treated as dependency references.
+#
 #   Same-repo (closed_repo == blocked_repo):
 #     - Bare #N not preceded by an alphanumeric/underscore/slash character
 #     - URL: github.com/{owner}/{closed_repo}/issues/{N}  or  .../pull/{N}
 #
 #   Cross-repo (closed_repo != blocked_repo):
-#     - {closed_repo}#N   (short form, not preceded by alphanumeric/underscore/slash)
-#     - {owner}/{closed_repo}#N  (fully-qualified, not preceded by alphanumeric/underscore/slash)
+#     - {owner}/{closed_repo}#N  (fully-qualified only — short form {closed_repo}#N
+#       is NOT matched; GitHub does not autolink the short form)
 #     - URL: github.com/{owner}/{closed_repo}/issues/{N}  or  .../pull/{N}
 #     - Bare #N does NOT match in the cross-repo case.
 #
@@ -46,13 +50,13 @@ if [ "${1-}" = "--test" ]; then
         local closed="$3"
         local blocked_repo="$4"
         local body="$5"
-        local result
-        result=$(printf '%s' "$body" | "$SCRIPT" "$closed" "$blocked_repo" >/dev/null 2>&1; echo $?)
-        if [ "$result" = "$expected" ]; then
+        local exit_code=0
+        printf '%s' "$body" | "$SCRIPT" "$closed" "$blocked_repo" > /dev/null 2>&1 || exit_code=$?
+        if [ "$exit_code" = "$expected" ]; then
             echo "PASS: $desc"
             PASS=$((PASS + 1))
         else
-            echo "FAIL: $desc  (expected=$expected, got=$result)"
+            echo "FAIL: $desc  (expected=$expected, got=$exit_code)"
             FAIL=$((FAIL + 1))
         fi
     }
@@ -74,10 +78,13 @@ if [ "${1-}" = "--test" ]; then
         1 "lucas42/lucos_photos#42" "lucos_photos" "other_repo#42"
     run_test "same-repo: no match for empty body" \
         1 "lucas42/lucos_photos#42" "lucos_photos" ""
+    # Backtick exclusions — same-repo
+    run_test "same-repo: bare #N inside backticks does NOT match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "see \`#42\` for details"
+    run_test "same-repo: URL inside backticks does NOT match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "see \`https://github.com/lucas42/lucos_photos/issues/42\` for details"
 
     # --- Cross-repo cases ---
-    run_test "cross-repo: short form matches" \
-        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucos_eolas#254"
     run_test "cross-repo: fully-qualified form matches" \
         0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucas42/lucos_eolas#254"
     run_test "cross-repo: issue URL matches" \
@@ -86,10 +93,17 @@ if [ "${1-}" = "--test" ]; then
         0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "blocked by https://github.com/lucas42/lucos_eolas/pull/254"
     run_test "cross-repo: bare #N does NOT match" \
         1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on #254"
-    run_test "cross-repo: wrong repo short form does not match" \
-        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucos_contacts#254"
-    run_test "cross-repo: wrong N in short form does not match" \
-        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucos_eolas#255"
+    run_test "cross-repo: short form (no owner prefix) does NOT match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucos_eolas#254"
+    run_test "cross-repo: wrong repo does not match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucas42/lucos_contacts#254"
+    run_test "cross-repo: wrong N in qualified form does not match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "lucas42/lucos_eolas#255"
+    # Backtick exclusions — cross-repo
+    run_test "cross-repo: fully-qualified form inside backticks does NOT match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "see \`lucas42/lucos_eolas#254\` for details"
+    run_test "cross-repo: URL inside backticks does NOT match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "\`https://github.com/lucas42/lucos_eolas/issues/254\`"
 
     # --- Regression: the concrete false positive from lucos_claude_config#92 ---
     run_test "REGRESSION: metadata_api#254 closed; blocked body refs eolas#254 — must NOT match" \
@@ -131,24 +145,26 @@ if [ -z "$OWNER" ] || [ -z "$CLOSED_REPO" ] || [ -z "$N" ]; then
     exit 2
 fi
 
-# Read body from stdin
-BODY=$(cat)
+# Read body from stdin; strip backtick code spans so references inside code
+# (e.g. `#254` or `lucas42/lucos_eolas#254`) are not treated as dependency links.
+BODY=$(cat | sed 's/`[^`]*`/ /g')
 
 # URL patterns apply to both same-repo and cross-repo cases
 match_url() {
-    echo "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/issues/${N}" 2>/dev/null && return 0
-    echo "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/pull/${N}" 2>/dev/null && return 0
+    printf '%s' "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/issues/${N}" 2>/dev/null && return 0
+    printf '%s' "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/pull/${N}" 2>/dev/null && return 0
     return 1
 }
 
 if [ "$CLOSED_REPO" = "$BLOCKED_REPO" ]; then
     # Same-repo: bare #N (not preceded by alphanumeric/underscore/slash) or URL
-    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" 2>/dev/null && exit 0
+    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" 2>/dev/null && exit 0
     match_url && exit 0
 else
-    # Cross-repo: qualified forms or URL only — bare #N does NOT match
-    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
-    echo "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
+    # Cross-repo: fully-qualified {owner}/{closed_repo}#N or URL only.
+    # Short-form {closed_repo}#N is NOT matched (GitHub does not autolink it).
+    # Bare #N is NOT matched.
+    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
     match_url && exit 0
 fi
 
