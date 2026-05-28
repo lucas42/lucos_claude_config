@@ -81,7 +81,7 @@ Given a closed critical issue that needs a report:
 
 4. **Reference the source issue**: Include a link to the original critical issue near the top of the report (e.g. in the summary or as a metadata field) so there is a clear audit trail.
 
-5. **Use fully-qualified cross-repo references.** Because incident reports live in the `lucos` repo, bare `#N` references resolve to `lucos` issues -- not the repo where the incident occurred. Always use the `lucas42/repo_name#N` format for issue and PR references (e.g. `lucas42/lucos_contacts#42`, not `#42`). This is the general rule from CLAUDE.md but is especially easy to get wrong in incident reports, where nearly every reference points to a different repo.
+5. **Use fully-qualified cross-repo references.** Because incident reports live in the `lucos` repo, bare `#N` references resolve to `lucos` issues -- not the repo where the incident occurred. Always use the `lucas42/repo_name#N` format for issue and PR references (e.g. `lucas42/lucos_contacts#42`, not `#42`). This is the general rule from CLAUDE.md but is especially easy to get wrong in incident reports, where nearly every reference points to a different repo. **Each `#N` instance auto-links independently against the host repo — qualifying once in a paragraph does not carry context to later instances.** Concretely: a Follow-up Actions row whose first mention is `lucas42/lucos_claude_config#97` and whose later sentence reads "the reference doc in #100" will still mis-link that bare `#100` to `lucos#100` (a real but unrelated issue), not to `lucos_claude_config#100`. Qualify every instance, or rewrite as prose ("PR #100 in `lucos_claude_config`") when repeated qualification would be visually noisy.
 
 ## Step 2: Raise a PR
 
