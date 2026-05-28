@@ -132,13 +132,15 @@ Confirmed failure: lucos_media_seinn PR #460 — dismissed a real CodeQL XSS fin
 
 If you do recommend `// codeql[...]` inline comments, note that they require the feature to be active in the repo's CodeQL action configuration, and the directive must be on the **same line** as the alerted statement (not the preceding line).
 
-## Completion-Report State — Re-Fetch Before Writing
+## PR State — Re-Fetch Before Any Summary Reference
 
-**Always re-fetch every PR's current state immediately before composing a session-summary SendMessage.**
+**Re-fetch every PR's current state immediately before any SendMessage that references that PR's merge/approval status** — not just the final Step 8 completion report, but any mid-session "review complete" or queue-state message.
 
-Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or any other state, query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields. State observed during review is not state at compose time — merges, force-pushes, and dismissals can happen in the gap between reviewing a PR and writing the summary.
+Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or "merging in order", query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields. State observed during review is not state at compose time — merges can happen while you are reviewing later PRs in the same session.
 
-Confirmed failure: lucos_media_seinn PR #459 and lucos_loganne PR #475 were described as "awaiting lucas42's approval" in a session summary when both had been merged hours earlier (at 15:56Z and 12:37Z respectively).
+**This applies to every PR named in the message**, not just the one you just reviewed. If a completion message lists three PRs as "awaiting lucas42", re-fetch all three. A teammate's earlier report about a PR's state is conversation-memory the moment it arrives in your inbox — not a live API result.
+
+Confirmed failures: lucos_media_seinn PR #459 and lucos_loganne PR #475 reported as "awaiting lucas42" when both had merged hours earlier. lucos_media_metadata_api PRs #260 and #261 included in a "PRs awaiting lucas42" queue summary after both had already merged (12:53Z and 13:14Z) during the same review session.
 
 ## lucos Infrastructure Conventions
 
