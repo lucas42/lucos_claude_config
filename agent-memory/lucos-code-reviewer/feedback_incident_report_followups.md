@@ -25,6 +25,12 @@ When a section is titled "Daily recurrence pattern (updated)" / "(continued)" / 
 
 **How to apply:** For incident reports with a cumulative/longitudinal section, read the prior report(s) named in the section heading or body, and confirm every row/entry from those reports is either present in the new version or explicitly noted as excluded.
 
+## Rule 4 — Daemon log quotes: Docker `"take affect"` is a confirmed upstream typo
+
+When reviewing incident reports that quote the Docker daemon's live-restore warning, **`"will not take affect"` is correct** — it is Docker's own typo in `moby/moby daemon/daemon_unix.go:839`. Do NOT flag it as a report error. If there is no `[sic]`, suggest adding one with the source citation so future responders don't second-guess the spelling.
+
+The message: `"there are running containers, updated network configuration will not take affect"` (note: "affect" not "effect"). Confirmed via GitHub code search on `moby/moby` — zero matches for "take effect", one match for "take affect" at `daemon_unix.go:839`. Surfaced during review of lucos PR #200 (2026-05-28 xwing incident TBD-fill).
+
 ## Rule 3 — "We already have a detector for this" claims need signal-class verification
 
 When a PR or report claims "the existing detector covers this" or implies an existing detector would have caught the failure, **check what signal the detector actually watches vs. the class of failure being described.**
