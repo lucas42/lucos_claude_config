@@ -13,6 +13,7 @@
 - [CV rebuild](project_cv_rebuild.md) — pandoc + markdown source-of-truth pipeline for lukeblaney_cv (started 2026-05-19)
 - [Cover-letter rebuild](project_cover_letter_rebuild.md) — building-block library + worked example + /tailor-cover-letter skill (started 2026-05-20)
 - [Applications tracker](project_applications_tracker.md) — central pipeline tracker at lukeblaney_cv_tailored/applications/ (started 2026-05-27)
+- [Funnel state snapshot 2026-05](project_funnel_state_2026_05.md) — strategic funnel state as of 2026-05-28: August runway, channels, top-7 queue. Re-verify if >4 weeks stale.
 
 ## External references
 
@@ -45,3 +46,4 @@
 - [Role-duration precision](feedback_role_duration_precision.md) — verify "[N] years" / "[X] months" claims tied to a named role against cv-extended.md before stating; don't round up
 - [Source vs ATS](feedback_source_vs_ats.md) — application "Source" is the discovery channel (LinkedIn, recruiter, direct), not the ATS that processes the submission; never conflate
 - [Borderline ethical deferral](feedback_borderline_ethical_deferral.md) — don't pre-emptively withdraw from borderline-ethical companies; flag once, then wait until they actually respond
+- [Tracker scope: action not completeness](feedback_tracker_scope_action_not_completeness.md) — tracker entries serve active work, not retroactive bookkeeping; don't backfill historical leads for completeness
