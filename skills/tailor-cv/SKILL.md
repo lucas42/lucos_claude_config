@@ -158,9 +158,7 @@ There is **no Dockerfile or CircleCI change** for new variants. The public `luke
 
 The script reuses the same pandoc templates and brand colour as the public-repo build, so the rendered tailored CV looks identical in styling to a CV built from `cv.md`. Because the source is named `cv.md`, the script outputs `Luke Blaney - CV.docx` — a submission-ready filename that includes Luke's name (recruiters bulk-download CVs and they're unidentifiable in a Downloads folder otherwise). See Step 10 for verification.
 
-**Update the applications tracker before committing** if this `/tailor-cv` run is producing a CV for an actual submission (the default). Per the standing persona rule on pipeline-state changes: move the entry from `applications/spotted.md` to `applications/in-progress.md` under `## Applied`, and update the README's `## At a glance — in progress` table + counts. If no `spotted.md` entry existed, create the `in-progress.md` entry directly. Bundle these tracker changes into the single commit below.
-
-If Luke is using `/tailor-cv` for *analysis only* (no submission this session), leave the tracker alone — only move on confirmed submission.
+**Don't touch the applications tracker.** `/tailor-cv` produces drafting artefacts; the tracker move from `spotted.md` to `in-progress.md` happens later when Luke separately reports the application as submitted (per [[project-applications-tracker]]). Don't ask "is this for submission this session?" — that's not a question this skill needs to answer.
 
 **Commit everything together in a single commit** in `lukeblaney_cv_tailored`. Per `feedback_cv_commit_discipline.md`: variant creation is one piece of work, not many. Stage:
 
@@ -168,7 +166,6 @@ If Luke is using `/tailor-cv` for *analysis only* (no submission this session), 
 - The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.docx` (submission artefact — committed alongside the markdown as the durable record of what was sent)
 - The new `orgs/{company-slug}/{role-slug}/Luke Blaney - CV.pdf` **if `--pdf` was passed** to the render script (e.g. a recruiter asked for a PDF for direct share). Any PDF in the tree is a deliberate `--pdf` output and is a real submission artefact — commit it alongside the .docx.
 - Any new `orgs/{company-slug}/notes.md` if this is a first-time application to that company
-- The applications tracker changes (`applications/spotted.md` removal, `applications/in-progress.md` addition, `applications/README.md` count update) if a submission is happening
 
 The only artefact that stays out of the commit is the LibreOffice verification PDF `Luke Blaney - CV (from docx).pdf` produced in Step 10 — the `.gitignore` pattern `*(from docx).pdf` keeps it out automatically.
 
