@@ -112,11 +112,12 @@ If splitting into smaller tickets has been agreed, do that — on the correct re
 ### If the issue should be closed
 
 1. **STOP — is this an `audit-finding` issue?** If yes, see [`audit-finding-handling.md`](audit-finding-handling.md) before closing.
-2. Close the issue directly when you are confident no further work is needed.
-3. Leave a brief explanation comment. **If citing another issue as a root-cause tracker or superseding issue, verify it is still open** — a closed issue cannot be tracking a problem. Use `gh-as-agent repos/lucas42/{repo}/issues/{number} --jq '.state'`.
-4. Remove any legacy workflow labels still present on the issue (e.g. `needs-refining`, `status:*`, `owner:*`, `agent-approved`, `priority:*`) — these are being retired in favour of project board fields.
-5. **Remove from the project board** — look up the item ID and call `deleteProjectV2Item`. Closed issues should not remain on the board.
-6. **Notify interacting agents** via brief FYI SendMessage — raiser, commenters, consulted agents. Include URL, closure reason, lucas42's reasoning if applicable. Especially important when a bot-raised issue is closed as `not_planned` — the originating agent should know so it can adjust future behaviour.
+2. **STOP — did the fix touch a production host?** If the issue's resolution involved a host-level change that bypassed CI (e.g. edit to `/etc/docker/daemon.json`, kernel / network / `iptables` state, package install on a host, manual `systemctl` action), consult `https://monitoring.l42.eu/api/status` before closing. Confirm no systems hosted on the affected host are in `failing` or `pending_verification` state. If any are, the verification is incomplete — do not close. This rule applies even when the closing party is acting on a verification report from another teammate; the monitoring API is the authoritative source for current service state, not a verification report. (Affected host is usually named in the issue body / title; for ambiguous cases check `lucos_configy/config/hosts.yaml`.) (Lesson from 2026-05-28 xwing outage: `lucas42/lucos#192` was closed on a sysadmin "all green" while monitoring was already showing six concurrent failures across xwing-hosted services — the closure was reverted ~10 minutes later when lucas42 noticed the contradiction manually.)
+3. Close the issue directly when you are confident no further work is needed.
+4. Leave a brief explanation comment. **If citing another issue as a root-cause tracker or superseding issue, verify it is still open** — a closed issue cannot be tracking a problem. Use `gh-as-agent repos/lucas42/{repo}/issues/{number} --jq '.state'`.
+5. Remove any legacy workflow labels still present on the issue (e.g. `needs-refining`, `status:*`, `owner:*`, `agent-approved`, `priority:*`) — these are being retired in favour of project board fields.
+6. **Remove from the project board** — look up the item ID and call `deleteProjectV2Item`. Closed issues should not remain on the board.
+7. **Notify interacting agents** via brief FYI SendMessage — raiser, commenters, consulted agents. Include URL, closure reason, lucas42's reasoning if applicable. Especially important when a bot-raised issue is closed as `not_planned` — the originating agent should know so it can adjust future behaviour.
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number} \
