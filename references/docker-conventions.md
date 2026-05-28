@@ -129,7 +129,7 @@ sudo journalctl -u docker --since "5 minutes ago" | grep "take affect"
 1. Send a `plannedMaintenance` Loganne event before stopping anything.
 2. `docker stop` all running containers — no sudo required.
 3. `sudo systemctl restart docker` — with no running containers, Docker initialises fully and recreates `bridge`/`host`/`none`.
-4. Retrigger CI redeploys for every service that was running. Each `docker compose up -d` recreates its declared user-defined network and reattaches its container. **Do not use `docker network create` manually** — lucos compose files are deployed transiently via CI and are not present on the host after deploy; there is no on-host source of truth (see [ADR-0008](https://github.com/lucas42/lucos/pull/199)).
+4. Retrigger CI redeploys for every service that was running. Each `docker compose up -d` recreates its declared user-defined network and reattaches its container. **Do not use `docker network create` manually** — lucos compose files are deployed transiently via CI and are not present on the host after deploy; there is no on-host source of truth (see [ADR-0008](https://github.com/lucas42/lucos/blob/main/docs/adr/0008-no-onhost-source-of-truth-for-compose-managed-state.md)).
 5. Verify: `docker network ls` shows all built-ins + user-defined networks; `curl https://<domain>/_info` returns HTTP 200 for each service. See [`references/healthcheck-depth.md`](healthcheck-depth.md) for the full verifier-side checklist.
 
 The planned brief outage (step 2) is the unavoidable cost of a clean restart. On lucos, where all compose files are CI-managed and CI deploys are fast, the downtime window is typically under 10 minutes.
