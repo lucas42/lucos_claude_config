@@ -37,6 +37,7 @@ When tailoring any future cover letter:
 2. Lead with the role + one sharp claim. Each letter's opening sentence should differ.
 3. Pull at least one concrete evidence story from the library (mined from civil-service statement).
 4. Demand a real "why this company" paragraph. If Luke can't write 60 words about why this specific company, that's a signal not to apply.
+5. **Test prospective company-connection angles** before leaning on them in para 3. Two tests: (a) was Luke personally involved enough to draw on the experience, or is the involvement at arm's length / through colleagues? (b) is the connection still current, given the target's corporate history (M&A transitions, product-line rationalisation, restructures since the connection)? If either test fails, drop the angle rather than padding around it. Stated 2026-05-28 during a Director-of-Architecture consultation: a 12-years-old indirect-vendor-relationship angle that had transited two major corporate transitions at the target company turned out to be trivia rather than substance; the cleaner play was the FT-as-business-shape-comparator framing, which Luke had genuine personal experience of.
 5. Demote the career break to a brief aside near the end; promote the lucos_agent / current-focus work as the forward-looking headline.
 6. Always close with a one-line invitation to talk.
 
