@@ -76,6 +76,7 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 - **Where it must NOT appear**: in a Skills section by default, alongside hands-on tools, or framed as "managed clusters" / "deployed to K8s" / "kubectl fluency".
 - **Skills-section default = OMIT**: stated 2026-05-26. **Never list Kubernetes in the CV Skills section unless the JD explicitly names Kubernetes.** Default is to omit. Luke's stated framing: "It's one of my most tenuous claims, so let's only include it when actually asked for." When the JD does name Kubernetes, list "Kubernetes" plainly (no qualifier) but keep the role-bullet phrasing focused on the migration rather than on hands-on operations.
 - **Tighter rule than previously held**: an earlier version of this rule said "for JDs that emphasise Kubernetes, lead with Docker in Skills" — that allowed Kubernetes-in-Skills for K8s-emphasising JDs. The tightened rule is stricter: omit by default, include only when the JD explicitly names Kubernetes, and even then keep the role-bullet honestly framed as migration-coordination rather than operations.
+- **JD-triage signal — DO NOT weight Kubernetes mentions as positive fit indicators when prioritising spotted.md / new applications.** Stated 2026-05-28. Luke's architecture-only experience makes him less confident on K8s than the inventory's "can claim under conditions" framing might suggest. When ranking which roles to actively pursue, a JD that emphasises Kubernetes operations should NOT pull Luke toward applying — it's a tenuous claim, not a differentiator. Same applies to **Kafka / event-driven architecture** (see the Architecture areas section below for the same rule).
 
 ## Cloud platforms
 
@@ -129,6 +130,7 @@ Stated 2026-05-22. The FT used **multiple / varied formats** across teams — so
 At architect / decision-making level (not necessarily hands-on configuration):
 
 - **Event-driven architecture** — was architect on the FT Universal Publishing Platform which used Apache Kafka. Made decisions about event flows and data contracts; configuration and operations owned by engineers.
+  - **JD-triage signal — DO NOT weight Kafka mentions as positive fit indicators when prioritising spotted.md / new applications.** Stated 2026-05-28. Same rule as Kubernetes — Luke's architecture-only experience makes him less confident on Kafka hands-on than the "made architectural decisions" framing might suggest. A JD that emphasises Kafka data-plane / stream-processing operations should NOT pull Luke toward applying. Treat as a tenuous claim, not a differentiator.
 - **Microservices** — 100+ at the FT publishing platform
 - **API-first / REST APIs**
 - **Real-time data processing** — FT was high-traffic but the volume was substantially less than the billion-events-per-day scale some platforms claim. Don't claim "billion-event-scale" without further confirmation.
