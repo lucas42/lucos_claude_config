@@ -7,6 +7,7 @@
 - [User role framing](user_role_framing.md) — level-positioning, manager-vs-IC tilts, career-break voice. Check before drafting Summary paragraphs.
 - [User cover-letter patterns](user_cover_letter_patterns.md) — boilerplate problem, civil-service-statement-holds-the-gold, what's working and what isn't in his existing letters
 - [User autonomy as floor](user_autonomy_as_floor.md) — title-indifferent; real psychological floor is technical autonomy. Use as the primary funnel-fit signal ahead of title/comp/domain match.
+- [Career break on parsed timelines](career_break_on_parsed_timelines.md) — how to fill the Mar2025–present gap when an ATS auto-parses the CV into an editable experience timeline (it skips the Career Break section).
 
 ## Active projects
 
