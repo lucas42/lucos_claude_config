@@ -46,7 +46,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Do the mechanical check before publishing](feedback_mechanical_check_before_publishing.md)
 - [Breaking change when callers must change anyway](feedback_breaking_change_when_callers_must_change_anyway.md)
 - [Flag-day plans need a verification gate, not just an order](feedback_flag_day_verification_gate.md)
-- [Verify the premise, not just the quote](feedback_verify_premise_not_just_quotes.md)
+- [Verify the premise, not just the quote](feedback_verify_premise_not_just_quotes.md) — structural claims AND incident-causation; attribute/hedge causation in artifacts, never restate as fact (#278, 2026-05-29)
 - [Shutdown protocol: send shutdown_response via SendMessage](feedback_shutdown_no_tool_calls.md)
 - [Convention scope = failure mode scope](feedback_convention_scope_failure_mode.md)
 - [File follow-up tickets during design](feedback_file_followups_during_design.md) — lucas42 doesn't trust us to remember later
