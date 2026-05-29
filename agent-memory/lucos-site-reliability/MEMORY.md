@@ -11,7 +11,8 @@
 
 ## arachne ingestor surprises
 
-- [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — adding prefLabel to a predicate/class definition pulls it into the doc-building loop, forcing label lookup on its rdf:types. Combined with the IGNORE_TYPES denylist gap this caused the 2026-05-18 incident. Watch until lucas42/lucos_arachne#544 replaces the denylist with a namespace filter.
+- [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — meta-entities with prefLabel get pulled into the searchindex doc-builder, forcing label+category lookup on their rdf:types. `is_meta_type` (#544, shipped) excludes OWL/RDFS but NOT SKOS. Recurred 2026-05-28 via #258 SKOS schemes (skos:Concept) → lucos_media_metadata_api#271.
+- [media_metadata → /v2/export → arachne pipeline + 2 landmines](pattern_media_metadata_arachne_pipeline.md) — exporter serves torn/empty exports (lucos_media_metadata_api#272); arachne ingest has no shrink-guard → empty export wipes 14,707 tracks. Never re-ingest against an unverified export. Includes ad-hoc trigger runbook.
 
 ## linuxplayer phantom DELETE retries — RESOLVED 2026-05-21 (lucos_media_linuxplayer#123 closed)
 

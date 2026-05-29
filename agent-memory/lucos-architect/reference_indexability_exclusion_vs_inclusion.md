@@ -17,6 +17,8 @@ The arachne ingestor (`ingestor/searchindex.py`) decides which RDF subjects beco
 
 **Why not adopt now.** Bigger change than #544's scope. The namespace filter is a real improvement and the right next step. But the inclusion framing should be recorded as a future direction — the namespace filter still has its own drift risk (new infra vocabulary; we forget to add it; same outage shape, rarer).
 
+**3rd occurrence (2026-05-28, lucos_media_metadata_api#271).** #258's SKOS migration emitted `skos:Concept`/`skos:ConceptScheme` subjects. SKOS namespace was never in `META_NAMESPACES`, so concepts were treated as domain types → `get_label` raised on the `skos:Concept` *type* → media search-index step failed on every ingest. Exactly the predicted "new infra vocabulary we forgot to add" drift. Immediate fix = option 2 (add SKOS core namespace to `META_NAMESPACES`); I framed it as **completing #544, NOT re-scoping #371** (#371 governs domain types; SKOS is W3C controlled-vocabulary infrastructure on the same footing as OWL/RDFS). The inclusion-direction future fix is now tracked as a real issue: **lucas42/lucos_arachne#590** (drive indexability by `eolas:hasCategory` registration, retire the denylist). Note for #590 design: inclusion test must key off the *resolved domain type after special cases* (LanguageFamily→Language branch, per-subject PlaceType category, subClassOf walk), not the raw rdf:type — see [[feedback_check_special_cases_before_extending_pipeline]].
+
 **General lesson.** When a system distinguishes "X items" from "non-X items" via a denylist of non-X, ask whether the system already has a positive definition of X it could consult instead. Denylists drift; positive definitions are self-maintaining.
 
 Related:
