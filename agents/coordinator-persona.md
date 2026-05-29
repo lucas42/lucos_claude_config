@@ -234,6 +234,8 @@ ENDBODY
 )"
 ```
 
+**Issues only — this returns `403 Resource not accessible by integration` on a PR.** `lucos-issue-manager` has `pull_requests: read` (write is intentionally withheld so it can't open PRs — see the dispatch skill). Even the `issues/{n}/comments` path 403s when `{n}` is a PR, because the target resource is a pull request. To leave a coordinator note that relates to a PR, comment on the **linked issue** instead (and say so, as the PR can't carry the note), or delegate the PR comment to a teammate that has `pull_requests: write` (developer / code-reviewer).
+
 **Before sending: if the body contains `{owner}`, `{repo}`, `{name}`, or any other curly-brace placeholder (e.g. in a code example showing a GitHub API path), OR starts with an `@`-mention (e.g. `@lucas42 …`), switch to the file-backed pattern in [`references/agent-github-identity.md`](../references/agent-github-identity.md). `gh api` performs silent template substitution inside `--field body=...` values and treats leading `@` as a filename — the corruption is invisible until you read the posted content. The same applies to `PATCH` calls that update an existing issue/PR body.
 
 ---
