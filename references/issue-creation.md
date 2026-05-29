@@ -70,6 +70,8 @@ When asked to create a new issue:
 
 5. **Add the issue to the project board** immediately after creation. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
 
+   **Non-coordinator personas: this will fail with `FORBIDDEN` / "Resource not accessible by integration".** Adding an item to the board requires the GitHub Projects PAT, which only the coordinator holds — a persona GitHub App installation token (`gh-as-agent --app lucos-<persona>`) does not have project write access. Don't retry or treat it as an error: skip the board drop and rely on the coordinator handoff in step 6, who does the board placement as part of triage. (Confirmed for `lucos-architect` 2026-05-28; the `addProjectV2ItemById` mutation returns `FORBIDDEN`.)
+
 6. **Hand off to the coordinator for triage.** Workflow state management (setting Status, Priority, and Owner fields on the project board) beyond initial placement are coordinator-only responsibilities — non-coordinator personas have a standing rule against managing labels or project field values (see `~/.claude/references/label-workflow.md`). After filing the issue and adding it to the board, send the issue URL to the coordinator (`team-lead`) via SendMessage so they can complete triage.
 
    **If you ARE the coordinator**, triage the issue inline yourself — assess against the triage criteria, set the Status/Priority/Owner fields on the board, and position by priority. Follow the procedure in `~/.claude/references/triage-procedure.md`. Do not park the issue and wait for a separate triage pass.
