@@ -14,6 +14,7 @@
 - **Datetime timezone normalisation — parse first, then check `tzinfo is None`.** Never blindly append `+00:00` to non-Z timestamps; they may already carry an explicit offset (e.g. `+05:30`) and appending would produce a malformed string. Correct pattern: replace Z→`+00:00`, parse with `fromisoformat`, then `if dt.tzinfo is None: dt = dt.replace(tzinfo=timezone.utc)`. Missed this in lucos_media_weightings PR #192 v1; lucas42 caught it.
 - [Detection code — check success AND failure path coverage](review_detection_code_coverage.md) — `.catch()` that only logs silently misses the failure-path counter; ask "does this metric cover both paths?" for every alert/banner counter
 - [x-sentinel bash trick — only works when `$VAR` has no trailing newline](review_xsentinel_bash.md) — if `$VAR` ends with `\n`, use `printf '%s' "$VAR" | cmp -s "$FILE" -` instead; wrong fix given in lucos_agent_coding_sandbox PR #71
+- [Synchronous external-service call in write hot path](review_sync_hotpath_external.md) — flag missing timeout/fallback; `fetchEolasName`→whole-dataset is a companion smell; root cause of 2026-05-29 502 incident
 
 ## Cross-Repo Review Rules
 
@@ -190,11 +191,9 @@ There are two distinct auto-merge workflows — do not conflate them:
 - **Never use raw `curl`** to fetch GitHub Actions logs. `get-app-token` does not exist in this environment. An unauthenticated request may follow redirects to a cached/stale zip artifact with completely wrong content and wrong timestamps — exactly what happened when diagnosing lucos_repos PR #291 (reported `auto-merge-secrets` 403s from 2026-03-20; real failure was a rate limit at `fetchRepos` on 2026-04-06).
 - To get the job ID for a failing check-run: `gh-as-agent ... "repos/.../actions/runs/{run_id}/jobs?per_page=10" --jq '.jobs[] | {id, name, conclusion}'`
 
-## Repo-Specific Review Rules — lucos_repos
-- Convention PRs: compare against checklist in `docs/convention-guide.md` in that repo.
-- **`RepoTypeScript` is NOT about the TypeScript language.** It refers to repos in configy's *scripts* list (tools designed to run locally).
 ## Repo-Specific Notes
 
+- **lucos_repos:** Convention PRs → check `docs/convention-guide.md`. `RepoTypeScript` = configy *scripts* list, not the TypeScript language.
 - [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
 - [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
 - [lucos_media_seinn mocha regression](lucos_media_seinn_mocha_regression.md) — recurring Dependabot major-group CI failure; #462 fix applied but didn't work, new tracking in #466; leave open as live reference
