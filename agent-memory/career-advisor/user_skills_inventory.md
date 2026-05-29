@@ -253,6 +253,17 @@ Confirmed 2026-05-28 during a public-sector transport cyber-architecture-lead co
 
 **Adjacent transferable evidence** (use to soften the gap, not erase it): FT-scale mission-critical systems under nation-state threat; incident & crisis management including business-continuity planning; architecture-and-risk rigour across a large mixed estate.
 
+## Data platform / data engineering
+
+Confirmed 2026-05-29. **Genuine gap.** Luke interviewed (Nov 2025) for a "Head of Platform" leadership role at a marketing-analytics company that turned out to be fundamentally a *data-platform* role; the interview exposed that data-engineering vocabulary and concepts ("data jargon") are not in his fingers, and he didn't get it.
+
+**For JDs centred on data platforms / data engineering / analytics engineering** (data warehouses, ETL/ELT pipelines, dbt, data modelling, streaming/batch processing, lakehouse, etc.): treat as a genuine gap.
+- **JD-triage signal — DO NOT weight a data-platform / data-engineering emphasis as a positive fit indicator** (same pattern as Kubernetes / Kafka). A "Platform" title that turns out to mean *data platform* is a mismatch, not a match, absent dedicated prep.
+- **The "platform" ambiguity is the trap:** "Head of Platform" / "Platform Tech Lead" can mean infra/DevEx platform (Luke's wheelhouse) **or** *data* platform (a gap). Clarify which before investing tailoring or interview prep — ideally get a written job spec; last time there was none, which is how the data focus caught him out mid-interview.
+- **If pursuing anyway:** transferable strength is platform / infrastructure / reliability / architecture leadership at scale; the data-engineering-specific depth is the gap. Luke's stated mitigation (2026-05-29) is to brush up on data-platform lingo beforehand. Honest framing, not bluffing — the Nov 2025 attempt failed precisely because the gap showed under questioning.
+
+Related: [[user-role-framing]].
+
 ## Security frameworks / standards certifications (GIAC, ISC2, ISACA, ISA, CompTIA)
 
 Confirmed 2026-05-28. **Luke holds none of these** — no CISSP, CISM/CISA, GIAC, CompTIA Security+, etc. For JDs that list cyber certifications as a requirement: claim none, and let demonstrated cyber-leadership experience carry it (a 5-year cyber-security-director-track record is itself the credential).
