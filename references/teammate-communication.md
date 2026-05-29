@@ -24,6 +24,24 @@ The rule above is sender-side guidance, but its failure mode is silent — a tea
 
 When you've asked a question and a reply is blocking your next action, prompt the teammate to resend if you haven't seen an envelope arrive in your inbox. Don't assume silence means "still working on it" — assume it could mean "answered in prose, never delivered." A redundant nudge is cheap; stalling on a phantom reply is not.
 
+## A reply may not be answering your latest message
+
+SendMessage is **asynchronous and queued**, not a synchronous request/response. A teammate does not read their inbox the instant you send — they finish whatever turn they are already in first, *including emitting any replies that turn produces*, and only read your new message when they next process their inbox. Your outgoing send-order is **not** their inbox-processing order.
+
+So when a `<teammate-message>` arrives shortly after you sent something, do **not** assume it is a response to *that* message. It may be:
+
+- answering an **earlier** message of yours (the one they had actually read when their turn began),
+- a self-initiated status report unrelated to your latest message, or
+- the product of work they were already mid-flight on when your message arrived.
+
+Correlate a reply to what it is actually about by its **content**, never by "it arrived after I sent X, so it must be about X." Consequences that bite repeatedly:
+
+- **A superseding instruction is not in effect until acknowledged.** If you send message B that changes or cancels message A and then a reply arrives, check whether the reply reflects B before assuming B has landed. The teammate may have acted on A and not yet seen B. Don't treat the old state as overridden until you see an acknowledgement of B *specifically*.
+- **Don't fire an actionable question and then its answer in quick succession.** If you ask "which way — (a) or (b)?" and immediately follow with "actually, hold — the answer is neither", the teammate may act on the (a)/(b) question before ever reading the "hold". Either wait for them to engage with the first message, or don't pose the actionable question until you know the answer.
+- **A reply that doesn't reflect your latest message is not the teammate "ignoring" it.** It almost always means they hadn't read it yet. Confirm against timing evidence before concluding anything about what they "had in hand" — see [§ Cross-check substantive claims](#cross-check-substantive-claims-from-teammates).
+
+A redundant clarification ("to be clear, this supersedes my previous message") is cheap; acting on a false assumption about what the other agent currently knows is expensive.
+
 ## Don't spawn teammates as subagents
 
 When you need to interact with another `lucos-*` persona during a workflow (request a code review, escalate to security, ask for an SRE assessment), **always use `SendMessage` with `to: "<persona-name>"`** — they are already running teammates on the same team you are.
