@@ -240,6 +240,20 @@ Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claud
 - Not a Claude API power-user in the "I've shipped a Claude-API-backed product" sense — this is personal-estate orchestration work.
 - Not Constitutional AI / Responsible Scaling Policy / interpretability research expertise. Luke comes at AI safety from the security-engineering and platform-engineering side, not from the ML research side.
 
+## Operational technology (OT) / ICS / SCADA / IEC 62443 / safety-critical
+
+Confirmed 2026-05-28 during a public-sector transport cyber-architecture-lead consultation. **Genuine gap.** Luke's entire cyber and engineering background is **IT, not OT.** No industrial control systems, SCADA, safety-critical, or IEC 62443 experience.
+
+**For JDs that name OT / ICS / SCADA / IEC 62443 / safety-critical infrastructure** (common in transport, utilities, energy, manufacturing, defence): treat as an honest gap. Luke's chosen handling (stated 2026-05-28): one candid sentence acknowledging the IT-not-OT background, paired with the transferable architecture-and-risk discipline and a willingness to ramp on the OT side. Don't dress it up; don't downplay it (these JDs make OT central).
+
+**Don't claim**: IEC 62443 in the CV Skills section, or any OT/ICS/SCADA hands-on or architectural experience. The defensible IT-side standards (ISO 27001, NIST, CIS Controls, OWASP, MITRE ATT&CK, Cyber Essentials) carry the security-frameworks keyword work without reaching for the OT-specific one.
+
+**Adjacent transferable evidence** (use to soften the gap, not erase it): FT-scale mission-critical systems under nation-state threat; incident & crisis management including business-continuity planning; architecture-and-risk rigour across a large mixed estate.
+
+## Security frameworks / standards certifications (GIAC, ISC2, ISACA, ISA, CompTIA)
+
+Confirmed 2026-05-28. **Luke holds none of these** — no CISSP, CISM/CISA, GIAC, CompTIA Security+, etc. For JDs that list cyber certifications as a requirement: claim none, and let demonstrated cyber-leadership experience carry it (a 5-year cyber-security-director-track record is itself the credential). **Familiarity** with the frameworks themselves (ISO 27001, NIST, CIS Controls, OWASP, MITRE ATT&CK as bodies of knowledge) is defensible for a cyber leader and fine to list in Skills; holding a *certification against* them is not.
+
 ## How to apply
 
 Before asking Luke a gap-fill question about tech in any CV-tailoring consultation, **check this file first**. If a JD requires something that's already settled here (Luke does or doesn't claim it), apply that — don't re-ask. If a JD asks for something not on this list at all, it's a genuine gap — ask Luke whether honest evidence exists, then update this file with the answer.

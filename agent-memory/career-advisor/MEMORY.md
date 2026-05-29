@@ -38,6 +38,7 @@
 - [Tailored variant freeze](feedback_tailored_variant_freeze.md) — sweeping changes apply to all of lukeblaney_cv; for lukeblaney_cv_tailored only the actively-worked items. Historic / submitted variants stay frozen by default, no need to ask.
 - [Check evidence recency](feedback_check_evidence_recency.md) — for senior IC variants, flag any headline evidence story ≥5 years old proactively before showing Luke a draft; look for absorption / continuity bridges
 - [CV page count](feedback_cv_page_count.md) — hard limit 3, target ~2; verify against the .docx (via LibreOffice round-trip) not the LaTeX-PDF
+- [CV font-mandate render](feedback_cv_font_mandate_render.md) — meet a mandated font (e.g. Arial 12pt) via post-render theme1.xml swap; template default is Calibri/Cambria
 - [CV skills section](feedback_cv_skills_section.md) — target ~5 categories; single-paragraph layout with hard line breaks (`\` at line end) to avoid inter-paragraph spacing bloat
 - [Write tool flattens NBSP](feedback_write_tool_nbsp_flattening.md) — U+00A0 gets normalised to ASCII space through the Write tool; use Python post-write or Bash heredoc to write nbsp content reliably
 - [Submission memory sweep](feedback_submission_memory_sweep.md) — when Luke says an application is submitted, batch all durable memory updates at that point alongside notes.md; don't wait for end-of-session prompt
