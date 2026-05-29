@@ -106,6 +106,8 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **SLOs / SRE-book practices — DO NOT claim explicit SLO practice at FT**: The FT Reliability Engineering team (which Luke founded, Feb 2018 – Aug 2020) predates SRE-book adoption at the FT and operated in monitoring / availability / incident-response vocabulary, not explicit SLO / error-budget vocabulary. Confirmed by Luke 2026-05-22. For JDs asking for SLO experience, stick to "monitoring", "observability", "availability", "incident response" framing. Don't put "SLOs" in Skills sections or claim SLO design/rollout.
 
+**"SRE" / "site reliability engineering" as a Skills term — DO NOT list.** Corrected 2026-05-29 (Luke pushed back on a Skills draft listing "site reliability engineering (SRE)"). Luke's team was named **Reliability Engineering**, and that's the defensible term — use **"reliability engineering"** in Skills, not "SRE" / "site reliability engineering". The two read as near-synonyms to an ATS, so "reliability engineering" still partially keyword-matches a JD that asks for "SRE practices" without overclaiming the SRE-book discipline. Same honest-framing reason as the SLO note above.
+
 **DORA metrics — defensible at "started the foundational data work" level**: Confirmed 2026-05-26. During the PE-Reliability Engineering period (Feb 2018 – Aug 2020), Luke began work on enabling DORA metrics tracking across the FT's engineering teams. The focus was foundational — getting solid, dependable, standardised data in place so that individual team leaders could make decisions off the back of it — rather than rolling out DORA scorecards centrally or improving DORA outcomes at scale.
 
 **Where it can appear**:
@@ -135,7 +137,8 @@ Stated 2026-05-22. The FT used **multiple / varied formats** across teams — so
 
 At architect / decision-making level (not necessarily hands-on configuration):
 
-- **Event-driven architecture** — was architect on the FT Universal Publishing Platform which used Apache Kafka. Made decisions about event flows and data contracts; configuration and operations owned by engineers.
+- **Event-driven architecture** — was architect on the FT Universal Publishing Platform which used Apache Kafka. Made decisions about event flows and data contracts; configuration and operations owned by engineers. **"Event-driven architecture" as a Skills term is fine** (architecture-level, defensible).
+  - **"Apache Kafka" / "Kafka" in the Skills section — DO NOT name unless the JD explicitly names it.** Confirmed 2026-05-29 (Luke: "don't mention Apache Kafka unless it's mentioned in the JD … Kafka should be in my skills inventory as architecture only"). Same default-omit pattern as Kubernetes and ECS: Kafka is architecture-only, not hands-on. List the generic "event-driven architecture" instead; name Kafka only inside the Architect-Content role bullet (accurate to that role) or in Skills when the JD itself names Kafka.
   - **JD-triage signal — DO NOT weight Kafka mentions as positive fit indicators when prioritising spotted.md / new applications.** Stated 2026-05-28. Same rule as Kubernetes — Luke's architecture-only experience makes him less confident on Kafka hands-on than the "made architectural decisions" framing might suggest. A JD that emphasises Kafka data-plane / stream-processing operations should NOT pull Luke toward applying. Treat as a tenuous claim, not a differentiator.
 - **Microservices** — 100+ at the FT publishing platform
 - **API-first / REST APIs**
@@ -252,7 +255,9 @@ Confirmed 2026-05-28 during a public-sector transport cyber-architecture-lead co
 
 ## Security frameworks / standards certifications (GIAC, ISC2, ISACA, ISA, CompTIA)
 
-Confirmed 2026-05-28. **Luke holds none of these** — no CISSP, CISM/CISA, GIAC, CompTIA Security+, etc. For JDs that list cyber certifications as a requirement: claim none, and let demonstrated cyber-leadership experience carry it (a 5-year cyber-security-director-track record is itself the credential). **Familiarity** with the frameworks themselves (ISO 27001, NIST, CIS Controls, OWASP, MITRE ATT&CK as bodies of knowledge) is defensible for a cyber leader and fine to list in Skills; holding a *certification against* them is not.
+Confirmed 2026-05-28. **Luke holds none of these** — no CISSP, CISM/CISA, GIAC, CompTIA Security+, etc. For JDs that list cyber certifications as a requirement: claim none, and let demonstrated cyber-leadership experience carry it (a 5-year cyber-security-director-track record is itself the credential).
+
+**Named security standards/frameworks — DO NOT list in Skills (no direct experience).** Corrected 2026-05-29 (Luke pushed back on a Skills draft that listed them). Luke confirmed he does **not** have direct experience of **ISO 27001, NIST, or CIS Controls** — don't put them in any CV Skills section, even as "familiarity". (This tightens an earlier, too-loose note that said framework "familiarity" was fine to list.) For the "compliance with frameworks and standards" type of JD ask, rely on the framework-agnostic security keywords Luke genuinely owns — security engineering, IAM/SSO, vulnerability management, DevSecOps (SAST/SCA/secret-scanning), security incident management, third-party/supplier risk, BCDR — rather than naming a specific standard. OWASP / MITRE ATT&CK weren't part of the 2026-05-29 correction, but apply the same conservative default: don't list a named framework unless Luke has confirmed direct experience of it.
 
 ## How to apply
 
