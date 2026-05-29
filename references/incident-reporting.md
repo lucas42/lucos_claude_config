@@ -63,6 +63,26 @@ The pattern:
 
 This is independent of whether the original framing was yours or inherited from upstream sources (issue body, PR description, prior agent's notes). The propagation pass is about the report's coherence, not assigning blame.
 
+## Verify the root cause actually caused *this* failure — don't ship a hypothesis as the cause
+
+A root cause is **established** only when you have confirmed it actually produced the observed failure — not merely that it is a plausible mechanism that *could* have. Naming an unverified mechanism as "the root cause" is worse than writing "cause not yet confirmed": it ends the investigation, sends fix effort at the wrong target, and reads as authoritative when it isn't.
+
+Before writing any mechanism into the Root Cause section as *the* cause, confirm the causal link by at least one of:
+
+- **Reproduction** — you (or a controlled test) reproduced the observed failure through the hypothesised path. A controlled repro is the right tool; do not skip it for convenience, or because a fix "would help regardless," or because mutating test data feels heavier than reasoning. If a repro is the only way to confirm and it's safe, run it (coordinate with the team-lead on any production-touching repro) — declining the one step that would confirm the cause, then shipping the unconfirmed cause anyway, is the trap.
+- **Direct evidence the failing request took that path** — e.g. a logged error / stack frame from the *actual* failing request showing the hypothesised code path; not just "that path exists and is slow."
+
+**Stop and treat your cause as UNCONFIRMED if any of these hold:**
+
+- The diagnosis depends on a fact you don't actually have ("it must be because the user was setting X" — did you confirm they were?).
+- The thing your hypothesis blames isn't present in the affected record (you blame predicate/field P, but the affected item has no P).
+- The timing or other evidence doesn't cleanly fit, and you're rationalising the mismatch rather than resolving it.
+- The cause is inferred chiefly from "a recent change touched a related area." Recency is a prompt to investigate, not proof of causation — a plausible recent-change story must not crowd out checking simpler or pre-existing/latent causes.
+
+If you cannot verify before the report must ship, **write the Root Cause section with the mechanism explicitly labelled a leading hypothesis (not confirmed), state exactly what verification is outstanding, and keep the Resolution UNRESOLVED** until confirmed. A confident-but-unverified narrative — however well-reasoned — is the failure mode this section exists to prevent.
+
+> Lesson from 2026-05-29 (lucos_media_metadata_api save-502): the team published a composer/producer eolas-resolution root cause built entirely from "recent migration + that save path makes a synchronous eolas call," across three report PRs, without ever reproducing the actual failing save. The real cause was unrelated and latent — an Album-typed value selected in the `about` field, whose API rejection was neither surfaced to the UI nor logged. Every red flag above was live: the affected track had no composer/producer tag, the 502 timing didn't fit the hypothesised path, a controlled repro was offered and declined, and the whole diagnosis hinged on an unconfirmed assumption about what the user was editing.
+
 ## Step 1: Write the incident report
 
 Given a closed critical issue that needs a report:
