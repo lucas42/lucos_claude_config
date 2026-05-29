@@ -1164,3 +1164,9 @@ certificate_expiry: 2026-05-07
 **Repos dashboard**: 57 repos checked, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
+
+### 2026-05-29 (SECOND RUN — container status only; repos dashboard already ran today; all other checks not yet due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**No new issues raised.**
