@@ -43,6 +43,7 @@ Identify the ATS from the URL pattern and fetch the full job description:
 - **Ashby** (`jobs.ashbyhq.com/{org}/{uuid}`): `curl -s "https://api.ashbyhq.com/posting-api/job-board/{org}?includeCompensation=true"` returns all jobs; filter for the matching `id`. Each job has `descriptionPlain` and `descriptionHtml` fields.
 - **Greenhouse** (`boards.greenhouse.io/{board}/jobs/{id}` or `job-boards.greenhouse.io/{board}/jobs/{id}`): `curl -s "https://boards-api.greenhouse.io/v1/boards/{board}/jobs/{id}"`.
 - **Lever** (`jobs.lever.co/{company}/{id}`): `curl -s "https://api.lever.co/v0/postings/{company}/{id}"`.
+- **Pinpoint** (custom careers domain, e.g. `careers.{company}.{tld}`, path `/postings/{uuid}`): `curl -s "https://careers.{company}.{tld}/postings.json"` returns all live postings as JSON (`data[]`) with full `description` HTML, `compensation`, `deadline_at`, and `job.department`/`division`. Match the target by its UUID appearing in the entry's `url`/`path`. The per-posting `.json` returns 406; a fuller JD PDF is often linked inside the `description` HTML (grep for `href`).
 - **Workday** / **iCIMS** / **Taleo** / generic: try WebFetch first. These often render content client-side — if WebFetch returns thin content, ask the user to paste the full JD text into the conversation.
 
 Extract:

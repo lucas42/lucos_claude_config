@@ -72,6 +72,7 @@ Identify the ATS from the URL pattern:
 - **Ashby** (`jobs.ashbyhq.com/{org}/{uuid}`): `curl -s "https://api.ashbyhq.com/posting-api/job-board/{org}?includeCompensation=true"` returns all jobs; filter for the matching `id`. The per-job endpoint returns 401 — don't use it.
 - **Greenhouse** (`boards.greenhouse.io/{board}/jobs/{id}` or `job-boards.greenhouse.io/{board}/jobs/{id}`): `curl -s "https://boards-api.greenhouse.io/v1/boards/{board}/jobs/{id}"`. Some company-board URLs use a redirect (e.g. `partnerize.com/company/jobs?gh_jid=ID`) — the `gh_jid` is the job id; probe board names with `curl -o /dev/null -w "%{http_code}\n"` to find the right one.
 - **Lever** (`jobs.lever.co/{company}/{id}`): `curl -s "https://api.lever.co/v0/postings/{company}/{id}"`.
+- **Pinpoint** (custom careers domain, e.g. `careers.{company}.{tld}`, path `/postings/{uuid}`): `curl -s "https://careers.{company}.{tld}/postings.json"` returns all live postings as JSON (`data[]`) with full `description` HTML, `compensation`, `deadline_at`, and `job.department`/`division`. Match the target by its UUID appearing in the entry's `url`/`path`. The per-posting `.json` returns 406; a fuller JD PDF is often linked inside the `description` HTML (grep for `href`).
 - **Workday / iCIMS / Taleo / generic**: try WebFetch first. If thin content comes back, ask Luke to paste the JD text.
 
 Extract:
@@ -89,6 +90,7 @@ Before joint analysis, fetch the **application form structure** so the artefact 
 - **Greenhouse**: append `?questions=true` to the boards-api URL. The response includes a `questions` array; each entry has `label`, `description` (HTML — often contains word-count or format guidance), `required`, and `fields[0].type` (e.g. `input_file`, `textarea`, `input_text`, `multi_value_single_select`). Example: `curl -s "https://boards-api.greenhouse.io/v1/boards/{org}/jobs/{id}?questions=true"`.
 - **Lever**: the posting JSON returned in Step 3 includes form metadata. For deeper detail, fetch `https://jobs.lever.co/{company}/{id}/apply` HTML and grep for custom field blocks (`data-qa="custom-question"` markers).
 - **Ashby**: the public posting-api response includes an `applicationFormDefinition` field per job listing the form's required / optional inputs and their types — but this field can be `null` on some boards (observed 2026-05-27).  When null, fall back to asking Luke to inspect the form manually, same as the Workday/iCIMS/Taleo path below.
+- **Pinpoint**: the form's file-upload and custom-question fields are JS-rendered — NOT in the static `/postings/{uuid}/applications/new` HTML (which only carries name/email/phone/LinkedIn, an optional "Personal Summary" textarea, and DEI fields). Don't infer the uploads or custom questions from the static HTML; ask Luke to confirm what the form shows (same as the Workday/iCIMS/Taleo path).
 - **Workday / iCIMS / Taleo / generic**: no public API. Ask Luke to paste a screenshot of the application form or list the fields by name. Don't guess.
 
 **Categorise each field** into one of these submission shapes:

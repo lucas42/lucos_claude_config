@@ -186,6 +186,16 @@ Opening paragraph led with the third-party cyber due-diligence workstream Luke o
 
 Related: [[user-skills-inventory]] (third-party cyber DD section), [[user-cover-letter-patterns]], [[check-evidence-recency]].
 
+## Dual-domain roles: unify the year-claim rather than adding two domain-claims
+
+Confirmed 2026-05-29 on a Platform Engineering Director application that co-weighted platform/infrastructure leadership **and** security engineering roughly evenly (the team even sat inside an Information Security group).
+
+When a JD wants two of Luke's domains at once (e.g. platform + security, or architecture + cyber), **frame the headline as a single unified claim** — "over a decade leading platform, reliability and security engineering at the FT" — and surface the more recent specialism via the **job title** ("most recently Cyber Security Director"), rather than stating two separate additive "[N] years of [domain]" claims.
+
+**Why:** Luke's cyber years (PE-Cyber Sep 2020 onwards) sit *inside* the broader FT engineering decade. Claiming "a decade of platform engineering" AND "5 years of cyber security leadership" as two separate numbers double-counts the 2020–2022 period and breaches the [[overlap-years-claim]] ceiling — it implies parallel tenures that didn't exist. One unified claim covering the whole tenure, with the recent title carrying the specialism signal, is honest and reads as more senior (breadth held continuously, not two short stints).
+
+**How to apply:** when picking the year-claims framing (the `/tailor` Step 8 decision), if the role wants two domains co-equally, default to the unified-claim framing instead of choosing one additive domain-number. Reserve the discrete "5 years cyber" / "3 years cyber" additive framings for roles that want *one* domain foregrounded.
+
 ## Level-positioning when the JD level doesn't match recent titles
 
 - **Director → Staff IC** (e.g. cv-staff-engineer.md for a fintech Staff Engineer JD): frame as "deliberate technical re-focus", lead with PE-concurrent bullet, surface architecture and engineering above strategy/people-management.

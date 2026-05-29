@@ -56,6 +56,7 @@ Same ATS routing as `/tailor-cv` — see the Ashby reference memory for the stan
 - **Ashby** (`jobs.ashbyhq.com/{org}/{uuid}`): `curl -s "https://api.ashbyhq.com/posting-api/job-board/{org}?includeCompensation=true"` returns all jobs as JSON; filter for the matching `id`. The per-job endpoint (`/posting-api/job-board/{org}/{job-id}`) returns 401 — don't use it.
 - **Greenhouse** (`boards.greenhouse.io/{board}/jobs/{id}` or `job-boards.greenhouse.io/{board}/jobs/{id}`): `curl -s "https://boards-api.greenhouse.io/v1/boards/{board}/jobs/{id}"`.
 - **Lever** (`jobs.lever.co/{company}/{id}`): `curl -s "https://api.lever.co/v0/postings/{company}/{id}"`.
+- **Pinpoint** (custom careers domain, e.g. `careers.{company}.{tld}`, path `/postings/{uuid}`): `curl -s "https://careers.{company}.{tld}/postings.json"` returns all live postings as JSON (`data[]`) with full `description` HTML, `compensation`, `deadline_at`, and `job.department`/`division`. Match the target by its UUID appearing in the entry's `url`/`path`. The per-posting `.json` returns 406; a fuller JD PDF is often linked inside the `description` HTML (grep for `href`).
 - **Workday / iCIMS / Taleo / generic**: try WebFetch first. If thin content comes back, ask Luke to paste the JD text in the conversation.
 
 Extract:
@@ -72,6 +73,7 @@ Same per-ATS API extension as in `/tailor` Step 3.5 — fetch the form structure
 - **Greenhouse**: append `?questions=true` to the boards-api URL; check `questions[]` for `input_file` (Cover Letter) vs `textarea` fields ("Cover Letter", "Why X?", "Additional Information", or other custom-question textareas).
 - **Lever**: posting JSON includes form metadata.
 - **Ashby**: `applicationFormDefinition` in the posting-api response.
+- **Pinpoint**: the form's file-upload and custom-question fields are JS-rendered — NOT in the static `/postings/{uuid}/applications/new` HTML (which only carries name/email/phone/LinkedIn, an optional "Personal Summary" textarea, and DEI fields). Don't infer the uploads or custom questions from the static HTML; ask Luke to confirm what the form shows (same as the Workday/iCIMS/Taleo path).
 - **Workday / iCIMS / Taleo**: ask Luke to paste / describe form fields.
 
 The cover-letter content drafted by this skill may end up shaped as:
