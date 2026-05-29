@@ -87,6 +87,14 @@ For each such issue, self-attest explicitly in your response: "SendMessage to <a
 
 This step exists because the "set Owner = <agent>" board mutation feels like the action when it isn't — the actual action is the SendMessage. The board update is purely the audit record. Setting Owner without SendMessage produces a perfectly-triaged-looking ticket that no agent knows about.
 
+## Step 4.6: Body/Title Currency — Bake Decisions Into the Ticket, Not Just a Comment
+
+For every issue you triaged this pass where the **scope, approach, chosen option, status rationale, or framing changed** from what the body/title currently says, verify the **body and title now reflect the current understanding** — not just a triage comment. The implementer (and the next reader) reads the body first, not the comment history; a stale body → wrong implementation, and a comment is not a substitute. This is `triage-procedure.md`'s requirement (lines ~81, ~83, ~142: "update title and body to reflect the current understanding"; "when an option is chosen, update the body to mark it — Not optional") — it lives buried in the procedure and keeps not firing, so it is a completion gate here.
+
+Concretely, when you've posted a triage comment that records a decision/re-scope/re-frame, ask: *does the body still say something now superseded or contradicted?* (e.g. a body recommending "surface the raw status" after lucas42 chose "map by range"; a title claiming a cause that's been disproven; a body framing a latent fragility as an active incident). If so, edit the body — add a "## Decision (triaged YYYY-MM-DD)" / "Chosen approach:" section near the top (keep the original below for context, alternatives documented), and correct the title if it's now factually wrong.
+
+For each issue triaged this pass, self-attest explicitly in your response: "Body/title currency for <issue URL>: updated / no change needed." If a body or title was materially superseded and you only left a comment, you have not finished triaging it. (Lesson from 2026-05-29: triaged #278/#311/#312/#283 via comments only, leaving bodies recommending rejected approaches and a title asserting a disproven cause — lucas42 caught it.)
+
 ## Step 5: Unblocking Check
 
 During each triage pass, also check for issues with Status = Blocked whose dependencies may have been resolved. Before setting Status away from Blocked on an issue:
