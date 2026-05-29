@@ -192,6 +192,16 @@ Related: [[user-skills-inventory]] (third-party cyber DD section), [[user-cover-
 - **Director → Director/Head/VP of Engineering** (e.g. cv-engineering-director.md for a platform-engineering Director JD): lean into the Director title and multi-team leadership; soften "manager of managers" per above; pull architecture experience (especially Architect - Content / publishing platform) up the page.
 - **Director → Engineering Manager / Tech Lead Manager** (not yet built): expected to need a "leading through senior leads" middle-ground framing.
 
+## Retail-sector roles: surface the early retail experience
+
+Confirmed 2026-05-29 during a Software Engineering Manager consultation at a major UK retailer.
+
+For **retail-sector roles**, include Luke's early retail job (J Sainsbury plc, Customer Services Assistant / tills, May 2005 – Dec 2005) as a **single one-liner in `# Earlier Career`** as a sector signal. Format: `- J Sainsbury plc - **Customer Services Assistant**: May 2005 - December 2005`. This is per the variant-content rule (pull forward Earlier Career entries directly relevant to the target industry) — the rest of the pre-Assanka Earlier Career entries (student societies, work placements) stay dropped.
+
+**Only call it out in a cover letter / textarea answer** if either (a) the role is at Sainsbury's specifically, or (b) the role has a particular focus on **in-store technology**. For a generic retail / e-commerce engineering role at a *different* retailer, the one-liner CV signal is enough — don't mention the till experience in prose (it isn't a genuine connection to *that* employer, and an EM/e-commerce role isn't in-store-tech-focused).
+
+Related: [[cv-variant-content-rule]].
+
 ## How to apply
 
 Check this file before drafting Summary paragraphs and before deciding how to reframe the Director / Interim VP bullets. If a JD raises a positioning question not addressed here, ask Luke and update this file with the answer so future variants inherit it.
