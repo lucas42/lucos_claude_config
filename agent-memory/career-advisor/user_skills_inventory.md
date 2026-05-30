@@ -98,6 +98,12 @@ What Luke can honestly defend on a CV or in a technical interview. Captured from
 
 **GCP — will not claim**: not on the inventory. Same rule as Azure — if a JD requires GCP, treat as a real gap.
 
+## Virtualisation / VMware
+
+**VMware — will not claim.** Confirmed 2026-05-30. The FT ran a Cisco UCS estate during Luke's tenure; he would occasionally use a web portal to create/destroy/modify VMs, but once a VM was up his interaction was via SSH and Puppet provisioning, not the hypervisor layer. He can't recall whether that portal was VMware-branded (vCenter/vSphere/ESXi) vs another virtualisation manager. So at best this is light, occasional *provisioning-level* usage of an unconfirmed hypervisor — not VMware administration (no HA/DRS, datastore design, vMotion, cluster ops). Don't put a VMware years-figure on a screening form; don't list VMware in Skills. If a JD names VMware as a hard requirement, treat as a real gap. **Cisco UCS ≠ VMware** — UCS is the compute hardware layer, VMware is the hypervisor that may or may not have run on it. Don't let UCS exposure get framed as VMware experience.
+
+**JD-triage signal:** a role gating on *years-of-VMware* (especially paired with *years-of-Azure*) is screening for hands-on hybrid-infra ops, not security/platform leadership — a shape mismatch. Don't weight it as a fit. (Pulse Recruit "Head of Platform Security", 2026-05-30, dropped pre-application on exactly this: only two Easy-Apply questions were Azure-years + VMware-years, both misses.)
+
 ## Methodologies / engineering practices
 
 **Comfortable**: TDD · Agile · Scrum · CI/CD · API-first design
