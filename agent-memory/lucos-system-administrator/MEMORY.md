@@ -138,6 +138,9 @@ Before applying any workflow change that wires in a security tool config (CodeQL
 ## hosts.yaml: ipv4_nat ≠ that host's IP
 `ipv4_nat` is the shared NAT gateway address (e.g. xwing's IP). SSH to `ipv4_nat` reaches the NAT host, not the named host. Only `ipv4` (no suffix) is a direct address. Salvare and virgon-express have no direct IPv4 — only IPv6. See `hosts-ipv4-nat.md`.
 
+## Production SSH: use `<host>.s.l42.eu`, never `<host>.l42.eu`, and let SSH config supply the user
+`avalon.l42.eu` is NXDOMAIN. Correct form: `avalon.s.l42.eu`. SSH config sets `User lucos-agent` for `*.s.l42.eu` — never override with `lucas@`. SRE tripped on both mistakes (2026-05-30). See `ssh-hostname-convention.md`.
+
 ## Docker fixed-cidr-v6 IPAM persistence — flush network/files/ to pick up changes
 `fixed-cidr-v6` in daemon.json only applies on bridge creation. Flush `/var/lib/docker/network/files/` + restart to change it. See `docker-fixed-cidr-v6-ipam-persistence.md`.
 
