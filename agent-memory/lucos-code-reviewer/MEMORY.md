@@ -15,6 +15,7 @@
 - [Detection code — check success AND failure path coverage](review_detection_code_coverage.md) — `.catch()` that only logs silently misses the failure-path counter; ask "does this metric cover both paths?" for every alert/banner counter
 - [x-sentinel bash trick — only works when `$VAR` has no trailing newline](review_xsentinel_bash.md) — if `$VAR` ends with `\n`, use `printf '%s' "$VAR" | cmp -s "$FILE" -` instead; wrong fix given in lucos_agent_coding_sandbox PR #71
 - [Synchronous external-service call in write hot path](review_sync_hotpath_external.md) — flag missing timeout/fallback; `fetchEolasName`→whole-dataset is a companion smell; root cause of 2026-05-29 502 incident
+- [SSRF/request-forgery false-positive assessment](feedback_ssrf_request_forgery_assessment.md) — cite `fetchEntityNameFromSource` hostname whitelist (NOT `ValidateURIOrigin`) as the universal guard on `fetchEolasName` paths
 
 ## Cross-Repo Review Rules
 
