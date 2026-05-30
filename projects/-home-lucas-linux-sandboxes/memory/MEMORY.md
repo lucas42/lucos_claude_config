@@ -68,6 +68,7 @@
 - [Don't gate read-only checks](feedback_no_gate_on_readonly_checks.md) — just run safe read-only verifications and report; confirm-first is only for state-changing/outward-facing actions, not for reading production state
 - [Dispatch URL only](feedback_dispatch_url_only.md) — dispatch SendMessage carries only `implement issue {url}`; never restate the ticket's design (redundant + an unversioned copy that can contradict the ticket)
 - [Harness problems → lucos#155](feedback_harness_problems_to_lucos155.md) — Claude Code harness/product-layer limitations (not infra/config-fixable) are tracked on lucas42/lucos#155; comment there, don't strand on per-repo tickets
+- [Empty tool output = unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — treat any empty/blank/late tool result as unknown; re-run or wait before asserting (receiver-side mitigation for confabulation-on-empty; captured for SRE during 2026-05-30 shutdown)
 
 ## Active Projects
 
