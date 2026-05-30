@@ -82,3 +82,5 @@
 - Key mitigations applied (2026-03-06): ops checks for SRE, sysadmin, and security were extracted into separate `*-ops-checks.md` files with explicit counts, criticality ordering, schedule grouping, and mandatory completion manifests. **These changes are untested** due to the caching issue above — need a fresh Claude session to verify.
 - The architect's MEMORY.md is 203 lines (3 over the 200-line truncation limit) — needs trimming.
 
+
+- [No parallel get-next/dispatch](feedback_no_parallel_getnext_dispatch.md) — run get-next to completion and dispatch exactly the URL it printed; never pre-fill /dispatch from memory (confabulated lucos_monitoring#286 on 2026-05-30)

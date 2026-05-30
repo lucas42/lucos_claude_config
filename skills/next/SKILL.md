@@ -48,6 +48,8 @@ If the script reports no implementable issues, tell the user there is nothing re
 
 ## Step 2: Dispatch the issue
 
+**Dispatch exactly the URL Step 1 printed.** Do not call `/dispatch` until `get-next-implementation-issue` has actually returned, do not batch the two in one tool block, and never pre-fill the `/dispatch` URL from memory or expectation. A URL read first from real script output cannot be a confabulation — a phantom URL 404s on the genuine issue fetch before any state-changing call. (Lesson 2026-05-30: a `/dispatch` was launched in parallel with `get-next` using a pre-filled, confabulated `lucos_monitoring#286`; the script's real answer was a different issue. See [[feedback_no_parallel_getnext_dispatch]].)
+
 Use the `/dispatch` skill with the issue URL and the owner from Step 1:
 
 ```
