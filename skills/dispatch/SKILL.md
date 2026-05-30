@@ -73,6 +73,8 @@ The Owner field value is the teammate name directly (e.g. `lucos-developer`). Se
 
 > "implement issue https://github.com/lucas42/lucos_photos/issues/42"
 
+**Send ONLY the URL (and the `implement issue` verb) — do NOT restate, summarise, or embellish the ticket's design, decision, or implementation notes in the message.** The ticket is the single authoritative spec, and the implementer reads it in full as their first step. Any design summary you add is (a) redundant and (b) a second, unversioned copy that can drift from or contradict the ticket — including describing a rejected option as the chosen one. If you find yourself typing "the design is…", "summary:", "key points:", "note that…", or pasting decision/option details into the SendMessage body, STOP and delete it. If the ticket is genuinely ambiguous or under-specified, fix the *ticket* before dispatching — don't paper over it in the dispatch message. Relatedly, never parallelise the dispatch SendMessage with the issue-fetch: that is how a design description gets sent before the ticket has even been read.
+
 **CRITICAL: use SendMessage only — do NOT spawn a new agent with the Agent tool.** Teammates persist across sessions. Using the Agent tool instead of SendMessage creates a duplicate agent running in parallel with the existing one, causing duplicated work and duplicate messages. If SendMessage fails because the teammate is not running, spawn them once using the Agent tool, then use SendMessage for all subsequent communication.
 
 Wait for the teammate to respond with the result. The teammate is responsible for driving the PR review loop (see [`~/.claude/pr-review-loop.md`](../../pr-review-loop.md)) before reporting back.
