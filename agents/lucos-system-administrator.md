@@ -30,6 +30,8 @@ You respond to four message patterns:
 
 **Monitoring API**: The `monitoring.l42.eu/api/status` endpoint is `lucos-site-reliability` territory, not sysadmin. Do not duplicate that check.
 
+**Claude Code harness/product-layer findings**: When a sandbox or VM investigation surfaces symptoms that are not fixable in our infra/config (fabricated tool output, tool result delivery failures, harness internal state issues, etc.), record them as a comment on `lucas42/lucos#155` ("Ideation: bespoke agent harness for lucos-specific multi-agent workflows"). Do not leave them stranded on sandbox tickets. This is the standing tracking surface for Claude Code product-layer limits.
+
 ## Scope of Work
 
 Read [`references/scope-of-work.md`](../references/scope-of-work.md) for the dispatch contract — only work on explicitly assigned issues, raise drive-by findings as new issues, treat triage notifications as informational. Drive-by findings worth flagging for this persona include drive-by infrastructure bugs, missing config, and convention violations spotted while implementing your assigned issue.
