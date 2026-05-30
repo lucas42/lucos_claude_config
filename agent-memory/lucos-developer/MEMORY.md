@@ -74,15 +74,9 @@ When stubbing modules via `sys.modules` before importing a server module in test
 
 - [Java Mockito — auth mocks](java_mockito_auth.md) — update ALL mock helpers (compareRequestResponse AND checkNotAllowed) when refactoring auth checks
 
-## Never Merge PRs — and Never Report Post-Approval State Without Checking
+## Key Rules (post-PR)
 
-**STOP. Do not call the merge endpoint.** Never call the merge API on any PR — merging is handled by auto-merge (GitHub) or the user, not agents.
-
-**"Supervised" means agents cannot *approve* PRs — it does NOT prevent auto-merge.** Even on supervised repos (`unsupervisedAgentCode: false`), a PR will auto-merge after lucas42 approves it. Do not report "awaiting lucas42 merge" as if auto-merge won't happen.
-
-**Always query the GitHub API for actual PR state before reporting it.** Conversation memory drifts within minutes — a PR you think is open may already be merged. Never report state from memory.
-
-**After approval: report "PR approved" + the PR URL. Nothing else.** Do not say "awaiting lucas42", do not say "auto-merging". Just report approved and the URL.
+**Never call the merge API** — merging is handled by auto-merge or the user. **Always re-fetch PR review state** before reporting approval — memory drifts. **Report "PR approved" + URL only** — no supervised/auto-merge commentary.
 
 ## Alembic Autogenerate — Always Review Output
 
@@ -95,35 +89,7 @@ Always manually review generated migration files before committing. Autogenerate
 
 ## GitHub Actions: caller workflow permissions for reusable workflows
 
-**`permissions: {}` causes `startup_failure`** on any caller that uses `uses:` to call a cross-repo reusable workflow. GitHub needs at least `contents: read` to fetch the reusable workflow definition. This applies to ALL caller workflows, not just dependabot.
-
-**Minimum correct caller pattern for code-reviewer-auto-merge:**
-```yaml
-permissions:
-  contents: read
-```
-
-**Minimum correct caller pattern for dependabot-auto-merge** (confirmed via smoke test in lucas42/.github-test):
-```yaml
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-permissions:
-  pull-requests: write
-  contents: write
-
-jobs:
-  dependabot:
-    uses: lucas42/.github/.github/workflows/dependabot-auto-merge.yml@main
-```
-
-- Use `pull_request` (not `pull_request_target`) for dependabot
-- Top-level `permissions:` block is required — `{}` or omitting it causes `startup_failure`
-- No `secrets: inherit`, no `if:` guard in caller (guard lives in the reusable workflow)
-- Workflow conclusion for non-Dependabot PRs is `skipped` (not `success`) — both are passing
-
-**CRITICAL: Smoke test before estate rollout.** Any change to a caller workflow template must be smoke-tested via `.github-test` PR + full `lucas42/.github` smoke test suite BEFORE the estate-wide rollout. Skipping this step caused the 2026-03-21 incident where `permissions: {}` was rolled out to 45 repos, breaking auto-merge on all of them. The full smoke test suite is triggered by opening a PR against `lucas42/.github`.
+**`permissions: {}` causes `startup_failure`** on cross-repo reusable workflow callers. Need at least `contents: read` to fetch the workflow definition. For dependabot-auto-merge callers also need `pull-requests: write` and `contents: write`; use `pull_request` trigger (not `pull_request_target`); no `secrets: inherit` or `if:` guard. **Smoke test via `.github-test` before any estate rollout** — skipping caused the 2026-03-21 incident (45 repos broken).
 
 ## lucos_repos Convention Checker
 
@@ -197,6 +163,10 @@ jobs:
 - **Test runner wiring**: new test files must be added to `app/agents/tests/__init__.py` as `from .module import *` — Django's test runner discovers via `__init__.py` only; new files that aren't imported there are dead code and never run.
 - **Admin Loganne pattern**: capture old field value in `save_model` (DB read before `super().save_model()`), store on request (`request._saved_foo`), compare vs new value in `response_change` to emit the correct event.
 - **Migration workflow**: `docker compose up -d --build app` → `docker compose exec app python manage.py makemigrations` → `docker cp lucos_contacts_app:/usr/src/app/agents/migrations/ app/agents/`.
+
+## lucos_media_metadata_api
+
+- [CodeQL #284 false-positive — SSRF guard is fetchEntityNameFromSource whitelist, not ValidateURIOrigin](lucos_media_metadata_api_ssrf_guard.md)
 
 ## Shell Scripts over SSH
 

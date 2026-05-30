@@ -382,3 +382,4 @@ for url, s in data['systems'].items():
 - **Comment endpoint footgun**: POSTing to `repos/.../issues/comments/{comment_id}` OVERWRITES the existing comment's body (GitHub treats it as an update). To post a NEW comment, always use the issue-scoped endpoint `/issues/{n}/comments`. To edit, use `--method PATCH repos/.../issues/comments/{comment_id}`. Got burnt on lucos_deploy_orb#105 on 2026-04-17 — had to reconstruct a lost comment.
 - The `lucos` repo has auto-merge — do not tell lucas42 to manually merge it.
 - For `gh-as-agent` body with backtick code: use `BODY=$(cat <<'ENDBODY' ... ENDBODY)` and pass as `--field body="$BODY"`.
+- [Treat empty tool output as unknown](feedback_treat_empty_tool_output_as_unknown.md) — empty/late tool result = unknown, never data; re-run/wait before asserting (confabulation-on-empty mitigation, lucos#155)

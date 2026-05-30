@@ -188,6 +188,10 @@ See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_eve
 
 **Policy (2026-05-20):** See `codeql-false-positive-policy.md` — GHAS dismissal is the **only** mechanism for false positives. No inline suppression comments (also non-functional in lucos repos), no `paths-ignore` config exclusions. Dismiss directly via API.
 
+## False Positive: go/request-forgery on fetchEolasName (lucos_media_metadata_api)
+
+See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dismissed 2026-05-30. Guard is `fetchEntityNameFromSource` hostname whitelist (scheme=https, host=eolas.l42.eu), NOT `ValidateURIOrigin`. Webhook paths bypass `ValidateURIOrigin`; `/webhooks` has Bearer auth.
+
 ## Risk Pattern: Zombie Credentials in Downstream Keystores
 
 See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_KEYS does NOT revoke pre-registered keys in downstream stores (typesense, etc.). Decommission checklist gap.
@@ -195,7 +199,3 @@ See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_K
 ## Risk Pattern: Webhook Fan-out Amplification
 
 See `risk-webhook-fanout-amplification.md` — client-side error bursts amplify ~2× via loganne fan-out (seinn incident 2026-05-22). Low risk currently but monitor if retry multiplier or subscriber count grows.
-
-## Key People/Agents
-
-See `relationships.md` for notes on working with other lucos agents.
