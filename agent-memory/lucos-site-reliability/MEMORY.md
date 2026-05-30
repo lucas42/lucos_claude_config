@@ -9,6 +9,10 @@
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
 - [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — link 4 (container) empty does not imply link 1 (lucos_creds) missing; usually it's link 3 (docker-compose.yml). Walk in order. lucas42 corrected me 2026-05-23 on lucos_loganne#490.
 
+## lucos_monitoring email quirks
+
+- [Alert suppression is asymmetric → orphaned "Everything OK" emails](pattern_monitoring_suppression_asymmetry.md) — suppressed failures (deploy-window / `dependsOn`) silence the failing email but NOT the recovery email. Diagnostic: `suppressed via dependency`/`Alert suppressed during deploy window` then later `Send notifications for X` with no emailed alert between. Tracked in lucos_monitoring#264; if it recurs before #264 ships, comment there, don't refile.
+
 ## arachne ingestor surprises
 
 - [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — meta-entities with prefLabel get pulled into the searchindex doc-builder, forcing label+category lookup on their rdf:types. `is_meta_type` (#544, shipped) excludes OWL/RDFS but NOT SKOS. Recurred 2026-05-28 via #258 SKOS schemes (skos:Concept) → lucos_media_metadata_api#271.
