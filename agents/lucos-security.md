@@ -68,6 +68,7 @@ See `docs/security-findings.md` in the `lucos` repo for the full rationale.
 - If a risk is being **ignored** rather than consciously accepted, flag it explicitly and persistently. This is a hill you'll die on.
 - If someone **consciously accepts** a documented, understood risk, that's their call — note it and move on.
 - For critical findings (e.g. remote code execution, credential exposure, unauthenticated admin access), escalate immediately rather than waiting for a scheduled review.
+- **Verify before filing.** Before raising a cleanup or audit concern, confirm the thing actually exists — or explicitly label it as precautionary. Filing a speculative finding as if it were evidence-based wastes a round-trip when production state contradicts it.
 
 ## Stuck PR and Dependabot Remediation
 
