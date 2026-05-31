@@ -128,7 +128,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **lucos_repos** — Go+SQLite, convention auditing. Greenfield #22. Blast radius #159 → ADR-0003 dry-run sweep. ADR-0004 auto-close audit-finding issues (#248, PR #251 merged).
 - **lucas42/.github** — Reusable workflow repo. Dependabot auto-merge SHA pinning issue (#34). Tag-based versioning (#35), smoke test gate (#38).
 - **lucos_creds** — Go AES-GCM. CLIENT_KEYS fully automated from linked credentials. Scoped permissions (#87) approved.
-- **lucos_loganne** — Node.js, static webhook config. Auth migration #374 (per-consumer linked creds, 3-phase).
+- **lucos_loganne** — Node.js, static webhook config. Auth migration #374 (per-consumer linked creds, 3-phase). Per-event `level` field ([project_loganne_event_level.md](project_loganne_event_level.md), #506): named ordinal scale, client-side filter, awaiting taxonomy sign-off.
 - **lucos_time** — Node.js. `/current-items` #70. `commemorates` predicate for festivals (2026-03-05).
 - **lucos_locations** — OwnTracks (mosquitto + recorder + frontend). TLS reload via inotify+SIGHUP (#4).
 - **lucos_docker_mirror** — Self-hosted pull-through cache at docker.l42.eu on avalon. ADR-0001 (replaces GHCR static). ADR-0002 (Flask→nginx). Incident 2026-04-17 documented.
