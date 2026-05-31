@@ -1,15 +1,20 @@
 ---
 name: loganne-event-level
-description: Per-event `level` field on loganne (lucos_loganne#506) — design signed off; ADR-0001 drafted as PR #507, blocked on pre-existing time-bomb test #508
+description: Per-event `level` field on loganne — ADR-0001 SHIPPED (PR #507 merged); impl tracked in #510, emitters #270/#238 blocked on it
 metadata:
   type: project
 ---
 
 # loganne per-event `level` field (lucos_loganne#506)
 
-**Status 2026-05-31:** taxonomy **signed off** by lucas42; ADR-0001 drafted → **PR #507** (code-reviewer approved the content). Blocked only on a **pre-existing time-bomb test (#508)** that reddened `main`'s `test` job estate-wide for loganne (test seeds a fixed `2026-05-22` date, reads it back through `GET /events`'s 7-day `DEFAULT_VIEW_WINDOW_MS`). Once #508 lands I rebase #507 → green → approval. **Emitter follow-ups still to raise after #507 merges.**
+**Status 2026-05-31 — DONE (design phase):** taxonomy signed off; **ADR-0001 merged** (PR #507, merge commit `7456984`, ADR on `main`); #506 auto-closed completed. Follow-ups raised & handed to coordinator for triage:
+- **lucas42/lucos_loganne#510** — implement the `level` field (validation + shared comparator + `/view`, `GET /events`, per-connection `/stream` filtering). **Ready.** #506's scope was "ADR **and implementation**", but `Closes #506` orphaned the impl on ADR merge — #510 carries it forward.
+- **lucas42/lucos_monitoring#270** — `monitoringAlertSuppressed` event → `level: detail`. **Blocked on #510.**
+- **lucas42/lucos_media_weightings#238** — `weightings` event (`all-tracks.py`) → `level: detail`. **Blocked on #510.**
+- **track-finished is NOT a real loganne event** — nothing in the estate emits it (manager emits `deviceSwitch`/`fetchTracks`/`collectionSwitch`). The #506 example was inaccurate; filed no ticket. Only `weightings` is a real churn event.
+- `headline` taxonomy stays owned by lucos_root#135 — no new ticket.
 
-**Correction:** loganne is **SUPERVISED** (`check-unsupervised` exits 1), despite the #506 body and the dispatch brief both saying "unsupervised → draft PR". Opened a **normal** PR (lucas42 auto-reviewer; auto-merge waits on his approval). Lesson: don't trust an issue body's supervised/unsupervised claim — always run `check-unsupervised`.
+**Lessons this session:** (1) loganne is **SUPERVISED** (`check-unsupervised` exits 1) despite #506 body + brief saying "unsupervised → draft PR" — opened a normal PR; never trust an issue body's supervised claim, always run `check-unsupervised`. (2) The blocking `test` failure was a **pre-existing time-bomb** (fixed `2026-05-22` date read back through `GET /events`'s 7-day window) — investigated rather than re-triggering; fixed via #508/#509, rebased #507. lucas42's approval survived the force-push (full-SHA-verified).
 
 **Why:** lucas42 wants UI viewers to filter out low-interest events (track-finished + weighting-update pairs; monitoring alerts during a suppression window).
 
@@ -27,6 +32,6 @@ metadata:
 - **Reversed my first-proposal calls** honestly: (1) server-side filtering now (view route + per-connection websocket filter, reusing shared comparator in handleEvents.js) instead of "keep server dumb" — because a bookmarkable `?level=` URL + lucos_root iframe embed (`?level=headline`) need it; (2) filter control = navigation to a new `?level=` URL + reload, not localStorage state. GET /events also accepts `?level=` for symmetry.
 - **lucos_root#135 makes level a real consumer-facing filter**, not human-UI-only. lucos_root embeds loganne `?level=headline` in an iframe.
 
-**Follow-ups to raise after sign-off:** lucos_monitoring (suppressed-window alerts → `detail`); track-finished/lucos_media_weightings emitter (→ `detail`); which events warrant `headline` belongs in lucos_root#135 scope, not pre-specified.
+**Follow-ups — RAISED (see Status section at top):** #510 (impl), #270 (monitoring), #238 (weightings). track-finished turned out not to be a real loganne event. `headline` stays with lucos_root#135.
 
 See [[reference_webhook_consumer_accept_202_enqueue]] for the loganne webhook contract context.
