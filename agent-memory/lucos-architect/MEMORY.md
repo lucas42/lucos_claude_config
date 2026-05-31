@@ -117,7 +117,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **lucos_photos** — FastAPI+worker+Postgres+Redis. ADR-0001 (pgvector). Profile pics #149. Face-to-contact linking #104 depends on contacts JSON API #529.
 - **lucos_contacts** — Django. JSON API filed as #529. Relationship deletion #53 → ADR-0001/0002, ongoing tickets #699-#713.
 - **lucos_arachne** — nginx + Typesense + Fuseki + Python ingestor. Webhook-driven (event-name suffix). ADR-0001 (MCP). Two Fuseki endpoints: `raw_arachne` (RW) + `arachne` (RO). Inference in ingestor, not Fuseki. People merge in search-index layer (#539); item-page merge open in #567; sameAs symmetry materialisation open in #566.
-- **lucos_eolas** — Django. People modelling #19 design closed. Write API #75 agent-approved priority:low.
+- **lucos_eolas** — Django. Canonical home for cross-domain metadata; write API shipped (`POST /api/metadata/<type>/`, 409-on-single-dup/201). ADR-0001 (canonical-home contract, PR #288) established `docs/adr/`. 0 open issues as of 2026-05-31.
 - **lucos_media_metadata_api** — Go+SQLite. v3 shipped. ADR-001 §2: arrays-everywhere wire format. Album as `mo:Record` (#157). Person-tag migration in #237. Latent bug in arachne searchindex.py (album field empty since #137) tracked in arachne#326.
 - **lucos_media_manager** (ceol.l42.eu) — Java long-polling. **Not** lucos_media_metadata_manager.
 - **lucos_media_metadata_manager** — PHP front-end. Client-side Typesense via arachne (#51).

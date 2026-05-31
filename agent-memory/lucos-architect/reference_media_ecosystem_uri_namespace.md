@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-**Principle (ADR-0005 in lucas42/lucos, proposed 2026-05-19, PR #164):** The `lucos_media_*` services store only their own URIs or `lucos_eolas` URIs in persistent entity references. They never store `lucos_contacts` URIs directly.
+**Principle (`lucos` ADR-0005, Accepted; status-line flip in lucos#206 on 2026-05-31, decision settled since #163 closed):** The `lucos_media_*` services store only their own URIs or `lucos_eolas` URIs in persistent entity references. They never store `lucos_contacts` URIs directly. Eolas-side counterpart is `lucos_eolas` ADR-0001 (canonical-home contract, PR #288).
 
 Contacts indirection happens via `preferredIdentifier` on the eolas side: an `eolas:Person` can carry a `preferredIdentifier` triple pointing at a `contacts:Person`, and `lucos_arachne` federates the inference so consumers see the canonical contact name surfaced from a media-stored eolas URI.
 
