@@ -117,7 +117,9 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 ## Committing `~/.claude` changes
 
-`~/.claude` is a version-controlled git repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files, or any other config — you **must commit and push** the changes:
+`~/.claude` is a version-controlled git repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files, or any other config — you **must commit and push** the changes.
+
+**Before committing, verify you are on `main`.** The `~/.claude` checkout is shared — other work can leave it on a feature branch. Run `git -C ~/.claude status` first; if not on main, run `git -C ~/.claude checkout main && git -C ~/.claude pull --ff-only` before proceeding.
 
 ```bash
 cd ~/.claude && git add {changed files} && \
