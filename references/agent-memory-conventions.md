@@ -69,16 +69,26 @@ These exclusions apply even when the user explicitly asks you to save something.
 
 ## Committing memory changes
 
-**You do not need to commit or push memory edits yourself — and you should not.** A scheduled job (`scripts/commit-agent-memory.sh`, cron `*/15`) automatically commits and pushes all uncommitted changes under `agent-memory/` and `projects/` to `origin/main` every 15 minutes, committing to main via a temporary worktree regardless of which branch is checked out. After any write to `~/.claude/agent-memory/<persona>/` (new file, edit, delete, or a `MEMORY.md` update), **just leave it in the working tree**; the next cron tick (≤15 min) captures it.
+After **any** write to `~/.claude/agent-memory/<persona>/` (new file, edit, delete, or a `MEMORY.md` update), commit and push the change **with your own persona identity** via `git-as-agent --app <persona-bot>` in the same turn. Do not ask permission. This is deliberate and not optional: the commit log is how lucas42 sees **which agent changed which memory**, so that attribution must come from you committing as yourself — it is the primary path, not a nicety. Brief commit message naming what was saved.
 
-Do **not** manually `git-as-agent` commit+push your `agent-memory/` changes in-session. The shared always-on VM keeps the working tree between session end and the next cron tick, so the job captures your edits durably — and a manual push *races* the cron, producing non-fast-forward errors once the cron has already pushed your work. (Eliminating that contention is why this step was removed.)
+Stage only your own memory path, so you don't sweep up other agents' in-progress edits in the shared working tree:
 
-Caveats:
-- **Durability window**: only edits made in the ≤15 min before the VM powers off or a cron run fails are at risk — narrow on an always-on VM, but non-zero. If you've written something you genuinely cannot lose and need it upstream *now*, that is the one time to commit+push `agent-memory/` by hand — and expect to rebase onto whatever the cron has already pushed.
-- **Authorship**: memory commits are attributed to `lucos-system-administrator[bot]` ("Auto-commit agent memory updates"), not your persona bot. The file contents, not the commit message, carry the per-persona record.
-- **Feature branches**: the job commits the working tree's `agent-memory/`/`projects/` content to main even if you are on a feature branch (it never pushes *to* the feature branch). Memory files are append-only and branches short-lived, so this is low-risk — but don't leave in-progress memory edits you don't want reaching main sitting in the working tree.
+```
+git-as-agent --app <persona-bot> add agent-memory/<persona>/
+git-as-agent --app <persona-bot> commit -m "<persona>: <what was saved>"
+git-as-agent --app <persona-bot> push
+```
 
-Note this auto-commit covers **only** `agent-memory/` and `projects/`. Config files outside those paths (`agents/`, `CLAUDE.md`, `settings.json`, workflow/reference docs) are **not** auto-committed and still need a deliberate `git-as-agent --app <persona-bot>` commit+push.
+**If the push is rejected as non-fast-forward**, the `scripts/commit-agent-memory.sh` cron (`*/15`) has pushed ahead of you — this is expected occasionally, not an error. Rebase your commit on top and retry; `autoStash` keeps other agents' uncommitted working-tree files safe across the rebase:
+
+```
+git -c rebase.autoStash=true pull --rebase origin main
+git-as-agent --app <persona-bot> push
+```
+
+That cron is a **backstop, not the primary path**: it exists only to catch memory edits left uncommitted when a session ends, so nothing is ever lost. But anything *it* commits is attributed to `lucos-system-administrator[bot]`, not you — so if you rely on it instead of committing yourself, your authorship is erased from the log. Always commit your own memory; let the cron only ever catch what you genuinely didn't get to.
+
+(The cron covers **only** `agent-memory/` and `projects/`. Other config files — `agents/`, `CLAUDE.md`, `settings.json`, workflow/reference docs — are never auto-committed and always need a deliberate `git-as-agent --app <persona-bot>` commit+push.)
 
 ## When to access memory
 
