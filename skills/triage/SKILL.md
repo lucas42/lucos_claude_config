@@ -31,8 +31,8 @@ Do this in a loop that re-fetches page 1 each round, since deletes shift items f
 
 This returns a JSON array of all issues that currently need your attention. An issue is included if **any** of the following is true:
 
-- **Status = Needs Triage** on the project board — newly added, needs initial triage.
-- **Status = Ideation or Awaiting Decision** and the most recent comment is NOT from `lucos-issue-manager[bot]` — an owner agent has probably completed work and the issue needs a status transition (or someone has replied and it needs another look).
+- **Status = Needs Analysis** on the project board — surfaced **every pass, regardless of owner**. This covers both brand-new items needing initial triage AND items routed to an agent for analysis/design. The script returns *all* of them (owner is an intention record, not an "actively looking" signal — agents are stateless until messaged, so an owned-but-never-messaged item is just as stranded as an unowned one). For each, decide: the owning agent is actively on it (leave), it needs a (re-)nudge via SendMessage, or the analysis is done and it can transition.
+- **Status = Ideation or Awaiting Decision** and the most recent comment is NOT from `lucos-issue-manager[bot]` — someone (an agent or lucas42) has replied and the issue needs another look (e.g. a decision landed, or a comment on a parked item).
 - **Owner = lucos-issue-manager** on the project board — explicitly routed back to you for action.
 - **Status = Ready with a fresh `lucas42` comment** — the issue was previously approved, but `lucas42` has commented more recently than the most recent `lucos-issue-manager[bot]` comment. The comment may be a substantive scope change (re-triage needed), a clarification to bake into the body, or an FYI. Re-evaluate per [`triage-procedure.md`](../../references/triage-procedure.md)'s **"If lucas42 has commented on an already-approved issue"** section.
 - **Not on the project board at all** — fallback for issues that predate the board or were missed by the board scan.
@@ -68,22 +68,22 @@ For every issue with Status = Awaiting Decision AND Owner = lucas42 on the proje
 
 The rule exists because reactions don't appear in the comment text feed — it is structurally easy to miss them by reading comments only. Skipping the reaction check is what produces the "Open question for you, @lucas42" comment posted *after* lucas42 has already reacted +1 to the design two minutes earlier. Don't do that.
 
-## Step 4: Board Verification — "Needs Triage" Must Be Empty
+## Step 4: Board Verification — Every "Needs Analysis" Item Was Reviewed This Pass
 
-After processing all issues in Step 3, verify that no items remain in the "Needs Triage" board column. Query the project board for items with status `79f7273e` (Needs Triage). If any are found:
+"Needs Analysis" (status `79f7273e`) is a **persistent working column, not a transient inbox** — items routed to an agent for analysis legitimately stay here while the work is in progress. So the check is no longer "must be empty"; it is **"every Needs-Analysis item was looked at this pass and consciously handled."** Query the board for items with status `79f7273e` and, for each, confirm you did one of:
 
-- **Not yet triaged**: triage now using Step 3.
-- **Needs agent design work**: a previous pass parked this instead of consulting the agent inline. Do the consultation now, then move to "Ideation" (`5f521008`) or "Awaiting Decision" (`cf5e250d`) as appropriate.
-- **Waiting for lucas42 decision**: board status wasn't updated — move to "Awaiting Decision" (`cf5e250d`).
-- **Clear and implementation-ready**: board status wasn't updated — move to "Ready" (`3aaf8e5e`).
+- **Brand-new / never triaged**: do initial triage now (set Owner + Priority; either route to an agent — stays in Needs Analysis, now owned — or transition to Ready/Blocked/Awaiting Decision/Ideation).
+- **Owned, agent actively on it**: leave it (note this in your pass summary so it's a conscious decision, not an oversight).
+- **Owned, but stranded** (agent never messaged, or work stalled): SendMessage the owner to (re-)nudge — see Step 4.5.
+- **Analysis complete**: transition to the appropriate column (Ready / Blocked / Awaiting Decision / Ideation / Done).
 
-**Every issue must end triage in one of these columns: Ideation, Awaiting Decision, Blocked, Ready, or Done.** "Needs Triage" is a transient processing state, not a destination. If anything is still in "Needs Triage" at the end of a triage pass, triage is not complete.
+**The residual invariant: no Needs-Analysis item should be left with *no owner* after a pass** (every one must at least have been assigned an analyser). Items may rest in Needs Analysis, Ideation, Awaiting Decision, Blocked, Ready, or Done — but a brand-new, un-owned item still sitting in Needs Analysis at the end of a pass means triage is not complete.
 
 ## Step 4.5: Handoff Verification — SendMessage for Every Non-Lucas42 Owner Routed This Pass
 
-For every issue you triaged in Step 3 that ended at Status ∈ {Ideation, Awaiting Decision} with Owner ≠ lucas42, verify you SendMessage'd that agent in this triage pass with the issue URL and ask. Setting the Owner field is board-state bookkeeping — it does not notify the agent. Without the SendMessage, the work goes silent and the issue stalls indefinitely.
+For every issue you routed to an agent for analysis this pass — i.e. it ended at Status = **Needs Analysis** (or Ideation/Awaiting Decision) with Owner ≠ lucas42 **and you intend the agent to act now** — verify you SendMessage'd that agent in this pass with the issue URL and ask. Setting the Owner field is board-state bookkeeping — it does not notify the agent. Without the SendMessage, the work goes silent and the issue stalls (exactly the stranding the every-pass Needs-Analysis surfacing is designed to catch — but catching it next pass is no substitute for messaging the agent now).
 
-For each such issue, self-attest explicitly in your response: "SendMessage to <agent> for <issue URL>: sent / not sent." If "not sent", SendMessage now (with full context — issue URL, the design/verification ask, problem statement verbatim from lucas42 if applicable per triage-procedure.md). Do not consider triage complete until every non-lucas42 owner on a triaged-this-pass Ideation/Awaiting Decision item has received their SendMessage.
+For each such issue, self-attest explicitly in your response: "SendMessage to <agent> for <issue URL>: sent / not sent / deliberately holding (reason)." If "not sent" and you intend the agent to act, SendMessage now (with full context — issue URL, the design/verification ask, problem statement verbatim from lucas42 if applicable per triage-procedure.md). If you are *deliberately* leaving an owned Needs-Analysis item without messaging (agent already engaged, or intentionally deprioritised), say so explicitly — that is a conscious call, not a missed handoff.
 
 This step exists because the "set Owner = <agent>" board mutation feels like the action when it isn't — the actual action is the SendMessage. The board update is purely the audit record. Setting Owner without SendMessage produces a perfectly-triaged-looking ticket that no agent knows about.
 

@@ -19,8 +19,8 @@ The **lucOS Issue Prioritisation** project board: https://github.com/users/lucas
 
 | Option | ID | Legacy label equivalent |
 |---|---|---|
-| Ideation | `5f521008` | `needs-refining` + `status:ideation` |
-| Needs Triage | `79f7273e` | Transient state only — set automatically when an item is first added to the board. Must be empty at the end of every triage pass. If an issue is still here after triage, something went wrong. |
+| Ideation | `5f521008` | `needs-refining` + `status:ideation` — parked/vague, **no agent currently assigned**; agent-owed analysis goes to Needs Analysis instead. |
+| Needs Analysis | `79f7273e` | (Renamed from "Needs Triage" on 2026-05-31; option ID unchanged.) The issue needs analysis/triage work — brand-new (auto-set on add) or routed to an agent. Surfaced on **every** triage pass **regardless of owner** so nothing strands; a persistent working column, **not** required to be empty after a pass. See the Status-field table in the coordinator persona for the per-pass decision (leave / nudge / transition). |
 | Awaiting Decision | `cf5e250d` | `needs-refining` + `status:awaiting-decision` — **only for items where lucas42's personal input or decision is needed**. Do NOT use for issues awaiting agent design work. |
 | Blocked | `d79b6b67` | `agent-approved` + `status:blocked` |
 | Ready | `3aaf8e5e` | `agent-approved` (no blocking status); also where issues sit while being worked on |
@@ -129,11 +129,11 @@ mutation {
 
 ### What the built-in workflows handle
 
-- **Item added to project** -> sets Status to "Needs Triage"
+- **Item added to project** -> sets Status to "Needs Analysis"
 - **Item closed** -> sets Status to "Done"
 - **Pull request merged** -> sets Status to "Done"
 
-You **do** need to set status to the correct value immediately after adding (since your triage action moves it past "Needs Triage"). You do **not** need to set Status to "Done" when closing.
+You **do** need to set the other fields (Owner, Priority) and either route the item to an agent (it stays in Needs Analysis, now owned) or transition it (Ready/Blocked/Awaiting Decision/Ideation) during triage. You do **not** need to set Status to "Done" when closing.
 
 ### Board sync rules
 

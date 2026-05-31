@@ -3,6 +3,8 @@
 **Investigated:** 2026-04-21  
 **Status:** Suspected GitHub regression — no action taken, monitoring
 
+> **Note (2026-05-31):** the column referred to below as **"Needs Triage"** was renamed to **"Needs Analysis"** (option ID `79f7273e` unchanged). The observations below are preserved as the historical record of 2026-04-21.
+
 ---
 
 ## What we observed
