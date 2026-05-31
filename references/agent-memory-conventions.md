@@ -69,7 +69,16 @@ These exclusions apply even when the user explicitly asks you to save something.
 
 ## Committing memory changes
 
-After **any** write to `~/.claude/agent-memory/<persona>/` (creating a new memory file, editing an existing one, deleting one, updating `MEMORY.md`), commit and push the change via `git-as-agent --app <persona-bot>` in the same turn. Do not ask permission — `~/.claude` is version-controlled in `lucas42/lucos_claude_config` and uncommitted memory edits are lost when the persona's session ends. Brief commit message naming what was saved is enough.
+**You do not need to commit or push memory edits yourself — and you should not.** A scheduled job (`scripts/commit-agent-memory.sh`, cron `*/15`) automatically commits and pushes all uncommitted changes under `agent-memory/` and `projects/` to `origin/main` every 15 minutes, committing to main via a temporary worktree regardless of which branch is checked out. After any write to `~/.claude/agent-memory/<persona>/` (new file, edit, delete, or a `MEMORY.md` update), **just leave it in the working tree**; the next cron tick (≤15 min) captures it.
+
+Do **not** manually `git-as-agent` commit+push your `agent-memory/` changes in-session. The shared always-on VM keeps the working tree between session end and the next cron tick, so the job captures your edits durably — and a manual push *races* the cron, producing non-fast-forward errors once the cron has already pushed your work. (Eliminating that contention is why this step was removed.)
+
+Caveats:
+- **Durability window**: only edits made in the ≤15 min before the VM powers off or a cron run fails are at risk — narrow on an always-on VM, but non-zero. If you've written something you genuinely cannot lose and need it upstream *now*, that is the one time to commit+push `agent-memory/` by hand — and expect to rebase onto whatever the cron has already pushed.
+- **Authorship**: memory commits are attributed to `lucos-system-administrator[bot]` ("Auto-commit agent memory updates"), not your persona bot. The file contents, not the commit message, carry the per-persona record.
+- **Feature branches**: the job commits the working tree's `agent-memory/`/`projects/` content to main even if you are on a feature branch (it never pushes *to* the feature branch). Memory files are append-only and branches short-lived, so this is low-risk — but don't leave in-progress memory edits you don't want reaching main sitting in the working tree.
+
+Note this auto-commit covers **only** `agent-memory/` and `projects/`. Config files outside those paths (`agents/`, `CLAUDE.md`, `settings.json`, workflow/reference docs) are **not** auto-committed and still need a deliberate `git-as-agent --app <persona-bot>` commit+push.
 
 ## When to access memory
 
