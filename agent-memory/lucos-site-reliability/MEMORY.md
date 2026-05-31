@@ -7,6 +7,7 @@
 
 ## media_metadata_api integrity checks
 
+- [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — job reports schedule_tracker success on total eolas-fetch failure (resolved=0) → green monitoring, zero work; eolas bulk endpoint at the 30s-timeout cliff post-migration. Names never backfill. lucos_media_metadata_api#302.
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — flip predicate to requiresURI → check red → backfill migration → green. Not a bug; don't treat as incident. Per-predicate logging being added under lucos_media_metadata_api#295. Confirmed by lucas42 2026-05-31.
 
 ## Docker daemon recovery
