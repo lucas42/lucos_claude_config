@@ -67,6 +67,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Don't publish in the same batch as your evidence](feedback_dont_publish_in_same_batch_as_evidence.md) — a comment POST/PATCH or claim-bearing SendMessage must not share a parallel tool block with the reads that ground it; it runs before you see them (monitoring#264 fabricated loganne send_event/3, 2026-05-30)
 - [Check special cases before extending a pipeline](feedback_check_special_cases_before_extending_pipeline.md) — when proposing a new walk/lookup on top of existing logic, start from the post-special-case output, not raw input (ADR-0004 LanguageFamily catch, 2026-05-27)
 - [Qualify cross-repo ADR references](feedback_qualify_cross_repo_adr_refs.md) — ADR numbers are unique within a repo, not globally; write `lucos_arachne ADR-0004`, not bare `ADR-0004` (2026-05-27)
+- [Commit your own agent-memory for attribution](feedback_commit_own_memory_for_attribution.md) — commit+push your own memory in-session (cron is backstop only); on non-ff use autoStash rebase, don't drop the step (2026-05-31)
 
 ## Reference memories
 
