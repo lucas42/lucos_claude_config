@@ -69,6 +69,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Qualify cross-repo ADR references](feedback_qualify_cross_repo_adr_refs.md) — ADR numbers are unique within a repo, not globally; write `lucos_arachne ADR-0004`, not bare `ADR-0004` (2026-05-27)
 - [Commit your own agent-memory for attribution](feedback_commit_own_memory_for_attribution.md) — commit+push your own memory in-session (cron is backstop only); on non-ff use autoStash rebase, don't drop the step (2026-05-31)
 - [Parse reference data, never hand-build it](feedback_parse_reference_data_never_handbuild.md) — audit/diff against the parsed source-of-truth file, never a memory-reconstructed registry list (creds#333 false gap, 2026-05-31)
+- [Check originating decision before forking](feedback_check_originating_decision_before_forking.md) — read the ticket that settled the design before framing an A/B fork; "divergence" may be an unfinished design half, and an option may re-open a deliberately-rejected approach (arachne#597 Option B, 2026-05-31)
 
 ## Reference memories
 
