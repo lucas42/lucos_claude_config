@@ -94,6 +94,12 @@ Posting any `lucos-issue-manager[bot]` comment clears the re-triage flag (since 
 
 This rule applies even when the only "change" appears trivial — read the comment in full before classifying. lucas42 sometimes raises a clarification that looks superficial but reveals a scope assumption worth revisiting.
 
+### If lucas42 has provided the input that was requested of him
+
+When an `Owner = lucas42` item's most recent comment is lucas42 **supplying the data, answer, or decision that was requested of him** — *fulfilling* a pending ask, not requesting a change or posing a new question — the ball returns to the agent who was waiting on it. Re-route immediately: set Owner = that agent and Status = Needs Analysis (or Ready if no further analysis is needed), SendMessage that agent to continue, and post an ack comment noting lucas42 has provided everything needed. **Do NOT leave it `Owner = lucas42`, and do NOT list it in the Step 6 "needs you" summary** — he has already done his part; surfacing it as "gating on you" is the exact wasted round-trip the summary exists to prevent.
+
+This is the mirror of the agent-completed-input rule below (an agent's completed input transitions the item *to* lucas42 or Ready): **lucas42's completed input transitions it *back to the agent*.** Applies to any `Owner = lucas42` item regardless of Status (Ready, Awaiting Decision, Ideation). Read his comment in full to distinguish *providing requested input* (re-route off him) from *requesting a change / asking a new question* (which may legitimately stay per the classification above). The trap to avoid: reading a data dump or decision lucas42 posted as "context/FYI, leave as-is" when it was actually the answer the workflow was blocked on.
+
 ### If there are agreed changes to make to the issue
 
 Check the changes have been suggested or approved by `lucas42` or by a consulted agent whose input is uncontroversial. Update the issue body with the agreed clarifications/scope changes:
