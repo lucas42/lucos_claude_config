@@ -1,13 +1,15 @@
 ---
 name: loganne-event-level
-description: Design recommendation for the per-event `level` field on loganne event payloads (lucos_loganne#506) — taxonomy awaiting lucas42 sign-off
+description: Per-event `level` field on loganne (lucos_loganne#506) — design signed off; ADR-0001 drafted as PR #507, blocked on pre-existing time-bomb test #508
 metadata:
   type: project
 ---
 
 # loganne per-event `level` field (lucos_loganne#506)
 
-Design recommendation posted on the issue 2026-05-31. Awaiting lucas42's taxonomy sign-off before I draft the ADR (loganne's first → ADR-0001, draft PR per unsupervised-repo rule).
+**Status 2026-05-31:** taxonomy **signed off** by lucas42; ADR-0001 drafted → **PR #507** (code-reviewer approved the content). Blocked only on a **pre-existing time-bomb test (#508)** that reddened `main`'s `test` job estate-wide for loganne (test seeds a fixed `2026-05-22` date, reads it back through `GET /events`'s 7-day `DEFAULT_VIEW_WINDOW_MS`). Once #508 lands I rebase #507 → green → approval. **Emitter follow-ups still to raise after #507 merges.**
+
+**Correction:** loganne is **SUPERVISED** (`check-unsupervised` exits 1), despite the #506 body and the dispatch brief both saying "unsupervised → draft PR". Opened a **normal** PR (lucas42 auto-reviewer; auto-merge waits on his approval). Lesson: don't trust an issue body's supervised/unsupervised claim — always run `check-unsupervised`.
 
 **Why:** lucas42 wants UI viewers to filter out low-interest events (track-finished + weighting-update pairs; monitoring alerts during a suppression window).
 
