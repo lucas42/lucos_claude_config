@@ -38,27 +38,25 @@ This returns the next implementable issue from the **lucOS Issue Prioritisation*
 
 The only valid reason not to dispatch what the script returns is a hard guardrail failure surfaced by `/dispatch` itself (open dependency, existing PR, estate-rollout detection). Anything else is second-guessing.
 
-It prints three lines:
+It prints three lines to stdout:
 
 1. The owner in `owner:{name}` format (e.g. `owner:lucos-developer`) — sourced from the project board Owner field. Note: this is the script's output format, not a GitHub label. Strip the `owner:` prefix to get the teammate name for SendMessage.
 2. The issue number and title (e.g. `#42 Fix the thing`)
 3. The issue URL
 
+It also writes `~/sandboxes/lucos_agent/.next-issue` (JSON with `url` and `owner` fields) — this is the hand-off file that Step 2 uses so the URL never has to be transcribed by the model.
+
 If the script reports no implementable issues, tell the user there is nothing ready to implement right now and stop.
 
 ## Step 2: Dispatch the issue
 
-**Dispatch exactly the URL Step 1 printed.** Do not call `/dispatch` until `get-next-implementation-issue` has actually returned, do not batch the two in one tool block, and never pre-fill the `/dispatch` URL from memory or expectation. A URL read first from real script output cannot be a confabulation — a phantom URL 404s on the genuine issue fetch before any state-changing call. (Lesson 2026-05-30: a `/dispatch` was launched in parallel with `get-next` using a pre-filled, confabulated `lucos_monitoring#286`; the script's real answer was a different issue. See [[feedback_no_parallel_getnext_dispatch]].)
-
-Use the `/dispatch` skill with the issue URL and the owner from Step 1:
+Run `/dispatch` with **no URL argument**. The URL and owner are read automatically from the `~/sandboxes/lucos_agent/.next-issue` file written by Step 1. The model never transcribes the URL.
 
 ```
-/dispatch {issue_url} owner:{owner}
+/dispatch
 ```
 
-For example: `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`
-
-For ad-hoc dispatch (where the user gives you a URL directly), omit the owner -- `/dispatch` will look it up from the project board.
+For ad-hoc dispatch (where the user gives you a URL directly), omit the owner and pass the URL as the argument — `/dispatch` will look up the owner from the project board.
 
 The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner, and handles post-completion (CI verification, auto-merge, unblocking dependents).
 

@@ -4,7 +4,34 @@ description: Guardrailed dispatch of a single GitHub issue to the correct implem
 disable-model-invocation: false
 ---
 
-Follow this process. The issue URL is provided as the first argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`). An optional `owner:{name}` argument may follow (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42 owner:lucos-developer`). If provided, use that owner for dispatch in Step 5 without querying the project board. Do not ask for clarification -- immediately begin.
+Follow this process. Do not ask for clarification -- immediately begin.
+
+**Getting the issue URL and owner:**
+
+- **Normal path (called from `/next`):** no URL argument is provided. Read the hand-off file written by `get-next-implementation-issue`:
+  ```bash
+  cat ~/sandboxes/lucos_agent/.next-issue
+  ```
+  This file contains JSON with `url` and `owner` fields. **Hard-fail if the file does not exist or its modification time is older than 15 minutes** — a stale file means `/dispatch` was invoked without a preceding `/next` run in this session. Check mtime:
+  ```bash
+  python3 -c "
+  import json, os, sys, time
+  path = os.path.expanduser('~/sandboxes/lucos_agent/.next-issue')
+  if not os.path.exists(path):
+      sys.exit('ERROR: .next-issue not found — run /next first')
+  age = time.time() - os.path.getmtime(path)
+  if age > 900:
+      sys.exit(f'ERROR: .next-issue is {int(age)}s old (max 900s) — run /next to refresh')
+  data = json.loads(open(path).read())
+  print(data['url'])
+  print(data['owner'])
+  "
+  ```
+  The first line printed is the URL, the second is the owner (without `owner:` prefix).
+
+- **Ad-hoc path (URL given directly):** if a URL is provided as the first argument (e.g. `/dispatch https://github.com/lucas42/lucos_photos/issues/42`), use that. An optional `owner:{name}` argument may follow; if provided, use that owner in Step 5 without querying the project board.
+
+**Capturing command output safely:** whenever you capture shell command output into a variable or file, capture **stdout only** and **check the exit code** before using the result. Never redirect stderr into the same stream as stdout (`2>&1`) when the output will be used as data — a wrapper error message is indistinguishable from real output once merged. A non-zero exit must abort the pipeline, not feed the next step. Before any write that modifies existing content (e.g. a PATCH to an issue body), validate that the new content is non-empty and structurally correct — prefer additive writes (comments) over full-body replacement when the change is additive.
 
 ## Step 1: Parse the issue URL and fetch issue data
 
