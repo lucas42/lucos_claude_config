@@ -1,5 +1,10 @@
 # SRE Agent Memory
 
+## Ops-check gotchas
+
+- [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
+- [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
+
 ## Docker daemon recovery
 
 - [Docker live-restore: true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — `sudo systemctl restart docker` silently fails to recreate missing built-in `bridge`/`host`/`none` networks if any containers are running. Daemon emits `there are running containers, updated network configuration will not take affect` (sudo to see). Fix: `docker stop` all containers → daemon restart → redeploy. Bit me on 2026-05-28 xwing recovery (Stage 5 of incident report).

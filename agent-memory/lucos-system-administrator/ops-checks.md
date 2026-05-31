@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-05-29
+container_status: 2026-05-31
 resource_checks: 2026-05-28
 syslog_review: 2026-05-28
 software_updates: 2026-05-28
 sandbox_drift: 2026-05-28
-repos_dashboard: 2026-05-29
+repos_dashboard: 2026-05-31
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1168,5 +1168,15 @@ certificate_expiry: 2026-05-07
 ### 2026-05-29 (SECOND RUN — container status only; repos dashboard already ran today; all other checks not yet due)
 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**No new issues raised.**
+
+---
+
+### 2026-05-31 (checks 1 + 6 due; weekly checks last ran 2026-05-28 — not due until 2026-06-04; monthly checks last ran 2026-05-07 — not due until 2026-06-06)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 57 repos checked, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
