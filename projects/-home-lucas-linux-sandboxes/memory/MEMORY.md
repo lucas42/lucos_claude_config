@@ -76,6 +76,7 @@
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
 - [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
+- [Migration finish-off state](project_migration_finishoff.md) — 2026-05-31 sweep, ~14 tickets triaged; held follow-up NOT in a ticket: retire migration from priorities.md once eolas#288 merges + arachne#597 decided + tidy-up closed
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
