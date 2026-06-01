@@ -14,7 +14,7 @@
 - [CV rebuild](project_cv_rebuild.md) — pandoc + markdown source-of-truth pipeline for lukeblaney_cv (started 2026-05-19)
 - [Cover-letter rebuild](project_cover_letter_rebuild.md) — building-block library + worked example + /tailor-cover-letter skill (started 2026-05-20)
 - [Applications tracker](project_applications_tracker.md) — central pipeline tracker at lukeblaney_cv_tailored/applications/ (started 2026-05-27)
-- [Funnel state snapshot 2026-05](project_funnel_state_2026_05.md) — strategic funnel state as of 2026-05-28: August runway, channels, top-7 queue. Re-verify if >4 weeks stale.
+- [Funnel state pointer](project_funnel_state_2026_05.md) — name-free search principles + pointer to the private strategy doc (named queue & runway specifics live in lukeblaney_cv_tailored).
 
 ## External references
 

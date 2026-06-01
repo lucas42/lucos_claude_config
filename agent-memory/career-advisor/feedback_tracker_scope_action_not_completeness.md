@@ -7,7 +7,7 @@ metadata:
 
 The `lukeblaney_cv_tailored/applications/` tracker should reflect entries where there is **active work** to do, not be treated as a complete record of every conversation Luke has ever had about a role.
 
-**Why:** stated by Luke 2026-05-28 after I'd proposed backfilling ~8 historical network-channel leads "for completeness". His response: *"How useful is historical funnel data for you? I'd rather spend time focusing on future leads, rather than going over ones I didn't get."* With a 12-week runway, every hour spent on tracker bookkeeping is an hour not spent on outreach or interviews. Completeness has no payoff if it doesn't drive a different decision.
+**Why:** stated by Luke 2026-05-28 after I'd proposed backfilling ~8 historical network-channel leads "for completeness". His response: *"How useful is historical funnel data for you? I'd rather spend time focusing on future leads, rather than going over ones I didn't get."* With a tight runway, every hour spent on tracker bookkeeping is an hour not spent on outreach or interviews. Completeness has no payoff if it doesn't drive a different decision.
 
 **How to apply:**
 

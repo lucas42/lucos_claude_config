@@ -15,7 +15,7 @@ User is Luke Blaney (CV repo: `lucas42/lukeblaney_cv`, public, TeX-based, Circle
 
 ## Funnel runway (stated 2026-05-28)
 
-Hard deadline: **mortgage pressure begins August 2026**. Practical translation: applications submitted after ~mid-June are unlikely to land an offer in time. Triage decisions, prospecting suggestions, and tailoring effort should weight time-to-offer ahead of perfect fit.
+Hard personal time-to-offer deadline in play (the financial specifics are held in the private strategy doc — `lukeblaney_cv_tailored/applications/strategy.md` — to keep them out of this public repo). Practical translation: applications submitted after ~mid-June are unlikely to land an offer in time. Triage decisions, prospecting suggestions, and tailoring effort should weight time-to-offer ahead of perfect fit.
 
 ## Comp bands (stated 2026-05-28)
 
