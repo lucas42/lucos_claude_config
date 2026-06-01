@@ -248,6 +248,19 @@ Confirmed 2026-05-22. The personal multi-persona agent fleet is built on **Claud
 **Don't overclaim**:
 - Not a Claude API power-user in the "I've shipped a Claude-API-backed product" sense — this is personal-estate orchestration work.
 - Not Constitutional AI / Responsible Scaling Policy / interpretability research expertise. Luke comes at AI safety from the security-engineering and platform-engineering side, not from the ML research side.
+- **Don't name specific AI attack vectors as things Luke has dealt with.** Confirmed 2026-06-01 (Fresha Head of Security). Luke is comfortable claiming "AI risks" / "AI risk management" in general (he thinks about controls while building the agent fleet), but has NOT directly dealt with **prompt injection, model abuse, or sensitive-data-exposure-through-AI-tooling** as named attack vectors. For JDs that list these specifically (common in AI-forward security roles), keep the framing general — "the AI risks this raises and the controls needed to manage them" — rather than enumerating vectors he'd have to defend in interview.
+
+## AI governance
+
+Confirmed 2026-06-01 (Fresha Head of Security). As Cyber Security Director (Feb 2023 – Mar 2025, the generative-AI-boom period), Luke worked on **AI governance at the FT**, in collaboration with the compliance function. Defensible to claim as a Director-era responsibility. Strong signal for AI-forward security/leadership roles. Now a bullet in cv-extended.md (Director role, bundled into the compliance-collaboration line). Don't overclaim a formal end-to-end AI-governance programme; the honest claim is contributing to AI governance alongside compliance.
+
+## Threat modelling
+
+Confirmed 2026-06-01 (Fresha Head of Security). Luke **ran collaborative threat-modelling sessions with engineering teams** at the FT (PE-Cyber era onwards) to surface and prioritise security risks in their systems. **Defensible to claim** — list "threat modelling" in Skills under Cyber Security, and it's now a bullet in cv-extended.md (PE-Cyber role). This tightens an earlier note that treated threat modelling as architecture-review-adjacent only; it's now a directly claimable practice. **Don't overclaim**: collaborative facilitated sessions with teams, not a centrally-owned automated threat-modelling *capability build* (a JD asking for the latter — e.g. a threat-intel/threat-modelling data warehouse — is still a partial gap).
+
+## Compliance-function collaboration at the FT
+
+Confirmed 2026-06-01 (Fresha Head of Security). Luke collaborated substantially with the FT's **compliance function** across **security incidents, the procurement due-diligence overhaul, AI governance, and ad-hoc risk assessments**. Defensible to claim, and valuable for security-leadership roles that emphasise a security/compliance partnership (e.g. roles peering with a Head of Compliance). Now a bullet in cv-extended.md (Director role). Note this doesn't change the [[user-role-framing]] "don't overclaim regulatory experience" rule — collaborating with compliance ≠ owning compliance frameworks; Luke still doesn't claim ISO 27001 / SOC 2 / PCI DSS direct ownership.
 
 ## Operational technology (OT) / ICS / SCADA / IEC 62443 / safety-critical
 
