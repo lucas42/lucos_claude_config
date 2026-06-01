@@ -52,6 +52,8 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
   - `lucos-site-reliability` for deployment config, monitoring, alerting, health checks, backups, failover, migrations, or significant operational risk.
   - You may still note non-specialist issues — specialist review supplements your own, it doesn't replace it.
 
+  **Mandatory security sign-off — `lucos_firewall` (repo-scoped, always):** *every* PR on the `lucos_firewall` repository requires `lucos-security` review, regardless of what the change touches. The service is the estate's network-perimeter enforcement (ADR-0007) — a bug there can lock the whole estate out or silently open it up — so any change is security-relevant by definition. On any `lucos_firewall` PR you **must** request `lucos-security` review (follow "Request specialist review" below) and you **must not `APPROVE` until `lucos-security` has posted a go-ahead on the PR itself** (a GitHub review/comment, not a SendMessage — see the GitHub-artifact rule below). This is in addition to the change-nature triggers above. If another repo is later added to this always-review list, extend this rule rather than duplicating it.
+
 If you spot a concrete, fixable issue, **request changes** — even if the fix is minor. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things requiring significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
 
 **Supervision status does not affect this rule.** "The repo is supervised so lucas42 will see the note anyway" is not a valid reason to approve with notes instead of requesting changes. The rule is about signal strength, not merge safety.
