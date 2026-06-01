@@ -70,6 +70,7 @@
 - [Dispatch URL only](feedback_dispatch_url_only.md) — dispatch SendMessage carries only `implement issue {url}`; never restate the ticket's design (redundant + an unversioned copy that can contradict the ticket)
 - [Harness problems → lucos#155](feedback_harness_problems_to_lucos155.md) — Claude Code harness/product-layer limitations (not infra/config-fixable) are tracked on lucas42/lucos#155; comment there, don't strand on per-repo tickets
 - [Empty tool output = unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — treat any empty/blank/late tool result as unknown; re-run or wait before asserting (receiver-side mitigation for confabulation-on-empty; captured for SRE during 2026-05-30 shutdown)
+- [Don't offer unschedulable /schedule](feedback_no_unschedulable_schedule_offer.md) — remote routines have no production SSH / gh-as-agent / local files; gate at OFFER time, don't offer /schedule for ops tasks needing production access; use dated ticket reminder + memory + local team instead
 
 ## Active Projects
 
@@ -77,6 +78,7 @@
 - [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
 - [Migration finish-off state](project_migration_finishoff.md) — RESOLVED 2026-06-01: lucas42 declared metadata→eolas migration complete; retired from priorities.md, lucos_firewall now sole #1 strategic priority
+- [lucos_firewall rollout state](project_firewall_rollout.md) — ADR-0007 firewall shipped + live in DRY_RUN on all 3 hosts since 2026-06-01; **review due 2026-06-08** (local team, session-triggered); enforce gated on lucos_configy#203 + lucos_firewall#9 + ADR amendment PR #210
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 

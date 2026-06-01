@@ -9,6 +9,8 @@ Use `RemoteTrigger` to create, update, list, and run scheduled remote agents on 
 
 **Important:** Routines run as remote agents in Anthropic's cloud — they have no access to local files, local services, local environment variables, or SSH to production hosts. For lucos ops work specifically (requires SSH to avalon/xwing/salvare and `gh-as-agent`), confirm with the user before creating a routine that the remote environment has those credentials wired in. If it doesn't, the routine will fail silently on any step that requires production access.
 
+**FEASIBILITY GATE — applies at OFFER time, not just create time.** Before you even *offer* to `/schedule` something, check the task against what a remote cloud agent can do. If it needs **production SSH** (e.g. reading a host's `docker logs`, deploys, enforce flips), **`gh-as-agent`**, or **local files/repos**, it **cannot** run as a remote routine — so do not offer it. In the lucos estate most ops "future obligations" (log reviews, deploys, audit reruns, mode flips) need production access and are therefore NOT remotely schedulable; the right pattern for those is a dated reminder on the ticket + a project memory, run by the local team (which has production access) when a session is active on/after the date. Offering a `/schedule` you then have to walk back wastes the user's time — gate first. (Lesson: 2026-06-01, offered to schedule a firewall dry-run log review that needed host SSH; had to retract it.)
+
 ## Step 0: Discover environment_id (always do this first)
 
 Every routine requires an `environment_id`. Discover it before doing anything else:
