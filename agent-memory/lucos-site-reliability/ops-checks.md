@@ -9,7 +9,7 @@ external_deps: 2026-05-04
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-05-22
-lucos_media_weightings: 2026-05-20
+lucos_media_weightings: 2026-06-01
 lucos_photos_worker: 2026-05-29
 lucos_arachne_explore: 2026-05-28
 lucos_arachne_web: 2026-05-29
@@ -26,10 +26,10 @@ lucos_contacts_web: 2026-05-31
 lucos_creds: 2026-05-23
 lucos_creds_configy_sync: 2026-05-31
 lucos_creds_ui: 2026-05-31
-lucos_dns_sync: 2026-05-20
+lucos_dns_sync: 2026-06-01
 lucos_eolas_app: 2026-05-29
-lucos_eolas_db: 2026-05-20
-lucos_eolas_web: 2026-05-20
+lucos_eolas_db: 2026-06-01
+lucos_eolas_web: 2026-06-01
 lucos_locations_mosquitto: 2026-05-25
 lucos_locations_otfrontend: 2026-05-26
 lucos_locations_otrecorder: 2026-05-26
@@ -61,7 +61,7 @@ lucos_docker_health_app: 2026-05-22
 
 lucos_docker_mirror_web: 2026-05-28
 lucos_docker_mirror_registry: 2026-05-31
-lucos_docker_mirror_info: 2026-05-19
+lucos_docker_mirror_info: 2026-06-01
 
 ## SSH Hostname Note
 
