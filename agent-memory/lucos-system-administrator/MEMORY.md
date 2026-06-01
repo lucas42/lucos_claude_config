@@ -146,3 +146,6 @@ Before applying any workflow change that wires in a security tool config (CodeQL
 
 ## Linux IPv6 route metric: linkdown at metric 256 beats UP at metric 600
 Lower metric wins even if linkdown. docker0 with public /64 silently swallows all traffic. See `linux-ipv6-route-metric-linkdown.md`.
+
+## DR assessment: bespoke corrections to external data are the irreplaceable part
+"Source data still exists on NAS" doesn't mean the DB is reconstructable — check for bespoke fixes to bad source data and manual annotations built on top. See `feedback_dr_bespoke_correction_data.md`.
