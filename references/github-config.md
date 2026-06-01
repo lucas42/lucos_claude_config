@@ -10,9 +10,13 @@ CodeQL supported languages (as of `codeql-action/init@v4`): C/C++, C#, Go, Java/
 
 Required status check name patterns:
 - Python repos: `Analyze (python)`
-- JavaScript repos: `Analyze (javascript)`
+- JavaScript/TypeScript repos: `Analyze (javascript)`
+- Go repos: `Analyze (go)`
+- Rust repos: do not add a CodeQL check — CodeQL does not support Rust (use `cargo audit` / Dependabot instead)
 
 These check run names must be added to branch protection rules for `main` to prevent a race condition with auto-merge.
+
+**When changing the CodeQL language in a PR:** the required status check name on `main`'s branch protection must be updated at the same time. `Analyze (old-language)` will never fire again, permanently blocking all future PRs. Update branch protection via `PATCH /repos/{owner}/{repo}/branches/main/protection/required_status_checks` (or ask `lucos-system-administrator`).
 
 ## Dependabot (`.github/dependabot.yml`)
 
