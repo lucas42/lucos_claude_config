@@ -212,6 +212,12 @@ For **retail-sector roles**, include Luke's early retail job (J Sainsbury plc, C
 
 Related: [[cv-variant-content-rule]].
 
+## Security-leadership roles that split compliance ownership to a peer
+
+Confirmed 2026-06-01 (a payments-SaaS Head of Security role reporting to a VP, peering with a Head of Compliance). When a security-leadership JD **explicitly splits compliance-framework ownership to a separate role/peer** — the Head of Compliance owns frameworks/audits/evidence, the security role owns posture, tooling and response — the named-compliance-framework gap (ISO 27001 / SOC 2 / PCI DSS / HIPAA, which Luke doesn't own; see [[user-skills-inventory]]) is **substantially neutralised**.
+
+**How to apply:** lead the CV with security posture / incident response / vulnerability management / tooling (Luke's strengths); omit named compliance frameworks from Skills (no direct ownership); and surface his genuine **compliance-function collaboration** (incidents, procurement DD, AI governance, ad-hoc risk — see [[user-skills-inventory]]) as evidence of working *alongside* compliance rather than owning it. This answers the "work closely with the Head of Compliance" expectation without overclaiming. Don't reach for the named frameworks just because the JD lists them as company-level regulatory context.
+
 ## How to apply
 
 Check this file before drafting Summary paragraphs and before deciding how to reframe the Director / Interim VP bullets. If a JD raises a positioning question not addressed here, ask Luke and update this file with the answer so future variants inherit it.
