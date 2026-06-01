@@ -256,7 +256,7 @@ Confirmed 2026-06-01 (Fresha Head of Security). As Cyber Security Director (Feb 
 
 ## Threat modelling
 
-Confirmed 2026-06-01 (Fresha Head of Security). Luke **ran collaborative threat-modelling sessions with engineering teams** at the FT (PE-Cyber era onwards) to surface and prioritise security risks in their systems. **Defensible to claim** — list "threat modelling" in Skills under Cyber Security, and it's now a bullet in cv-extended.md (PE-Cyber role). This tightens an earlier note that treated threat modelling as architecture-review-adjacent only; it's now a directly claimable practice. **Don't overclaim**: collaborative facilitated sessions with teams, not a centrally-owned automated threat-modelling *capability build* (a JD asking for the latter — e.g. a threat-intel/threat-modelling data warehouse — is still a partial gap).
+Confirmed 2026-06-01 (Fresha Head of Security). Luke **introduced collaborative threat-modelling sessions with engineering teams** at the FT — mostly during the **Interim VP of Cyber Security** period (Apr 2022 – Jan 2023), not earlier — to surface and prioritise security risks in their systems. **Defensible to claim** — list "threat modelling" in Skills under Cyber Security, and it's now a bullet in cv-extended.md (Interim VP role). This tightens an earlier note that treated threat modelling as architecture-review-adjacent only; it's now a directly claimable practice. **Don't overclaim**: collaborative facilitated sessions with teams, not a centrally-owned automated threat-modelling *capability build* (a JD asking for the latter — e.g. a threat-intel/threat-modelling data warehouse — is still a partial gap).
 
 ## Compliance-function collaboration at the FT
 
