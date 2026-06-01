@@ -36,7 +36,7 @@ ENDBODY
 )"
 ```
 
-For bodies that contain `{owner}/{repo}` or other curly-brace placeholders, use the file-backed pattern from [`references/issue-creation.md`](../../references/issue-creation.md) instead — the `gh api` template substitution will silently corrupt placeholders inside `--field body=`.
+For bodies that contain `{owner}/{repo}` or other curly-brace placeholders, **or that begin with an `@`-mention** (e.g. a `@lucas42` ping comment), use the file-backed pattern (`-F body=@file`) from [`references/issue-creation.md`](../../references/issue-creation.md) instead — `gh api` silently corrupts curly-brace placeholders and mangles a leading `@` inside `--field body=`, so the heredoc `--field` form fails for both.
 
 ## Step 3 — Start from an up-to-date main branch
 
