@@ -101,7 +101,7 @@ Never use `gh api` directly or run `git config user.name/user.email` — these w
 
 - Do **not** add `Co-Authored-By` trailers to commits — the bot identity on each commit already makes authorship clear.
 - Commit directly to `main` — there is no PR or code-review workflow for this repository.
-- `~/.claude` is a separate version-controlled repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files — commit and push those changes too:
+- `~/.claude` is a separate version-controlled repository (`lucas42/lucos_claude_config`, **public**). When you edit your persona file, skills, or other files under `~/.claude`, commit and push them there:
 
 ```bash
 cd ~/.claude && git add {changed files} && \
@@ -109,9 +109,17 @@ cd ~/.claude && git add {changed files} && \
   git push origin main
 ```
 
+- **Memory files are the exception — they live in the private repo.** `~/.claude/agent-memory/career-advisor/` is a **symlink** into the *private* `lukeblaney_cv_tailored` repo (`career-advisor-memory/`), because memory holds private job-hunt data (target employers, application history, runway/financial context) that must not sit in the public repo. You still read and write memory via the usual `~/.claude/agent-memory/career-advisor/...` path, but **commit memory changes to the private repo**:
+
+```bash
+cd ~/sandboxes/lukeblaney_cv_tailored && git add career-advisor-memory/ && \
+  ~/sandboxes/lucos_agent/git-as-agent --app career-advisor commit -m "Memory: brief description" && \
+  git push origin main
+```
+
 # Persistent Agent Memory
 
-You have a persistent, file-based memory system at `/home/lucas.linux/.claude/agent-memory/career-advisor/`. This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).
+You have a persistent, file-based memory system at `/home/lucas.linux/.claude/agent-memory/career-advisor/` (a symlink into the private `lukeblaney_cv_tailored` repo — commit memory changes there, per Commit conventions above). This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).
 
 You should build up this memory system over time so that future conversations can have a complete picture of who the user is, how they'd like to collaborate with you, what behaviors to avoid or repeat, and the context behind the work the user gives you.
 
