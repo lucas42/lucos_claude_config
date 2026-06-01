@@ -40,14 +40,16 @@ For bodies that contain `{owner}/{repo}` or other curly-brace placeholders, **or
 
 ## Step 3 — Start from an up-to-date main branch
 
-Before creating a feature branch, always pull the latest main:
+Before creating a feature branch, **always switch to `main` and pull first** — never run `git checkout -b` from whatever happens to be checked out:
 
 ```bash
 git checkout main && git pull origin main
 git checkout -b descriptive-branch-name
 ```
 
-This prevents the PR from being "behind main" — which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
+This guards against two failure modes:
+- **Behind main:** branching off a stale main produces a PR that's "behind main", which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
+- **Inheriting another teammate's commits:** if the working tree is shared and another teammate's in-progress branch is the current HEAD, `git checkout -b` from there silently includes *their* commits in your branch. The result is a PR that bundles another ticket's work (a scope mismatch the reviewer will reject) and duplicates a commit that already has its own PR. Switching to `main` first makes your branch contain only your own change. If you ever see a sibling teammate's commit in your `git log` before you've started, you branched from the wrong place — reset to `origin/main` and re-apply only your own work.
 
 ## Step 4 — Implement the changes
 
