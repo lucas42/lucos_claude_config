@@ -95,6 +95,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Project memories
 
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album
+- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals (lucos_root, agents) get sessions not bearer scheme → no dual auth; unify authN not authZ; lucos_root#135 hard-depends on #132
 
 ## Auto-merge & security checks
 
