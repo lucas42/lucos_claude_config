@@ -292,7 +292,7 @@ All variant-B answers are plain markdown — no salutation, no sign-off, no firs
 Before showing Luke the final assembled output, run the checks below. Fix any failure before showing.
 
 **CV**:
-- **Page count**: hard limit 3, target ~2. Verified against the **.docx** (via LibreOffice round-trip — see Step 14), NOT the LaTeX-PDF. The .docx is the document under the constraint because it's what gets submitted; the LaTeX-PDF's page count can differ by a page or more. Anything over 3 → propose further cuts before showing Luke. **If at 3 or fewer pages, proceed without asking** — 3 is within the hard limit and Luke has confirmed it's acceptable; don't make him re-confirm on every variant. See [[cv-page-count]].
+- **Page count**: hard limit 3 pages **in the recipient's Word / Pages view**, target ~2. Verified against the **.docx** (via LibreOffice round-trip — see Step 14), NOT the LaTeX-PDF. The headless round-trip under-counts Word/Pages by up to ~1 page, so apply the margin in Step 14: headless ≤ 2 ships without asking; headless = 3 is NOT an auto-pass — check the page-3 fill (a near-full page 3 is likely 4 in Word, so trim toward 2); headless ≥ 4 is unsubmittable. See [[cv-page-count]].
 - ATS metrics (from Step 14 verification): `cid` / `ligs` / `hyphens` all 0 (non-negotiable)
 - JD top keywords: all present in the rendered text
 
@@ -558,9 +558,10 @@ EOF
 The `Luke Blaney - CV (from docx).pdf` file is a verification artefact, not a deliverable — `lukeblaney_cv_tailored`'s top-level `.gitignore` has a specific `*(from docx).pdf` pattern that keeps it out of `git add`. Other PDFs (the `Luke Blaney - CV.pdf` from `render-tailored.sh --pdf`) are NOT gitignored and should be committed alongside the .docx when present.
 
 Targets:
-- **DOCX pages**: hard limit 3, target ~2.
-  - If 4+: propose cuts and re-render before showing Luke. Standard cuts in priority order: drop Publications, drop Talks & Panels (or trim to 2 entries), trim Architect-Content bullets to 4, collapse Platform Architect to intro + 2 bullets, tighten Career Break, combine Director + Interim VP entries if a single intro line works.
-  - **If 3 or fewer: proceed without asking.** 3 is within the hard limit and acceptable. Don't make Luke re-confirm on every variant.
+- **DOCX pages** (headless LibreOffice round-trip): the headless count **under-counts the recipient's Word / Pages view by up to ~1 page** (confirmed twice — Apple Pages 2026-05-23, Word 2026-06-01). Apply that margin:
+  - **headless ≤ 2 → ship without asking.** 2 is the target and safe against the margin.
+  - **headless = 3 → do NOT auto-pass.** Inspect the page-3 fill. A *sparse* page 3 (a stray Education line, one or two Talks) is genuinely 3 in Word — acceptable. A *near-full / jam-packed* page 3 will almost certainly be 4 in Word — run surgical line-wrap-orphan trimming + standard cuts to reach ≤ 2; only ship at 3 if the content genuinely can't be cut, and then flag to Luke that it may render as 4 pages in his viewer.
+  - **headless ≥ 4 → unsubmittable.** Cut and re-render before showing Luke. Standard cuts in priority order: drop Publications, drop Talks & Panels (or trim to 2 entries), trim Architect-Content bullets to 4, collapse Platform Architect to intro + 2 bullets, tighten Career Break, combine Director + Interim VP entries if a single intro line works.
 - **cid / ligs / hyphens**: all 0 (non-negotiable — if any are >0 the geometry/header is broken).
 - **JD keywords**: all top-tier keywords present.
 
