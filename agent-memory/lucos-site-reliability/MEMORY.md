@@ -10,6 +10,10 @@
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — job reports schedule_tracker success on total eolas-fetch failure (resolved=0) → green monitoring, zero work; eolas bulk endpoint at the 30s-timeout cliff post-migration. Names never backfill. lucos_media_metadata_api#302.
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — flip predicate to requiresURI → check red → backfill migration → green. Not a bug; don't treat as incident. Per-predicate logging being added under lucos_media_metadata_api#295. Confirmed by lucas42 2026-05-31.
 
+## Monitoring dependsOn / schedule_tracker mechanics
+
+- [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
+
 ## Docker daemon recovery
 
 - [Docker live-restore: true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — `sudo systemctl restart docker` silently fails to recreate missing built-in `bridge`/`host`/`none` networks if any containers are running. Daemon emits `there are running containers, updated network configuration will not take affect` (sudo to see). Fix: `docker stop` all containers → daemon restart → redeploy. Bit me on 2026-05-28 xwing recovery (Stage 5 of incident report).
