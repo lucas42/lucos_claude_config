@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-01
+container_status: 2026-06-02
 resource_checks: 2026-05-28
 syslog_review: 2026-05-28
 software_updates: 2026-05-28
 sandbox_drift: 2026-05-28
-repos_dashboard: 2026-06-01
+repos_dashboard: 2026-06-02
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1190,3 +1190,22 @@ certificate_expiry: 2026-05-07
 **Repos dashboard**: 57 repos checked, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
+
+---
+
+### 2026-06-02 (checks 1 + 6 due; weekly checks not due until 2026-06-04; monthly checks not due until 2026-06-06)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare. (58 repos now — lucos_firewall added since last count.)
+
+**Repos dashboard**: 1 failing convention — `lucos_firewall` `circleci-jobs-in-required-checks`: `ci/circleci: test` was missing from required status checks (only `ci/circleci: lucos/build` and `Analyze (go)` were present). Auto-raised issue #11 existed (created 2026-06-01T19:35Z). Fixed directly via GitHub branch protection API: added `ci/circleci: test`. All 25 conventions for `lucos_firewall` now pass (verified via full rerun). Comment posted on #11 — convention now passes, closure-ready.
+
+**Cert spot-check** (opportunistic — dns.l42.eu was 33 days on 2026-05-07):
+- dns.l42.eu: Aug 8 2026 (67 days) — RENEWED ✓ (was 33 days on 2026-05-07, certbot renewed as expected)
+- schedule-tracker.l42.eu: Aug 9 2026 (68 days) — RENEWED ✓
+- comhra.l42.eu: Jul 2 2026 (30 days) — comhra was decommissioned 2026-05-21. Cert at exactly the 30-day renewal threshold. Watch for renewal failure (certbot may fail HTTP challenge if domain no longer routes to a live service). Not actionable yet.
+- repos.l42.eu: Jul 3 2026 (31 days) — fine, certbot will trigger very soon.
+- All other certs: Jul 5+ (33+ days). Fine.
+- No certs under 30 days. No issues raised.
+
+**Issues raised**: None (firewall fix applied directly; #11 closure-ready)
+**Issues fixed**: lucos_firewall #11 — convention now passes.
