@@ -10,6 +10,10 @@
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — job reports schedule_tracker success on total eolas-fetch failure (resolved=0) → green monitoring, zero work; eolas bulk endpoint at the 30s-timeout cliff post-migration. Names never backfill. lucos_media_metadata_api#302.
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — flip predicate to requiresURI → check red → backfill migration → green. Not a bug; don't treat as incident. Per-predicate logging being added under lucos_media_metadata_api#295. Confirmed by lucas42 2026-05-31.
 
+## Monitoring self fetch-info flap
+
+- [monitoring's own fetch-info self-probe flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — post-deploy + steady-state flaps from the global 1s timeout (fetcher_info.erl:231) crossing global failThreshold:2. Suppression = estate-wide blast radius; #186 closed not_planned. Don't refile.
+
 ## Monitoring dependsOn / schedule_tracker mechanics
 
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.

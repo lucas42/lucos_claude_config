@@ -33,11 +33,11 @@ lucos_eolas_web: 2026-06-01
 lucos_locations_mosquitto: 2026-05-25
 lucos_locations_otfrontend: 2026-05-26
 lucos_locations_otrecorder: 2026-05-26
-lucos_mail_smtp: 2026-05-21
+lucos_mail_smtp: 2026-06-02
 lucos_photos_api: 2026-05-25
 lucos_arachne_ingestor: 2026-05-29
 lucos_arachne_search: 2026-05-22
-lucos_arachne_triplestore: 2026-05-21
+lucos_arachne_triplestore: 2026-06-02
 lucos_mail_docs: 2026-05-24
 lucos_photos_postgres: 2026-05-27
 lucos_photos_redis: 2026-05-24
@@ -45,14 +45,14 @@ lucos_scenes: 2026-05-27
 lukeblaney_co_uk: 2026-05-26
 lucos_media_manager: 2026-05-23
 lucos_media_metadata_api: 2026-05-25
-lucos_monitoring: 2026-05-21
+lucos_monitoring: 2026-06-02
 lucos_media_seinn: 2026-05-28
 tfluke: 2026-05-28
 lucos_media_metadata_api_exporter: 2026-05-22
 lucos_media_metadata_manager: 2026-05-23
 lucos_notes: 2026-05-23
 lucos_root: 2026-05-24
-lucos_router: 2026-05-21
+lucos_router: 2026-06-02
 semweb: 2026-05-24
 lucos_time: 2026-05-27
 lucos_arachne_mcp: 2026-05-23
@@ -62,6 +62,7 @@ lucos_docker_health_app: 2026-05-22
 lucos_docker_mirror_web: 2026-05-28
 lucos_docker_mirror_registry: 2026-05-31
 lucos_docker_mirror_info: 2026-06-01
+lucos_firewall: 2026-06-02
 
 ## SSH Hostname Note
 
