@@ -95,7 +95,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Project memories
 
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album
-- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals (lucos_root, agents) get sessions not bearer scheme → no dual auth; unify authN not authZ; lucos_root#135 hard-depends on #132
+- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals (lucos_root, agents) get sessions not bearer scheme → no dual auth; unify authN not authZ; lucos_root#135 hard-depends on #132; acquisition key in creds (deploy-pull), session minted at runtime (resolved 2026-06-02)
+- [File uploader](project_file_uploader.md) — lucos#209: stateless 3-tier uploader; uniform ingest contract; Bandcamp perm fix at NAS-write boundary; ideation, awaiting lucas42 answers
 
 ## Auto-merge & security checks
 
