@@ -23,6 +23,8 @@ When approving an issue (setting Status = Ready on the project board), also set 
 
 **Investigation note:** do not default production-failure investigations to the developer just because a code fix might eventually be needed — the SRE is better equipped to diagnose root cause first.
 
+**`lucos-code-reviewer` is never an implementation Owner.** It is a review-only persona (triggers: `review PR {url}`, `review any open PRs`) and cannot take an `implement issue {url}` dispatch. When an issue's work touches the code-reviewer's *own* artifacts — its stuck-PR detection guide, its `review-pr` workflow, the scripts it invokes — do **not** set Owner = lucos-code-reviewer on the theory that "it owns those files." Set Owner = `lucos-developer` (the implementation lands as a PR), and the code-reviewer reviews that PR through its normal trigger — so changes to its own instructions still pass under its eyes. (Lesson from 2026-06-02, `lucas42/.github#65`: Owner = lucos-code-reviewer couldn't be actioned because the persona has no implement trigger.)
+
 Use the option IDs from [`triage-reference-data.md`](triage-reference-data.md) when setting the Owner field via `updateProjectV2ItemFieldValue`.
 
 ---
