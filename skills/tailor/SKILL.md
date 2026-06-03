@@ -366,7 +366,7 @@ For each piece of new content surfaced:
 7. **A new CV-level achievement** (accomplishment that should appear on every CV variant)
    → propose for addition to `~/sandboxes/lukeblaney_cv/cv-extended.md`
    → sign-off on exact wording
-   → its own commit before the per-application work so future `/tailor` and `/tailor-cv` invocations inherit it
+   → its own commit before the per-application work so future `/tailor` invocations inherit it
 
 8. **Company-level context** (hiring manager name, recruiter contact, ATS, prior interview history)
    → add to or update `orgs/{company-slug}/notes.md` in the private repo
@@ -640,17 +640,18 @@ Commit directly to `main` on both `lukeblaney_cv` and `lukeblaney_cv_tailored` �
 
 ## When this skill is not the right tool
 
-- **Luke wants only a CV, no letter or textareas** — Step 3.5 will naturally produce a CV-only artefact set if the form has no letter file upload, no letter textarea, and no custom content questions. Otherwise: invoke `/tailor-cv` directly for the leaner CV-only flow.
-- **Luke wants only a letter, no CV** — use `/tailor-cover-letter` directly. This skill always generates a CV.
+- **Luke wants only a CV, no letter or textareas** — handled natively: Step 3.5 produces a CV-only artefact set if the form has no letter file upload, no letter textarea, and no custom content questions. If Luke explicitly wants CV-only regardless of the form, skip the `[LETTER]` sub-steps and produce just the CV.
+- **Luke wants only a letter, no CV** — this skill defaults to always producing a CV, but if Luke explicitly asks for letter-only, skip the CV-writing parts of Steps 9, 13, and 14 and run only the `[LETTER]` sub-steps. (Rare — most forms want a CV; don't volunteer letter-only.)
 - **Luke wants to update the cover-letter library or `cv-extended.md` itself** (add a new story, change the template, rewrite an opener) — that's a normal career-advisor edit, not a per-application task. Skip the JD-analysis steps.
 - **Luke wants analysis of a JD without producing artefacts** — do Steps 1–6 and stop; don't write any files.
 - **No JD URL or JD text is available** — ask Luke for one before starting.
 - **The company has a closed application that Luke isn't reopening** — confirm with Luke whether to draft fresh material or just update the company-notes outcome field.
 
-## Relationship to `/tailor-cv` and `/tailor-cover-letter`
+## Source-of-truth files
 
-This skill deliberately duplicates much of the logic of `/tailor-cv` and `/tailor-cover-letter` in order to interleave the consultation steps and maximise cross-pollination between the two documents (the explicit reason the combined skill exists). The single-purpose skills remain useful when Luke wants a leaner standalone flow.
+This skill is self-contained — it carries all the CV and cover-letter logic itself (it's the sole tailoring skill; the older single-purpose `/tailor-cv` and `/tailor-cover-letter` skills were removed 2026-06-03 as Luke used `/tailor` for everything).
 
-**When updating standing rules or workflow logic**:
-- If you change material rules in `/tailor-cv` (positioning rules, standard cuts, file structure, render path) or `/tailor-cover-letter` (block-selection logic, voice rules, file structure, render path), remember to mirror the change here.
-- The skills share the same memory files (`user_skills_inventory.md`, `user_role_framing.md`, etc.) and the same library (`cover-letters/blocks/`) and the same source-of-truth (`cv-extended.md`). Updates to those files automatically benefit all three skills — that's where most of the durable logic lives.
+Most durable logic lives in shared files, not in this skill text — update those and every future invocation inherits the change:
+- Memory files: `user_skills_inventory.md`, `user_role_framing.md`, the `feedback_*` standing rules.
+- The cover-letter library: `~/sandboxes/lukeblaney_cv/cover-letters/blocks/`.
+- The CV source-of-truth: `~/sandboxes/lukeblaney_cv/cv-extended.md`.
