@@ -10,8 +10,12 @@
   "hooks": {
     "Stop": [
       {
-        "type": "command",
-        "command": "/home/lucas.linux/.claude/scripts/post-turn-hook.sh"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/lucas.linux/.claude/scripts/post-turn-hook.sh"
+          }
+        ]
       }
     ]
   }
