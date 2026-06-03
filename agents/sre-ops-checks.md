@@ -232,11 +232,20 @@ Scan for repos where CI has been red for an extended period (more than a few day
 Check `ops-checks.md` for `ci_status` last_run date; skip if less than a month ago.
 
 ```bash
+# lucas42 is a USER account, not an org — `orgs/lucas42/repos` returns 404.
+# For the GitHub App, list the repos the installation can access:
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
-  "orgs/lucas42/repos?per_page=50"
+  "installation/repositories?per_page=100" \
+  --jq '.repositories[] | select(.archived==false) | [.name, .default_branch, (.pushed_at|.[0:10])] | @tsv'
 ```
 
-Then check recent CircleCI status for repos that look active. Raise a P3 issue for any repo with CI red for more than a week.
+Then check recent CI status for repos that look active. The combined-status API
+(`repos/lucas42/{repo}/commits/{branch}/status`) only reports **commit statuses**
+(CircleCI) — a `state:"pending"` with `total_count:0` means *no CircleCI status at
+all* (a repo without CircleCI, e.g. docs/config/utility repos), NOT a failure.
+GitHub Actions results live under `commits/{branch}/check-runs` instead — check both
+before concluding a repo is red. Raise a P3 issue for any repo with CI genuinely red
+(a `failure`/`error` status, or a failing check-run conclusion) for more than a week.
 
 After completing, update `ci_status` in `ops-checks.md` with today's date.
 
