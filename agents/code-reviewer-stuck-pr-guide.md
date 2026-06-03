@@ -56,7 +56,8 @@ A PR is stuck if any of the following are true:
     }
   ' \
   -f repo={repo} \
-  -F pr={pr_number}
+  -F pr={pr_number} \
+  --jq '.data.repository.pullRequest.commits.nodes[0].commit.statusCheckRollup.contexts.nodes[] | {name, status, conclusion, context, state}'
 ```
 
 A required check present in `/check-runs` with `conclusion: success` but absent from the rollup `contexts` confirms the mismatch.
