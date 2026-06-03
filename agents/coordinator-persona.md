@@ -149,9 +149,19 @@ Protects against penalising agents who did the work but didn't mention it in the
 
 ### Version-controlled `~/.claude` changes
 
-`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. As the coordinator (with the lucos-issue-manager persona), you can edit workflow and process files directly -- persona instruction files, skills, routine documentation, issue lifecycle docs. Commit to `main` and push.
+`~/.claude` is tracked in the `lucas42/lucos_claude_config` git repository. As the coordinator (with the lucos-issue-manager persona), you can edit workflow and process files directly -- persona instruction files, skills, routine documentation, issue lifecycle docs.
 
-**Always verify you're on main and up-to-date before committing.** Other agents (e.g. the architect implementing a PR) may have left the working tree on a feature branch; their PR's merge to `main` happens on origin, not locally. Run `git -C ~/.claude status` to check the current branch and, if not on `main`, `git checkout main && git pull --ff-only` before making changes. Otherwise a coordinator commit lands on the stale feature branch and silently misses `main`.
+**To land a change: edit the file in `~/.claude` (which also makes it effective for the running session), then commit it straight to `origin/main` with `commit-claude-main`:**
+
+```bash
+~/sandboxes/lucos_agent/commit-claude-main --app lucos-issue-manager \
+  -m "your commit message" \
+  skills/routine/SKILL.md [other/paths...]
+```
+
+Paths are relative to `~/.claude/` (absolute paths under `~/.claude/` also work). The tool commits the current on-disk content of those files onto a freshly-fetched `origin/main` via an **isolated throwaway worktree**, so it is immune to the shared `~/.claude` working tree's state -- it never needs you to be on `main`, never runs `git pull`, and never touches other agents' uncommitted memory files. It prints a clean commit SHA to stdout (git noise goes to stderr, so `SHA=$(commit-claude-main ...)` is safe), exits 0 with "Nothing to commit" if the files already match `origin/main`, and exits non-zero on a push race (just re-run).
+
+**Do NOT** fall back to the old `git checkout main && git pull --ff-only` + commit + push flow, and do **NOT** route a `~/.claude` change through a branch + PR -- that needlessly drags in the developer/reviewer and only ever existed because direct push used to break on a dirty shared tree, which `commit-claude-main` now fixes. Use `commit-claude-main` for every `~/.claude` commit.
 
 Delegate to `lucos-system-administrator` for infrastructure and environment changes -- `CLAUDE.md` itself, ops check files, environment config.
 
