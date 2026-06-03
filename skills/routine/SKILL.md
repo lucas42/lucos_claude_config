@@ -15,7 +15,7 @@ Send messages to these teammates concurrently in the same response:
 3. `lucos-system-administrator` — "run your ops checks"
 4. `lucos-site-reliability` — "run your ops checks"
 
-**Wait for all teammates to respond before proceeding.**
+**Wait for each teammate's *complete* ops-check response before proceeding — not merely any message from them.** Security, sysadmin, and SRE each return a full multi-check manifest (a table listing every check with a status); the code-reviewer returns a PR-review / stuck-PR result. A teammate may send an **urgent partial first** — e.g. the SRE flagging a live incident with "I'm writing the incident report next" — which is real (it passes the phantom check below) but is **not** their full manifest. Treat any response that lacks the expected manifest table, or that explicitly defers remaining work ("next", "writing X now", "still checking Y"), as **partial**: wait for the completing message before starting Phase 2. Otherwise issues the teammate files during the rest of their run miss the `get-issues-for-triage` batch and need a separate follow-up triage pass.
 
 Rationale: ops checks run first so that any issues they raise are available for triage in Phase 2. PR review runs here because it's independent of the issue pipeline. Security reviews dependabot alerts. The system administrator checks container status, resource usage, backups, and other infrastructure health. Site reliability checks monitoring status, service health, and observability.
 
