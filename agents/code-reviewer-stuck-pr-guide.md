@@ -29,7 +29,37 @@ A PR is stuck if any of the following are true:
 
 *Cause:* Typically occurs after a GitHub Actions outage where the `pull_request` event for a push was dropped. When CodeQL (or another required check) is later triggered manually via `workflow_dispatch`, it creates a check-run on the SHA but doesn't associate it with the PR's check-suite. GitHub's branch protection evaluates the rollup (`statusCheckRollup.contexts`), not the raw `/check-runs` endpoint — so it treats the required check as missing even though it has actually run and passed on the SHA.
 
-*How to distinguish from Criterion 4:* In Criterion 4, the required check doesn't appear in `/check-runs` at all. In this criterion, the check IS present in `/check-runs` with `conclusion: success` — it's simply not wired into the PR's rollup. To confirm: query the commit's check-runs via REST (`/commits/{sha}/check-runs`), identify which required check is missing from the rollup, and verify it appears there with `conclusion: success`.
+*How to distinguish from Criterion 4:* In Criterion 4, the required check doesn't appear in `/check-runs` at all. In this criterion, the check IS present in `/check-runs` with `conclusion: success` — it's simply not wired into the PR's rollup. To confirm: query the commit's check-runs via REST (`/commits/{sha}/check-runs`) to see which checks ran on the SHA, then query the rollup to see what GitHub's branch protection actually evaluates:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer graphql \
+  -f query='
+    query($repo: String!, $pr: Int!) {
+      repository(owner: "lucas42", name: $repo) {
+        pullRequest(number: $pr) {
+          commits(last: 1) {
+            nodes {
+              commit {
+                statusCheckRollup {
+                  contexts(first: 50) {
+                    nodes {
+                      ... on CheckRun { name status conclusion }
+                      ... on StatusContext { context state }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ' \
+  -f repo={repo} \
+  -F pr={pr_number}
+```
+
+A required check present in `/check-runs` with `conclusion: success` but absent from the rollup `contexts` confirms the mismatch.
 
 *Fix:* Close + reopen the PR. The `pull_request:reopened` event triggers a fresh run of required checks (e.g. CodeQL) that get properly associated with the PR's check-suite rollup. Do NOT use `workflow_dispatch` again — that will reproduce the exact same rollup-mismatch.
 
