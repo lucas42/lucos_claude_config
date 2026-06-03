@@ -62,21 +62,25 @@ If you spot a concrete, fixable issue, **request changes** — even if the fix i
 
 ## Step 5 — Post the review
 
-Always use `gh-as-agent --app lucos-code-reviewer`. Never `gh api` directly, never `gh pr review` — those would post under the wrong identity. Always wrap `body` in a `<<'ENDBODY'` heredoc; inline `-f body="..."` breaks newlines and backticks. See [`references/agent-github-identity.md`](../../references/agent-github-identity.md) for the heredoc pattern and the `{owner}/{repo}` template-substitution gotcha.
+Always use `gh-as-agent --app lucos-code-reviewer`. Never `gh api` directly, never `gh pr review` — those would post under the wrong identity.
+
+**Always use the file-backed body pattern for review bodies.** Code reviews routinely discuss code containing `{repo}`, `{owner}`, `{sha}`, and other `{...}` placeholder patterns — `gh api` performs template substitution on these inside `--field body="..."` even when the shell doesn't, silently corrupting the posted text. Writing the body to a temp file and passing `--field body=@$BODY_FILE` bypasses this entirely. See [`references/agent-github-identity.md`](../../references/agent-github-identity.md) for the full gotcha explanation.
 
 ### Approve
 
 Single encouraging, specific sentence relevant to the actual change (not generic "looks good").
 
 ```bash
+BODY_FILE=$(mktemp)
+cat > "$BODY_FILE" <<'ENDBODY'
+Your encouraging comment here.
+ENDBODY
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
   -f event="APPROVE" \
-  --field body="$(cat <<'ENDBODY'
-Your encouraging comment here.
-ENDBODY
-)"
+  --field "body=@$BODY_FILE"
+rm "$BODY_FILE"
 ```
 
 ### Request changes
@@ -84,14 +88,16 @@ ENDBODY
 List **all** problems found, grouped logically. Explain *why* each issue matters. Constructive, respectful, with markdown formatting.
 
 ```bash
+BODY_FILE=$(mktemp)
+cat > "$BODY_FILE" <<'ENDBODY'
+Your detailed markdown comment with all issues found.
+ENDBODY
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
   repos/lucas42/{repo}/pulls/{pr_number}/reviews \
   --method POST \
   -f event="REQUEST_CHANGES" \
-  --field body="$(cat <<'ENDBODY'
-Your detailed markdown comment with all issues found.
-ENDBODY
-)"
+  --field "body=@$BODY_FILE"
+rm "$BODY_FILE"
 ```
 
 ### Request specialist review
