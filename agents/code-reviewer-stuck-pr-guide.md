@@ -12,7 +12,7 @@ A PR is stuck if any of the following are true:
 
 **3. PR on an archived repo.** A PR on an archived repo can never be merged. Action: close the PR with a comment explaining the repo is archived.
 
-**4. Auto-merge enabled but `mergeable_state: blocked` despite passing CI and an existing approval.** This means something is silently preventing the merge — usually a branch protection rule or a required status check that isn't surfacing as a check-run (e.g. a stale required check from a deleted workflow).
+**4. Auto-merge enabled but `mergeable_state: blocked` despite passing CI and an existing approval.** This means something is silently preventing the merge — usually a branch protection rule or a required status check that isn't surfacing as a check-run at all (e.g. a stale required check from a deleted workflow). If the required check IS present in `/check-runs` but absent from the rollup, see Criterion 8 instead.
 
 **5. `mergeable_state: dirty` (actual merge conflict) with no rebase for >72 hours.** The PR has genuine conflicts with the base branch. For Dependabot PRs, Dependabot will rebase on its own scheduled cadence — do not immediately escalate. Only flag as stuck if the conflict has been unresolved for >72 hours with no activity. Note: `mergeable_state: behind` (branch is simply behind main, no conflicts) is NOT stuck — GitHub will not block merge for this reason alone, and Dependabot handles it automatically.
 
@@ -24,6 +24,19 @@ A PR is stuck if any of the following are true:
 ```
 
 **7. Approved + CI green + `mergeable_state: clean` + `auto_merge: null`.** Everything looks ready but auto-merge was never enabled. Check the Actions runs API for the head SHA for any workflow with `startup_failure` or `failure` conclusion — the auto-merge workflow may have failed silently regardless of what it's named. Do NOT rely on checking for a specific workflow filename (e.g. `code-reviewer-auto-merge.yml`) — repos use different names (e.g. `dependabot-auto-merge.yml`).
+
+**8. Rollup-mismatch: `mergeable_state: blocked` + `reviewDecision: APPROVED` + all check-runs passing on the SHA, but a required check is absent from the PR's check-suite rollup.**
+
+*Cause:* Typically occurs after a GitHub Actions outage where the `pull_request` event for a push was dropped. When CodeQL (or another required check) is later triggered manually via `workflow_dispatch`, it creates a check-run on the SHA but doesn't associate it with the PR's check-suite. GitHub's branch protection evaluates the rollup (`statusCheckRollup.contexts`), not the raw `/check-runs` endpoint — so it treats the required check as missing even though it has actually run and passed on the SHA.
+
+*How to distinguish from Criterion 4:* In Criterion 4, the required check doesn't appear in `/check-runs` at all. In this criterion, the check IS present in `/check-runs` with `conclusion: success` — it's simply not wired into the PR's rollup. To confirm: query the commit's check-runs via REST (`/commits/{sha}/check-runs`), identify which required check is missing from the rollup, and verify it appears there with `conclusion: success`.
+
+*Fix:* Close + reopen the PR. The `pull_request:reopened` event triggers a fresh run of required checks (e.g. CodeQL) that get properly associated with the PR's check-suite rollup. Do NOT use `workflow_dispatch` again — that will reproduce the exact same rollup-mismatch.
+
+*Side effects of close+reopen:*
+- **Branch deletion race.** If `delete_branch_on_merge` is true for the repo, the branch may be auto-deleted moments after close. The PR cannot be reopened after the branch is deleted (`validation_failed / state cannot be changed`). Reopen must happen within seconds of close — perform close and reopen as a back-to-back sequence without any delay.
+- Auto-merge state is dropped on close, but re-set automatically on the next approval review event. This side effect is normally invisible.
+- Existing reviews are preserved across close+reopen.
 
 ---
 
@@ -38,6 +51,7 @@ Before escalating, **always try self-service fixes first**. Asking a human to in
 | **CI failure** (infrastructure, runner issues, Docker errors, network timeouts, stale checks, startup failures, persistently red CI) | Ask `lucos-system-administrator` to re-run the failing workflow | `lucos-site-reliability` — SendMessage if re-run fails or problem recurs |
 | **Auto-merge workflow failed** (race condition, "unstable status", "base branch modified", startup failure) | Ask `lucos-system-administrator` to re-run — try multiple times; these errors are often transient | Team lead — only if re-run fails repeatedly with the same error and is clearly non-transient |
 | **`mergeable_state: dirty`** (genuine merge conflict) | Leave it — Dependabot rebases on its own schedule. Only escalate if still dirty after 72+ hours with no activity | Team lead (for `@dependabot rebase` if you need to force sooner) — **note: `@dependabot rebase` cannot be posted by GitHub Apps; requires lucas42** |
+| **Rollup-mismatch** (criterion 8: BLOCKED + APPROVED + check in `/check-runs` but absent from rollup) | Ask `lucos-system-administrator` to close + immediately reopen the PR (back-to-back, no delay — branch deletion race). Provide repo name, PR number, and a note about the branch-deletion risk. | `lucos-site-reliability` — if close+reopen doesn't clear the blockage |
 | **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
 | **Auto-merge not triggering** (criterion 7) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | `lucos-site-reliability` — if re-run succeeds but auto-merge still not set |
 | **Archived repo** | Close directly | Post a comment explaining why, then close |
