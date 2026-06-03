@@ -21,7 +21,8 @@
 # Commit identity: lucos-system-administrator[bot]
 # Bot user ID: 264392982 (used in noreply email for correct GitHub avatar)
 #
-# Usage: run manually or via cron, e.g.:
+# Usage: called primarily from post-turn-hook.sh (Claude Code Stop hook), which
+# fires after every turn.  Also called from a 15-minute cron as a fallback:
 #   */15 * * * * /home/lucas.linux/.claude/scripts/commit-agent-memory.sh >> /home/lucas.linux/.claude/scripts/commit-agent-memory.log 2>&1
 
 set -euo pipefail
