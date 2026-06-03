@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-02
+container_status: 2026-06-03
 resource_checks: 2026-05-28
 syslog_review: 2026-05-28
 software_updates: 2026-05-28
 sandbox_drift: 2026-05-28
-repos_dashboard: 2026-06-02
+repos_dashboard: 2026-06-03
 docker_image_staleness: 2026-05-07
 backup_verification: 2026-05-07
 certificate_expiry: 2026-05-07
@@ -1209,3 +1209,19 @@ certificate_expiry: 2026-05-07
 
 **Issues raised**: None (firewall fix applied directly; #11 closure-ready)
 **Issues fixed**: lucos_firewall #11 — convention now passes.
+
+---
+
+### 2026-06-03 (checks 1 + 6 due; cert spot-check; weekly checks due 2026-06-04; monthly checks due ~2026-06-06)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare. (58 repos)
+
+**Repos dashboard**: 58 repos checked, 0 failing conventions. Completely clean.
+
+**Certificate spot-check** (opportunistic — comhra.l42.eu flagged at 30 days on 2026-06-02):
+- comhra.l42.eu: Jul 2 2026 (29 days) — **WARNING**. Domain is NXDOMAIN (decommissioned 2026-05-21). certbot renewal will fail tonight. No live service impact but will generate failure noise. Issue raised: lucos_router#90.
+- repos.l42.eu: Jul 3 2026 (30 days) — at certbot renewal threshold. Domain IS active. certbot should trigger tonight. Fine.
+- locations.l42.eu: Jul 5 2026 (32 days) — fine.
+- All other certs: Jul 16+ (≥43 days). Fine.
+
+**Issues raised**: lucos_router#90 (comhra.l42.eu stale cert, NXDOMAIN, certbot renewal will fail)
