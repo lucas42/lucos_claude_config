@@ -5,6 +5,10 @@
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
 
+## CI / docker build failures
+
+- ["blob unknown to registry" on push = upstream Hub transient](pattern_docker_push_blob_unknown_upstream.md) — build compiles fine, fails only at push; rerun with identical code clears it → NOT our code. Mirror not implicated (pull-through). Fix = push-step retry in orb (lucos_deploy_orb#182). First hit lucos_monitoring 2026-06-03.
+
 ## media_metadata_api integrity checks
 
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — job reports schedule_tracker success on total eolas-fetch failure (resolved=0) → green monitoring, zero work; eolas bulk endpoint at the 30s-timeout cliff post-migration. Names never backfill. lucos_media_metadata_api#302.
