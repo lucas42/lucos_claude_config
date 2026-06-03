@@ -16,6 +16,7 @@
 - [x-sentinel bash trick — only works when `$VAR` has no trailing newline](review_xsentinel_bash.md) — if `$VAR` ends with `\n`, use `printf '%s' "$VAR" | cmp -s "$FILE" -` instead; wrong fix given in lucos_agent_coding_sandbox PR #71
 - [Synchronous external-service call in write hot path](review_sync_hotpath_external.md) — flag missing timeout/fallback; `fetchEolasName`→whole-dataset is a companion smell; root cause of 2026-05-29 502 incident
 - [SSRF/request-forgery false-positive assessment](feedback_ssrf_request_forgery_assessment.md) — cite `fetchEntityNameFromSource` hostname whitelist (NOT `ValidateURIOrigin`) as the universal guard on `fetchEolasName` paths
+- [Robustness gaps must block — "unlikely in practice" is not a valid downgrade](feedback_robustness_gaps_block.md) — exception-path resource leaks, partial cleanup on error, missing guards: request changes even if the fix is one line and the failure scenario is improbable (lucos_backups #292/#293)
 
 ## Cross-Repo Review Rules
 

@@ -56,6 +56,8 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
 
 If you spot a concrete, fixable issue, **request changes** — even if the fix is minor. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things requiring significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
 
+**"Unlikely in practice" is not a valid qualifier.** Probability of the failure scenario is not grounds for downgrading a concrete correctness or robustness gap to a non-blocking note. If the fix is one line and the gap is real — exception-path resource leak, partial cleanup on error, missing guard — request changes. The cost of a follow-up issue exceeds the cost of blocking the PR. (Confirmed: lucos_backups #292 — `closeConnection()` skipped `gateway.close()` if `connection.close()` raised; approved with a note; became a separate PR #293.)
+
 **Supervision status does not affect this rule.** "The repo is supervised so lucas42 will see the note anyway" is not a valid reason to approve with notes instead of requesting changes. The rule is about signal strength, not merge safety.
 
 ## Step 5 — Post the review
