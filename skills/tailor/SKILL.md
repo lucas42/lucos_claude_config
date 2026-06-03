@@ -6,7 +6,13 @@ disable-model-invocation: false
 
 Coordinated tailoring of both Luke's CV and his cover letter against a single JD. The two artefacts are produced together so that one set of positioning decisions cascades to both — Summary paragraph and letter opener share the same level-framing, Skills section and letter evidence story emphasise the same JD signals, CV career-break section and letter career-break aside say the same thing in the same voice.
 
-The JD URL is provided as the first argument (e.g. `/tailor https://jobs.ashbyhq.com/...`). If no URL is provided, ask Luke for one — or for the JD text directly if the source isn't web-accessible.
+The JD URL is provided as the first argument (e.g. `/tailor https://jobs.ashbyhq.com/...`).
+
+**If no argument is provided, default to the top of the spotted queue.** Read `~/sandboxes/lukeblaney_cv_tailored/applications/spotted.md` and take the **first role entry** — the first `###` heading from the top of the file, which is the highest-priority role (the list is priority-ordered; the top-tier's first entry leads). Use that entry's **JD:** URL as the argument for the rest of the flow. **State which role you picked** before proceeding ("No URL given — tailoring for the top of the queue: {Company} — {Role}") so Luke can redirect if he meant a different one; don't make it a blocking gate, just an announced default he can interrupt.
+
+Edge cases:
+- If `spotted.md` has no role entries at all, ask Luke for a URL — or for the JD text directly if the source isn't web-accessible.
+- If Luke passes JD text instead of a URL (source not web-accessible), use that directly as in the current flow.
 
 ## Step 0: Routing
 
@@ -644,7 +650,7 @@ Commit directly to `main` on both `lukeblaney_cv` and `lukeblaney_cv_tailored` �
 - **Luke wants only a letter, no CV** — this skill defaults to always producing a CV, but if Luke explicitly asks for letter-only, skip the CV-writing parts of Steps 9, 13, and 14 and run only the `[LETTER]` sub-steps. (Rare — most forms want a CV; don't volunteer letter-only.)
 - **Luke wants to update the cover-letter library or `cv-extended.md` itself** (add a new story, change the template, rewrite an opener) — that's a normal career-advisor edit, not a per-application task. Skip the JD-analysis steps.
 - **Luke wants analysis of a JD without producing artefacts** — do Steps 1–6 and stop; don't write any files.
-- **No JD URL or JD text is available** — ask Luke for one before starting.
+- **No argument passed** — default to the top of the spotted queue (see the intro). Only ask Luke for a URL if `spotted.md` has no role entries.
 - **The company has a closed application that Luke isn't reopening** — confirm with Luke whether to draft fresh material or just update the company-notes outcome field.
 
 ## Source-of-truth files
