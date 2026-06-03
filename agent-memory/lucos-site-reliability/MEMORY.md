@@ -17,6 +17,7 @@
 ## Monitoring dependsOn / schedule_tracker mechanics
 
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
+- [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress filter (`is_dependency_suppressed/3`) AND unsuppress cascade (`find_dependent_systems/2`). A universal dependsOn (e.g. on synthetic fetch-info, #272) fans pending_verification estate-wide on every dep deploy. Missed read site 2 on 2026-06-03; architect caught it.
 
 ## Docker daemon recovery
 
