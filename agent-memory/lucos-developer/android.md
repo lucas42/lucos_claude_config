@@ -5,7 +5,7 @@ type: project
 ---
 
 - **Repo**: `https://github.com/lucas42/lucos_photos_android` (created 2026-03-04)
-- **Language**: Kotlin, minSdk 26, targetSdk 36, compileSdk 36
+- **Language**: Kotlin, minSdk 26, targetSdk 37, compileSdk 37
 - **Build**: Gradle 9.4.0 wrapper, AGP 9.1.0. CI uses `cimg/android:2025.01` (x86_64).
 - **AGP 9.x migration**: `org.jetbrains.kotlin.android` plugin is **rejected** by AGP 9.0+ (hard error, not warning). Remove from both `build.gradle.kts` files and `libs.versions.toml`. Replace `kotlinOptions { jvmTarget }` with `kotlin { jvmToolchain(17) }`.
 - **CodeQL for Android takes 15-30 min** — the `updated_at` field in GitHub API stays frozen at creation time during the run; this is a GitHub API quirk, not a stall. Do not flag slow CodeQL runs to lucos-site-reliability.
