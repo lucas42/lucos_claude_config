@@ -1209,3 +1209,46 @@ certificate_expiry: 2026-06-04
 
 **Issues raised**: None (firewall fix applied directly; #11 closure-ready)
 **Issues fixed**: lucos_firewall #11 — convention now passes.
+
+---
+
+### 2026-06-04 (ALL 9 checks due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- Jun 1: lucos-agent sudo failure (ls on docker volume path) — expected from prior ops work.
+- Jun 3: lucos-agent sudo failures (ls /proc/{pid}/fd, cat /proc/{pid}/limits) — expected.
+- No hardware errors, no OOM kills.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.5.3, containerd 2.2.1→2.2.4, buildx →0.34.1, compose →5.1.4. Routine.
+- Xwing: Docker CE 29.4→29.5.3, containerd, buildx, compose; kernel 6.12.47→6.18.33, various rpi packages, libssl3t64/openssl from `stable` (not `stable-security`). Routine.
+- Salvare: Docker CE 29.3→29.5.2, containerd, buildx, compose; kernel 6.12.87, raspi packages. Routine.
+
+**Resources**:
+- Avalon: 3.3Gi available of 7.6Gi. Swap 268Mi/4.5Gi (6%) — very healthy. Disk 24% (405G/1.8T). Load 4.39/4.01/3.21 (89 days uptime, acceptable). Journal 104.9M. Fine.
+- Xwing: 443Mi available of 906Mi. Swap 156Mi/905Mi (17%). Disk **69%** (77G/117G) — stable (same as 2026-05-28). Load 3.49/3.41/3.47 (known elevated pattern for this Pi). Fine.
+- Salvare: 3.4Gi available of 3.7Gi. No swap. Disk **76%** (42G/58G) — up from 73% on 2026-05-28. Growing ~1G/week. 14G free. Watch item but not at 80% threshold. Fine.
+- Local VM: was 68% (66G/96G) — pruned Docker unused images (1.3GB) and build cache (14.5GB). Now 47% (45G/96G). Docker images 40.64GB→lowered; build cache cleared. Fine.
+
+**Sandbox drift**: 1 remote commit (0c7638b — PR #87, add 8 GiB swapfile to Lima VM). VM already has 8GB swap (Swap: 8.0Gi confirmed). VM was provisioned ~2026-05-30 (same day PR merged) — swap came from provisioning, not a manual snowflake. No live VM action needed. Pulled. Clean.
+
+**Repos dashboard**: 0 failing conventions (57 repos). Completely clean.
+
+**Backup verification**: Running correctly on avalon. Hourly config fetch + tracking completing successfully. Full backup run today (2026-06-04) confirmed — volumes being archived and copied to aurora/salvare/xwing. BrokenPipeError exceptions are known benign. No issues.
+
+**Certificate expiry**:
+- locations.l42.eu: Jul 5 2026 — **31 days** (at certbot 30-day renewal threshold). Certbot should trigger tonight. Worth spot-checking in next run.
+- docker.l42.eu: Jul 16 2026 — 42 days. Fine.
+- creds.l42.eu: Jul 17 2026 — 43 days. Fine.
+- All other avalon certs: Jul 21+ (47+ days). Fine.
+- All xwing certs (nas/private/staticmedia/xwing.s.l42.eu): Aug 4 2026 — 61 days. Fine.
+- No certs under 30 days. No issues raised.
+
+**Docker image staleness**:
+- `lucos_locations_otrecorder`: Still 2025-08-12. lucos_locations#79 was raised 2026-05-07 and CLOSED as completed — upstream owntracks/recorder Docker Hub image hasn't been updated since 2025-08-12 either. Production image IS the latest available. Not a staleness issue; no new issue raised.
+- All other images: within 60 days (most recent: Jun 3–4 2026). Fine.
+
+**No new issues raised.**
+
