@@ -52,7 +52,12 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
   - `lucos-site-reliability` for deployment config, monitoring, alerting, health checks, backups, failover, migrations, or significant operational risk.
   - You may still note non-specialist issues — specialist review supplements your own, it doesn't replace it.
 
-  **Mandatory security sign-off — `lucos_firewall` (repo-scoped, always):** *every* PR on the `lucos_firewall` repository requires `lucos-security` review, regardless of what the change touches. The service is the estate's network-perimeter enforcement (ADR-0007) — a bug there can lock the whole estate out or silently open it up — so any change is security-relevant by definition. On any `lucos_firewall` PR you **must** request `lucos-security` review (follow "Request specialist review" below) and you **must not `APPROVE` until `lucos-security` has posted a go-ahead on the PR itself** (a GitHub review/comment, not a SendMessage — see the GitHub-artifact rule below). This is in addition to the change-nature triggers above. If another repo is later added to this always-review list, extend this rule rather than duplicating it.
+  **Mandatory security sign-off — always-review repos (repo-scoped, always):** *every* PR on a repository in the list below requires `lucos-security` review, regardless of what the change touches — any change to these is security-relevant by definition. On any PR in one of these repos you **must** request `lucos-security` review (follow "Request specialist review" below) and you **must not `APPROVE` until `lucos-security` has posted a go-ahead on the PR itself** (a GitHub review/comment, not a SendMessage — see the GitHub-artifact rule below). This is in addition to the change-nature triggers above.
+
+    - **`lucos_firewall`** — the estate's network-perimeter enforcement (ADR-0007); a bug there can lock the whole estate out or silently open it up.
+    - **`lucos_creds`** — the estate's credential/secret store and the source of every inter-service auth key (`CLIENT_KEYS`, scopes, TSIG secrets); a bug there can leak secrets or broaden access across every service that authenticates against it.
+
+    To add another repo to this always-review list, append it here rather than duplicating the rule.
 
 If you spot a concrete, fixable issue, **request changes** — even if the fix is minor. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things requiring significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
 
