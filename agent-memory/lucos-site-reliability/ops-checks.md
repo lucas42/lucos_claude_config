@@ -23,7 +23,7 @@ lucos_contacts_app: 2026-05-29
 lucos_contacts_db: 2026-05-29
 lucos_contacts_googlesync_import: 2026-05-31
 lucos_contacts_web: 2026-05-31
-lucos_creds: 2026-05-23
+lucos_creds: 2026-06-04
 lucos_creds_configy_sync: 2026-05-31
 lucos_creds_ui: 2026-05-31
 lucos_dns_sync: 2026-06-01
@@ -49,13 +49,13 @@ lucos_monitoring: 2026-06-02
 lucos_media_seinn: 2026-05-28
 tfluke: 2026-05-28
 lucos_media_metadata_api_exporter: 2026-06-03
-lucos_media_metadata_manager: 2026-05-23
-lucos_notes: 2026-05-23
+lucos_media_metadata_manager: 2026-06-04
+lucos_notes: 2026-06-04
 lucos_root: 2026-05-24
 lucos_router: 2026-06-02
 semweb: 2026-05-24
 lucos_time: 2026-05-27
-lucos_arachne_mcp: 2026-05-23
+lucos_arachne_mcp: 2026-06-04
 lukeblaney_blog: 2026-05-24
 lucos_docker_health_app: 2026-06-03
 
