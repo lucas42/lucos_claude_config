@@ -11,6 +11,9 @@
 
 ## CI / docker build failures
 
+- [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — circleci-check red + `test` failed + `deploy-avalon` not_run = flaky `TestEnvironmentRestrictedAccess` scp assertion (exit 255/"Connection closed" vs 1/"lost connection"). Re-run workflow from failed → deploys. NOT a product bug, NOT the scope migration (that's startup in-code). Tracked lucos_creds#358; if open on recurrence, re-run + comment, don't refile.
+
+
 - ["blob unknown to registry" on push = upstream Hub transient](pattern_docker_push_blob_unknown_upstream.md) — build compiles fine, fails only at push; rerun with identical code clears it → NOT our code. Mirror not implicated (pull-through). Fix = push-step retry in orb (lucos_deploy_orb#182). First hit lucos_monitoring 2026-06-03.
 
 ## media_metadata_api integrity checks
