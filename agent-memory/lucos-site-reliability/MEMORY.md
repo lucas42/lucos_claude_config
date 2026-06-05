@@ -18,6 +18,10 @@
 
 - [monitoring's own fetch-info self-probe flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — post-deploy + steady-state flaps from the global 1s timeout (fetcher_info.erl:231) crossing global failThreshold:2. Suppression = estate-wide blast radius; #186 closed not_planned. Don't refile.
 
+## Monitoring coverage: HTTP vs scheduled-jobs
+
+- [fetch-info requires http_port; non-HTTP boxes covered via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — `info-systems-list.json` built from configy `/systems/http` at Docker build (Dockerfile L17); a domain-but-no-http_port system (e.g. lucos_dns) has NO fetch-info/tls, only `config-sync`+`circleci`. Don't assume domain⇒fetch-info. schedule_tracker overdue (age≥freq×3)=liveness, consec-errors (5/4/3/2 by cadence)=staleness; grace is frequency-derived, not a free knob. Verified 2026-06-05 (lucos#217 DNS-secondary SOA design).
+
 ## Monitoring dependsOn / schedule_tracker mechanics
 
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
