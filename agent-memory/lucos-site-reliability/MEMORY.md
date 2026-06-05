@@ -2,7 +2,7 @@
 
 ## salvare IPv6 / home-ISP prefix
 
-- [salvare backup failure = home IPv6 prefix withdrawal](pattern_salvare_ipv6_prefix_withdrawal.md) — `lucos_backups/host-tracking-failures` red w/ "connect to port 22 on 2a01:4b00:8598:5a00:…" = ISP withdrew home /64; salvare IPv6-only inbound; deploys/docker_health use `salvare-v4` & stay green; blast radius = backups only; self-resolves when prefix returns. Don't force IPv4. First diagnosed 2026-06-05.
+- [home-host backups red = ISP dropped upstream IPv6 transit](pattern_salvare_ipv6_prefix_withdrawal.md) — `lucos_backups/host-tracking-failures` red for xwing/salvare/aurora = ISP stopped routing `/64` upstream BOTH ways while LAN v6 stays healthy (NOT a prefix withdrawal — verified: xwing↔salvare LAN v6 fine, CPE answers v6, only internet↔home transit dead). deploys/docker_health on `salvare-v4` stay green. Self-resolves when transit returns; don't force IPv4. Diagnosed 2026-06-05.
 
 ## Ops-check gotchas
 
