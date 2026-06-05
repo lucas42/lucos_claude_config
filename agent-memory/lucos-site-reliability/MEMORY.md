@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## salvare IPv6 / home-ISP prefix
+
+- [salvare backup failure = home IPv6 prefix withdrawal](pattern_salvare_ipv6_prefix_withdrawal.md) — `lucos_backups/host-tracking-failures` red w/ "connect to port 22 on 2a01:4b00:8598:5a00:…" = ISP withdrew home /64; salvare IPv6-only inbound; deploys/docker_health use `salvare-v4` & stay green; blast radius = backups only; self-resolves when prefix returns. Don't force IPv4. First diagnosed 2026-06-05.
+
 ## Ops-check gotchas
 
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
