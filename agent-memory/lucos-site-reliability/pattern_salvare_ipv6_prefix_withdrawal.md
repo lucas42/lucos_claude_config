@@ -21,7 +21,7 @@ So: **LAN IPv6 works; internet↔home IPv6 transit is dead both ways. Break is u
 
 **Why nothing else breaks:** whole inbound estate is IPv4-only (service domains CNAME→`<host>.s.l42.eu`, clients use A). Deploys + docker_health use `salvare-v4`/`xwing-v4` (A-only) → green throughout. avalon's v6 is OVH, independent.
 
-**Resolution:** automatic when the ISP restores upstream routing (user reports ~a day last time). No data at risk; backups resume next tracking run. Don't "fix" by forcing IPv4 — lucas42 explicitly doesn't want a v4-failover for this.
+**Resolution:** automatic when upstream routing returns. **A router (CPE) reboot is a confirmed recovery lever** — 2026-06-05 reboot restored transit both ways within minutes, and the **same prefix + same addresses came back** (xwing `…:ba27:ebff:fe83:e1ee` unchanged), so lucos_dns AAAA stayed valid and no config change was needed; backups auto-recovered (`host-tracking-failures` → healthy) on the next tracking run. That a reboot was needed at all suggests the CPE's WAN IPv6/DHCPv6-PD session got wedged by the ISP account change rather than the ISP hard-withdrawing the prefix. No data at risk. Don't "fix" by forcing IPv4 — lucas42 explicitly doesn't want a v4-failover for this.
 
 **ISP framing:** NOT "I have no IPv6 address" (they'll see the prefix delegated and close it). Correct: "my delegated /64 `2a01:4b00:8598:5a00::/64` is delegated and live on my LAN, but has no upstream routing — I can't reach the IPv6 internet and it can't reach me; IPv4 works. Started ~13:10 UTC 2026-06-05 after the account change. Is my IPv6 PD static or dynamic, and was it de-routed by the change?"
 
