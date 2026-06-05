@@ -16,7 +16,9 @@ If the assumed shape doesn't exist, the design is fictional from the moment it s
 
 - **2026-05-28 — lucos_repos#404 (loopback-healthcheck convention).** I proposed a convention with `Severity: Warning (not Fail)` as the load-bearing mechanism that would surface findings for review without forcing changes. lucas42 pointed out the convention engine is binary — pass or fail-with-issue, no third tier. The "warning" I'd designed around didn't exist. The ticket closed `not_planned`; the rule lives entirely in `lucas42/lucos_claude_config#97`'s reference doc.
 
-Both instances share the same shape: a design proposal that **assumes a mechanism property** (CI sequencing; severity tier) **without reading the implementation** to confirm. The substantive direction may have been right or wrong, but the mechanism scaffold was a fiction.
+- **2026-06-05 — ADR-0010 follow-up + lucos#217 (DNS SOA monitoring).** I specified the SOA-serial-consistency check as "an `/_info`-exposed signal on the DNS systems" — assuming the systems expose `/_info`. They don't: they're bare BIND containers with no HTTP server, and (no `http_port`) they're excluded from monitoring's `/_info` poll list, which is built from configy's `/systems/http`. lucas42 caught it. The correct mechanism was a `schedule_tracker` scheduled job (push), which monitoring already consumes for non-HTTP workloads. "Expose it via `/_info`" silently assumes an HTTP server exists — verify the service *has* one before specifying `/_info`; non-HTTP workloads (BIND, cron jobs, `lucos_docker_health`) report via schedule_tracker push instead.
+
+All three instances share the same shape: a design proposal that **assumes a mechanism property** (CI sequencing; severity tier; an HTTP `/_info` endpoint) **without reading the implementation** to confirm. The substantive direction may have been right or wrong, but the mechanism scaffold was a fiction.
 
 **How to apply:**
 
@@ -24,6 +26,7 @@ Both instances share the same shape: a design proposal that **assumes a mechanis
   - CI sequencing or registry visibility → read `.circleci/config.yml` of the affected repos and the relevant orb commands (`~/sandboxes/lucos_deploy_orb/src/...`). See [reference_buildx_bake_additional_contexts.md](reference_buildx_bake_additional_contexts.md) for what the orb actually does.
   - lucos_repos convention engine shape → read `conventions/conventions.go` and an existing convention file (e.g. `docker-healthcheck-on-built-services.go`) to see what `ConventionResult` fields are supported. There is no `Severity` field; the engine is binary.
   - API / registry behaviour → read the source of the API or registry, not just its documentation. Behaviour and docs drift.
+  - "expose via `/_info`" → confirm the service runs an HTTP server and has an `http_port` (it's then in configy's `/systems/http` and monitoring's `fetcher_info`). Non-HTTP workloads (BIND, cron, distroless agents) report via `schedule_tracker` push, consumed by `fetcher_scheduled_jobs`.
 - Treat "this'll work because [some implicit ordering / tier / hook / fallback]" as a yellow flag and verify before posting. Implicit properties are exactly the kind of thing that's wrong silently.
 - This applies even when the substantive recommendation is correct. Both halves of the proposal — the substance and the mechanism it rides on — need rigour. A right answer carried by a fictional mechanism still doesn't ship.
 
