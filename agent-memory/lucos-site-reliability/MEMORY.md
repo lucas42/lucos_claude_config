@@ -9,6 +9,11 @@
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
 
+## Scheduled-job check failures (deterministic, won't self-clear)
+
+- [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — schedule-tracker debug `"Backups failed for: repo:<name>"`; empty repo → ref-less codeload URL → wget exit 8. Volumes+other repos fine. First hit lucos_dns_secondary 2026-06-06. Tracked lucos_backups#298.
+- [loganne client `level` now a REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — callers missing it crash `TypeError: updateLoganne() missing 1 required positional argument: 'level'`. Job does real work but skips success tick → check red while function looks fine. First hit lucos_arachne ingest.py 2026-06-06 (lucos_arachne#608). Estate-wide sweep risk flagged.
+
 ## CI / docker build failures
 
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — circleci-check red + `test` failed + `deploy-avalon` not_run = flaky `TestEnvironmentRestrictedAccess` scp assertion (exit 255/"Connection closed" vs 1/"lost connection"). Re-run workflow from failed → deploys. NOT a product bug, NOT the scope migration (that's startup in-code). Tracked lucos_creds#358; if open on recurrence, re-run + comment, don't refile.
