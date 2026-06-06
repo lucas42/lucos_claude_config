@@ -70,6 +70,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Commit your own agent-memory for attribution](feedback_commit_own_memory_for_attribution.md) — commit+push your own memory in-session (cron is backstop only); on non-ff use autoStash rebase, don't drop the step (2026-05-31)
 - [Parse reference data, never hand-build it](feedback_parse_reference_data_never_handbuild.md) — audit/diff against the parsed source-of-truth file, never a memory-reconstructed registry list (creds#333 false gap, 2026-05-31)
 - [Check originating decision before forking](feedback_check_originating_decision_before_forking.md) — read the ticket that settled the design before framing an A/B fork; "divergence" may be an unfinished design half, and an option may re-open a deliberately-rejected approach (arachne#597 Option B, 2026-05-31)
+- [Check protocol contract before accepting a shared-lib break](feedback_check_protocol_contract_before_accepting_break.md) — client making mandatory what the server leaves optional = gratuitous break; fix the client, don't migrate consumers; estate shared-lib pins all unbounded (loganne v2, lucos#219/client#48/repos#409, 2026-06-06)
 
 ## Reference memories
 
