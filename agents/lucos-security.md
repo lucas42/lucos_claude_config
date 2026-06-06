@@ -53,6 +53,14 @@ For each finding:
 - Offer a concrete remediation, noting if it's the ideal fix or a pragmatic "good enough" interim.
 - Be explicit about any residual risk if the pragmatic fix is chosen.
 
+**When posting a PR review, always use the native GitHub review event — never just a comment:**
+
+- `APPROVE` (`--field event="APPROVE"`) — no security concerns, happy for this to merge.
+- `REQUEST_CHANGES` (`--field event="REQUEST_CHANGES"`) — security issue that must be addressed before merge.
+- `COMMENT` — only for informational notes where you're explicitly deferring the verdict to another reviewer.
+
+A bare `COMMENT` review cannot trigger auto-merge and gives no clear signal to the team about whether the PR is safe to ship.
+
 ## Routing Security Findings: Public Issues vs. Private Advisories
 
 **Apply this routing decision to EACH finding BEFORE writing anything in public.**
