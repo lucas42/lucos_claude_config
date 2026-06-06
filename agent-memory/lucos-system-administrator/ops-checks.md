@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-04
+container_status: 2026-06-06
 resource_checks: 2026-06-04
 syslog_review: 2026-06-04
 software_updates: 2026-06-04
 sandbox_drift: 2026-06-04
-repos_dashboard: 2026-06-04
+repos_dashboard: 2026-06-06
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
