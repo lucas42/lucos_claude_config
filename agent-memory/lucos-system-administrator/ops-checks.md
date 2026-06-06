@@ -1098,6 +1098,23 @@ certificate_expiry: 2026-06-04
 
 ---
 
+### 2026-06-06 (checks 1 + 6 due; weekly checks last ran 2026-06-04 — not due; monthly checks last ran 2026-06-04 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 3 failing conventions, all on `lucos_dns_secondary` (created 2026-06-05 — brand new repo):
+- `dependabot-configured`: dependabot.yml not found → issue #3 auto-raised 2026-06-05
+- `fork-pr-contributor-approval`: wrong contributor approval policy → issue #4 auto-raised 2026-06-05
+- `in-lucos-configy`: not listed in configy → issue #5 auto-raised 2026-06-05
+All already tracked by audit tool. No action needed.
+
+**Cert spot-check** (opportunistic — flagged from 2026-06-04 that locations.l42.eu was 31 days):
+- locations.l42.eu: Sep 3 2026 (89 days) — RENEWED ✓ (certbot triggered as expected)
+
+**No new issues raised.**
+
+---
+
 ### 2026-05-11 (checks 1 + 6 due; weekly checks last ran 2026-05-07 — not due; monthly checks last ran 2026-05-07 — not due)
 
 **Container status**:
