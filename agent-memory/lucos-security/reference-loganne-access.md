@@ -11,7 +11,7 @@ metadata:
 
 **Endpoint:** `GET https://loganne.l42.eu/events`
 
-No query params filter server-side — the full event feed is always returned (newest-first). Filter client-side.
+**No query params filter server-side** (until lucas42/lucos_loganne#522 ships). `?source=`, `?type=`, `?limit=`, `?count=` are silently ignored — the full feed is always returned (newest-first). `?since=` and `?level=` do work. Filter everything else client-side until #522 lands.
 
 **Working pattern:**
 ```bash
