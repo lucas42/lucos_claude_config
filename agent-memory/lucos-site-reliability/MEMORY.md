@@ -9,6 +9,10 @@
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
 
+## CI/CD pipeline (deploy orb)
+
+- [deploy-avalon exit 18 "pull access denied for *_test" = orb pull was profile-blind](pattern_deploy_orb_pull_profile_blind.md) — orb pull step used `yq` (profile-blind) vs publish's `docker compose config` (profile-aware), so it tried to pull a repo's deliberately-unpublished profiled `test` image. Prod stays UP (pull runs before `compose up`) = P2 not outage. FIXED in `lucos/deploy@0.0.185` (orb#184, 2026-06-07). Gotcha: re-running a failed workflow reuses old compiled orb version — trigger a FRESH pipeline to pick up an orb fix.
+
 ## Scheduled-job check failures (deterministic, won't self-clear)
 
 - [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — schedule-tracker debug `"Backups failed for: repo:<name>"`; empty repo → ref-less codeload URL → wget exit 8. Volumes+other repos fine. First hit lucos_dns_secondary 2026-06-06. Tracked lucos_backups#298.
