@@ -7,7 +7,9 @@ metadata:
 
 # Test environments in lucos_creds (ADR-0002, 2026-06-07)
 
-Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363; PR #364 (Proposed). Designed with lucos-security.
+Triggered by lucos_dns#99. Tracking issue lucos_creds#363; PR #364 (Proposed). Designed with lucos-security.
+
+**NOT greenfield:** `lucos_contacts/test` already exists & is in active prod use — verified via lucos_contacts `.circleci/config.yml` (`scp tests@creds.l42.eu:$CIRCLE_PROJECT_REPONAME/test/.env`, no error suppression) + CircleCI build 4563 (scp exit 0). The ADR formalises existing-but-undocumented practice. Pre-existing test envs predate the bright-line rule → must be retro-audited (a dev-scoped key can't read `test`, so it's a human check).
 
 ## Mechanism facts (verified in server/src)
 
