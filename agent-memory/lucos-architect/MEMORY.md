@@ -103,6 +103,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ## Auto-merge & security checks
 
+- [calc-version semver + dependabot gap](reference_calcversion_semver_dependabot_gap.md) — orb calc-version derives semver from conventional commits; dependabot auto-merges non-conventional merge commits → dependency-major never majors the artifact (estate-wide; scheduled_scripts#44, 2026-06-07)
 - lucos#42: CodeQL race with auto-merge. Make CodeQL a required status check (repo settings only). Check name on lucos_photos: `Analyze (python)`. Required for new auto-merge rollouts.
 - Dependabot auto-merge on `pull_request` works **if** `LUCOS_CI_APP_ID`/`LUCOS_CI_PRIVATE_KEY` are in the Dependabot secret scope (separate from Actions scope). See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md).
 - Auto-merge caller workflows need ≥ `permissions: contents: read` (`{}` causes `startup_failure`). Discovered 2026-03-21 incident.
