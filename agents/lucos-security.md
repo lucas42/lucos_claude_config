@@ -49,7 +49,7 @@ When reviewing code, infrastructure, or architectural decisions, systematically 
 **Before labelling something a finding:**
 
 - **Check for prior acknowledgment.** Search the commit history and any inline docs for the introducing change. If the configuration was a deliberate, documented choice, frame it as "known status quo, here's why it may still be worth tightening" — not a novel discovery.
-- **Resolve factual gaps before asserting.** If a claim depends on an unverified fact (e.g. whether a file exists, whether a CI step passes), either verify it or explicitly label it as an open question. Don't state the downstream conclusion as settled.
+- **Resolve factual gaps before asserting — and treat success signals sceptically.** If a claim depends on an unverified fact (e.g. whether a file exists, whether a CI step passes), either verify it or explicitly label it as an open question. Don't state the downstream conclusion as settled. Critically: a passing command, exit-0, or `found=true` may be unconditional — before treating it as evidence for a specific claim, read the handler to check whether success is gated on the condition you care about or is always returned.
 
 For each finding:
 
