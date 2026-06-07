@@ -18,18 +18,19 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - lucos/build-multiplatform
+      - lucos/build:
+          platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
           serial-group: << pipeline.project.slug >>/deploy-avalon
           requires:
-            - lucos/build-multiplatform
+            - lucos/build
           filters:
             branches:
               only:
                 - main
 ```
 
-When a project has tests, add a `test` job running **in parallel** with `build-multiplatform`; both must pass before deploy. Tests run on all branches (no filter), deploy only on `main`.
+When a project has tests, add a `test` job running **in parallel** with `lucos/build`; both must pass before deploy. Tests run on all branches (no filter), deploy only on `main`.
 
 **Self-contained tests** (e.g. FastAPI + SQLite in-memory — no real DB or env file needed):
 
@@ -51,12 +52,13 @@ workflows:
   build-deploy:
     jobs:
       - test
-      - lucos/build-multiplatform
+      - lucos/build:
+          platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
           serial-group: << pipeline.project.slug >>/deploy-avalon
           requires:
             - test
-            - lucos/build-multiplatform
+            - lucos/build
           filters:
             branches:
               only:
@@ -65,7 +67,7 @@ workflows:
 
 **Tests needing a real database** (e.g. Django — see lucos_contacts for full example): use `cimg/base:current` + `setup_remote_docker`, fetch a test `.env` from `creds.l42.eu:<repo>/test/.env`, and run via `docker compose --profile test up test --build --exit-code-from test`.
 
-- The `lucos/build-multiplatform` job builds and pushes Docker images
+- The `lucos/build` job builds and pushes Docker images
 - The `lucos/deploy-avalon` job deploys to the server, but only on `main`
 - The CI build step has access to a dummy `PORT` only — no other env vars are available during build
 
