@@ -16,6 +16,7 @@
 
 - [arachne MCP tool name lookups](reference_arachne_mcp_tools.md) — `find_entities` returns `rdfs:label` (alternate names); use `get_entity` by URI for canonical `skos:prefLabel`
 - [Media systems domain mapping](media-manager-domain-mapping.md) — lucos_configy/config/systems.yaml is canonical; beware lucos_media_manager (ceol.l42.eu) vs lucos_media_metadata_manager (media-metadata.l42.eu)
+- [lucos_creds key rotation on cred update](reference_lucos_creds_key_rotation.md) — linked-credential/scope changes rotate the key → need coordinated redeploys (proven rollout sequence + loganne two-event audit pattern)
 
 ## GitHub Comment Conventions
 
