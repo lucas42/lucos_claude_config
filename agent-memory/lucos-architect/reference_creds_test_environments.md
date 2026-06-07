@@ -28,7 +28,7 @@ Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363; PR #
 - lucos_creds#360 — set-valued `restrict-environment` + `test` on agent key (prereq for agent access; contingent on ADR Accepted)
 - lucos_creds#361 — audit/right-scope the over-broad `tests` CI key (security: prod-secret CI-exfil risk)
 - lucos_creds#362 — CLOSED not_planned (2026-06-07): key-NAME collision audit is conceptually broken (env vars reuse same key names by design → 100% false positives). See [[feedback_detector_inverse_failure_mode]] sibling-failure note.
-- lucos_dns#100 — dns config-sync test writes to PRODUCTION loganne/schedule_tracker (security flag; may cascade into those services needing test envs)
+- lucos_dns#100 — CLOSED not_planned (2026-06-07), folded into dns#99. Reconciled: the dns config-sync test is an ADR-0011 consumer test → real client + STUBBED transport, no real calls → **no creds test env needed, cascade did NOT trigger**. The ADR-0002 "may cascade into loganne/schedule_tracker needing test envs" consequence still holds in general but this instance was a mis-example (it's a stubbed test, not an integration test). See [[feedback_check_protocol_contract_before_accepting_break]].
 
 ## Why dns#99's endpoints legitimately go in creds (not compose)
 `lucos_dns/development` stores `LOGANNE_ENDPOINT`/`SCHEDULE_TRACKER_ENDPOINT` (type `simple`) → they vary by env → convention says creds, not hardcode. So dns#99's test env is convention-consistent (and trivially satisfies the bright-line: no secrets at all). Don't claim "dns doesn't need a creds test env" — checked, it does.
