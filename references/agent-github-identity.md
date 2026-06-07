@@ -39,24 +39,20 @@ So documentation-style placeholders in a comment body (e.g. ``GET /repos/{owner}
 
 **A related but distinct gotcha — leading `@` is interpreted as a filename.** `gh api`'s `-f` / `--field` flag uses an `@`-prefix on the value to mean "read the value from this file". So a body that *starts with* a GitHub `@`-mention (e.g. `@lucas42 — please confirm…`) is interpreted as "open the file named `lucas42 — please confirm…`" and fails with `error parsing "body" value: open <text>: no such file or directory`. The body never gets posted, but the wrapper output may look successful if you don't check exit codes. This affects every coordinator comment that opens with an `@`-mention — i.e. most "@lucas42, please…" routing comments. The fix is the file-backed pattern below.
 
-**Two safe workarounds:**
+**The safe workaround — heredoc-captured variable (use this for all multi-line bodies):**
 
-1. **File-backed body (preferred for any body that might contain API path templates, curly-brace placeholders, or start with a `@`-mention):**
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{N}/comments \
+    --method POST \
+    -f body="$(cat <<'ENDBODY'
+Your body text, with {owner}/{repo} placeholders preserved verbatim.
+ENDBODY
+)"
+```
 
-   ```bash
-   BODY_FILE=$(mktemp)
-   cat > "$BODY_FILE" <<'ENDBODY'
-   Your body text, with {owner}/{repo} placeholders preserved verbatim.
-   ENDBODY
-   ~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{N}/comments \
-       --method POST \
-       --field "body=@$BODY_FILE"
-   rm "$BODY_FILE"
-   ```
+`$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. **Do not use `--field "body=@$BODY_FILE"` (passes the literal path string, not file contents)** and **do not use `--field body-file=$FILE`** (silently creates an ignored field). Both patterns fail silently — the body ends up as a path string or null with no error from the wrapper.
 
-   The `@`-prefix tells `gh api` to read the field's value from the file. **Do not use `--field body-file=$FILE` or `--field body=$FILE`** — those send the literal path string (or with `body-file=`, silently create a `body-file` field the GitHub API ignores), so the issue/PR/comment gets created with `body: null`. The wrapper does not error; the failure is silent until you re-fetch the body and find it empty.
-
-2. **Avoid the placeholder syntax in prose entirely** — name the endpoint by its docs title (e.g. "the List repository Dependabot secrets endpoint") rather than the path template.
+**If the body contains curly-brace placeholders** (e.g. `{owner}/{repo}` in prose): `gh api` performs template substitution on these tokens inside field values regardless of shell quoting. To prevent this, reword the prose to avoid the `{owner}/{repo}` syntax — use the docs title instead.
 
 The same gotcha applies to `PATCH` calls that update an existing issue/PR body and to comments. See [`references/issue-creation.md`](issue-creation.md) for the canonical issue-creation patterns.
 
