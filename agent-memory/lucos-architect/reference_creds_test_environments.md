@@ -20,14 +20,14 @@ Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363; PR #
 ## The decisions
 
 1. **Contents** = standard env rule: only secrets or env-varying values; non-secret/non-varying config stays in `docker-compose.yml`. Legit contents = env-varying config + *test-scoped* secrets (e.g. a `test→test` linked credential, dummy keys).
-2. **Bright-line rule: a test env must NEVER contain a production secret.** Security endorsed it as a *single inspectable invariant* (beats the dual-invariant "allow prod secrets but exclude from agent keys"). Gated exception requires written rationale + agent-key exclusion + lucas42 sign-off; never agent-accessible.
+2. **Bright-line rule: a test env must NEVER contain a production secret.** Beats Option B (allow prod secrets, exclude from agent keys) on: (a) legit test secrets are non-prod *by construction* (test→test linked cred = fresh random value); (b) one absolute rule vs B's two drift-prone invariants (classify + scope-sync); (c) fewer/more-conspicuous failure paths. **NOT machine-enforceable** — key names collide across envs by design (env vars), values encrypted → no audit can detect a copied prod secret; rests on write-time discipline. (Original "single *inspectable* invariant" framing was WRONG — lucas42 corrected; see below.) Gated exception requires written rationale + agent-key exclusion + lucas42 sign-off; never agent-accessible.
 3. **Access:** standard test envs **ARE** in the agents' permission set (read+write, == development), safe because of rule 2. Needs `restrict-environment` extended to a **set** (`development,test`) — prerequisite follow-up lucos_creds#360.
 4. **Pulled by:** CI test jobs (existing unrestricted `tests` key — dns#99 path, **no code change blocks it**); agents (after #360); local dev (human key).
 
 ## Follow-ups
 - lucos_creds#360 — set-valued `restrict-environment` + `test` on agent key (prereq for agent access; contingent on ADR Accepted)
 - lucos_creds#361 — audit/right-scope the over-broad `tests` CI key (security: prod-secret CI-exfil risk)
-- lucos_creds#362 — periodic test-vs-prod key-NAME collision audit (defence-in-depth) + optional UI warning
+- lucos_creds#362 — CLOSED not_planned (2026-06-07): key-NAME collision audit is conceptually broken (env vars reuse same key names by design → 100% false positives). See [[feedback_detector_inverse_failure_mode]] sibling-failure note.
 - lucos_dns#100 — dns config-sync test writes to PRODUCTION loganne/schedule_tracker (security flag; may cascade into those services needing test envs)
 
 ## Why dns#99's endpoints legitimately go in creds (not compose)
