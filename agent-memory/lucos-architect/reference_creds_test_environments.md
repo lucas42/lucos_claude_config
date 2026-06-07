@@ -7,7 +7,7 @@ metadata:
 
 # Test environments in lucos_creds (ADR-0002, 2026-06-07)
 
-Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363; PR #364 (Proposed). Designed with lucos-security.
+Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363 (closed); **ADR ACCEPTED + MERGED via PR #364, 2026-06-07** (lucas42 approved). Designed with lucos-security. Live follow-up: #360 (set-valued key); #361 (tests-key audit). Known stale spot: ADR's "e.g. dns#100 cascade" example is a mis-example (see below) — possible post-merge doc tweak pending lucas42.
 
 **Genuinely greenfield** — NO secrets are stored with environment=`test` anywhere (lucas42 confirmed). Note: a `scp .../<system>/test/.env` exiting 0 does NOT prove a test env exists — `controller.go readFileByHandle` sets `found=true` unconditionally for any well-formed `system/env/.env` handle, and SYSTEM/ENVIRONMENT built-ins are auto-injected for any combo. (I briefly mis-concluded lucos_contacts/test existed from exit-0; reverted. See [[feedback_verify_ci_mechanism_before_relying_on_it]].)
 
