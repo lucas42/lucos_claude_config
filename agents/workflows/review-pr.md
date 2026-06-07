@@ -174,7 +174,7 @@ You may notice things beyond immediate correctness — adjacent improvements, po
 
 **PR URLs in completion reports must be derived from the API, not typed from memory.** Use the `html_url` field from the PR object you already fetched, or construct it as `https://github.com/lucas42/{repo}/pull/{number}` using the exact repo name you queried — never recall it from context. Repo names are easy to mis-type (e.g. `lucos` vs `lucos_loganne`), and wrong URLs in completion reports waste the reader's time.
 
-**Re-fetch every PR's state immediately before writing the completion report.** Do not rely on state from earlier in the session — a PR reviewed an hour ago may already have been merged (especially on fast-moving sessions with multiple PRs). For each PR in the report, call `gh-as-agent repos/lucas42/{repo}/pulls/{number} --jq '{state, merged_at, auto_merge}'` and use the live values. Describing a merged PR as "awaiting approval" is actively misleading to the team-lead.
+**Re-fetch every PR's state immediately before writing the completion report — and before any mid-session SendMessage that references a PR's merge/approval status.** This includes "stuck" escalations, "awaiting lucas42" status updates, and specialist-referral updates. Do not rely on state from earlier in the session — a PR reviewed an hour ago (or diagnosed as stuck five minutes ago) may already have merged. For each PR in the report, call `gh-as-agent repos/lucas42/{repo}/pulls/{number} --jq '{state, merged_at, auto_merge}'` and use the live values. Describing a merged PR as "awaiting approval" or "stuck" is actively misleading. (Confirmed failure: PR #6 diagnosed as "stuck — lucas42 needs to re-approve" after the merge had already landed at 23:03Z.)
 
 The message must cover, briefly:
 
