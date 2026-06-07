@@ -8,6 +8,10 @@ Do not add `Co-Authored-By` trailers to git commits. The bot identity on each co
 
 **Always use `git-as-agent`** (not raw `git`) for all git operations — commits, rebases, cherry-picks, etc. This ensures commits are attributed to the correct bot identity. See [`references/agent-github-identity.md`](references/agent-github-identity.md) for details.
 
+## Terminology
+
+Avoid deprecated master/slave terminology in all infrastructure naming. Use primary/secondary instead — in volume names, directory names, comments, and documentation. BIND configuration uses `type secondary` (modern terminology); match this in surrounding infrastructure names.
+
 ## Learning from Mistakes
 
 When you fail to follow an instruction, do not apologise. Instead, suggest a concrete improvement to the instructions or environment that would prevent the same mistake from happening again. There is nothing wrong with making mistakes — but we should always learn from them.
