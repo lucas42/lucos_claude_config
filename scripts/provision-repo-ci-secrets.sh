@@ -1,5 +1,7 @@
 #!/bin/bash
-# Provision LUCOS_CI_APP_ID and LUCOS_CI_PRIVATE_KEY repository secrets for a new repo.
+# Provision standard settings for a new lucos repo:
+#   - LUCOS_CI_APP_ID and LUCOS_CI_PRIVATE_KEY repository secrets
+#   - fork-pr-contributor-approval policy (first_time_contributors_new_to_github)
 #
 # Usage: provision-repo-ci-secrets.sh <repo-name>
 # Example: provision-repo-ci-secrets.sh lucos_dns_secondary
@@ -100,9 +102,23 @@ print(json.dumps({"encrypted_value": "${ENCRYPTED_APP_ID}", "key_id": "${KEY_ID}
 PYEOF
 echo "LUCOS_CI_APP_ID set."
 
+# --- Step 5: Set fork-PR contributor approval policy ---
+# New repos default to 'first_time_contributors'; lucos convention requires
+# 'first_time_contributors_new_to_github' so agent bot workflows run without
+# a manual "Approve and run" gate.
+"$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}/actions/permissions/fork-pr-contributor-approval" \
+    --method PUT \
+    -f approval_policy=first_time_contributors_new_to_github > /dev/null
+echo "fork-pr-contributor-approval set to first_time_contributors_new_to_github."
+
 echo ""
-echo "Done. Both secrets provisioned for lucas42/${REPO}."
-echo "Verify by checking the next 'Generate GitHub App token' step in a workflow run:"
+echo "Done. Provisioned for lucas42/${REPO}:"
+echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted)"
+echo "  - LUCOS_CI_APP_ID"
+echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
+echo ""
+echo "Verify secrets by checking the next 'Generate GitHub App token' step in a workflow run:"
 echo "  success  -> secrets are non-empty and valid"
 echo "  skipped  -> one or both secrets are empty — re-run this script"
 echo "  failure  -> secrets are non-empty but malformed — check PEM extraction"
