@@ -199,3 +199,7 @@ See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_K
 ## Risk Pattern: Webhook Fan-out Amplification
 
 See `risk-webhook-fanout-amplification.md` — client-side error bursts amplify ~2× via loganne fan-out (seinn incident 2026-05-22). Low risk currently but monitor if retry multiplier or subscriber count grows.
+
+## Reference: Loganne Agent Access
+
+See [reference-loganne-access.md](reference-loganne-access.md) — bearer token via `KEY_LUCOS_LOGANNE` in `~/sandboxes/lucos_agent/.env`; server-side filtering does NOT work, filter client-side; event type is `credentialUpdated`.
