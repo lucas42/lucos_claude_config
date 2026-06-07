@@ -57,8 +57,11 @@ Single container on avalon handles ALL hosts. See `lucos_backups.md`.
 ## xwing TLS certificate renewal
 certbot auto-renews at 30 days. **Do NOT raise issues** for certs expiring >30 days. Only raise if cert fails to renew past the 30-day mark.
 
+## New repo standup: run provision-repo-ci-secrets.sh
+Sets LUCOS_CI_PRIVATE_KEY (Python/re.DOTALL extraction), LUCOS_CI_APP_ID, fork-pr-approval policy in one step. grep|cut silently truncates multiline PEM to header only → `failure` on token step. See `new-repo-provisioning-script.md`.
+
 ## code-reviewer-auto-merge: PEM key formatting gotcha
-PEM keys from lucos_creds are space-flattened — convert before setting as GitHub Actions secrets. See `pem-key-formatting.md`.
+PEM keys must be extracted with Python (re.DOTALL), not grep|cut. Use `provision-repo-ci-secrets.sh`. See `pem-key-formatting.md` and `new-repo-provisioning-script.md`.
 
 ## Planned maintenance notifications
 Two channels: (1) GitHub comment pre-reboot; (2) Loganne `POST https://loganne.l42.eu/events` after recovery.
