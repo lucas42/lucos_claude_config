@@ -4,39 +4,19 @@ How to set GitHub App private keys (PEM secrets) on lucas42 repositories, and ho
 
 ## Setting GitHub Repository Secrets (PEM keys)
 
-When setting secrets that contain PEM private keys (e.g. `CODE_REVIEWER_PRIVATE_KEY`), the key must have **real newlines** — not the space-flattened format used by lucos_creds. lucos_creds stores PEM keys with newlines replaced by spaces and wrapped in double quotes. The `actions/create-github-app-token@v2` action (and most consumers) need a properly-formatted PEM with actual `\n` characters.
+**Use the provisioning script** — `~/.claude/scripts/provision-repo-ci-secrets.sh <repo-name>`. This sets both `LUCOS_CI_APP_ID` and `LUCOS_CI_PRIVATE_KEY` correctly in one step and is mechanically safe. Run it instead of constructing the API calls by hand.
 
-Conversion procedure:
-
-1. Extract the PEM using Python — **do not use `grep | cut -d'"' -f2`**, which only returns the first line of a multiline value and silently truncates the key to just the header:
-
-```python
-import re, json
-
-with open('/home/lucas.linux/sandboxes/lucos_agent/.env', 'r') as f:
-    content = f.read()
-
-# Handles both real-newline and space-flattened PEM formats
-match = re.search(r'LUCOS_CI_PEM="((?:[^"\\]|\\.)*)"', content, re.DOTALL)
-pem = match.group(1)
-# If space-flattened (spaces instead of newlines in body), convert:
-# pem = pem.replace(' ', '\n')  # only if needed — verify first
-print(f"Length: {len(pem)}, newlines: {pem.count(chr(10))}")
-print(pem[:50])
+```bash
+~/.claude/scripts/provision-repo-ci-secrets.sh lucos_dns_secondary
 ```
 
-2. Verify: must start with `-----BEGIN RSA PRIVATE KEY-----`, end with `-----END RSA PRIVATE KEY-----`, and have 20+ newlines. A 32-char result means only the header was extracted — re-extract.
-3. Encrypt using the repo's libsodium public key (PyNaCl) and set via the GitHub API:
+**Why the script exists:** `grep | cut -d'"' -f2` silently truncates multiline values to the first line. The PEM private key spans ~27 lines; `cut` returns only the 32-char header (`-----BEGIN RSA PRIVATE KEY-----`). The secret is then non-empty (so `has_app_token=true` and the token step runs) but invalid (PEM can't be parsed → step `failure`). The script uses Python with `re.DOTALL` which handles multiline values correctly, and includes a sanity check (20+ newlines) before touching any API.
 
-```python
-from nacl.encoding import Base64Encoder
-from nacl.public import PublicKey, SealedBox
+**Manual procedure (if script can't be used):**
 
-pub_key = PublicKey(repo_pub_key_b64, encoder=Base64Encoder)
-encrypted = SealedBox(pub_key).encrypt(pem.encode('utf-8'), encoder=Base64Encoder)
-# PUT to repos/lucas42/{repo}/actions/secrets/LUCOS_CI_PRIVATE_KEY
-# with {"encrypted_value": encrypted.decode(), "key_id": key_id}
-```
+1. Extract the PEM with Python — `re.search(r'LUCOS_CI_PEM="((?:[^"\\]|\\.)*)"', content, re.DOTALL)` — never `grep | cut`.
+2. Verify: 1600+ chars, 20+ newlines, starts with `-----BEGIN RSA PRIVATE KEY-----`.
+3. Encrypt with PyNaCl `SealedBox` against the repo's public key; PUT to the secrets API.
 
 **Do not** store a truncated or space-flattened PEM as a repository secret — a truncated key causes `failure` on the token generation step (non-empty but invalid); space-flattened causes `InvalidCharacterError`.
 
