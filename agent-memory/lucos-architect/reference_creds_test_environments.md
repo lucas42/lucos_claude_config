@@ -7,9 +7,9 @@ metadata:
 
 # Test environments in lucos_creds (ADR-0002, 2026-06-07)
 
-Triggered by lucos_dns#99. Tracking issue lucos_creds#363; PR #364 (Proposed). Designed with lucos-security.
+Triggered by lucos_dns#99 (first consumer). Tracking issue lucos_creds#363; PR #364 (Proposed). Designed with lucos-security.
 
-**NOT greenfield:** `lucos_contacts/test` already exists & is in active prod use — verified via lucos_contacts `.circleci/config.yml` (`scp tests@creds.l42.eu:$CIRCLE_PROJECT_REPONAME/test/.env`, no error suppression) + CircleCI build 4563 (scp exit 0). The ADR formalises existing-but-undocumented practice. Pre-existing test envs predate the bright-line rule → must be retro-audited (a dev-scoped key can't read `test`, so it's a human check).
+**Genuinely greenfield** — NO secrets are stored with environment=`test` anywhere (lucas42 confirmed). Note: a `scp .../<system>/test/.env` exiting 0 does NOT prove a test env exists — `controller.go readFileByHandle` sets `found=true` unconditionally for any well-formed `system/env/.env` handle, and SYSTEM/ENVIRONMENT built-ins are auto-injected for any combo. (I briefly mis-concluded lucos_contacts/test existed from exit-0; reverted. See [[feedback_verify_ci_mechanism_before_relying_on_it]].)
 
 ## Mechanism facts (verified in server/src)
 
