@@ -32,3 +32,13 @@ for e in [e for e in events if e.get('source')=='lucos_creds'][:10]:
 **Auth model:** shared read key, not per-client CLIENT_KEYS. Fine for read-only audit logs.
 
 **Note:** `KEY_LUCOS_LOGANNE` is a shared read key — fine for read-only audit logs, no per-agent rotation needed.
+
+## lucos_creds linked credential updates — two events per change
+
+`updateLinkedCredential` emits **two** loganne events per update:
+
+1. **Client-side event** — keyed `KEY_<SERVER_SYSTEM>` (e.g. `KEY_LUCOS_MEDIA_METADATA_API`) on the **client** system. **Carries the scope value** in humanReadable: `"Credential KEY_LUCOS_MEDIA_METADATA_API updated in lucos_arachne (production) with scope \"export:read\""`.
+
+2. **Server-side event** — keyed `CLIENT_KEYS` on the **server** system. Does **not** carry scope or client identity (CLIENT_KEYS is a compound credential holding many entries).
+
+**To verify or audit a scope change: query the client-side `KEY_<SERVER_SYSTEM>` event, not the server-side `CLIENT_KEYS` event.** Filtering by `humanReadable` containing `KEY_LUCOS_<SERVER>` and `production` is the right approach. The `CLIENT_KEYS` events only confirm *that* the compound credential was modified — not which entry or what scope.
