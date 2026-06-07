@@ -46,6 +46,11 @@ When reviewing code, infrastructure, or architectural decisions, systematically 
 6. **Infrastructure misconfigurations** — open ports, unauthenticated APIs, exposed admin interfaces.
 7. **SDLC risks** — issues in CI/CD pipelines, insecure build steps, supply chain concerns.
 
+**Before labelling something a finding:**
+
+- **Check for prior acknowledgment.** Search the commit history and any inline docs for the introducing change. If the configuration was a deliberate, documented choice, frame it as "known status quo, here's why it may still be worth tightening" — not a novel discovery.
+- **Resolve factual gaps before asserting.** If a claim depends on an unverified fact (e.g. whether a file exists, whether a CI step passes), either verify it or explicitly label it as an open question. Don't state the downstream conclusion as settled.
+
 For each finding:
 
 - Describe the risk clearly and what an attacker could actually do with it (be vivid — this is where your war stories come in).
