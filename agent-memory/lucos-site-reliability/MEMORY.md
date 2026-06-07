@@ -4,6 +4,10 @@
 
 - [home-host backups red = ISP dropped upstream IPv6 transit](pattern_salvare_ipv6_prefix_withdrawal.md) — `lucos_backups/host-tracking-failures` red for xwing/salvare/aurora = ISP stopped routing `/64` upstream BOTH ways while LAN v6 stays healthy (NOT a prefix withdrawal — verified: xwing↔salvare LAN v6 fine, CPE answers v6, only internet↔home transit dead). deploys/docker_health on `salvare-v4` stay green. Self-resolves when transit returns; don't force IPv4. Diagnosed 2026-06-05.
 
+## Loganne read / self-verify
+
+- [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer `KEY_LUCOS_LOGANNE`; `/events` filters are CLIENT-SIDE only (`source`/`type`/`limit` ignored until lucos_loganne#522). cred event `type=credentialUpdated`; deploy `type=deploySystem`. eolas containers are `lucos_eolas_web`/`_app`, NOT `lucos_eolas`.
+
 ## Ops-check gotchas
 
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
