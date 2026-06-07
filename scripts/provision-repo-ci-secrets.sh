@@ -112,11 +112,96 @@ echo "LUCOS_CI_APP_ID set."
     -f approval_policy=first_time_contributors_new_to_github > /dev/null
 echo "fork-pr-contributor-approval set to first_time_contributors_new_to_github."
 
+# --- Step 6: Set LUCOS_CI_APP_ID and LUCOS_CI_PRIVATE_KEY in Dependabot secrets ---
+# GitHub only exposes Dependabot secrets (not Actions secrets) when a Dependabot
+# PR triggers a workflow. Without them in the Dependabot store, the reusable
+# dependabot-auto-merge workflow falls back to GITHUB_TOKEN, breaking auto-merge.
+DEP_KEY_RESPONSE=$("$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}/dependabot/secrets/public-key")
+DEP_PUB_KEY=$(echo "$DEP_KEY_RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['key'])")
+DEP_KEY_ID=$(echo "$DEP_KEY_RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['key_id'])")
+echo "Dependabot public key_id: $DEP_KEY_ID"
+
+# Encrypt APP_ID for Dependabot
+DEP_ENCRYPTED_APP_ID=$(python3 - <<PYEOF
+from nacl.encoding import Base64Encoder
+from nacl.public import PublicKey, SealedBox
+pub_key = PublicKey("${DEP_PUB_KEY}", encoder=Base64Encoder)
+encrypted = SealedBox(pub_key).encrypt("${APP_ID}".encode('utf-8'), encoder=Base64Encoder)
+print(encrypted.decode())
+PYEOF
+)
+python3 -c "import json; print(json.dumps({'encrypted_value': '${DEP_ENCRYPTED_APP_ID}', 'key_id': '${DEP_KEY_ID}'}))" | \
+    "$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}/dependabot/secrets/LUCOS_CI_APP_ID" \
+    --method PUT --input /dev/stdin > /dev/null
+echo "LUCOS_CI_APP_ID set in Dependabot secrets."
+
+# Encrypt PEM for Dependabot (must use temp-file Python — heredoc shell expansion breaks the regex)
+DEP_SCRIPT=$(mktemp /tmp/dep-enc-XXXXXX.py)
+cat > "$DEP_SCRIPT" << PYEOF
+import re, json, os
+from nacl.encoding import Base64Encoder
+from nacl.public import PublicKey, SealedBox
+env_path = os.path.expanduser('~/sandboxes/lucos_agent/.env')
+with open(env_path, 'r') as f:
+    content = f.read()
+match = re.search(r'LUCOS_CI_PEM="((?:[^"\\\\]|\\\\.)*)"', content, re.DOTALL)
+if not match:
+    raise ValueError("LUCOS_CI_PEM not found")
+pem = match.group(1)
+if pem.count('\n') < 10:
+    raise ValueError(f"PEM looks truncated: {pem.count(chr(10))} newlines")
+pub_key = PublicKey("${DEP_PUB_KEY}", encoder=Base64Encoder)
+encrypted = SealedBox(pub_key).encrypt(pem.encode('utf-8'), encoder=Base64Encoder)
+print(json.dumps({"encrypted_value": encrypted.decode(), "key_id": "${DEP_KEY_ID}"}))
+PYEOF
+python3 "$DEP_SCRIPT" | \
+    "$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}/dependabot/secrets/LUCOS_CI_PRIVATE_KEY" \
+    --method PUT --input /dev/stdin > /dev/null
+rm "$DEP_SCRIPT"
+echo "LUCOS_CI_PRIVATE_KEY set in Dependabot secrets."
+
+# --- Step 7: Enable delete-branch-on-merge ---
+"$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}" \
+    --method PATCH \
+    -f delete_branch_on_merge=true > /dev/null
+echo "delete_branch_on_merge enabled."
+
+# --- Step 8: Branch protection on main ---
+# Requires PRs pass CI (ci/circleci: lucos/build) before merge.
+# No approval requirement and no strict mode — both would block Dependabot auto-merge.
+# IMPORTANT: The exact required check name depends on the repo's CircleCI config.
+# This sets the standard single-build check; add test/CodeQL checks manually if needed.
+BP_BODY=$(mktemp /tmp/branch-protection-XXXXXX.json)
+cat > "$BP_BODY" <<'BPEOF'
+{
+  "required_status_checks": {
+    "strict": false,
+    "contexts": ["ci/circleci: lucos/build"]
+  },
+  "enforce_admins": null,
+  "required_pull_request_reviews": null,
+  "restrictions": null
+}
+BPEOF
+"$GH_AS_AGENT" --app lucos-system-administrator \
+    "repos/lucas42/${REPO}/branches/main/protection" \
+    --method PUT \
+    --input "$BP_BODY" > /dev/null
+rm "$BP_BODY"
+echo "Branch protection enabled on main (required: ci/circleci: lucos/build)."
+echo "NOTE: if the repo has test jobs or CodeQL, add them manually via the GitHub UI or API."
+
 echo ""
 echo "Done. Provisioned for lucas42/${REPO}:"
-echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted)"
-echo "  - LUCOS_CI_APP_ID"
+echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted) — Actions + Dependabot secrets"
+echo "  - LUCOS_CI_APP_ID — Actions + Dependabot secrets"
 echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
+echo "  - delete_branch_on_merge = true"
+echo "  - Branch protection on main (required: ci/circleci: lucos/build, strict=false)"
 echo ""
 echo "Verify secrets by checking the next 'Generate GitHub App token' step in a workflow run:"
 echo "  success  -> secrets are non-empty and valid"
