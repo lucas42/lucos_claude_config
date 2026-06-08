@@ -7,7 +7,13 @@ metadata:
 
 # lucos_firewall enforce rollout (lucos#182)
 
-Status 2026-06-08: all 3 hosts (xwing, salvare, avalon) running `lucas42/lucos_firewall:1.0.6` in DRY_RUN, image includes #14 (28 `-i br+ -j RETURN` lines in dry-run log = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host.
+Status 2026-06-08: all 3 hosts running `lucos_firewall` with #14 (28 `-i br+ -j RETURN` lines = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host.
+
+**xwing FLIPPED TO ENFORCE 2026-06-08 10:45 — CLEAN, hairpin HELD (empirical proof).** Sequence: `10:45:16 effective: enforce` → IPv4+IPv6 applied → 30s confirm → `10:45:46 Rules confirmed and active` (no auto-revert). private.l42.eu + staticmedia.l42.eu stayed 302 on every 8s fresh-connection poll right across the flip → **#14 br+/docker0 RETURN successfully exempts the live 172.17.0.1 router hairpin under enforce.** This is the proof the whole estate (esp. avalon's ~35 hairpin svcs) was riding on. xwing:80→301, 443→400 (allow-listed, reachable); 8016/8017→000 (blocked, but already were pre-flip). Enforce mechanism: DRY_RUN **env override** beats configy unconditionally — real flip = lucas42 redeploys clean (no DRY_RUN, image 1.0.7) THEN configy `firewall_enforce=true` PR merges → ~configy-CI + next 60s poll + 30s confirm before enforce applies (NOT instant on merge). Revert hand: `docker exec lucos_firewall iptables -D DOCKER-USER -j DROP` (seconds).
+
+## Monitoring gotcha (my own tooling, bit me twice this session)
+- Canary script alerting on `*502*|*503*|*000*` against the WHOLE curl output string false-matches the `time_total` digits (`0.033503s` contains "503"). Alert on the **http_code field only**.
+- Detector greping `docker logs --since Nm` for state markers re-matches STALE pre-flip lines (`effective: dry-run` from before the flip is still in a 3m window). For post-flip failure detection, trigger ONLY on unambiguous failure markers (`Auto-reverting`/`Confirmation failed`), not on `effective: dry-run`, and use a tight `--since 90s`.
 
 ## CRITICAL: dry-run logs the RULESET, not would-deny packets
 - DRY_RUN mode logs `[DRY-RUN] Would apply via iptables-restore: <full ruleset>`. There is **NO `-j LOG`/NFLOG target** anywhere — `INPUT DROP` policy and `-A DOCKER-USER -j DROP` are *silent*. So there is **no would-deny packet log to review**. Any pre-enforce review is static coverage-analysis (allow-list vs listening/published ports), not empirical traffic observation.
