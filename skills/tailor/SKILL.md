@@ -80,7 +80,9 @@ Identify the ATS from the URL pattern:
 - **Lever** (`jobs.lever.co/{company}/{id}`): `curl -s "https://api.lever.co/v0/postings/{company}/{id}"`.
 - **Pinpoint** (custom careers domain, e.g. `careers.{company}.{tld}`, path `/postings/{uuid}`): `curl -s "https://careers.{company}.{tld}/postings.json"` returns all live postings as JSON (`data[]`) with full `description` HTML, `compensation`, `deadline_at`, and `job.department`/`division`. Match the target by its UUID appearing in the entry's `url`/`path`. The per-posting `.json` returns 406; a fuller JD PDF is often linked inside the `description` HTML (grep for `href`).
 - **Workday** (`{tenant}.wd{N}.myworkdayjobs.com/{site}/job/{path}`): use the CXS JSON endpoint — `curl -s "https://{tenant}.wd{N}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/job/{path}" -H "Accept: application/json"`. Note `{tenant}` appears twice and `{site}` + job `{path}` mirror the public URL. Returns `jobPostingInfo` with `title`, `location`, `startDate`/`endDate` (endDate = closing date), `timeType`, `remoteType`, and `jobDescription` (HTML). More reliable than WebFetch. Confirmed 2026-06-03 on a `wd5` tenant.
+- **Phenom** (`careers.{company}.com`, often `#LI-` tagged): WebFetch returns a templated "this job has been filled" message and the JSON API is tenant-gated — that message is **not** reliable evidence the role is closed. Don't treat it as filled; give Luke the URL and ask him to paste the JD contents.
 - **iCIMS / Taleo / generic**: try WebFetch first. If thin content comes back, ask Luke to paste the JD text.
+- **Whenever a fetch is genuinely stuck** (any ATS), the default is to give Luke the URL and ask him to paste the JD — don't proceed on a partial/thin read or assume the role is closed.
 
 Extract:
 - Role title and seniority level
