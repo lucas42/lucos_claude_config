@@ -7,7 +7,11 @@ metadata:
 
 # lucos_firewall enforce rollout (lucos#182)
 
-Status 2026-06-08: all 3 hosts running `lucos_firewall` with #14 (28 `-i br+ -j RETURN` lines = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host. xwing+salvare ENFORCING (INPUT DROP), avalon NOT (INPUT ACCEPT, gated on PR #14 + lucas42).
+**ROLLOUT COMPLETE 2026-06-08 — ALL 3 HOSTS ENFORCING (INPUT DROP, firewall_enforce=true).** xwing+salvare flipped 10:45/10:59; **avalon flipped 14:24:51, Rules confirmed and active 14:25:12 — CLEAN, no auto-revert.** Estate-wide monitoring: zero failing checks post-flip.
+
+**avalon flip verified both probes held across the enforce window (the unique same-bridge risk PASSED):** same-bridge app→db direct socket probe OK on all 3 stacks (photos_api→172.16.0.3:5432 + redis:6379, contacts_app→192.168.0.2:5432, eolas_app→192.168.192.2:5432) immediately at INPUT=DROP AND after confirm; photos `/_info` db-reachable+redis-reachable + contacts `db` all True; 10-service hairpin sample all 200 both windows. avalon `bridge-nf-call-iptables=1` confirmed, so app→postgres genuinely traverses DOCKER-USER → exempted by the single `-i br+ -j RETURN` wildcard (1 line covers all bridges; that's why a rule-count of 1 is correct, NOT a missing-rules signal). DOCKER-USER terminal `-j DROP` present. Watch tooling: `/tmp/avalon_enforce_probe.sh` (baseline) + `/tmp/avalon_enforce_watch.sh` (polls INPUT, probes instant it flips to DROP, captures confirm/revert marker).
+
+Earlier 2026-06-08 status (historical): all 3 hosts running `lucos_firewall` with #14 (`-i br+ RETURN` live). Rollout order xwing→salvare→avalon, flip lucas42's call per host.
 
 **INSPECTION VANTAGE: use `docker exec lucos_firewall iptables -S` (and `ip6tables -S`), NOT host `sudo iptables`.** Passwordless `sudo` is NOT available on production hosts (`sudo -n iptables` → "a password is required"). The firewall container runs in the host netns with NET_ADMIN, so its iptables view IS the host's live ruleset. Beware `2>/dev/null` masking a sudo failure as an empty (false-negative) result — verified this bit me 2026-06-08.
 
