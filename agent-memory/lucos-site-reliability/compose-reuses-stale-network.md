@@ -1,9 +1,13 @@
 ---
 name: compose-reuses-stale-network
-description: Docker Compose silently REUSES a pre-existing network instead of applying changed enable_ipv6/subnet/IPAM config — a correct compose can deploy a stale network
+description: Docker Compose silently REUSES a pre-existing network OR named volume instead of applying changed config (enable_ipv6/subnet/IPAM, or NFS driver_opts addr=) — a correct compose can deploy stale resources
 metadata:
   type: pattern
 ---
+
+# Compose foot-gun: a pre-existing network OR VOLUME is reused, NOT reconciled to new config
+
+**Applies to named VOLUMES too, not just networks** (both bit us on 2026-06-08). A redeploy reuses an existing named volume with its OLD `driver_opts` and will NOT apply changed options. Hit by lucos_backups#306's NFS-mount migration: compose correctly changed the NFS `o: "addr=aurora.local…"` → `addr=aurora.lan`, the 3 containers (lucos_private/static_media/media_import) redeployed on xwing 17:17–17:36, but `docker volume inspect` still showed `addr=aurora.local` — the pre-existing `*_medlib`/`*_public`/`*_media` volumes were reused. Mounts stayed *healthy* only because aurora.local still resolved (mDNS), so the migration goal (get off mDNS) was NOT achieved — latent. `/proc/mounts` shows only the resolved IP (192.168.8.143, same for both names) so it can't tell you the name — **`docker volume inspect <v> -f '{{.Options.o}}'` reveals the real configured addr.** Fix: stop container, `docker volume rm <v>`, redeploy (NFS data on aurora is untouched — only the local mount definition is recreated). A plain redeploy won't reconcile it.
 
 # Compose foot-gun: a pre-existing network is reused, NOT reconciled to new config
 
