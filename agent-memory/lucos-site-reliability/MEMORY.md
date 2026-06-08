@@ -54,6 +54,7 @@
 
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
 - [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress filter (`is_dependency_suppressed/3`) AND unsuppress cascade (`find_dependent_systems/2`). A universal dependsOn (e.g. on synthetic fetch-info, #272) fans pending_verification estate-wide on every dep deploy. Missed read site 2 on 2026-06-03; architect caught it.
+- [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md) — `PUT /suppress/<system>` opens a 600s auto-expiring window that by design IGNORES pre-existing failures (snapshots them as continuing→keep alerting); zero effect on an already-failing check, board stays red. Can't mark an ongoing failure "known". Auth=Bearer from monitoring `CLIENT_KEYS` (lucos_agent key NOT in my .env — read via `docker exec lucos_monitoring printenv`). For a known trail: Loganne plannedMaintenance + GitHub comment + own sentinel. Verified 2026-06-08.
 
 ## Docker daemon recovery
 
