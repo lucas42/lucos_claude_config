@@ -101,7 +101,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album
 - [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals get sessions not bearer; unify authN not authZ; **authN-easy/authZ-blocker (lucas42 2026-06-08): easy uniform acquisition, default-deny prod scope, scope-GRANT is the crown jewel not the credential**
-- [File uploader](project_file_uploader.md) — lucos#209: **ADR-0013 drafted (PR #235)**; stateless 3-tier uploader; uniform backend-owned-schema ingest contract; 6 Qs answered; build tickets held until ADR merge
+- [File uploader](project_file_uploader.md) — lucos#209: **PARKED back to Ideation 2026-06-08**; ADR-0013 left as draft PR #235 (do NOT mark ready); build tickets held indefinitely; design/Q&A valid for future revisit
 - [Google Photos migration](project_photos_google_migration.md) — lucos_photos#424: ~78GB; dedup crux (SHA-256 misses Google-reprocessed dups → date-cutoff); **backup daily-full-tarball broke at 6.6GB (lucos_backups#309), copy-window binding, photos→aurora-only**; 5 Qs to lucas42
 - [DNS secondary modelling](project_dns_secondary_modelling.md) — configy one-system/one-domain/one-host vs heterogeneous multi-host; recommend two-systems-one-repo; ADR lucos#213; dns#79/#95/configy#208 on hold
 
