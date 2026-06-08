@@ -152,3 +152,6 @@ Lower metric wins even if linkdown. docker0 with public /64 silently swallows al
 
 ## DR assessment: bespoke corrections to external data are the irreplaceable part
 "Source data still exists on NAS" doesn't mean the DB is reconstructable — check for bespoke fixes to bad source data and manual annotations built on top. See `feedback_dr_bespoke_correction_data.md`.
+
+## lucos_dns: BIND restart risk + rndc fallback + circular config-sync failure
+Until #104 (validate-before-install guard) ships, avalon BIND restarts are high-risk — zone load fails hard with no fallback. rndc can become unauthenticated (key regenerates on restart); fallback is `docker kill --signal SIGHUP lucos_dns_bind`. config-sync defaults to external CONFIGY_ENDPOINT → circular failure when DNS is down; fix is `http://lucos_configy:8034`. See `incident-2026-06-07-dns-outage.md`.
