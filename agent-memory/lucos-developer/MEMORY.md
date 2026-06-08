@@ -122,6 +122,7 @@ Always manually review generated migration files before committing. Autogenerate
 ## PR Process
 
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
+- [Partial issue Closes keyword](feedback_partial_issue_closes.md) — use "Part of #N" / "Refs #N" when PR only fixes one of several root causes; save `Closes` for full resolution
 - [Reporting PR completion: unsupervised vs non-unsupervised repos](feedback_pr_completion_reporting.md) — use different language depending on repo type
 - [Check existing issues before filing](feedback_check_existing_issues.md) — search open issues first; other agents may have already filed the same finding
 - [Grep for old name before renaming](feedback_rename_grep.md) — always `grep -r "old_name" .` before committing a rename; missed reference caused crash-loop + outage (lucos_arachne #267/#280)
