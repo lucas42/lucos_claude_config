@@ -34,7 +34,8 @@ This returns the next implementable issue from the **lucOS Issue Prioritisation*
 - Do not re-check the priority label and conclude the position must be wrong.
 - Do not reason from recent conversation context (e.g. "lucas42 said this was for later, so the position must be a board default") — lucas42 routinely repositions things deliberately, including items he previously deferred, when capacity opens up.
 - Do not assume a position is "default" or "accidental" just because you recently added the item to the board.
-- Do not reposition the item before dispatching — dispatch it. If the position is genuinely wrong, lucas42 will reposition it himself between turns; that's his call, not yours.
+- Do not reframe a reposition as "fixing my own triage artifact" or "completing my positioning" — **even if you recently added the item and have a specific mechanistic story for why it's on top** (e.g. "items added via the project API default to the top, so this position is meaningless"). lucas42 routinely drags items to the top of Ready to prioritise them, so a top item is at least as likely his deliberate placement as your artifact. A top position you don't *remember him* setting is not evidence you set it.
+- Do not reposition the item before dispatching — dispatch it. If the position is genuinely wrong, lucas42 will reposition it himself between turns; that's his call, not yours. **Never move a different item above what `/next` returned and dispatch that instead.** If you truly believe the order is wrong, dispatch what `/next` returned anyway, or ask lucas42 before changing the order — never silently override it.
 
 The only valid reason not to dispatch what the script returns is a hard guardrail failure surfaced by `/dispatch` itself (open dependency, existing PR, estate-rollout detection). Anything else is second-guessing.
 
