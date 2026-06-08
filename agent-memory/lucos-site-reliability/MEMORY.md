@@ -54,6 +54,7 @@
 ## avalon IPv6 docker bridging
 
 - [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time are IPv4-only](reference_avalon_ipv6_bridging.md) — daemon `ipv6:true` + global `fixed-cidr-v6 2001:41d0:8:dc2c::/64` + Docker 29 (ip6tables default-on). `lucos_dns_default`/`bridge`=EnableIPv6, ULA fd00:2::/64, NAT66→global works (lucos_dns_bind ping6's salvare). `lucos_monitoring_default`/`lucos_time_default`=IPv4-ONLY → can't egress IPv6 & DON'T reach salvare (salvare reports outbound). salvare IPv6-only reachable. #307 bridge-backups+enable_ipv6 SAFE for IPv6→salvare (verified; architect's monitoring-precedent evidence wrong, conclusion right). enable_ipv6 is per-network, not automatic. Verified 2026-06-08.
+- [Compose silently REUSES a stale network — correct compose can deploy stale config](compose-reuses-stale-network.md) — if `<project>_default` exists, Compose reuses it as-is, ignoring changed `enable_ipv6`/subnet/IPAM. Bit #307: correct compose (enable_ipv6+fd00:3::/64) but stale Sept-2024 IPv4-only network reused → backups→salvare broke. Diagnostic: live `docker network inspect` EnableIPv6/subnet ≠ compose; don't re-read compose, inspect the live net. Fix: `network rm`+recreate (plain `up` won't reconcile). Verify the dependent path, not just "container started".
 
 ## Monitoring dependsOn / schedule_tracker mechanics
 
