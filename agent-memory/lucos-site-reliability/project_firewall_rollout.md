@@ -7,7 +7,11 @@ metadata:
 
 # lucos_firewall enforce rollout (lucos#182)
 
-Status 2026-06-08: all 3 hosts running `lucos_firewall` with #14 (28 `-i br+ -j RETURN` lines = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host.
+Status 2026-06-08: all 3 hosts running `lucos_firewall` with #14 (28 `-i br+ -j RETURN` lines = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host. xwing+salvare ENFORCING (INPUT DROP), avalon NOT (INPUT ACCEPT, gated on PR #14 + lucas42).
+
+**INSPECTION VANTAGE: use `docker exec lucos_firewall iptables -S` (and `ip6tables -S`), NOT host `sudo iptables`.** Passwordless `sudo` is NOT available on production hosts (`sudo -n iptables` → "a password is required"). The firewall container runs in the host netns with NET_ADMIN, so its iptables view IS the host's live ruleset. Beware `2>/dev/null` masking a sudo failure as an empty (false-negative) result — verified this bit me 2026-06-08.
+
+**mDNS-drop breakage RESOLVED 2026-06-08 13:48 via Amendment 3 (`lucos_firewall:1.0.8`, PR #17).** Base-allow link-local mDNS UDP 5353: v4 `-d 224.0.0.251/32`, v6 `-d ff02::fb/128`, both ACCEPT, present in live ruleset on xwing+salvare under INPUT DROP. Verified end-to-end: `.local` resolution restored cross-host (aurora/xwing/salvare.local all resolve again); ad-hoc backups tracking refresh (`POST /refresh-tracking` on avalon backups container, HTTP 303) → `host-tracking-failures` healthy in both backups `/_info` and monitoring. The carve-out alone resolves the breakage — the 4 aurora `.lan` PRs (NFS + configy) are robustness follow-up, not load-bearing. backups container runs on **avalon**, tracking refreshes hourly (`backups.cron` min 7).
 
 **salvare FLIPPED TO ENFORCE 2026-06-08 10:59 — CLEAN.** `10:59:02 effective: enforce` → `10:59:32 Rules confirmed and active` (no auto-revert). SSH/22 up every 8s poll across the window; real SSH login verified under enforce (`SSH_LOGIN_OK`); ICMP up. mDNS dropped, zero impact (harmless case confirmed). Containers (linuxplayer, docker_health, backups) all outbound-only, unaffected. salvare signal = SSH reachability + host up + firewall confirm (no hairpin to watch). 2 of 3 hosts now enforced; avalon remaining.
 
