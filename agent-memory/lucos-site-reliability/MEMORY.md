@@ -73,6 +73,10 @@
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
 - [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — link 4 (container) empty does not imply link 1 (lucos_creds) missing; usually it's link 3 (docker-compose.yml). Walk in order. lucas42 corrected me 2026-05-23 on lucos_loganne#490.
 
+## lucos_monitoring re-alert per deploy
+
+- [Repeated alerts for the SAME static failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — N `monitoringAlert` with ZERO recoveries between ≠ flapping. Each `deploySystem` re-fires via `monitoring_state_server.erl:131` "still unhealthy after deploy — alerting" (`FailingNow>0` post-window). By design (ADR-0003, #252/#264). Diagnosed 2026-06-08: lucos_backups deployed 5× iterating #309 → 5 create-backups alerts ~1min after each. Loganne time field is `date`; deploySystem `system`=None (match humanReadable).
+
 ## lucos_monitoring email quirks
 
 - [Alert suppression is asymmetric → orphaned "Everything OK" emails](pattern_monitoring_suppression_asymmetry.md) — suppressed failures (deploy-window / `dependsOn`) silence the failing email but NOT the recovery email. Diagnostic: `suppressed via dependency`/`Alert suppressed during deploy window` then later `Send notifications for X` with no emailed alert between. Tracked in lucos_monitoring#264; if it recurs before #264 ships, comment there, don't refile.
