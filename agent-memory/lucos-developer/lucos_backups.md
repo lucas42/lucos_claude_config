@@ -23,10 +23,6 @@ Requires changes in **two repos**:
 
 As of PR #311, `Host.copyTo()` uses `rsync -az --partial --timeout=300 -e 'ssh ...'` with `timeout=None` on `connection.run()`. Rationale: scp's `timeout=600` killed mid-transfer for large volumes (6.6 GB photos volume). rsync's `--timeout` is idle I/O timeout, not wall-clock. **rsync runs on the source host (avalon), not in the Docker container** — the container just SSH-instructs the host.
 
-## tolerate_live_file
-
-`Volume.tolerate_live_file` (bool, default False): when True, `archiveLocally()` uses `warn=True` and tolerates tar exit code 1 (file changed while reading). Set on `lucos_media_manager_stateFile` in lucos_configy (PR #218).
-
 ## References
 
 - [[lucos-configy-null-fields]] — optional fields serialize as explicit null; use `dict.get(k) or default` for Option<T>, `dict.get(k, default)` for `#[serde(default)] bool`
