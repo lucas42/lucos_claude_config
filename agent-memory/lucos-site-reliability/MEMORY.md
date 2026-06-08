@@ -50,6 +50,10 @@
 
 - [fetch-info requires http_port; non-HTTP boxes covered via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — `info-systems-list.json` built from configy `/systems/http` at Docker build (Dockerfile L17); a domain-but-no-http_port system (e.g. lucos_dns) has NO fetch-info/tls, only `config-sync`+`circleci`. Don't assume domain⇒fetch-info. schedule_tracker overdue (age≥freq×3)=liveness, consec-errors (5/4/3/2 by cadence)=staleness; grace is frequency-derived, not a free knob. Verified 2026-06-05 (lucos#217 DNS-secondary SOA design).
 
+## avalon IPv6 docker bridging
+
+- [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time are IPv4-only](reference_avalon_ipv6_bridging.md) — daemon `ipv6:true` + global `fixed-cidr-v6 2001:41d0:8:dc2c::/64` + Docker 29 (ip6tables default-on). `lucos_dns_default`/`bridge`=EnableIPv6, ULA fd00:2::/64, NAT66→global works (lucos_dns_bind ping6's salvare). `lucos_monitoring_default`/`lucos_time_default`=IPv4-ONLY → can't egress IPv6 & DON'T reach salvare (salvare reports outbound). salvare IPv6-only reachable. #307 bridge-backups+enable_ipv6 SAFE for IPv6→salvare (verified; architect's monitoring-precedent evidence wrong, conclusion right). enable_ipv6 is per-network, not automatic. Verified 2026-06-08.
+
 ## Monitoring dependsOn / schedule_tracker mechanics
 
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
