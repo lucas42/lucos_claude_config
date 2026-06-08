@@ -9,6 +9,8 @@ metadata:
 
 Status 2026-06-08: all 3 hosts running `lucos_firewall` with #14 (28 `-i br+ -j RETURN` lines = #14 live). Rollout order xwing→salvare→avalon, flip is lucas42's call per host.
 
+**salvare FLIPPED TO ENFORCE 2026-06-08 10:59 — CLEAN.** `10:59:02 effective: enforce` → `10:59:32 Rules confirmed and active` (no auto-revert). SSH/22 up every 8s poll across the window; real SSH login verified under enforce (`SSH_LOGIN_OK`); ICMP up. mDNS dropped, zero impact (harmless case confirmed). Containers (linuxplayer, docker_health, backups) all outbound-only, unaffected. salvare signal = SSH reachability + host up + firewall confirm (no hairpin to watch). 2 of 3 hosts now enforced; avalon remaining.
+
 **xwing FLIPPED TO ENFORCE 2026-06-08 10:45 — CLEAN, hairpin HELD (empirical proof).** Sequence: `10:45:16 effective: enforce` → IPv4+IPv6 applied → 30s confirm → `10:45:46 Rules confirmed and active` (no auto-revert). private.l42.eu + staticmedia.l42.eu stayed 302 on every 8s fresh-connection poll right across the flip → **#14 br+/docker0 RETURN successfully exempts the live 172.17.0.1 router hairpin under enforce.** This is the proof the whole estate (esp. avalon's ~35 hairpin svcs) was riding on. xwing:80→301, 443→400 (allow-listed, reachable); 8016/8017→000 (blocked, but already were pre-flip). Enforce mechanism: DRY_RUN **env override** beats configy unconditionally — real flip = lucas42 redeploys clean (no DRY_RUN, image 1.0.7) THEN configy `firewall_enforce=true` PR merges → ~configy-CI + next 60s poll + 30s confirm before enforce applies (NOT instant on merge). Revert hand: `docker exec lucos_firewall iptables -D DOCKER-USER -j DROP` (seconds).
 
 ## Monitoring gotcha (my own tooling, bit me twice this session)
