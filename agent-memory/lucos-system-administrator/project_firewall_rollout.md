@@ -46,6 +46,18 @@ Removes the terminal DROP. Hash-dedup means firewall won't re-apply DROP on next
 - lucas42/lucos_static_media#49
 - lucas42/lucos_media_import#166
 
+## Current state (updated 2026-06-08 ~16:30 UTC)
+
+- **xwing: ENFORCED** ✓
+- **salvare: ENFORCED** ✓
+- **avalon: ENFORCED** ✓ — configy PR #217 merged ~14:21 UTC, "Rules confirmed and active" ~14:25 UTC
+
+## Post-enforce follow-on issues
+
+- **lucos_backups#307** (bridge lucos_backups off network_mode:host): UNBLOCKED by #19. Branch `bridge-network-mode` ready. ULA IPv6 masquerade to salvare is the remaining sub-issue.
+- **lucos_firewall#19 (DOCKER-FORWARD)**: COMPLETE. v1.0.10 deployed 16:22 UTC. Docker 29.x chains manually recreated on avalon (recovery step — live-restore prevented daemon restart from helping). `docker network create --ipv6` verified working.
+- **Docker chain recovery** (one-time): All 6 Docker filter chains recreated manually on 2026-06-08 after old code's last wipe. v1.0.10's --noflush will preserve them going forward.
+
 ## Build history
 
 - 2026-06-01: firewall shipped, all three hosts in DRY_RUN
@@ -54,4 +66,6 @@ Removes the terminal DROP. Hash-dedup means firewall won't re-apply DROP on next
 - 2026-06-08 10:59:32 UTC: salvare enforced via lucas42/lucos_configy#215
 - 2026-06-08: lucos_firewall v1.0.8 — mDNS base-allow rules (PR #17)
 - 2026-06-08: lucos_firewall v1.0.9 — nil vs empty ports comment fix (PR #18)
-- 2026-06-08 14:16:50 UTC: v1.0.9 deployed to avalon. Draft enforce PR lucas42/lucos_configy#217 staged.
+- 2026-06-08 14:16:50 UTC: v1.0.9 deployed to avalon. PR #217 merged, enforced ~14:25 UTC
+- 2026-06-08 16:17 UTC: v1.0.10 (PR #20) merged — --noflush DOCKER-FORWARD fix
+- 2026-06-08 16:22 UTC: v1.0.10 deployed to avalon, docker network create verified working
