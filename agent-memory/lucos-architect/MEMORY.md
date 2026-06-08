@@ -114,6 +114,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 
 ## Infrastructure notes
 
+- [Firewall DOCKER-USER polices inter-container traffic](reference_firewall_dockeruser_scope.md) — terminal DROP + origin-blind allow-list hits container↔container, not just external; diverges from ADR-0007; bridge-nf-call-iptables determinant; firewall#13 gates avalon enforce (2026-06-08)
 - **CI token migration (lucos_deploy_orb ADR-0001, PR #90):** broad PAT → GitHub App installation token (`lucos-ci`). MUST pass `repositories:["$CIRCLE_PROJECT_REPONAME"]` for per-repo scoping. Blocked on lucas42 creating App.
 - CI orb: `build-multiplatform` for amd64+arm64 (buildx+QEMU); `build-amd64` for amd64-only. pici retired 2026-03-17.
 - `depends_on` in compose does NOT wait for readiness; Postgres consumers need startup retry.
