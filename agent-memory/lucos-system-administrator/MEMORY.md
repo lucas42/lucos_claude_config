@@ -155,3 +155,6 @@ Lower metric wins even if linkdown. docker0 with public /64 silently swallows al
 
 ## lucos_dns: BIND restart risk + rndc fallback + circular config-sync failure
 Until #104 (validate-before-install guard) ships, avalon BIND restarts are high-risk — zone load fails hard with no fallback. rndc can become unauthenticated (key regenerates on restart); fallback is `docker kill --signal SIGHUP lucos_dns_bind`. config-sync defaults to external CONFIGY_ENDPOINT → circular failure when DNS is down; fix is `http://lucos_configy:8034`. See `incident-2026-06-07-dns-outage.md`.
+
+## Verify cumulative diff before un-drafting a PR or adding `Closes #N`
+On shared/force-pushed branches a commit can edit the wrong location and drop out of `main...HEAD`. Run `git diff origin/main...HEAD -- <file>` to confirm every claimed fix is present before marking ready. See `feedback_verify_cumulative_diff.md`.
