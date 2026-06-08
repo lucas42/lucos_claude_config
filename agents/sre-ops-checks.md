@@ -164,9 +164,12 @@ Note: monitoringAlertSuppressed events (deploy-window suppression) are intention
 
 #### Step 2: Check for existing incident reports
 
-For each outage from step 1, check whether an incident report in the `lucos` repo at `docs/incidents/` mentions the affected system around that date:
+For each outage from step 1, check whether an incident report in the `lucos` repo at `docs/incidents/` mentions the affected system around that date.
+
+**Refresh the local checkout first.** `~/sandboxes/lucos` is frequently several commits behind `origin/main`, so a raw `ls` of the local `docs/incidents/` can report a report as missing when it was merged hours ago — leading you to write a duplicate. Always pull (or query GitHub) before trusting the listing:
 
 ```bash
+git -C ~/sandboxes/lucos pull --ff-only -q   # or: gh-as-agent ... "repos/lucas42/lucos/contents/docs/incidents"
 ls ~/sandboxes/lucos/docs/incidents/*.md
 
 # Find reports mentioning a specific system
