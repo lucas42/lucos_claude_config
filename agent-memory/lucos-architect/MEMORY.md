@@ -71,6 +71,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Parse reference data, never hand-build it](feedback_parse_reference_data_never_handbuild.md) — audit/diff against the parsed source-of-truth file, never a memory-reconstructed registry list (creds#333 false gap, 2026-05-31)
 - [Check originating decision before forking](feedback_check_originating_decision_before_forking.md) — read the ticket that settled the design before framing an A/B fork; "divergence" may be an unfinished design half, and an option may re-open a deliberately-rejected approach (arachne#597 Option B, 2026-05-31)
 - [Shared-lib break: testing gap, not caps](feedback_check_protocol_contract_before_accepting_break.md) — don't call a strict-client/permissive-server major "gratuitous"; real fix is consumer tests exercising the REAL lib interface (real-transport > fixture > autospec), not version caps (loganne v2, lucas42 corrected my caps/revert framing, 2026-06-06)
+- [Check shared failure domain before diagnosing a "two-paths" split](feedback_check_shared_failure_domain_before_diagnosing_split.md) — divergent answers from two endpoints during an incident may be probe-timing artifact, not a resilience difference, if both share a failure domain (#410 per-repo-vs-bulk configy was one DNS outage, 2026-06-07; real fix was fail-closed-and-silent → .github#68)
 
 ## Reference memories
 
