@@ -1,13 +1,28 @@
 ---
 name: photos-google-migration
-description: lucas42/lucos_photos#424 — plan migration of ~78GB historical photos from Google Photos; framing posted 2026-06-08; dedup crux + backup-mechanism forcing function
+description: lucas42/lucos_photos#424 — migrate ~78GB historical photos from Google Photos; PLAN FINALISED 2026-06-09, 4 tickets spawned (#425/#427/#426 + lucos_backups#318)
 metadata:
   type: project
 ---
 
 # Google Photos → lucos_photos migration (lucas42/lucos_photos#424)
 
-Framing posted 2026-06-08 (comment on #424). ~78GB historical photos from Google Photos. Prep-planning ticket; not yet building. 5 product/one-way-door Qs back to lucas42.
+**PLAN FINALISED 2026-06-09** — lucas42 answered all 5 Qs (his comment on #424, 2026-06-08); 4 tickets spawned, coordinator to board. Decisions:
+- **Dedup = clean date-cutoff by date TAKEN, cutoff 1 Feb 2026** (Option C — temporally-disjoint sets, no content dedup built). Import only Google photos taken <1 Feb 2026; **delete all lucos_photos photos taken <1 Feb 2026 first** (Google becomes authoritative pre-cutoff, phone post-cutoff). Accepted: clean cutoff won't backfill phone-upload-misses in overlap window.
+- **Description field**: add as prep, display in `.photo-metadata` (display-only, no UI editing).
+- **Faces**: unnamed OK; explore reusing Google face *grouping* to avoid per-person fragmentation (spike).
+- **Run on avalon**; aurora free space **954.4G** (now verified, was the blocker).
+- **Backups**: incremental/content-addressed confirmed, own ADR in lucos_backups.
+
+**Spawned tickets:**
+- lucas42/lucos_photos#425 — description field (prep) — Ready
+- lucas42/lucos_backups#318 — incremental/content-addressed backups for photos volume + ADR (docs/adr/0002) — Ready, **blocker**
+- lucas42/lucos_photos#427 — resumable migration script + cutover (date-cutoff + pre-cutoff deletion phase + runbook) — **Blocked** by #425 + lucos_backups#318
+- lucas42/lucos_photos#426 — spike: reuse Google face grouping — Ready, low-pri, non-blocking
+- Cutover run order: verified incremental backup → delete pre-cutoff → import via POST /photos. I offered to write/review the lucos_backups ADR.
+
+---
+## Original framing (posted 2026-06-08, comment on #424) — retained for design context
 
 **Import endpoint sufficiency:** `POST /photos` (api/app/routers/photos.py) streams→SHA-256→dedups on hash; accepts `X-Taken-At` header (epoch ms); worker overwrites taken_at with EXIF if present. Two gaps: (1) **no `description` column** in MediaItem (sha256_hash/taken_at/uploaded_at only) — migrating Google descriptions needs schema migration + endpoint/worker + UI = prep work; (2) dates covered via Takeout JSON sidecar `photoTakenTime` → X-Taken-At.
 
