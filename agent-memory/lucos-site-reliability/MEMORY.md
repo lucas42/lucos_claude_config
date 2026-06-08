@@ -29,6 +29,7 @@
 
 - [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — schedule-tracker debug `"Backups failed for: repo:<name>"`; empty repo → ref-less codeload URL → wget exit 8. Volumes+other repos fine. First hit lucos_dns_secondary 2026-06-06. Tracked lucos_backups#298.
 - [loganne client `level` now a REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — callers missing it crash `TypeError: updateLoganne() missing 1 required positional argument: 'level'`. Job does real work but skips success tick → check red while function looks fine. First hit lucos_arachne ingest.py 2026-06-06 (lucos_arachne#608). Estate-wide sweep risk flagged.
+- create-backups red for `media_manager_stateFile` + `photos_photos` = lucos_backups#309 (raised 2026-06-08), NOT firewall. (1) media_manager_stateFile: local `tar: short read` = live file written during archive. (2) photos_photos: 6.6G volume > hardcoded 600s scp-to-aurora timeout (avalon→ProxyJump xwing→aurora.local), worsens as photos grows. Proof not-firewall: other avalon+xwing volumes copy to aurora fine same run; host-tracking green; mid-transfer timeout ≠ INPUT-drop. If red recurs for these volumes, it's #309 — don't re-investigate or blame enforce.
 
 ## CI / docker build failures
 
