@@ -79,7 +79,7 @@
 - [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
 - [Migration finish-off state](project_migration_finishoff.md) — RESOLVED 2026-06-01: lucas42 declared metadata→eolas migration complete; retired from priorities.md, lucos_firewall now sole #1 strategic priority
-- [lucos_firewall rollout state](project_firewall_rollout.md) — ADR-0007 firewall shipped + live in DRY_RUN on all 3 hosts since 2026-06-01; build complete. **2026-06-08 dry-run review surfaced `lucos_firewall#13`** (DOCKER-USER terminal DROP also hit inter-container traffic — hard gate on avalon); **fix in PR #14 is now the avalon enforce gate, awaiting lucas42 approval**. Cross-stack scope decided Option A (firewall exempts ALL inter-container traffic, doesn't isolate stacks). Then per-host enforce flips xwing→salvare→avalon at lucas42's discretion
+- [lucos_firewall rollout state](project_firewall_rollout.md) — **COMPLETE 2026-06-08: all 3 hosts enforcing (xwing 10:45, salvare 10:59, avalon 14:25), lucos#182 closed.** Four post-enforce regressions found+fixed (#13/#14 inter-container DROP, #19/#20 Docker FORWARD wipe, #16/#17 mDNS, backups#307/#310 host-net hairpin). Memory retains durable lessons: DRY_RUN override, revert hand, the **Compose-reuses-stale-network foot-gun**, host-net+router INPUT pattern
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
