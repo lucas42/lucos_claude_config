@@ -91,3 +91,5 @@
 - [No parallel get-next/dispatch](feedback_no_parallel_getnext_dispatch.md) — run get-next to completion and dispatch exactly the URL it printed; never pre-fill /dispatch from memory (confabulated lucos_monitoring#286 on 2026-05-30)
 
 - [No confabulated quotes in consult relay](feedback_confabulated_quote_in_consult_relay.md) — paste verbatim quotes from the just-fetched tool result, never from memory (fabricated a lucas42 #264 comment to the architect on 2026-05-30)
+
+- [No extra host binaries](feedback_no_extra_host_binaries.md) — lucas42 rejects installing new packages on hosts; favour tools already supported estate-wide (scp over rsync, 2026-06-08); surface host-provisioning cost + get his nod before adding a host dependency

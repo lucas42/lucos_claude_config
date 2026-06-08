@@ -27,9 +27,16 @@ xwing/salvare/aurora copy fine; only **avalon-source** volumes fail (most servic
 (`apk add … rsync`). Container then HAD rsync 3.4.3 and the run STILL failed — proving
 the copy never runs in the container. Harmless dead weight; not the fix.
 
-**The right fix:** install rsync on **avalon** (host-level, **sysadmin** territory). No
-redeploy needed — the running container picks it up on the next Fabric `run`. Then
-re-run create-backups.
+**The right fix (considered):** install rsync on avalon (host-level, sysadmin). No
+redeploy needed — running container picks it up on the next Fabric `run`.
+
+**ACTUAL RESOLUTION (lucas42, 2026-06-08):** **rolled back to scp entirely** — NOT
+installing rsync on avalon. Policy: don't provision extra binaries on hosts; the copy
+runs host-side so rsync would mean provisioning every source host, whereas scp is
+already everywhere. Developer reverted `copyTo()` to scp, removed rsync from the
+Dockerfile, and solved the photos 600s-timeout the scp-compatible way (raise/parameterise
+the per-copy wall-clock cap for large volumes). So #309's final fix is scp-based, not
+rsync. avalon never got rsync.
 
 **Two debugging traps I hit here:**
 1. `which rsync` **in the container** is the wrong place to check — the copy runs on the
