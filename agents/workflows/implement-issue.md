@@ -96,6 +96,17 @@ rm "$BODY_FILE"
 
 The script prints the PR URL on success.
 
+**Verification (supervised repos only):** After `create-pr` completes, confirm `lucas42` appears in `requested_reviewers` before moving on:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> \
+    repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+    --jq '.users[].login'
+# Must print "lucas42". If absent, the PR is not in his review queue.
+```
+
+If `lucas42` is missing, request him immediately with `POST /requested_reviewers` before reporting the PR open. A silent miss means the PR waits indefinitely with no one assigned.
+
 ## Step 7 — Re-request reviewer after pushing fixes
 
 `create-pr` handles the *initial* reviewer request automatically at PR creation: it adds `lucas42` on supervised repos and adds nobody on unsupervised repos.
