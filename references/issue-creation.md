@@ -70,6 +70,8 @@ When asked to create a new issue:
 
 5. **Add the issue to the project board** immediately after creation. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
 
+   **Run creation, board-add, and field-setting as separate commands — not one bundled script.** If they are bundled and the call is interrupted or rejected, earlier steps may have already executed, orphaning a created-but-unconfigured issue. After *any* interrupted or rejected side-effecting command, re-fetch the actual state (does the issue exist? is it on the board?) before asserting what happened — never conclude "nothing was created" from the tool verdict alone.
+
 6. **Hand off to the coordinator for triage.** Workflow state management (setting Status, Priority, and Owner fields on the project board) beyond initial placement are coordinator-only responsibilities — non-coordinator personas have a standing rule against managing labels or project field values (see `~/.claude/references/label-workflow.md`). After filing the issue and adding it to the board, send the issue URL to the coordinator (`team-lead`) via SendMessage so they can complete triage.
 
    **If you ARE the coordinator**, triage the issue inline yourself — assess against the triage criteria, set the Status/Priority/Owner fields on the board, and position by priority. Follow the procedure in `~/.claude/references/triage-procedure.md`. Do not park the issue and wait for a separate triage pass.
