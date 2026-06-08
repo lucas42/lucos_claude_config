@@ -9,6 +9,8 @@ metadata:
 
 **PARKED 2026-06-08 (coordinator, on lucas42's call):** answering the 6 framing Qs was NOT a commit-to-build; the coordinator commissioned the ADR too early. #209 is back to Status=Ideation. **Do NOT mark ADR-0013 (PR #235) ready** — leave it open as a draft, parked (not merged, not pursued). **Build-ticket batch trigger ("on ADR acceptance") is OFF indefinitely** — only resume if lucas42 explicitly green-lights the design. Posted a parking note on PR #235 retracting my earlier sign-off ping. Design + Q&A below remain valid context for a future revisit; nothing wasted.
 
+**On revival — relocate, don't merge (new convention 2026-06-08):** if/when lucas42 revives #209, the design should be written as **`ADR-0001` in a new file-uploader repo** (created empty by sysadmin first), NOT merged into `lucos`. Per the new founding-ADR convention: a brand-new system's founding design lives in its own repo as ADR-0001; `lucos/docs/adr/` is estate-wide-only. ADR-0013-in-lucos (PR #235) was the wrong home (I read it as a cross-system contract; the new-system-founding reading wins). So on revival: don't mark #235 ready/merge it — port the content to the new repo's ADR-0001 and close #235.
+
 ---
 
 lucas42 answered all 6 product/one-way-door questions 2026-06-08. ADR-0013 written and opened as **draft PR lucas42/lucos#235** (lucos is unsupervised → draft to block auto-merge). Status in ADR = Proposed.
