@@ -1,6 +1,6 @@
 ---
 name: firewall-rollout-state
-description: "lucos_firewall (ADR-0007) rollout state — xwing ENFORCED 2026-06-08; salvare + avalon still dry-run via configy"
+description: "lucos_firewall (ADR-0007) rollout state — xwing + salvare ENFORCED 2026-06-08; avalon still dry-run via configy"
 metadata: 
   node_type: memory
   type: project
@@ -14,8 +14,8 @@ ADR-0007 estate-wide default-deny firewall. Rollout tracked in `lucas42/lucos#18
 ## Current state (2026-06-08)
 
 - **xwing: ENFORCED** as of 10:45:46 UTC 2026-06-08. "Rules confirmed and active" — hairpin clean, no auto-revert, no manual revert needed. Canary passed.
-- **salvare: dry-run via configy** (`firewall_enforce: false`, no public-facing services — base-only rules expected when enforced)
-- **avalon: dry-run via configy** (`firewall_enforce: false`)
+- **salvare: ENFORCED** as of 10:59:32 UTC 2026-06-08. "Rules confirmed and active" — 0 public ports (no serves_http), base rules only. configy PR #215. No auto-revert, no SRE call.
+- **avalon: dry-run via configy** (no `firewall_enforce` entry — final step)
 
 ## Key operational notes learned this session
 
@@ -34,5 +34,6 @@ ADR-0007 estate-wide default-deny firewall. Rollout tracked in `lucas42/lucos#18
 ## Build history
 
 - 2026-06-01: firewall shipped, all three hosts in DRY_RUN
-- 2026-06-08: PR #14 merged (inter-container RETURN fix), DRY_RUN removed from creds, xwing enforced
-- lucos_firewall#15 raised (salvare comment wording)
+- 2026-06-08: PR #14 merged (inter-container RETURN fix), DRY_RUN removed from creds, xwing enforced (10:45:46 UTC)
+- 2026-06-08: salvare enforced via configy PR lucas42/lucos_configy#215 (10:59:32 UTC)
+- lucos_firewall#15 raised (salvare comment wording — cosmetic, P3)
