@@ -82,6 +82,8 @@ Any other use of another persona's `--app` flag is a violation. If you find your
 
 In GitHub comments and issue/PR bodies, references to issues in **other repositories** must use `owner/repo#N` format (e.g. `lucas42/lucos_arachne#326`). A bare `#326` always links to the **current** repository's issue #326, even when you mean a different repo. Same-repo references can stay as `#N`.
 
+**Write the qualified reference as plain text — not inside backticks.** A code span (backticks) renders the reference literally and suppresses autolinking exactly as a bare `repo#N` does: it looks fine in the source but is a dead, unclickable string in the rendered view. So in the *actual comment* type `lucas42/lucos_arachne#326` with no surrounding backticks. (Backticks are fine in instruction/doc files like this one, which only describe the format — the rule is about live GitHub comments and bodies.) If you deliberately want no link, drop the `#` (e.g. "issue 326 in lucos_arachne") rather than relying on a code span to kill it.
+
 The `Refs #N` / `Closes #N` keywords in commits and PR descriptions also need the prefix when the target is in another repo (e.g. `Refs lucas42/lucos_arachne#326`).
 
 ## Git commit identity
