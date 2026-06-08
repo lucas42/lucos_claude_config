@@ -19,9 +19,11 @@ Requires changes in **two repos**:
 
 **Why:** configy Rust API only serializes fields declared in the struct. Unknown YAML fields are silently dropped by serde.
 
-## copyTo() uses rsync (not scp)
+## copyTo() uses scp with raised timeout
 
-As of PR #311, `Host.copyTo()` uses `rsync -az --partial --timeout=300 -e 'ssh ...'` with `timeout=None` on `connection.run()`. Rationale: scp's `timeout=600` killed mid-transfer for large volumes (6.6 GB photos volume). rsync's `--timeout` is idle I/O timeout, not wall-clock. **rsync runs on the source host (avalon), not in the Docker container** — the container just SSH-instructs the host.
+As of PR #315, `Host.copyTo()` uses `scp` with `timeout=7200` (2 hours). The original 600s cap killed the 6.6 GB `lucos_photos_photos` transfer.
+
+**CRITICAL:** `connection.run()` executes the copy command **on the source host's shell** via Fabric SSH — NOT inside the backup Docker container. This means the binary must be installed on the source host (e.g. avalon), not just in the image. `scp` comes from `openssh-client` which is present everywhere. **Never switch to a binary that requires host-level installation** (e.g. rsync, rclone) without confirming it's on all backup source hosts — the image Dockerfile is irrelevant for host-side commands.
 
 ## References
 
