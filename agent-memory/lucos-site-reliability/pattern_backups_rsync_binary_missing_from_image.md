@@ -36,7 +36,7 @@ runs host-side so rsync would mean provisioning every source host, whereas scp i
 already everywhere. Developer reverted `copyTo()` to scp, removed rsync from the
 Dockerfile, and solved the photos 600s-timeout the scp-compatible way (raise/parameterise
 the per-copy wall-clock cap for large volumes). So #309's final fix is scp-based, not
-rsync. avalon never got rsync.
+rsync. avalon never got rsync. **VERIFIED green 2026-06-08** on scp build `1.1.4` (#315): full ad-hoc create-backups completed clean (~2730s, NO ERRORS), photos_photos 6.6 GB scp to aurora finished well under the new 7200s cap, media_manager_stateFile tar clean, off-host copy worked across all source hosts; schedule_tracker create-backups check `ok:true, errors:0`.
 
 **Two debugging traps I hit here:**
 1. `which rsync` **in the container** is the wrong place to check — the copy runs on the
