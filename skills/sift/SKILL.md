@@ -73,6 +73,7 @@ Sort the field into the tiers (current headings: `Top priority — apply this we
 - **Autonomy first, then enjoyment-fit, then level/comp/domain** — the established weighting.
 - **Deadline pressure rises within a tier.** A strong-fit role with a hard near-term close is the *first* thing to do in its tier even if a deadline-free role edges it on raw desirability (the Thomson Reuters "apply first — only hard deadline" placement is the pattern).
 - **Respect Luke's deliberate manual positioning** per the prioritised-list rule — if he's hand-placed something, don't silently reorder it; surface the proposed change and let him keep it.
+- **An unfetchable JD is NOT a demotion signal.** When a JD can't be fetched (JS-rendered ATS, tenant-gated API, no readable mirror — having genuinely exhausted the fetch routes in Step 3), rank the role on the signal that *is* available (title / summary / employer / level), exactly as for any other thin LinkedIn-only entry. Make "open in a browser to confirm live-status + read the JD" an explicit pre-`/tailor` **action flag**, and state in the entry that the unconfirmed fields are unknown *because of tooling, not merit*. Don't conflate "I can't verify this" with "this ranks lower" (per `feedback_unfetchable_jd_not_a_demotion.md`).
 - **Drop candidates**: expired closing dates, confirmed-duplicate-of-already-applied, or roles a filter clearly rules out. Propose these for removal with a one-line reason; don't unilaterally delete unless it's an unambiguous expiry/duplicate.
 
 ## Step 6: Propose the re-rank for sign-off (gate)
