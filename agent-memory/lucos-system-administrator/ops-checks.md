@@ -1269,3 +1269,16 @@ All already tracked by audit tool. No action needed.
 
 **No new issues raised.**
 
+---
+
+### 2026-06-08 (checks 1 + 6 due; weekly checks last ran 2026-06-04 — not due; monthly checks last ran 2026-06-04 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 1 failing convention — `lucos_arachne` `required-status-checks-coherent`: "ci/circleci: lucos/build" not reported on HEAD of main — stale cache false positive. Commit statuses on main confirmed `ci/circleci: lucos/build` is present. Rerun triggered; convention now passes (all 5 required checks coherent). No issue raised.
+
+**Cert spot-check** (opportunistic — locations.l42.eu was 31 days on 2026-06-04):
+- locations.l42.eu: Sep 3 2026 (87 days) — RENEWED ✓ (certbot triggered 2026-06-05 as expected)
+
+**No new issues raised.**
+
