@@ -176,3 +176,7 @@ Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH
 ## lucos_media_seinn
 
 - [forEach(async ...) is implicit parallelism](seinn_async_foreach_parallelism.md) — shared state mutations need serialisation; chain onto existing `evictionLock` rather than adding a second mutex
+
+## lucos_backups
+
+- [Architecture, config-from-configy pattern, rsync switch, tolerate_live_file](lucos_backups.md) — config.yaml is gitignored (generated from configy); new volume fields need changes in BOTH configy (Rust struct) and backups (Python reader)
