@@ -92,6 +92,8 @@ Avoid constructing compound values (e.g. `DATABASE_URL`) in docker-compose using
 
 For the `gh-as-agent` / `git-as-agent` wrappers, the heredoc + file-backed body patterns, the `{owner}/{repo}` template-substitution gotcha, and cross-repo issue references, see [`references/agent-github-identity.md`](references/agent-github-identity.md). For GitHub App limits, the GitHub Projects PAT, draft-PR-ready GraphQL, and bulk cross-repo operation safety, see [`references/github-workflow.md`](references/github-workflow.md). For the per-issue implementation walk (starting comments, branching, PR creation, closing keywords, supervised-repo reviewer requests), see [`agents/workflows/implement-issue.md`](agents/workflows/implement-issue.md).
 
+**Cross-repo issue/PR references in GitHub comments and bodies must be fully-qualified plain text** — write `lucas42/<repo>#N`, never a bare `#N` (which always links to the *host* repo's #N, not the repo you meant) and never wrapped in backticks (a code span renders literally and does not autolink). Qualify **every** occurrence — autolinking is per-token, so qualifying once in a paragraph doesn't carry. A bare `#N` is only correct when that number genuinely lives in the host repo. To intentionally avoid a link, drop the `#` ("issue 14 in lucos_firewall"), not backticks. Detail: [`references/agent-github-identity.md`](references/agent-github-identity.md) §"Cross-repo issue references".
+
 ---
 
 ## Reference Files
