@@ -100,8 +100,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Project memories
 
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album
-- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals (lucos_root, agents) get sessions not bearer scheme → no dual auth; unify authN not authZ; lucos_root#135 hard-depends on #132; acquisition key in creds (deploy-pull), session minted at runtime (resolved 2026-06-02)
-- [File uploader](project_file_uploader.md) — lucos#209: stateless 3-tier uploader; uniform ingest contract; Bandcamp perm fix at NAS-write boundary; ideation, awaiting lucas42 answers
+- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals get sessions not bearer; unify authN not authZ; **authN-easy/authZ-blocker (lucas42 2026-06-08): easy uniform acquisition, default-deny prod scope, scope-GRANT is the crown jewel not the credential**
+- [File uploader](project_file_uploader.md) — lucos#209: **ADR-0013 drafted (PR #235)**; stateless 3-tier uploader; uniform backend-owned-schema ingest contract; 6 Qs answered; build tickets held until ADR merge
+- [Google Photos migration](project_photos_google_migration.md) — lucos_photos#424: ~78GB; dedup crux (SHA-256 misses Google-reprocessed dups → date-cutoff); **backup daily-full-tarball broke at 6.6GB (lucos_backups#309), copy-window binding, photos→aurora-only**; 5 Qs to lucas42
 - [DNS secondary modelling](project_dns_secondary_modelling.md) — configy one-system/one-domain/one-host vs heterogeneous multi-host; recommend two-systems-one-repo; ADR lucos#213; dns#79/#95/configy#208 on hold
 
 ## Auto-merge & security checks
@@ -147,4 +148,3 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **lucos_locations** — OwnTracks (mosquitto + recorder + frontend). TLS reload via inotify+SIGHUP (#4).
 - **lucos_docker_mirror** — Self-hosted pull-through cache at docker.l42.eu on avalon. ADR-0001 (replaces GHCR static). ADR-0002 (Flask→nginx). Incident 2026-04-17 documented.
 - **lucos_docker_health** (lucos#45) — Go, distroless, push via schedule_tracker. Heartbeat healthcheck pattern. Runs as root (socket access is root-equiv regardless of UID).
-- **Claude Code setup review (Mar 2026)** — claude_config, lucos_agent, sandbox. Well-designed isolation. Open: token caching, memory path, CLAUDE.md restructure.

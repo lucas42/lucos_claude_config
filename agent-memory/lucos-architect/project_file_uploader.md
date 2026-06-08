@@ -1,33 +1,29 @@
 ---
 name: file-uploader
-description: Initial design framing for lucas42/lucos#209 — stateless one-stop file uploader; forward design, ideation, awaiting lucas42's answers before ADR
+description: lucas42/lucos#209 LucOS File Uploader — ADR-0013 written (draft PR #235); stateless 3-tier uploader + uniform backend ingest contract; all 6 product Qs answered
 metadata:
   type: project
 ---
 
-# LucOS File Uploader (lucas42/lucos#209)
+# LucOS File Uploader (lucas42/lucos#209) — ADR-0013 drafted
 
-Initial design framing posted 2026-06-02 (comment on #209). Ideation — not committed to build. Forward design; ADR follows once lucas42 answers the open product questions.
+lucas42 answered all 6 product/one-way-door questions 2026-06-08. ADR-0013 written and opened as **draft PR lucas42/lucos#235** (lucos is unsupervised → draft to block auto-merge; pinged @lucas42; mark ready only after sign-off). Status in ADR = Proposed until merge.
 
-**Three-tier responsibility model:**
-- **Browser** = stateful coordinator (holds the upload session: file list, per-file metadata, progress, retry). State lives here.
-- **Uploader service** = stateless transform + route (decompress/extract archives, route each file + metadata to the correct backend, return per-file result). No durable state; bounded transient working space only.
-- **Backends** = durable store + metadata validation + permissions.
+**Architecture (decided):**
+- **Three tiers:** browser = stateful coordinator (holds upload session/retry); uploader = stateless transform+route (server-side archive extraction, route per-file+metadata to backend); backends = durable store + schema validation + permissions + dedup.
+- **Uniform ingest contract** (NOT adapter-plugins-in-uploader): each backend exposes a standard ingest endpoint AND **owns + advertises its own metadata schema** from a dedicated discovery endpoint. UI "folders" are backend-declared discrete fields → new upload types / metadata values = config/backend-side, never uploader code.
+- **Schema location (lucas42 left to me):** backend-owned-and-advertised on a dedicated endpoint. Explicitly NOT YAML-in-uploader (re-couples) NOR configy (wrong grain). Closest to his "/_info" idea but a separate functional endpoint (keep monitoring vs functional contract apart). Uploader holds only a thin registry of backend ingest URLs.
 
-**Why:** "stateless" means no durable store, not "no transient working space." Statelessness gives a clean reliability story (browser holds the truth, re-drives on failure) — the discipline to protect is keeping the uploader thin so it doesn't become a coupling hub.
+**lucas42's 6 answers, folded in:**
+1. "Done" = handed-off, not fully-ingested; backends log full-ingest to loganne for user to verify. Async ingest endpoints follow lucos ADR-0006 (accept-202-enqueue).
+2. Attribution = via logs (which user, which system), NOT a stored DB column. So no contact-ID provenance column in backends.
+3. Batch = partial-success + browser-driven retry-of-failures.
+4. Extraction = server-side.
+5. Extensibility = ingestion schema; config location not fussy.
+6. Dedup = backend's job (eolas 409 precedent); uploader surfaces "duplicate" gracefully.
 
-**Central crux — backend plugin model:** recommend **uniform ingest contract** (each backend exposes a standard ingest endpoint + declares its own metadata schema) over adapter-plugins-in-the-uploader. Under the contract, the UI "folders" (discrete-metadata selectors) are *backend-declared* → new upload types are config/registration, not uploader code. Matches estate's one-system-owns-its-domain grain.
+**Heterogeneous backends + Bandcamp perm fix:** filesystem backends satisfy the contract via a thin ingest endpoint owned by the storage owner. Perm fix (700→770) lives at the NAS-write boundary inside that endpoint — likely moot by construction (uploader forwards extracted constituent files; ingest endpoint creates dirs fresh under its own umask). `lucos_media_import` is the big build cost (a scanner with NO HTTP surface today). `lucos_private` already serves HTTP. `lucos_photos POST /photos` needs *conforming*, not building.
 
-**Heterogeneous backends:** lucos_photos is HTTP (ingest endpoint natural); music + documents are NAS filesystem drops (scanned by lucos_media_import / served by lucos_private). Resolution: filesystem-backed backends satisfy the contract via a thin ingest endpoint owned by the storage owner.
+**Security:** server-side extraction concentrates zip-slip/zip-bomb surface in the uploader (design-in). Uploader is a machine principal to backends → [[machine-principal-sessions]] (#132) consumer; uses signed+scoped session, ingest scope only.
 
-**Bandcamp 700-perm fix location:** at the NAS-write boundary, in the ingest endpoint — NOT the uploader (uploader must never know serving user/group). Likely moot by construction: uploader extracts archive and forwards constituent files (with relative-path metadata), so dirs are created fresh by the ingest endpoint under its own umask.
-
-**Metadata is two-tiered:** discrete/per-folder (provenance, category — chosen by drag-into-folder) + free/per-file (photo date-taken, reverse notes). Contract must carry per-file metadata.
-
-**Security (design-in, not bolt-on):** archive extraction = zip-slip/path-traversal + zip-bomb surface (sanitise paths, bound expansion, stream, temp budget+cleanup). Plus auth.
-
-**#132 tie-in:** uploader is BOTH a human-auth consumer (login to use) AND a machine principal to backends (deposits files server-side) → natural [[machine-principal-sessions]] consumer. Open product Q: attribute deposited files to lucas42's contact ID or a service account?
-
-**Open questions to lucas42 (on ticket, awaiting answers):** (1) define-of-done for async backends (music→NAS scanned later); (2) attribution; (3) partial-batch + retry-failures model; (4) server-side vs client-side extraction (I recommend server); (5) extensibility = config/registration not code (confirm); (6) dedup is backend's job (eolas 409 precedent).
-
-**How to apply:** when lucas42 answers, write the ADR (context/decision/consequences) and scope the build — the bulk of real work is which backends need a new ingest endpoint.
+**Deferred build tickets (enumerated in ADR Follow-up, NOT raised yet — ADR-0006 precedent, raise on ADR acceptance):** (1) create lucos_file_uploader [new repo, raised on lucos]; (2) lucos_photos conform; (3) lucos_media_import ingest endpoint + perm fix; (4) lucos_private documents ingest. Items 2-4 downstream of 1 defining wire format. **How to apply:** when ADR-0013 merges, raise these 4 and hand URLs to coordinator.
