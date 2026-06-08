@@ -39,6 +39,10 @@ So schedule_tracker is a **single mechanism for both liveness and staleness**. K
 
 Scheduled-job checks get **no** `dependsOn` deploy-window suppression (that's stamped only on fetch-info via `make_direct_probe_check` in fetcher_info) — a deploy may briefly error; the frequency grace absorbs it.
 
+## Concrete instance: salvare is NOT monitored over IPv6 (and that's fine) — 2026-06-08
+
+Architect flagged that `lucos_monitoring`+`lucos_time` have `EnableIPv6=false` on their docker networks (confirmed live; avalon `daemon.json` has no `ip6tables`) → monitoring can't originate IPv6, so salvare's "IPv6-only services" might be silently unreachable. **Verified FALSE as a gap:** all 3 salvare-hosted systems (`lucos_docker_health`, `lucos_firewall`, `lucos_media_linuxplayer`) have **no http_port/domain** → zero fetch-info probes to salvare; salvare has no `serves_http`. salvare is monitored entirely via OUTBOUND push: docker_health's `salvare-v4` schedule_tracker check (salvare→avalon, IPv4, healthy=actively reporting) + per-system `circleci` checks. Monitoring never makes an inbound IPv6 probe to salvare, so its lack of IPv6 egress is irrelevant. Green board = accurate. **General principle to remember:** monitoring's no-IPv6-egress only matters for a monitored domain that resolves **AAAA-only** AND gets a fetch-info probe — that's the only shape where "can't reach over IPv6" is a real gap. salvare isn't that shape.
+
 ## Practical: monitoring a non-HTTP box without standing up an HTTP server
 
 Don't build an `/_info` HTTP server just to surface one check on a non-HTTP box (extra TLS/router/attack surface — bad on e.g. an authoritative nameserver). Instead: a cron on the box pushes to schedule_tracker. A plain `curl` POST to `/v2/report-status` (fields: system, frequency, status, job_name, message) is enough — no need for the python client. lucos_dns's `config-sync` push is the working reference.
