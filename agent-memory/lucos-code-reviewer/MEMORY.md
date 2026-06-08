@@ -195,6 +195,6 @@ There are two distinct auto-merge workflows — do not conflate them:
 ## Repo-Specific Notes
 
 - **lucos_repos:** Convention PRs → check `docs/convention-guide.md`. `RepoTypeScript` = configy *scripts* list, not the TypeScript language.
-- [lucos_arachne triplestore check](lucos_arachne_triplestore.md) — do NOT approve re-adding it until lucos_monitoring#74 lands
-- [lucos_arachne CLAUDE.md domain-types caveat](lucos_arachne_claude_md_convention_caveat.md) — convention text says "every rdf:type" but means domain types only; push back if #544 (namespace-filter rewrite) doesn't fix the wording
+- [lucos_arachne: triplestore check](lucos_arachne_triplestore.md), [CLAUDE.md caveat](lucos_arachne_claude_md_convention_caveat.md) — triplestore: hold until #74; caveat: "every rdf:type" means domain types only, push back if #544 doesn't fix it
 - [lucos_media_seinn mocha regression](lucos_media_seinn_mocha_regression.md) — recurring Dependabot major-group CI failure; #462 fix applied but didn't work, new tracking in #466; leave open as live reference
+- [Estate DNS failure pattern in CI](feedback_estate_dns_ci_pattern.md) — simultaneous GitHub Actions + CircleCI `*.l42.eu` DNS failure → authoritative outage, not a PR defect; configy silent fail-closed → .github#68
