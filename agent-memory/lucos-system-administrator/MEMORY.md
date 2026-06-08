@@ -164,3 +164,6 @@ All 3 hosts ENFORCED 2026-06-08. lucos_backups#307 (bridge mode) next — unbloc
 
 ## Docker 29.x chains: DOCKER-FORWARD, DOCKER-BRIDGE, DOCKER-CT + 3 others needed
 Six chains required for docker network create. Recovery procedure in `docker-29x-chains.md`. Deleted by old --noflush-less firewall code; manually recreated on avalon 2026-06-08.
+
+## Docker compose stale network: compose reuses existing network even if config changed
+Must manually rm + recreate if enable_ipv6/subnet changed. Stopped container has old network ID wired in — must `docker rm` + CI trigger after recreating. See `docker-compose-stale-network.md`.
