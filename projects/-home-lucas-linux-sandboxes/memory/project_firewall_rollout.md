@@ -1,22 +1,38 @@
 ---
 name: firewall-rollout-state
-description: "lucos_firewall (ADR-0007) rollout state — dry-run live; 2026-06-08 review surfaced firewall#13 (inter-container DROP bug), fix in PR #14 now the avalon enforce gate, awaiting lucas42 approval"
+description: "lucos_firewall (ADR-0007) rollout state — xwing ENFORCED 2026-06-08; salvare + avalon still dry-run via configy"
 metadata: 
   node_type: memory
   type: project
   originSessionId: f9e2917c-8177-41f8-a17d-a299feb63d76
 ---
 
-ADR-0007 estate-wide default-deny firewall. As of 2026-06-01 the implementation is **shipped** (lucos_firewall#1 + FORWARD fix #6 merged; configy `public_ports` schema #189 + populated #190 merged; all repo conventions green). The firewall is **live in DRY_RUN on all three hosts since 2026-06-01 14:50 UTC**.
+ADR-0007 estate-wide default-deny firewall. Rollout tracked in `lucas42/lucos#182`.
 
-**Rollout tracked in `lucas42/lucos#182`.** Enforce order: **xwing → salvare → avalon** (avalon last — remote, no out-of-band console, so the timed auto-rollback is its sole safety net). Dry-run on all three in parallel; enforce each host only after its own clean dry-run review.
+**Enforce order: xwing → salvare → avalon** (avalon last — remote, no out-of-band console).
 
-**ACTION DUE 2026-06-08** (≥7-day dry-run minimum): the local team (SRE + sysadmin — they have production SSH; a remote scheduled agent cannot read the hosts' `docker logs`, which is why this is session-triggered not a `/schedule` routine) reviews each host's dry-run "would-deny" set and reports readiness to begin enforcing xwing. On/after that date, dispatch the review. Reminder also posted as a comment on #182.
+## Current state (2026-06-08)
 
-**BUILD COMPLETE as of 2026-06-01** — the per-host enforce-control mechanism is fully merged: `lucos_configy#203` (per-host `firewall_enforce` field + `/hosts/{host}` endpoint, PR #204) and `lucos_firewall#9` (firewall reads enforce-mode from configy per poll, PR #10 — incl. a fix for a silent enforce-skip bug where dry-run hash updates blocked the dry-run→enforce transition). ADR-0007 amendment (lucos PR #210) merged, design of record. `DRY_RUN` from creds can't differ per host — **flipping a host to enforce = setting `firewall_enforce: true` for that host in configy** (PR-reviewed, picked up by the poll loop, no redeploy).
+- **xwing: ENFORCED** as of 10:45:46 UTC 2026-06-08. "Rules confirmed and active" — hairpin clean, no auto-revert, no manual revert needed. Canary passed.
+- **salvare: dry-run via configy** (`firewall_enforce: false`, no public-facing services — base-only rules expected when enforced)
+- **avalon: dry-run via configy** (`firewall_enforce: false`)
 
-**Nothing left to build.** Remaining is purely operational/timeline: the 2026-06-08 dry-run review (above), then per-host enforce flips (xwing → salvare → avalon), each lucas42's call after a clean per-host review. (Verify live ticket states before citing — these churn.) salvare confirmed by lucas42 to have no public-facing services (base-only rules in enforce expected). The `firewall_enforce` flip to enforce is lucas42's call per host.
+## Key operational notes learned this session
 
-**UPDATE 2026-06-08 — dry-run review surfaced a real blocker before avalon enforce.** The architect (assessing a sysadmin question on lucos_dns#106) found `lucos_firewall#13`: the generated `DOCKER-USER` chain ended in a terminal DROP with allow rules qualified by protocol+dport only — so under enforce a *new* inter-container connection to a non-public port is DROPped, diverging from ADR-0007's stated scope (inter-container controls were explicitly OUT). **Hard gate on avalon** (sysctl check: `bridge-nf-call-iptables=1` on avalon → same-bridge app↔postgres would break; xwing/salvare have `br_netfilter` absent today → lower risk but fix-first recommended for all). Fix shipped in **`lucos_firewall#14`** (`-i br+`/`-i docker0 -j RETURN`, scoping DROP to external-origin) — code-reviewer + security approved, **awaiting lucas42's approval (supervised repo); this PR is now the actual avalon enforce gate.** Cross-stack scope decision: lucas42 chose **Option A — the firewall exempts ALL inter-container traffic (same-stack AND cross-stack) and does NOT isolate stacks** (consistent with ADR-0007's original scope; cross-stack security relies on app-level auth, not host firewall — ties to [[lucos-132]] no-trusted-internal-network). ADR-0007 doc corrections (FORWARD skeleton + cross-stack prose) in lucos PR #232 (closes lucos#230, auto-merges). lucos_dns#106 config-sync circular-DNS fix needs re-spec (cache-to-disk, not the network-URL approach) after #14 lands.
+**DRY_RUN env var overrides configy unconditionally.** `DRY_RUN=true` was present in production lucos_firewall creds throughout the dry-run period. lucas42 removed it 2026-06-08 before the enforce flip. The documented "flip = set firewall_enforce in configy" mechanism only works once DRY_RUN is cleared from creds + container redeployed. Future host enforce flips now work via configy alone (no DRY_RUN in creds).
 
-A mandatory `lucos-security` review gate on every `lucos_firewall` PR was added to the code-reviewer workflow this session. Cf. [[firewall-security-gate]] if split out later.
+**Revert path for enforce failures** (hairpin/service breaks): `ssh <host> 'docker exec lucos_firewall /usr/sbin/iptables -D DOCKER-USER -j DROP && docker exec lucos_firewall /usr/sbin/ip6tables -D DOCKER-USER -j DROP'` — removes the terminal DROP, FORWARD policy ACCEPT means traffic falls through. The firewall's hash-dedup means it won't re-apply DROP on next poll (ruleset unchanged → skip). Also push a configy revert (`firewall_enforce: false`) as the secondary backstop (~10 min CI lag). The auto-rollback (30s configy reachability check) does NOT catch hairpin failures — only catches broken outbound from the host.
+
+**Enforce flip sequence** (for salvare and avalon when ready):
+1. `firewall_enforce: true` for the host in lucos_configy hosts.yaml → PR → merge → configy CI deploys on avalon (~5 min Rust build)
+2. Within ≤60s the host's firewall polls, reads enforce=true, calls `applyWithRollback`
+3. 30s confirm window → "Rules confirmed and active" or auto-reverts
+4. SRE watches hairpin; sysadmin holds revert command ready
+
+**lucos_firewall#15** (P3/hygiene): salvare generates "fallback mode — configy unreachable or no ports declared" comment even when configy is reachable + 0 ports — cosmetic, not blocking.
+
+## Build history
+
+- 2026-06-01: firewall shipped, all three hosts in DRY_RUN
+- 2026-06-08: PR #14 merged (inter-container RETURN fix), DRY_RUN removed from creds, xwing enforced
+- lucos_firewall#15 raised (salvare comment wording)
