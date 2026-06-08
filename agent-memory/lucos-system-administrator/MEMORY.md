@@ -158,3 +158,6 @@ Until #104 (validate-before-install guard) ships, avalon BIND restarts are high-
 
 ## Verify cumulative diff before un-drafting a PR or adding `Closes #N`
 On shared/force-pushed branches a commit can edit the wrong location and drop out of `main...HEAD`. Run `git diff origin/main...HEAD -- <file>` to confirm every claimed fix is present before marking ready. See `feedback_verify_cumulative_diff.md`.
+
+## lucos_firewall ADR-0007 rollout state
+xwing + salvare ENFORCED 2026-06-08. Avalon v1.0.9 verified dry-run, draft enforce PR lucas42/lucos_configy#217 staged — awaiting GO. Revert command + open NFS PRs in `project_firewall_rollout.md`.
