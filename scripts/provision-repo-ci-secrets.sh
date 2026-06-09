@@ -213,6 +213,31 @@ else
     echo "CircleCI follow: following=${FOLLOWING}"
 fi
 
+# --- Step 10: Trigger initial pipeline on main ---
+# The follow (step 9) registers the webhook for *future* pushes only — it does NOT
+# retroactively build commits that already exist on the repo. Without an explicit
+# trigger, ci/circleci:* statuses never appear on main, and existing PR branches
+# pushed before provisioning also stay unbuilt (each needs its own trigger).
+# Trigger main now so the first build runs and primes the required status check.
+if [ -z "$CIRCLECI_TOKEN" ]; then
+    echo "WARNING: skipping initial pipeline trigger (no CIRCLECI_API_TOKEN)."
+    echo "  Run manually: curl -X POST -H 'Circle-Token: <token>' \\"
+    echo "    https://circleci.com/api/v2/project/github/lucas42/${REPO}/pipeline \\"
+    echo "    -d '{\"branch\":\"main\"}'"
+else
+    TRIGGER_RESULT=$(curl -s -X POST \
+        -H "Circle-Token: $CIRCLECI_TOKEN" \
+        -H "Content-Type: application/json" \
+        "https://circleci.com/api/v2/project/github/lucas42/${REPO}/pipeline" \
+        -d '{"branch":"main"}')
+    PIPELINE_ID=$(echo "$TRIGGER_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id','?'))" 2>/dev/null)
+    echo "CircleCI initial pipeline triggered on main (id: ${PIPELINE_ID})."
+    echo "  NOTE: if PR branches were pushed before provisioning, trigger each manually:"
+    echo "    curl -X POST -H 'Circle-Token: \$TOKEN' \\"
+    echo "      https://circleci.com/api/v2/project/github/lucas42/${REPO}/pipeline \\"
+    echo "      -d '{\"branch\":\"<your-branch>\"}'"
+fi
+
 echo ""
 echo "Done. Provisioned for lucas42/${REPO}:"
 echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted) — Actions + Dependabot secrets"
@@ -221,6 +246,7 @@ echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
 echo "  - delete_branch_on_merge = true"
 echo "  - Branch protection on main (required: ci/circleci: lucos/build, strict=false)"
 echo "  - CircleCI follow (GitHub webhook registered — ci/circleci:* statuses will appear)"
+echo "  - Initial pipeline triggered on main (future pushes auto-build via webhook)"
 echo ""
 echo "Verify secrets by checking the next 'Generate GitHub App token' step in a workflow run:"
 echo "  success  -> secrets are non-empty and valid"
