@@ -195,6 +195,24 @@ rm "$BP_BODY"
 echo "Branch protection enabled on main (required: ci/circleci: lucos/build)."
 echo "NOTE: if the repo has test jobs or CodeQL, add them manually via the GitHub UI or API."
 
+# --- Step 9: Follow project in CircleCI (sets up push/PR webhook in GitHub) ---
+# New repos must be "followed" via CircleCI v1.1 API to register the GitHub webhook
+# that triggers builds on push/PR. Without this, CircleCI sees no push events and
+# ci/circleci:* statuses never appear — the required checks stay permanently pending
+# and block all merges. Discovered during lucos_aithne standup (2026-06-09).
+CIRCLECI_TOKEN=$(grep CIRCLECI_API_TOKEN "$HOME/sandboxes/lucos_agent/.env" | cut -d'"' -f2)
+if [ -z "$CIRCLECI_TOKEN" ]; then
+    echo "WARNING: CIRCLECI_API_TOKEN not found in lucos_agent/.env — skipping CircleCI follow."
+    echo "  Run manually: curl -X POST -H 'Circle-Token: <token>' https://circleci.com/api/v1.1/project/github/lucas42/${REPO}/follow"
+else
+    FOLLOW_RESULT=$(curl -s -X POST \
+        -H "Circle-Token: $CIRCLECI_TOKEN" \
+        -H "Content-Type: application/json" \
+        "https://circleci.com/api/v1.1/project/github/lucas42/${REPO}/follow")
+    FOLLOWING=$(echo "$FOLLOW_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('following','?'))" 2>/dev/null)
+    echo "CircleCI follow: following=${FOLLOWING}"
+fi
+
 echo ""
 echo "Done. Provisioned for lucas42/${REPO}:"
 echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted) — Actions + Dependabot secrets"
@@ -202,6 +220,7 @@ echo "  - LUCOS_CI_APP_ID — Actions + Dependabot secrets"
 echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
 echo "  - delete_branch_on_merge = true"
 echo "  - Branch protection on main (required: ci/circleci: lucos/build, strict=false)"
+echo "  - CircleCI follow (GitHub webhook registered — ci/circleci:* statuses will appear)"
 echo ""
 echo "Verify secrets by checking the next 'Generate GitHub App token' step in a workflow run:"
 echo "  success  -> secrets are non-empty and valid"
