@@ -1,13 +1,27 @@
 ---
 name: machine-principal-sessions
-description: Auth design for lucos#132 — non-human principals (lucos_root service, trusted LLM agents) should be session-capable, not a separate bearer scheme
+description: Auth design for lucos_aithne (formerly lucos#132) — the new passkey auth service; machine principals session-capable not bearer, plus the full OIDC/passkey design proposed 2026-06-09
 metadata:
   type: project
 ---
 
-# Machine-principal sessions (lucas42/lucos#132 auth design)
+# lucos_aithne auth design (formerly lucas42/lucos#132)
 
-Design agreed with lucas42 2026-06-01 while framing how lucos_root#135 (live homepage dashboard) depends on the new auth service (lucas42/lucos#132). Tickets are Ideation — this is forward design, not yet built.
+**Ticket moved 2026-06-09:** lucos#132 was transferred to its own repo and is now **lucas42/lucos_aithne#1** (the founding tracking issue). Service named **`lucos_aithne`** — Irish for *recognition / knowing a person* (names the function, not the passkey mechanism; distinct from `lucos_authentication` for safe coexistence during migration). priorities.md already updated (origin/main): aithne is active priority #1, firewall complete/retired.
+
+**Full design PROPOSED 2026-06-09 (awaiting lucas42 sign-off — NOT yet agreed)** — comment on lucos_aithne#1. Synthesises the machine-principal work below with the new human/protocol layer:
+- **Self-hosted OpenID Provider** (OIDC/OAuth2 endpoints) → satisfies "standard protocol for off-the-shelf tools" + "no third party" together. Humans log in via **WebAuthn passkeys** (ceremony only in aithne, RP ID = auth domain).
+- **Session = short-lived signed JWT** (contact ID + principal-class + scopes), cookie on `.l42.eu`, **verified LOCALLY via JWKS** — replaces today's `/data?token=` per-request introspection (amplification pattern). Machine/agent path (OAuth2 client-credentials, below) yields the *same* token.
+- **Cross-iframe SSO works because all services share l42.eu = same-site** (`.l42.eu` cookie is first-party in the iframe). Design constraint: holds ONLY while everything stays under l42.eu.
+- **5 open decisions routed to lucas42:** (1) internal services share session-JWT + local-verify [rec yes] vs full-OIDC-RP each; (2) passkey-lockout recovery — ≥2 passkeys + admin re-enrol [rec]; (3) split third-party token-brokering out so aithne is identity-only [rec yes]; (4) WebAuthn credential store aithne-owned [rec] vs contacts account-type; (5) admin-invite enrolment [rec yes]. ADR-0001 (in lucos_aithne) + tickets follow sign-off.
+
+**Current `lucos_authentication` (the thing being replaced) — facts grounding the migration:** Node.js (single server.js). Does TWO bundled jobs: (a) identity via **third-party** OAuth providers (Google etc., providers.json) → maps provider identity to a lucos_contacts agentid via contacts `/identify`; (b) **third-party token brokering** (`/apptoken`, trusted `/data` w/ appkeys.conf) so apps call Google APIs. Consumers validate via `GET /data?token=` introspection. Also serves a shared `lucos_navbar.js`. Blast radius ≈12 consumer repos across 6+ languages (sandbox grep — authoritative list needs full estate sweep).
+
+---
+
+## Machine-principal sessions (the prior, already-agreed core)
+
+Design agreed with lucas42 2026-06-01 while framing how lucos_root#135 (live homepage dashboard) depends on the new auth service. Tickets are Ideation — this is forward design, not yet built.
 
 **Decision:** the new auth service should let a **non-human principal** (a service like lucos_root, or a trusted LLM agent) obtain a session **non-interactively** (pre-shared key, not a passkey ceremony), and backends validate that session **identically to a human session** (same `/data`-style lookup, resolving to a service-account contact ID).
 
