@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-08
+container_status: 2026-06-09
 resource_checks: 2026-06-04
 syslog_review: 2026-06-04
 software_updates: 2026-06-04
 sandbox_drift: 2026-06-04
-repos_dashboard: 2026-06-08
+repos_dashboard: 2026-06-09
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1266,6 +1266,16 @@ All already tracked by audit tool. No action needed.
 **Docker image staleness**:
 - `lucos_locations_otrecorder`: Still 2025-08-12. lucos_locations#79 was raised 2026-05-07 and CLOSED as completed — upstream owntracks/recorder Docker Hub image hasn't been updated since 2025-08-12 either. Production image IS the latest available. Not a staleness issue; no new issue raised.
 - All other images: within 60 days (most recent: Jun 3–4 2026). Fine.
+
+**No new issues raised.**
+
+---
+
+### 2026-06-09 (checks 1 + 6 due; weekly checks last ran 2026-06-04 — not due until 2026-06-11; monthly checks last ran 2026-06-04 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 1 failure — `lucos_arachne` `required-status-checks-coherent`: "ci/circleci: lucos/build" not reported on HEAD of main. Confirmed stale-cache false positive (check IS present in main commit statuses). Rerun triggered; convention now passes (all 5 required checks coherent). No issue raised.
 
 **No new issues raised.**
 
