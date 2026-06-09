@@ -29,6 +29,10 @@
 
 - [deploy-avalon exit 18 "pull access denied for *_test" = orb pull was profile-blind](pattern_deploy_orb_pull_profile_blind.md) — orb pull step used `yq` (profile-blind) vs publish's `docker compose config` (profile-aware), so it tried to pull a repo's deliberately-unpublished profiled `test` image. Prod stays UP (pull runs before `compose up`) = P2 not outage. FIXED in `lucos/deploy@0.0.185` (orb#184, 2026-06-07). Gotcha: re-running a failed workflow reuses old compiled orb version — trigger a FRESH pipeline to pick up an orb fix.
 
+## Monitoring: circleci estate-wide alert storm
+
+- [Estate-wide circleci alert storm = CircleCI API outage tripping UnknownsGate, not workflow failures](pattern_circleci_unknownsgate_estate_storm.md) — N systems all alert `circleci` within seconds + recover ~1min later = CircleCI API 503/unreachable for ≥3 consecutive 60s polls → UnknownsGate (threshold 3) flips ok:unknown→false → alert at ~2-min mark. CHECK the Loganne `failingChecks[].debug` FIRST (503/transport=unknown path; "Workflow X failed"=ok:false path) — don't reason from gate code. Fix lever = UnknownsGate threshold (lucos_monitoring#279, 3→5), NOT failThreshold (rejected #226). Hit 2026-06-09.
+
 ## Scheduled-job check failures (deterministic, won't self-clear)
 
 - [host-tracking-failures "<host>: 'low'" = invalid recreate_effort in configy](pattern_backups_invalid_effort_crashes_host_tracking.md) — quoted word is a Python KeyError repr; a volume's `recreate_effort` not in effort_labels.yaml (valid: small/considerable/huge/automatic/tolerable/remote/unknown) crashes that host's entire getData(). Backups still run (P2). Fix configy value. First hit 2026-06-09 lucos_dns_configy-sync-cache `low`→`automatic` (lucos_configy#220); hardening lucos_backups#316.
