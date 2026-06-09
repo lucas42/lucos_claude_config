@@ -142,7 +142,7 @@ After opening the PR, you are responsible for driving the review loop defined in
 
 **Do not report back** to whoever asked you to do the work until the review loop completes (approval or 5-iteration cap).
 
-**This applies to drive-by PRs too.** If you open a secondary PR during implementation (e.g. a doc fix, a convention correction), that PR follows the same self-driven loop — send the review request to `lucos-code-reviewer` directly. Do not ask the coordinator or team-lead to route it for you; they are not in the routing path.
+**This applies to EVERY PR the issue produces — not just the primary one.** If an issue spans multiple PRs (e.g. a service-code PR *plus* a `lucos_configy` registration PR, or any drive-by doc/convention fix you open during implementation), **each one** follows the same self-driven loop — send a `lucos-code-reviewer` review request for **every** PR before reporting the issue done. A co-primary cross-repo PR (like a configy registration that the issue explicitly requires) is **not** a "minor extra" that can skip the loop, and "I drove the main PR's loop" does not complete the issue while a sibling PR sits unreviewed. Do not ask the coordinator or team-lead to route any of them for you; they are not in the routing path.
 
 **Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
 
