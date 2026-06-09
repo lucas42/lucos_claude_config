@@ -56,6 +56,7 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
 
     - **`lucos_firewall`** — the estate's network-perimeter enforcement (ADR-0007); a bug there can lock the whole estate out or silently open it up.
     - **`lucos_creds`** — the estate's credential/secret store and the source of every inter-service auth key (`CLIENT_KEYS`, scopes, TSIG secrets); a bug there can leak secrets or broaden access across every service that authenticates against it.
+    - **`lucos_aithne`** — the estate's authentication/identity service (ADR-0001): credential store, session-token spine, OIDC/OAuth2 endpoints, scope-grant authority. Any change is security-relevant by definition; lucas42 confirmed (2026-06-10) that *every* aithne PR requires `lucos-security` review — do not fall back to change-nature judgment (a non-auth-looking change like an `/_info` fix still requires it).
 
     To add another repo to this always-review list, append it here rather than duplicating the rule.
 
@@ -174,7 +175,7 @@ You may notice things beyond immediate correctness — adjacent improvements, po
 
 **PR URLs in completion reports must be derived from the API, not typed from memory.** Use the `html_url` field from the PR object you already fetched, or construct it as `https://github.com/lucas42/{repo}/pull/{number}` using the exact repo name you queried — never recall it from context. Repo names are easy to mis-type (e.g. `lucos` vs `lucos_loganne`), and wrong URLs in completion reports waste the reader's time.
 
-**Re-fetch every PR's state immediately before writing the completion report — and before any mid-session SendMessage that references a PR's merge/approval status.** This includes "stuck" escalations, "awaiting lucas42" status updates, and specialist-referral updates. Do not rely on state from earlier in the session — a PR reviewed an hour ago (or diagnosed as stuck five minutes ago) may already have merged. For each PR in the report, call `gh-as-agent repos/lucas42/{repo}/pulls/{number} --jq '{state, merged_at, auto_merge}'` and use the live values. Describing a merged PR as "awaiting approval" or "stuck" is actively misleading. (Confirmed failure: PR #6 diagnosed as "stuck — lucas42 needs to re-approve" after the merge had already landed at 23:03Z.)
+**Re-fetch every PR's state immediately before writing the completion report — and before any mid-session SendMessage that references a PR's state for any reason.** This rule applies to every PR named in the message regardless of *why* you're naming it: merge/approval status, action items ("this PR should be closed"), predecessor/related PRs, stuck escalations, or anything else. Do not rely on state from earlier in the session — a PR reviewed or mentioned an hour ago may already have merged or closed. For each PR in the report, call `gh-as-agent repos/lucas42/{repo}/pulls/{number} --jq '{state, merged_at, merged}'` and use the live values before asserting anything about it. Describing a merged PR as "awaiting approval", "still open", or "should be closed" is actively misleading. (Confirmed failures: PR #6 stuck claim after merge at 23:03Z; PR #311 "still open / should be closed" when it had merged at 19:14Z earlier the same session.)
 
 The message must cover, briefly:
 
@@ -217,6 +218,7 @@ After approving any PR, run these checks before moving on:
    - **Non-null:** auto-merge enabled, will merge when CI passes. Report as "auto-merge enabled".
    - **Null:** check supervision status with `check-unsupervised` (above). If supervised (exit 1), this is **expected** — report as "awaiting lucas42 approval", not "auto-merge triggered". If unsupervised (exit 0) and `auto_merge` is still null, flag as stuck (criterion 7 in the stuck-PR guide) and check the Actions runs API for any workflow with `startup_failure` or `failure`.
    - **Never report "auto-merge triggered" or "auto-merge succeeded" based solely on the workflow check-run having `conclusion: success`.** A succeeded workflow on a supervised repo means it ran and correctly did nothing. The only reliable signal is `auto_merge` being non-null on the PR itself.
+   - **If the PR has merged and you need to characterise what triggered it** (e.g. "merged on bot approval" vs "merged on lucas42's approval"), fetch the reviews list — `repos/lucas42/{repo}/pulls/{n}/reviews --jq '.[] | {state, submitted_at, user: .user.login}'` — and compare approver timestamps against `merged_at`. The merge trigger is the approval that immediately precedes `merged_at`, not the earliest approval in the list. A small gap (seconds to minutes) between bot approval and merge does NOT imply the bot triggered it — lucas42 may have approved in between. Never assert a supervision gap without this check.
 
 ## Stuck PR audit (during "review any open PRs")
 
