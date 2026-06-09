@@ -97,6 +97,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Deployment model has no on-host source of truth](reference_no_onhost_source_of_truth.md) — compose files live transiently on CI; recovery requires CI redeploy, not local recreate (xwing 2026-05-28)
 - [Docker Healthy ≠ network reachability — recurring estate-wide pattern](reference_docker_healthy_not_reachability.md) — 2 of last 3 incidents (creds CRLF 2026-05-09, xwing 2026-05-28); systemic healthcheck-design concern
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md) — delete-on-absence loops must raise on an empty-but-non-erroring source, else they wipe everything (creds#333 ADR-0001, 2026-06-04)
+- [Sweep-vs-CI race false positives](reference_sweep_vs_ci_race.md) — required-status-checks-coherent flags the slow CircleCI rollup as "stale" when the ~07:15 sweep collides with dependabot auto-merges; NOT a stale cache; fix lucos_repos#413 (2026-06-09)
 
 ## Project memories
 
