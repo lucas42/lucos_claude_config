@@ -14,7 +14,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Auth domain hardcoded as `https://auth.l42.eu` -- prefer in application code, not compose env var
 - Always specify sequencing dependencies for cross-repo infrastructure changes
 - lucas42 prefers splitting multi-concern issues into separate tickets
-- **Always check `origin/HEAD` before reviewing code.** Sandbox copies may be stale. If lucas42 mentions a change not reflected in the code, `git fetch && git checkout origin/main`.
+- **`git fetch` before reviewing EACH repo — the fetch is the load-bearing step, not the checkout.** `git checkout origin/main` alone reuses a possibly-stale remote-tracking ref; you can be reviewing month-old code while believing it's current. Never assume freshness because you fetched a *different* repo this session. Slip 2026-06-10: reviewed stale eolas+media_metadata_api auth code (checkout without fetch), concluded scopes were "inert" and told lucas42 — both had merged scope-enforcement PRs (#298/#315) my local refs didn't have. If a conclusion hinges on absence-of-a-feature, `git fetch` and re-check before asserting it.
 - Strong one-service-per-repo convention. Naming: `lucos_{subsystem}_{qualifier}`
 - ADR-0001 (claude_config): agent instruction compliance. Extract task lists into short files, explicit counts + completion manifests, dispatcher verification, order by criticality, 200-line max.
 - ADR-0002 (claude_config #14): Agent teams migration. SendMessage replaces Task subagent dispatch. Identity via persona instructions.
