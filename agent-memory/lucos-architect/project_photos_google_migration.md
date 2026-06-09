@@ -19,7 +19,7 @@ metadata:
 - lucas42/lucos_backups#318 — incremental/content-addressed backups for photos volume + ADR (docs/adr/0002) — Ready, **blocker**
 - lucas42/lucos_photos#427 — resumable migration script + cutover (date-cutoff + pre-cutoff deletion phase + runbook) — **Blocked** by #425 + lucos_backups#318
 - lucas42/lucos_photos#426 — spike: reuse Google face grouping — Ready, low-pri, non-blocking
-- Cutover run order: verified incremental backup → delete pre-cutoff → import via POST /photos. I offered to write/review the lucos_backups ADR.
+- Cutover run order: off-cron seed + **verified RESTORE** → delete pre-cutoff → import via POST /photos. **#427 owns the off-cron seed-staging + verified-restore-before-import gate** (deferred from lucos_backups ADR-0002 per lucas42 on backups#318, 2026-06-09 — ADR records only that rsync `--link-dest` *supports* `--seed`; the seed planning/execution + restore-test live in #424/#427, not the ADR). Gate upgraded from "verified backup exists" to "verified restore" (a backup never restored is a hope). SRE owns the other 2 ADR parts (collapse-to-unconditional now aurora rsync verified; host-level-rsync soft-avoid).
 
 ---
 ## Original framing (posted 2026-06-08, comment on #424) — retained for design context
