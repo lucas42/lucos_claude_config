@@ -89,6 +89,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Webhook consumer accept-202-enqueue (ADR-0006)](reference_webhook_consumer_accept_202_enqueue.md)
 - [Service-worker-backed UI is a system component](reference_service_worker_ui_as_system_component.md)
 - [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md)
+- [Encryption-at-rest ≠ ransomware defence](reference_encryption_at_rest_vs_ransomware.md) — encryption=confidentiality; ransomware-availability lever is append-only/immutable destination (backups ADR-0002 PR#319, 2026-06-09)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
 - [Enumerating the lucos_creds store over SSH](reference_creds_store_enumeration.md) — `ls` lists all system/env pairs; agent key is dev-scoped only (no prod visibility); sync manages only PORT/APP_ORIGIN
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md) — open env namespace; single-valued allowed-environment; bright-line no-prod-secrets rule; agents get standard test envs via set-valued key (#360); creds#363/PR#364
