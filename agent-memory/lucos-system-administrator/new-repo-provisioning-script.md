@@ -12,6 +12,7 @@ Covers in one shot:
 2. `LUCOS_CI_APP_ID`
 3. `fork-pr-contributor-approval = first_time_contributors_new_to_github` (new repos default to `first_time_contributors` which blocks agent bot workflows)
 4. **CircleCI follow** — `POST /api/v1.1/project/github/lucas42/{repo}/follow` registers the GitHub webhook. Without this, `ci/circleci:*` statuses never appear and all PRs stay blocked (discovered lucos_aithne standup 2026-06-09).
+5. **Initial pipeline trigger on main** — follow registers webhook for future pushes only; existing commits on the repo are NOT retroactively built. Script now explicitly triggers main so the first build runs immediately. If PR branches were pushed before provisioning, trigger each manually: `curl -X POST -H 'Circle-Token: $TOKEN' https://circleci.com/api/v2/project/github/lucas42/{repo}/pipeline -d '{"branch":"<branch>"}'`
 
 **What the script does NOT cover (still manual):**
 - CircleCI SSH key (`docker-deploy@creds.l42.eu`) — private key not in agent environment; lucas42 adds it in CircleCI project settings → Additional SSH Keys → hostname `creds.l42.eu`
