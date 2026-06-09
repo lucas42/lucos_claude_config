@@ -92,12 +92,11 @@
 
 ## CircleCI Build Convention
 
-### `build-multiplatform` is the standard for ARM-targeted services — amd64-only services stay on `build-amd64`
-- `lucos/build-multiplatform` (Docker buildx + QEMU, produces a unified `linux/amd64,linux/arm64` manifest) is the standard for services deployed to ARM architectures.
-- **amd64-only services stay on `build-amd64`** — the migration to `build-multiplatform` is NOT universal. Confirmed: lucos_monitoring stays on `build-amd64` (lucas42/lucos_monitoring#83 closed as not_planned).
+### `lucos/build` with `platform` parameter is the current unified orb pattern (confirmed lucos_aithne PR #13)
+- **`lucos/build`** is the current unified job. Pass `platform: "linux/amd64,linux/arm64"` for ARM-targeted services; omit `platform` (or leave empty) for amd64-only. The old `build-multiplatform` and `build-amd64` job names are retired.
 - `build-armv7l`, `build-arm64`, and the pici Docker-in-Docker build host are retired. pici repo is archived.
-- **Do NOT flag `build-amd64` as needing migration without first checking whether the service targets ARM.** Only flag if the service is confirmed to be deployed to ARM hosts.
-- When a service uses `build-multiplatform`, the `docker-compose.yml` image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
+- **Do NOT flag `lucos/build` (no `platform` param) as needing migration to multiplatform without first checking whether the service targets ARM.** Only flag if the service is confirmed to be deployed to ARM hosts.
+- docker-compose.yml image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
 - No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
 
 ## CircleCI — `max_auto_reruns` and Exit Code Suppression
