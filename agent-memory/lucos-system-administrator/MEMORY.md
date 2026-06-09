@@ -167,3 +167,9 @@ Six chains required for docker network create. Recovery procedure in `docker-29x
 
 ## Docker compose stale network: compose reuses existing network even if config changed
 Must manually rm + recreate if enable_ipv6/subnet changed. Stopped container has old network ID wired in — must `docker rm` + CI trigger after recreating. See `docker-compose-stale-network.md`.
+
+## Multi-PR issues: drive review loop for ALL PRs before reporting done
+A co-primary cross-repo PR (e.g. configy registration) is not a "drive-by extra" — send it to code-reviewer concurrently with the main PR. See `feedback_multi_pr_review_loop.md`.
+
+## New repo standup: provision-repo-ci-secrets.sh now includes CircleCI follow
+Step 9 added 2026-06-09: `POST /api/v1.1/project/github/lucas42/{repo}/follow` registers the GitHub webhook so ci/circleci:* statuses actually appear. Without it, all required checks stay pending forever.
