@@ -13,9 +13,19 @@ metadata:
 
 **My mistake (2026-05-31):** I hit a non-fast-forward push (the cron had swept my files first) and inferred the manual commit was therefore "redundant and contention-prone", and flagged it for removal. Wrong — the contention is handled by a recipe, not by removing the step. My session's changes landed via the cron and so were mis-attributed to the cron bot; can't retroactively fix that, but follow the recipe next time.
 
-**How to apply — on a non-ff push, don't hand-stash other agents' files. Use:**
+**How to apply — on a non-ff push, don't hand-stash other agents' files.** The documented recipe (`references/agent-memory-conventions.md`, authoritative) is:
 ```
-git -c rebase.autoStash=true pull --rebase origin main   # autoStash keeps other agents' uncommitted working-tree files safe
-# then re-push
+git -c rebase.autoStash=true pull --rebase origin main   # then re-push; stage only your own path
 ```
-Stage only your own path so you never sweep up another agent's in-flight edits. The full recipe is in `references/agent-memory-conventions.md` (authoritative). See [[reference_creds_store_enumeration]] for an unrelated same-session note.
+**But that recipe is fragile and failed twice on 2026-06-09:** `pull --rebase` aborts with "untracked working tree files would be overwritten by checkout" when another agent's *new* memory file (now also on origin) sits untracked in the shared `~/.claude` tree — autoStash doesn't cover untracked files, so the rebase can't detach HEAD. **Reliable fallback that worked both times: commit locally, then land it via a throwaway worktree at origin/main and cherry-pick:**
+```
+MYSHA=$(git -C ~/.claude rev-parse HEAD)        # after committing your staged memory locally
+WT=$(mktemp -d); git -C ~/.claude worktree add -q "$WT" origin/main
+cd "$WT" && git-as-agent --app <persona> cherry-pick "$MYSHA" && git-as-agent --app <persona> push -q origin HEAD:main
+cd ~/.claude && git worktree remove --force "$WT"
+```
+This never touches the shared working tree (no stash, no index.lock contention) — it's the same isolation the cron already uses, and is exactly the worktree-isolation fix I proposed as #113 Option B′.
+
+**Status (2026-06-09):** the standalone race/attribution fix (#113 Option C/B′) was **declined by lucas42** as more complexity than the friction warrants and **folded into the agent-isolation work on lucas42/lucos#155** (lucos_claude_config#113 closed not_planned). So: don't re-propose a standalone fix; the manual-commit recipe above still stands until lucos#155 delivers per-agent isolation (which dissolves the shared-working-tree root cause). The worktree-cherry-pick fallback above is the interim workaround when autoStash aborts.
+
+See [[reference_creds_store_enumeration]] for an unrelated same-session note.
