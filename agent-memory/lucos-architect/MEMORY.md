@@ -102,7 +102,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 ## Project memories
 
 - [Artist modelling decision](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api alongside Album
-- [Machine-principal sessions](project_machine_principal_sessions.md) — lucos#132 auth: non-human principals get sessions not bearer; unify authN not authZ; **authN-easy/authZ-blocker (lucas42 2026-06-08): easy uniform acquisition, default-deny prod scope, scope-GRANT is the crown jewel not the credential**
+- [lucos_aithne auth design](project_machine_principal_sessions.md) — **ticket now lucas42/lucos_aithne#1** (formerly lucos#132); name=aithne. Full design PROPOSED 2026-06-09 (OIDC OP + WebAuthn passkeys + local-JWKS signed-JWT sessions + identity-only), awaiting lucas42 sign-off on 5 decisions. Core agreed: non-human principals get sessions not bearer; authN-easy/authZ-hard, default-deny, scope-GRANT is the crown jewel
 - [File uploader](project_file_uploader.md) — lucos#209: **PARKED back to Ideation 2026-06-08**; ADR-0013 left as draft PR #235 (do NOT mark ready); build tickets held indefinitely; design/Q&A valid for future revisit
 - [Google Photos migration](project_photos_google_migration.md) — lucos_photos#424: PLAN FINALISED 2026-06-09; date-cutoff dedup (taken<1Feb2026); 4 tickets: #425 desc / #427 migration-script(Blocked) / #426 face-spike / lucos_backups#318 incremental-backup-ADR(blocker); aurora 954.4G
 - [DNS secondary modelling](project_dns_secondary_modelling.md) — configy one-system/one-domain/one-host vs heterogeneous multi-host; recommend two-systems-one-repo; ADR lucos#213; dns#79/#95/configy#208 on hold
