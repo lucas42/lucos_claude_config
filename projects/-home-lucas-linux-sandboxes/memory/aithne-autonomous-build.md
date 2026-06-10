@@ -18,6 +18,6 @@ Build order: #5 (session-token spine) → unblocks #6 (WebAuthn) + #8 (machine a
 
 Two known set-aside touchpoints (supervised repos — verified 2026-06-10):
 - **#8** machine auth — the long-lived key lives in `lucos_creds` (supervised). aithne code ships autonomously; provisioning a **production** machine key in creds is lucas42-only → set that activation step aside.
-- **#10** admin-invite — enrolee needs a `lucos_contacts` (supervised) entry. Autonomous if it uses the existing contacts API; a contacts **code** change needs lucas42. Verify when #10 comes up.
+- **#10** admin-invite — enrolee needs a `lucos_contacts` (supervised) entry. **RESOLVED 2026-06-10:** lucas42 pre-provisioned `KEY_LUCOS_CONTACTS` + `LUCOS_CONTACTS_ORIGIN` for aithne in lucos_creds (dev + prod) — so #10 can call the existing contacts API autonomously, no contacts code change. Relay lucas42's #10 comment (00:43Z) to the developer at #10 dispatch so they use those creds. Only re-flag to lucas42 if implementation finds the existing contacts API lacks a needed endpoint (would be a supervised code change).
 
 **Why:** protects the authorisation against context compression during the away-period, so the build keeps moving and I don't wrongly pause to ask an absent lucas42. **How to apply:** dispatch ready aithne tickets as they unblock; only pause the specific supervised-repo sub-steps above. Retire this memory when lucas42 returns / the non-migration build is complete. Related: [[project_firewall_rollout]] pattern of an autonomous estate build.
