@@ -188,6 +188,10 @@ See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_eve
 
 **Policy (2026-05-20):** See `codeql-false-positive-policy.md` — GHAS dismissal is the **only** mechanism for false positives. No inline suppression comments (also non-functional in lucos repos), no `paths-ignore` config exclusions. Dismiss directly via API.
 
+## False Positive: go/unvalidated-url-redirection on lucos_aithne OIDC (2026-06-10)
+
+See `lucos-aithne-oidc-url-redirect-fp.md` — alerts #1/#2 dismissed; `HasRedirectURI` exact-match allowlist at store/oidc.go:42-49 sanitizes before either redirect.
+
 ## False Positive: go/request-forgery on fetchEolasName (lucos_media_metadata_api)
 
 See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dismissed 2026-05-30. Guard is `fetchEntityNameFromSource` hostname whitelist (scheme=https, host=eolas.l42.eu), NOT `ValidateURIOrigin`. Webhook paths bypass `ValidateURIOrigin`; `/webhooks` has Bearer auth.
