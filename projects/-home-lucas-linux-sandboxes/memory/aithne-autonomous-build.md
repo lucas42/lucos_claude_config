@@ -7,6 +7,10 @@ metadata:
   originSessionId: bbdfac99-480d-4231-a8bc-48f76d9907fb
 ---
 
+> **⚠️ RETIRED 2026-06-10 — lucas42 is back; the autonomous period is over. Do NOT treat anything below as a live authorization or a pending gate. Verify live GitHub state before citing any PR/issue from this file.** Known-stale traps that already caused wrong answers: PR **#50 is MERGED** (lucas42 approved it himself 11:09Z, auto-merged 11:19Z) — NOT awaiting sign-off; **#48/#49/#50 all closed/merged** (bootstrap-admin enrolment built); migration umbrella **#12 has no formal blocker** — #11 found **zero** `/apptoken`/trusted-`/data` consumers (nothing to rehome), build parity + deploy done, so #12 just awaits lucas42's direction to scope the ~11 identity-consumer sub-tickets. Only possible residual return-item: **#8 prod machine-key provisioning in lucos_creds** (supervised) — verify before asserting it's still pending. Everything below is historical context only.
+
+---
+
 On 2026-06-10 lucas42 stepped away, authorising the team to implement **all open `lucos_aithne` tickets EXCEPT the migration (#12) and any post-migration tickets**, without him. `lucos_aithne` is unsupervised, so PRs auto-merge on `lucos-code-reviewer` + `lucos-security` approval (aithne is on the always-security-review list) — no lucas42 approval needed.
 
 Standing permissions while away:
