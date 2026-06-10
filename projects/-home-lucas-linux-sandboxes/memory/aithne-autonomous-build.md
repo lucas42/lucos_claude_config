@@ -25,6 +25,12 @@ Set-aside touchpoints (supervised repos — verified 2026-06-10) — items needi
 
 **Closed:** #37 (REGISTRATION_ENABLED default-off → 503) merged 08:35Z with lucos-security + code-reviewer APPROVED — durable lockdown live, before the 22:16 nginx-block expiry. No exploitation occurred (verified empty DB), no incident, no lucas42 escalation needed. Interim nginx block on avalon now redundant (self-clears at 22:16 cron). #10 will later remove the endpoints entirely (the permanent fix). Detail below for history:
 
+### Post-#40-merge follow-ups (when #10/PR#40 lands — security-approved 2026-06-10, awaiting code-reviewer final approve + auto-merge)
+- #40 **removes** the 3 `/auth/register/*` endpoints + the `REGISTRATION_ENABLED` flag → gap permanently closed (no kill-switch needed after).
+- **File a hardening ticket** (autonomous, Low) for security's minor observation: `url.PathEscape()` missing on `contact_id` in aithne's contacts HTTP client (admin-only, no real attack surface).
+- **Verify no orphaned `REGISTRATION_ENABLED` creds var** (dev/prod) — #37 used a code default, so likely none was set, but confirm nothing's left dangling.
+- nginx block already self-clears at 22:16Z.
+
 ### (history) unauthenticated registration exposure
 
 `lucos-security` assessed #6's WebAuthn **registration endpoints** (live on aithne.l42.eu since #6/PR#36 auto-deployed ~02:25Z) as an **unacceptable live exposure**: unauthenticated → credential-squatting for any contact_id; **if `BOOTSTRAP_ADMIN_CONTACT_ID` is set in prod, attacker can register as admin = full compromise**. Security's preferred nginx block needs a `lucos_router` PR (SUPERVISED → lucas42, away). So using security's stated fallback: **lucas42/lucos_aithne#37 (Critical)** — `REGISTRATION_ENABLED` env flag default-off → 503 on `/auth/register/*`; aithne unsupervised → auto-merges+deploys; dispatched to developer AHEAD of #10. #10 then removes the endpoints (durable fix; UX scoped the removal in).
