@@ -4,6 +4,10 @@
 
 - [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
 
+## CI publish: data-only images amd64-only
+
+- [buildx attestations force a platform-claiming index → "agnostic" images publish amd64-only](pattern_buildx_attestations_force_index_platform_claim.md) — orb `release-docker platform:""` should emit a plain manifest (consumable from ANY arch) but buildx's default provenance/SBOM attestations wrap it in an OCI index claiming `linux/amd64` → non-amd64 `COPY --from` fails `no match for platform in manifest`. Fix in ORB (disable attestations on platform:"" path), NOT multi-arch (only matches enumerated arches). lucos_deploy_orb#186; auth_scopes#15/#16; lukeblaney_cv affected too. 2026-06-10.
+
 ## lucos_router (TLS / domain serving)
 
 - [New service's TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — router domain discovery is PULL-ONLY (no configy push). `update-domains.sh` (certbot certonly per domain) runs only on container startup + daily cron at **22:16 UTC** (`16 22 * * *`). New configy domain waits up to ~24h for its cert; restart lucos_router to force it. LE backdates `notBefore` ~1h (don't misread as issuance time). NOT an incident. First hit aithne 2026-06-09; doc gap = lucos_router#95.
