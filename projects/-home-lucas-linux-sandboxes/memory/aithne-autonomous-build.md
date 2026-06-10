@@ -27,8 +27,9 @@ Set-aside touchpoints (supervised repos — verified 2026-06-10) — items needi
 
 ### Post-#40-merge follow-ups (when #10/PR#40 lands — security-approved 2026-06-10, awaiting code-reviewer final approve + auto-merge)
 - #40 **removes** the 3 `/auth/register/*` endpoints + the `REGISTRATION_ENABLED` flag → gap permanently closed (no kill-switch needed after).
-- **File a hardening ticket** (autonomous, Low) for security's minor observation: `url.PathEscape()` missing on `contact_id` in aithne's contacts HTTP client (admin-only, no real attack surface).
-- **Verify no orphaned `REGISTRATION_ENABLED` creds var** (dev/prod) — #37 used a code default, so likely none was set, but confirm nothing's left dangling.
+- ✅ url.PathEscape hardening ticket **filed as #42** (Ready/developer/Low).
+- **`REGISTRATION_ENABLED` creds var:** harmless now (#40 removed the code that read it, so any orphaned var is inert). Tidy when convenient — dev clean is an agent/sysadmin job; if it was set in **prod** that's a lucas42-return cleanup. Low priority, not blocking.
+- #10 closed 09:04Z (the permanent fix).
 - nginx block already self-clears at 22:16Z.
 
 ### (history) unauthenticated registration exposure
