@@ -46,10 +46,10 @@
 ### CodeQL false-positive suppression — use config file, not inline comments
 - **Prefer `.github/codeql/codeql-config.yml` exclusion or GitHub Security UI dismissal** over `// codeql[]` inline comments — inline suppression requires specific action configuration and silently does nothing otherwise (4 attempts on seinn PR #460 confirmed). Fallback: refactor to remove the taint path.
 
-### Verify absence of a specific thing in the raw file before requesting changes
-- **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
-- Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard already in the file. Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
-- **Shadow DOM components: check JS event handlers, not just CSS.** [[feedback-js-component-css-inspection]] — `mainStyle` CSS absence ≠ fix absent; the fix may be in a `dropdown_open`/lifecycle handler. Grep the full JS source before filing.
+### Verify absence in the raw file before asserting it in any review context
+- **Before asserting in any review context (COMMENT, concern, REQUEST_CHANGES) that something is absent from code NOT shown in the diff, verify by reading the raw file.** The diff only shows what changed — unchanged functions are invisible in it.
+- Confirmed failures: lucos_notes PR #355 — diff omitted a guard already in the file; lucos_backups PR #324 — asserted `_outbound_ssh_args` lacked `StrictHostKeyChecking=no`; it was at line 122, unchanged. Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"`.
+- **Shadow DOM components: check JS event handlers, not just CSS.** [[feedback-js-component-css-inspection]] — `mainStyle` CSS absence ≠ fix absent; the fix may be in a `dropdown_open`/lifecycle handler.
 
 ### Post code review immediately, then follow up if CI fails
 - **Post review (APPROVE or REQUEST_CHANGES) immediately based on code quality; handle CI separately.** Waiting first creates a race — developer may push while CI runs, making your diff stale.
