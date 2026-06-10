@@ -21,7 +21,11 @@ Set-aside touchpoints (supervised repos — verified 2026-06-10) — items needi
 - **#30** encrypt signing key at rest — needs `KEY_AITHNE_SIGNING_KEK` in `lucos_creds`. Dev KEK an agent can provision; **prod KEK is lucas42-only**, and prod encryption-at-rest needs it before deploy → set the prod activation aside. (Blocked on #5 first.)
 - **#10** admin-invite — enrolee needs a `lucos_contacts` (supervised) entry. **RESOLVED 2026-06-10:** lucas42 pre-provisioned `KEY_LUCOS_CONTACTS` + `LUCOS_CONTACTS_ORIGIN` for aithne in lucos_creds (dev + prod) — so #10 can call the existing contacts API autonomously, no contacts code change. Relay lucas42's #10 comment (00:43Z) to the developer at #10 dispatch so they use those creds. Only re-flag to lucas42 if implementation finds the existing contacts API lacks a needed endpoint (would be a supervised code change).
 
-## ACTIVE SECURITY ITEM (2026-06-10) — unauthenticated registration exposure
+## SECURITY ITEM — RESOLVED 2026-06-10 08:35Z (unauthenticated registration exposure)
+
+**Closed:** #37 (REGISTRATION_ENABLED default-off → 503) merged 08:35Z with lucos-security + code-reviewer APPROVED — durable lockdown live, before the 22:16 nginx-block expiry. No exploitation occurred (verified empty DB), no incident, no lucas42 escalation needed. Interim nginx block on avalon now redundant (self-clears at 22:16 cron). #10 will later remove the endpoints entirely (the permanent fix). Detail below for history:
+
+### (history) unauthenticated registration exposure
 
 `lucos-security` assessed #6's WebAuthn **registration endpoints** (live on aithne.l42.eu since #6/PR#36 auto-deployed ~02:25Z) as an **unacceptable live exposure**: unauthenticated → credential-squatting for any contact_id; **if `BOOTSTRAP_ADMIN_CONTACT_ID` is set in prod, attacker can register as admin = full compromise**. Security's preferred nginx block needs a `lucos_router` PR (SUPERVISED → lucas42, away). So using security's stated fallback: **lucas42/lucos_aithne#37 (Critical)** — `REGISTRATION_ENABLED` env flag default-off → 503 on `/auth/register/*`; aithne unsupervised → auto-merges+deploys; dispatched to developer AHEAD of #10. #10 then removes the endpoints (durable fix; UX scoped the removal in).
 
