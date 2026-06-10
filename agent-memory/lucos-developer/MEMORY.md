@@ -62,6 +62,7 @@
 - See `~/.claude/references/docker-conventions.md` for conventions. Missing role suffix in container_name/image is a recurring review comment.
 - **Healthcheck URLs: always `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1`; services bind `0.0.0.0` (IPv4 only). Fixed in lucos_arachne#91 and lucos_contacts#535.
 - **`php:*-apache`**: has `curl` but not `wget` — use `curl -sf http://127.0.0.1/` for healthchecks.
+- **No inline comments after instructions** — `COPY ... # note` is invalid; BuildKit parses `# note` tokens as positional args, causing a build failure. Version/pin comments must go on a preceding line.
 
 ## Python test stubs (sys.modules injection)
 
