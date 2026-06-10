@@ -37,6 +37,10 @@
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
 
+## CircleCI serial-group / stuck PRs
+
+- [serial-group drops inner `ci/circleci: build` status → PR stuck `blocked`](pattern_circleci_serialgroup_dropped_build_status.md) — orb serial-group build emits 3 contexts (serial-start-1 / **build** / serial-end-1); CircleCI sometimes delivers the wrappers but NOT the inner `build` (the required check) though the job succeeded → required check absent, `mergeable_state: blocked`, native auto-merge waits forever. Diagnostic: compare head-SHA contexts vs a recent merged PR; wrappers-present-but-`build`-absent. Fix = re-run build-deploy workflow (safe on non-main: deploy jobs main-only); `build` re-delivers ~2min AFTER workflow finishes (don't verify too early). DON'T require serial-end-1 (unlock job, unsafe gate). First hit lucos_router#97 2026-06-10.
+
 ## Dependabot / branch protection
 
 - [Green Dependabot PR blocked + auto-merge on + 0 reviews = required-approval gate no automation satisfies](pattern_dependabot_blocked_by_required_approval.md) — lucos auto-merge tooling only runs `gh pr merge --auto`, NEVER approves. Estate convention = `required_approving_review_count: none` (gate on status checks only). A repo requiring an approval blocks every Dependabot PR forever; fix=set count to 0 (sysadmin/repo-settings). Audit `branch-protection-enabled` catches it. Don't chase missing `LUCOS_CI_*` secrets first — `dependabot-auto-merge.yml` can conclude `success` while still blocked. First hit aithne#22/#15 2026-06-10.
