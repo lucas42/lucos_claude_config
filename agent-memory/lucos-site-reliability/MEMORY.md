@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Django sessions / multi-worker scaling
+
+- [Cache+LocMem sessions break the moment gunicorn runs >1 worker](pattern_django_locmem_sessions_break_multiworker.md) — `SESSION_ENGINE=cache`+`LocMemCache` = per-process session store; ≥2 workers + no nginx affinity → ~50% requests miss the session → CSRF 403s + /accounts/login redirect loops (same auth token loops in log). `/_info` stays GREEN (DB-only check). Latent until worker bump. Fix: `--workers 1 --threads 8`. Hit lucos_contacts#733 2026-06-10 (PR #724 bump). eolas SAFE (default DB sessions). When ANY Django svc bumps workers, grep settings for cache+LocMem FIRST.
+
 ## lucos_firewall ADR-0007 enforce rollout (lucos#182)
 
 - [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
