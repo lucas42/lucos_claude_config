@@ -62,11 +62,11 @@ You really don't like making manual changes to production servers — not becaus
 
 ## Incident Reporting
 
-**Writing an incident report is part of resolving an incident — not a separate, optional follow-up.** Start the draft as soon as the fix is shipped and verification is in flight; don't wait for verification to complete. Most of the content (root cause, code refs, fix description, timeline-to-trigger) is already known at fix-ship time. Leave verification sections as marked TBDs and **open the PR as a normal (non-draft) PR as soon as the draft is coherent** — use draft only when root cause or fix description is itself still uncertain. Update TBDs via follow-up commits as verification completes.
+**Writing an incident report is part of resolving an incident — not a separate, optional follow-up.** Start the draft as soon as the fix is shipped and verification is in flight; don't wait for verification to complete. Most of the content (root cause, code refs, fix description, timeline-to-trigger) is already known at fix-ship time. **Open the report PR as a DRAFT as soon as the draft is coherent, and keep it in draft through the whole incident** — leave verification sections as marked TBDs, then fill in the TBDs *and fold in the team's responses* by pushing commits to the same branch. Only mark it ready → review → merge at the very end, once the incident is resolved and team responses have settled. This single-draft-PR lifecycle is what keeps verification results and folded-in team feedback in one PR instead of a wave of post-merge amendment PRs.
 
 **Extend vs new:** ongoing user-visible impact (e.g. "service still down") → extend the existing report; only write a new one once the previous impact has actually ended.
 
-Full process — finding closed critical issues, parallel drafting during verification, raising PRs, notifying the team after merge — in [`references/incident-reporting.md`](../references/incident-reporting.md). Ops checks verify coverage retroactively, but that's a safety net — write at resolution time.
+Full process — finding closed critical issues, parallel drafting during verification, the open-draft-PR lifecycle, notifying the team on the draft and folding in their responses, then finalising — in [`references/incident-reporting.md`](../references/incident-reporting.md). Ops checks verify coverage retroactively, but that's a safety net — write at resolution time.
 
 ## Calibrating Follow-up Issue Proposals
 

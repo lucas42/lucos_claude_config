@@ -4,14 +4,15 @@ This document defines the process for writing an incident report for a specific 
 
 Use this process when you have identified a critical issue that needs a report -- whether during ops checks (Check 2: Incident Report Coverage) or when asked to write a report ad-hoc.
 
-> **STOP — read the completion checklist before you start, not after.** Incident-report work is delivered when *all four* items below are true, not when the report PR is open:
+> **STOP — read the completion checklist before you start, not after.** Incident-report work uses **a single draft PR that stays open through the whole incident** and is only finalised at the end. This is what lets the report accumulate the full picture — verification results, then the team's folded-in responses — in *one* PR instead of a wave of post-merge amendment PRs. It is delivered when *all five* items below are true, not when the PR is opened:
 >
 > 1. Report written following `docs/incidents/TEMPLATE.md`
-> 2. Follow-up issues filed and linked in the Follow-up Actions table
-> 3. PR raised, **reviewed, and merged** (drive the review loop yourself per `pr-review-loop.md` — do not stop at "PR opened")
-> 4. Individual notification messages sent to **every other teammate** (six messages, not one "broadcast")
+> 2. **Draft** PR opened early and kept open — every amendment (verification results, folded-in team responses, late follow-up links) goes on the same branch. Do NOT mark ready or merge mid-incident.
+> 3. Follow-up issues filed and linked in the Follow-up Actions table
+> 4. Team notified **on the draft**, and their responses folded into the report
+> 5. Only once the incident is resolved AND the team responses have settled: mark the PR **ready**, drive the code-reviewer review loop to approval (per `pr-review-loop.md`), and **merge**
 >
-> The full checklist with checkbox syntax is at the bottom of this file. It is duplicated here at the top because every previous false-completion of this workflow has been caused by reading down to Step 2 and stopping. Items 3 and 4 are not optional follow-ups — they are part of the work.
+> The full checklist with checkbox syntax is at the bottom of this file. It is duplicated here at the top because every previous false-completion of this workflow has been caused by reading down to Step 2 and stopping. The draft-stays-open lifecycle (items 2→5) is the load-bearing change: keeping the PR in draft is precisely what avoids the ship-then-amend churn.
 
 ## Extend an existing report, or write a new one?
 
@@ -22,27 +23,25 @@ Before writing a new report, check whether the incident you are about to documen
 
 When in doubt, ask the team-lead before creating a fresh report — it is far easier to fold information into an existing report than to merge two later.
 
-## Don't gate drafting or shipping on long-running verification
+## Open the draft PR early and keep it open — don't sit idle, don't merge early
 
-When verifying an incident's resolution takes meaningful time — multi-hour cron reruns, soak windows, estate-wide deploy propagation, post-failure data backfills, etc. — draft the report **and ship the PR** in parallel with the verification. Two principles:
+When verifying an incident's resolution takes meaningful time — multi-hour cron reruns, soak windows, estate-wide deploy propagation, post-failure data backfills, etc. — start the report and open its **draft** PR in parallel with the verification. Two principles:
 
 - **Don't sit idle before drafting.** Almost everything that goes into the report (root cause, code-site references, fix description, timeline up to the verification trigger, the analysis sections) is already known once the fix is shipped.
-- **Don't gate the PR on verification.** Durability of state-in-git matters more than the tidiness of a TBD-free first commit. Verification windows can outlast a work session; uncommitted draft material on disk does not survive a context loss, but pushed commits do.
+- **Open early as a draft, but don't *merge* until the end.** Durability of state-in-git matters more than a TBD-free first commit — pushed commits survive a context loss, uncommitted disk material does not. But because the report keeps growing (verification results, then the team's folded-in responses), the PR stays a **draft** until the incident is fully wrapped, so every addition is one push to one branch rather than a new PR each time.
 
 The pattern:
 
-1. Once the fix is shipped and verification is in flight, start drafting immediately.
+1. Once the fix is shipped and verification is in flight, start drafting immediately and **open a draft PR** as soon as the draft is coherent. List the outstanding TBDs in the PR body so a cold reader (e.g. you in a future session) can pick up the work.
 2. Leave verification-result sections as clearly-marked TBDs. Examples:
    - In the timeline: `2026-04-28 HH:MM | Rerun completes — TBD pending result`
    - In the header table: `Duration | … — TBD pending verification`
    - In the summary: `Verified end-to-end with rerun — TBD pending rerun completion`
-3. **Open the PR as soon as the draft is coherent** — default mode is a normal (non-draft) PR. List the outstanding TBDs in the PR body so reviewers know what's pending and a cold reader (e.g. you in a future session) can pick up the work. Use a *draft* PR only when the substantive content (root cause, fix description) is itself still uncertain — not merely because verification is pending.
-4. As verification completes, fill in the TBDs:
-   - **If the original PR is still open** (e.g. on a supervised repo where merge waits on a human): push follow-up commits to the same branch.
-   - **If the original PR has already merged** (e.g. auto-merge repos like `lucos`, where reviewer-approval triggers immediate merge): open a fresh branch off latest main, fill in the TBDs, and open a follow-up PR. Reference the original PR in the body so the audit trail is intact. Drive the review loop on the new PR per `pr-review-loop.md`.
-5. If verification surfaces a further failure mode (the incident isn't actually resolved yet), update the report via further commits to reflect the new chapter of the story. An explicit `TBD pending result` line is not a claim of success, so leaving it in place while waiting does not violate this — but once the result is known, do not retain a TBD that no longer reflects reality. The report is amendable: if anything else develops after merge, update it via a fresh PR.
+3. As verification completes and team responses arrive, **fill in the TBDs and fold in the responses by pushing commits to the same draft branch.** Because the PR is a draft it cannot auto-merge out from under you — there is no "fresh PR because it already merged" case to handle mid-incident, which is the whole point.
+4. If verification surfaces a further failure mode (the incident isn't actually resolved yet), update the draft to reflect the new chapter of the story. An explicit `TBD pending result` line is not a claim of success, so leaving it in place while waiting is fine — but once the result is known, do not retain a stale TBD.
+5. **Only finalise at the very end** (Step 4 below): once the incident is resolved and the team's responses have settled, mark the PR ready, drive the review loop to approval, and merge.
 
-Sitting idle until verification completes — or holding the PR back — wastes time and delays the team-lead's ability to confirm the incident is closed out. The TBD-and-fill-in pattern keeps work flowing and durable without misrepresenting state.
+The one exception: if something material develops *after* the final merge, the report is still amendable — open a fresh branch off main and a follow-up PR referencing the original. This should be the rare case, not the norm; the draft-stays-open lifecycle exists precisely so nearly everything lands before the single merge.
 
 This rule applies equally to fresh reports and to extending an existing one.
 
@@ -103,9 +102,9 @@ Given a closed critical issue that needs a report:
 
 5. **Use fully-qualified cross-repo references.** Because incident reports live in the `lucos` repo, bare `#N` references resolve to `lucos` issues -- not the repo where the incident occurred. Always use the `lucas42/repo_name#N` format for issue and PR references (e.g. `lucas42/lucos_contacts#42`, not `#42`). This is the general rule from CLAUDE.md but is especially easy to get wrong in incident reports, where nearly every reference points to a different repo. **Each `#N` instance auto-links independently against the host repo — qualifying once in a paragraph does not carry context to later instances.** Concretely: a Follow-up Actions row whose first mention is `lucas42/lucos_claude_config#97` and whose later sentence reads "the reference doc in #100" will still mis-link that bare `#100` to `lucos#100` (a real but unrelated issue), not to `lucos_claude_config#100`. Qualify every instance, or rewrite as prose ("PR #100 in `lucos_claude_config`") when repeated qualification would be visually noisy.
 
-## Step 2: Raise a PR
+## Step 2: Open a draft PR (and keep it open through the incident)
 
-Create a branch, commit the new incident report(s), and open a PR on the `lucos` repo:
+Create a branch, commit the report, and open a **draft** PR on the `lucos` repo — early, as soon as the draft is coherent. Keep it in draft while the report accumulates verification results and the team's folded-in responses.
 
 ```bash
 cd ~/sandboxes/lucos
@@ -116,34 +115,26 @@ git checkout -b incident-report-{short-description}
     commit -m "Add incident report for {short description}
 
 Refs lucas42/{repo}#{number}"
-git push -u origin incident-report-{short-description}
+~/sandboxes/lucos_agent/git-as-agent --app lucos-site-reliability \
+    push -u origin incident-report-{short-description}
 ```
 
-Then create the PR via `gh-as-agent`:
+Then open the PR as a **draft** with `create-pr` (always use `create-pr`, never `gh-as-agent … pulls` directly — it handles the supervised-repo reviewer step). Write the body to a unique tempfile first:
 
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability repos/lucas42/lucos/pulls \
-    --method POST \
-    -f title="Add incident report: {short title}" \
-    -f head="incident-report-{short-description}" \
-    -f base="main" \
-    --field body="$(cat <<'ENDBODY'
-Adds an incident report for the {short description} incident.
-
-Source issue: lucas42/{repo}#{number}
-
-Written from issue body, comments, and linked PRs following `docs/incidents/TEMPLATE.md`.
-ENDBODY
-)"
+~/sandboxes/lucos_agent/create-pr --app lucos-site-reliability --repo lucos \
+    --title "Add incident report: {short title}" \
+    --body-file /tmp/pr_body_incident_{slug}.md \
+    --head incident-report-{short-description} --base main --draft
 ```
 
-If multiple critical issues need reports, include them all in a single PR with a commit per report.
+Put the source/originating issue(s) and the list of outstanding TBDs in the body so a cold reader (you, in a future session) can pick up the work. If multiple critical issues need reports, include them all in one PR with a commit per report.
 
-After opening the PR, follow the PR review loop defined in `pr-review-loop.md` -- message the `lucos-code-reviewer` teammate and drive the review to completion before reporting back.
+**Do NOT mark this PR ready or drive it to merge yet.** Every amendment through the incident — verification results, folded-in team responses, late follow-up links — goes on this same branch (Step 3). It is finalised only in Step 4. A draft PR cannot auto-merge, which is exactly why it can stay open and absorb everything in one place.
 
-## Step 3: Notify the team after merge
+## Step 3: Notify the team on the draft, and fold in their responses
 
-Once the incident report PR is merged or closed, send a notification to every other teammate with a link to the report so they can learn from the outcomes.
+Once the incident is resolved and the draft report is coherent (verification TBDs filled or clearly marked pending), notify every other teammate — pointing them at the **draft** report so they can review it for their domain and surface any follow-ups *before* it's finalised. This is the step that earns the draft-stays-open lifecycle: responses get folded into the same PR rather than chased through separate amendment PRs after merge.
 
 **There is no broadcast mechanism in SendMessage.** Setting `to: "broadcast"` puts the message into a phantom inbox no agent reads — it does not multiplex. The only structured message types are `shutdown_request`, `shutdown_response`, and `plan_approval_response`. To reach the whole team, send **individual SendMessage calls**, one per teammate. You can issue all of them in a single response (parallel tool calls).
 
@@ -159,16 +150,30 @@ Recipients (excluding yourself):
 Suggested content (same for each recipient):
 
 ```
-Incident report published: docs/incidents/{filename}.md
-Source issue: https://github.com/lucas42/{repo}/issues/{number}
+Draft incident report for your review: docs/incidents/{filename}.md (PR lucas42/lucos#{pr})
+Source/originating issue(s): lucas42/{repo}#{number}
 Summary: {one-line summary of what happened and the root cause}
 Lessons: {bullet list of the load-bearing lessons most likely to affect future work}
-Read the full report at: https://github.com/lucas42/lucos/blob/main/docs/incidents/{filename}.md
+Read the draft at: https://github.com/lucas42/lucos/blob/{branch}/docs/incidents/{filename}.md
 
-If this report highlights a follow-up action in your domain: message lucos-site-reliability to coordinate before filing any issue — see "Receiving incident notifications" in references/incident-reporting.md.
+This is still a draft — I'm finalising once responses settle. If it highlights a follow-up action in your domain, message lucos-site-reliability to coordinate before filing any issue (I own incident follow-ups, to avoid duplicates) — see "Receiving incident notifications" below.
 ```
 
-This ensures every agent — architect, code-reviewer, developer, security, sysadmin, ux — can absorb lessons learned and update their own memory or practices as needed.
+As responses arrive:
+
+- Fold domain input, factual corrections, and architecture/security-style observations into the report by pushing commits to the draft branch (apply "Propagate factual corrections through every narrative section" above).
+- When a teammate raises a follow-up in their domain, coordinate per "Receiving incident notifications" below, then link the resulting issue in the Follow-up Actions table.
+
+**Don't block forever on silence.** "Responses have settled" means the active threads have gone quiet, not that every teammate has acknowledged. Give a reasonable window, fold in what lands, and proceed to Step 4. Because the team engaged with the draft here, no separate post-merge "lessons broadcast" round is needed.
+
+## Step 4: Finalise — mark ready, review, merge
+
+Only once the incident is resolved AND the team's responses have settled (Step 3) AND every follow-up issue is filed and linked in the Follow-up Actions table (Step 1.3):
+
+1. **Mark the draft PR ready for review** (GraphQL `markPullRequestReadyForReview` — see `references/github-workflow.md` for the mutation and node-id lookup).
+2. **Drive the code-reviewer review loop to approval and merge**, per `pr-review-loop.md` — message `lucos-code-reviewer` and don't stop at "marked ready". On `lucos` (unsupervised) reviewer approval triggers auto-merge.
+
+After merge the report is final. If something material develops *afterwards*, the report is still amendable via a fresh follow-up PR referencing the original — but that's the rare exception; the draft-stays-open lifecycle exists so nearly everything lands before this single merge.
 
 ## Receiving incident notifications
 
@@ -184,23 +189,27 @@ The coordination step is what matters. Whether the SRE or another persona ultima
 
 ## Completion checklist
 
-The incident report is delivered when ALL of the following are true. Reporting back to the dispatcher before all four are true is incomplete; do not substitute an outcomes-style "Done" summary that omits any step.
+The incident report is delivered when ALL of the following are true. Reporting back to the dispatcher before all five are true is incomplete; do not substitute an outcomes-style "Done" summary that omits any step.
 
 - [ ] Report written following `docs/incidents/TEMPLATE.md` (Step 1)
+- [ ] Draft PR opened early and kept open; all amendments on the same branch, not merged mid-incident (Step 2)
 - [ ] Follow-up issues filed and linked in the report's Follow-up Actions table (Step 1, item 3)
-- [ ] PR raised, reviewed, and merged (Step 2)
-- [ ] Individual notification messages sent to every other teammate (Step 3 — six messages, not one "broadcast")
+- [ ] Team notified on the draft and their responses folded in (Step 3 — six individual messages, not one "broadcast")
+- [ ] PR marked ready, reviewed, and merged once the incident is resolved and responses have settled (Step 4)
 
 ### Mandatory completion-report format
 
-Before reporting back to the dispatcher (team-lead or user) that the incident report is delivered, **the completion message must restate each of the four checklist items verbatim, each annotated `done` or `not done`**. This is a forcing function: composing the message exposes any item that isn't actually true.
+Before reporting back to the dispatcher (team-lead or user) that the incident report is delivered, **the completion message must restate each of the five checklist items verbatim, each annotated `done` or `not done`**. This is a forcing function: composing the message exposes any item that isn't actually true.
 
 Example completion-report fragment:
 
 > **Incident report completion checklist:**
 > - [x] Report written following `docs/incidents/TEMPLATE.md` — done (`docs/incidents/2026-05-18-…md`)
+> - [x] Draft PR opened early and kept open — done (`lucas42/lucos#161`, draft from HH:MMZ; verification + responses folded on the same branch)
 > - [x] Follow-up issues filed and linked — done (`lucas42/lucos_arachne#544` in Follow-up Actions table)
-> - [x] PR raised, reviewed, and merged — done (`lucas42/lucos#161`, merged HH:MMZ)
-> - [x] Individual notifications sent to every other teammate — done (architect, code-reviewer, developer, security, system-administrator, ux — six messages)
+> - [x] Team notified on the draft and responses folded in — done (architect, code-reviewer, developer, security, system-administrator, ux — six messages)
+> - [x] PR marked ready, reviewed, and merged — done (`lucas42/lucos#161`, merged HH:MMZ)
 
-If any item is `not done`, the completion report is premature; **do not send it**. Continue the work (drive the review loop, send the notifications) and report back only once all four are `done`. A partial-progress update is fine and welcome — but it must clearly say "in progress" and list which items remain, not "done" / "no outstanding actions".
+If any item is `not done`, the completion report is premature; **do not send it**. Continue the work (fold in responses, finalise the PR) and report back only once all five are `done`. A partial-progress update is fine and welcome — but it must clearly say "in progress" and list which items remain, not "done" / "no outstanding actions".
+
+> **Note on the draft lifecycle vs. fast incidents.** For a small, fully-resolved incident with no pending verification and no likely cross-domain follow-ups, the draft window can be brief — open draft, notify, and if nothing comes back, finalise in the same session. The draft step is not bureaucratic overhead; it's insurance that the *common* case (verification results and team responses arriving after the report's first draft) lands in one PR instead of several. Don't skip the draft just because an incident *looks* simple — the seinn/backups incidents looked simple too and still drew follow-up amendments.
