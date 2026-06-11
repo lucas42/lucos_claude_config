@@ -16,7 +16,7 @@ lucos_arachne_web: 2026-05-29
 lucos_backups: 2026-06-06
 lucos_authentication: 2026-06-08
 lucos_repos_app: 2026-05-29
-lucos_dns_bind: 2026-05-27
+lucos_dns_bind: 2026-06-11
 lucos_loganne: 2026-06-09
 lucos_configy: 2026-06-09
 lucos_contacts_app: 2026-05-29
@@ -39,9 +39,9 @@ lucos_arachne_ingestor: 2026-06-06
 lucos_arachne_search: 2026-06-03
 lucos_arachne_triplestore: 2026-06-02
 lucos_mail_docs: 2026-06-06
-lucos_photos_postgres: 2026-05-27
+lucos_photos_postgres: 2026-06-11
 lucos_photos_redis: 2026-06-06
-lucos_scenes: 2026-05-27
+lucos_scenes: 2026-06-11
 lukeblaney_co_uk: 2026-06-09
 lucos_media_manager: 2026-06-03
 lucos_media_metadata_api: 2026-06-08
@@ -54,7 +54,8 @@ lucos_notes: 2026-06-04
 lucos_root: 2026-06-06
 lucos_router: 2026-06-02
 semweb: 2026-06-06
-lucos_time: 2026-05-27
+lucos_time: 2026-06-11
+lucos_aithne: 2026-06-11
 lucos_arachne_mcp: 2026-06-04
 lukeblaney_blog: 2026-06-06
 lucos_docker_health_app: 2026-06-03
@@ -76,3 +77,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-05-25: lucos_comhra_agent and lucos_comhra_llm decommissioned (no longer present on avalon; loganne system map no longer includes lucos_comhra). UNRECOVERED monitoring alerts for those systems are stale window artefacts.
 - 2026-06-03 Check 6 (/_info): `dns.l42.eu/_info` returns empty body but `lucos_dns` is healthy in monitoring — monitoring polls lucos_dns's /_info from a different endpoint than the public dns.l42.eu host. NOT a defect; don't re-chase. Six services omit Tier-1 checks/metrics (configy, scenes, static_media, private, semweb, lukeblaney.co.uk) — tracked in lucas42/lucos#212 (P3 hygiene, zero runtime impact). `title` is Tier-2 (optional) — missing-title is never a defect.
 - 2026-06-03 Check 5: deriving service domains for /_info checks — use configy `config/systems.yaml` (31 mappings); `installation/repositories` for the repo list (NOT orgs/lucas42 — 404).
+- 2026-06-11: lucos_aithne is a NEW service (replacing lucos_authentication, tracking lucos_aithne#12) under heavy active development (v1.1.x→v1.12.0, 30+ deploys 06-09→06-11). Its 06-09→06-10 flaps (fetch-info/tls/db) = deploy churn + new-service cert latency (lucos_router#95). Its new volume `lucos_aithne_credential_store` appearing on avalon before being declared in configy caused the backups volume-config/volume-host flaps 06-09 23:08-23:53 (same root cause; now declared with recreate_effort: considerable, green). Don't re-investigate these as separate incidents while aithne is being stood up. Bootstrap warning (BOOTSTRAP_ADMIN_CONTACT_ID still set post-enrolment) is lucas42's WIP — he set it.
