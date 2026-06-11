@@ -112,6 +112,10 @@
 
 - [Daily 02:00Z bulk weighting recompute → loganne flap](pattern_daily_weighting_cron_loganne_flap.md) — known recurring 1-2 brief alerts/day at 02:13-02:25Z UTC from the `lucos_media_weightings` daily bulk recompute (~220 trackWeightingUpdated → ~660 outbound fires in 30 min). Within calibration trade-off; do NOT refile or re-diagnose during ops checks.
 
+## Deploy-stuck triage
+
+- [Slow deploy to xwing-v4/salvare = home-ISP image pull, not a stall](pattern_homehost_deploy_pull_slowness.md) — "Pull container(s) onto remote box" step bandwidth-bound on home hosts; large rebuild (python:3.14 rollout) → ~7min pull. Check v1.1 job steps: all-succeeded-in-sequence + current step progressing = fine; real stall = one step >15min no progress. Verify via deploySystem Loganne event + monitoring (xwing-v4 SSH fails host-key from sandbox — known_hosts gap, TODO). Don't ticket the slowness. Confirmed 2026-06-11 media_import #450.
+
 ## lucos_repos deploy mechanics
 
 - [Deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — `Start() → TriggerSweep()` means deploy → recovery is ~17-18min, not the 6h scheduled cadence. Also: `POST /api/sweep` (no auth) is the manual trigger; returns 409 if sweep in progress. I got the 6h recovery time wrong on 2026-05-28; lucas42 caught it.
