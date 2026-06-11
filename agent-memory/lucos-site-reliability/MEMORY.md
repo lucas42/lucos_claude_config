@@ -1,16 +1,8 @@
 # SRE Agent Memory
 
-## Django sessions / multi-worker scaling
-
-- [Cache+LocMem sessions break the moment gunicorn runs >1 worker](pattern_django_locmem_sessions_break_multiworker.md) — `SESSION_ENGINE=cache`+`LocMemCache` = per-process session store; ≥2 workers + no nginx affinity → ~50% requests miss the session → CSRF 403s + /accounts/login redirect loops (same auth token loops in log). `/_info` stays GREEN (DB-only check). Latent until worker bump. Fix: `--workers 1 --threads 8`. Hit lucos_contacts#733 2026-06-10 (PR #724 bump). eolas SAFE (default DB sessions). When ANY Django svc bumps workers, grep settings for cache+LocMem FIRST.
-
 ## lucos_firewall ADR-0007 enforce rollout (lucos#182)
 
 - [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
-
-## CI publish: data-only images amd64-only
-
-- [buildx attestations force a platform-claiming index → "agnostic" images publish amd64-only](pattern_buildx_attestations_force_index_platform_claim.md) — orb `release-docker platform:""` should emit a plain manifest (consumable from ANY arch) but buildx's default provenance/SBOM attestations wrap it in an OCI index claiming `linux/amd64` → non-amd64 `COPY --from` fails `no match for platform in manifest`. Fix in ORB (disable attestations on platform:"" path), NOT multi-arch (only matches enumerated arches). lucos_deploy_orb#186; auth_scopes#15/#16; lukeblaney_cv affected too. 2026-06-10.
 
 ## lucos_router (TLS / domain serving)
 
@@ -36,14 +28,6 @@
 
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
-
-## CircleCI serial-group / stuck PRs
-
-- [serial-group drops inner `ci/circleci: build` status → PR stuck `blocked`](pattern_circleci_serialgroup_dropped_build_status.md) — orb serial-group build emits 3 contexts (serial-start-1 / **build** / serial-end-1); CircleCI sometimes delivers the wrappers but NOT the inner `build` (the required check) though the job succeeded → required check absent, `mergeable_state: blocked`, native auto-merge waits forever. Diagnostic: compare head-SHA contexts vs a recent merged PR; wrappers-present-but-`build`-absent. Fix = re-run build-deploy workflow (safe on non-main: deploy jobs main-only); `build` re-delivers ~2min AFTER workflow finishes (don't verify too early). DON'T require serial-end-1 (unlock job, unsafe gate). First hit lucos_router#97 2026-06-10.
-
-## Dependabot / branch protection
-
-- [Green Dependabot PR blocked + auto-merge on + 0 reviews = required-approval gate no automation satisfies](pattern_dependabot_blocked_by_required_approval.md) — lucos auto-merge tooling only runs `gh pr merge --auto`, NEVER approves. Estate convention = `required_approving_review_count: none` (gate on status checks only). A repo requiring an approval blocks every Dependabot PR forever; fix=set count to 0 (sysadmin/repo-settings). Audit `branch-protection-enabled` catches it. Don't chase missing `LUCOS_CI_*` secrets first — `dependabot-auto-merge.yml` can conclude `success` while still blocked. First hit aithne#22/#15 2026-06-10.
 
 ## CI/CD pipeline (deploy orb)
 
