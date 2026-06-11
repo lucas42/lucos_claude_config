@@ -173,3 +173,6 @@ A co-primary cross-repo PR (e.g. configy registration) is not a "drive-by extra"
 
 ## New repo standup: provision-repo-ci-secrets.sh now includes CircleCI follow
 Step 9 added 2026-06-09: `POST /api/v1.1/project/github/lucas42/{repo}/follow` registers the GitHub webhook so ci/circleci:* statuses actually appear. Without it, all required checks stay pending forever.
+
+## xwing SSH from sandbox: use avalon jump host
+Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at this time"). Use `-J avalon.s.l42.eu`. For salvare: `-J xwing.s.l42.eu` (or `-J avalon.s.l42.eu,xwing.s.l42.eu`). See `xwing-ssh-via-avalon.md`.
