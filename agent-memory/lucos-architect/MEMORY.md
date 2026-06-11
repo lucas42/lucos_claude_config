@@ -114,6 +114,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - Dependabot auto-merge on `pull_request` works **if** `LUCOS_CI_APP_ID`/`LUCOS_CI_PRIVATE_KEY` are in the Dependabot secret scope (separate from Actions scope). See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md).
 - Auto-merge caller workflows need ≥ `permissions: contents: read` (`{}` causes `startup_failure`). Discovered 2026-03-21 incident.
 - `.github` smoke-test suite covers `dependabot-auto-merge` only, not `code-reviewer-auto-merge` — gap tracked in lucos#58.
+- [Auto-merge approval policy](project_auto_merge_approval_policy.md) — **lucos ADR-0013 Proposed**, draft PR lucos#237 (configy#224); configy `additionalReviewers` + workflow-enforced required-set, fail-closed; supervised=bot+lucas42; follow-ups held till sign-off
 
 ## Infrastructure notes
 
