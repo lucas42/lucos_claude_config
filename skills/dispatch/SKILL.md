@@ -120,7 +120,7 @@ If a PR was created and approved:
    ```
    where `<system-name>` is the repository name (e.g. `lucos_photos`). Exit code 0 means yes (unsupervised), exit code 1 means no, exit code 2 means error.
 
-3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Query the project board for all items with Status = Blocked (option ID `d79b6b67`), paginating until exhausted. For each Blocked item, fetch the issue body **and all comments**. Then pipe the combined text into `~/.claude/skills/dispatch/check-dependent` to determine whether the closing issue is a dependency:
+3. **Check for issues to unblock (always — regardless of supervised/unsupervised).** Query the project board for **every** item with Status = Blocked (option ID `d79b6b67`), paginating until exhausted, and run the dependency check below against **all of them**. **Do not shortcut this by unblocking only the dependents you remember were waiting on the closed issue** — when one issue feeds several blocked tickets (e.g. a shared spine), it is easy to clear the ones on your active critical path and leave a sibling stranded. Reasoning from memory is exactly the failure this systematic sweep prevents: a dependency closing means *re-querying all Blocked items*, not hand-picking the obvious children. For each Blocked item, fetch the issue body **and all comments**. Then pipe the combined text into `~/.claude/skills/dispatch/check-dependent` to determine whether the closing issue is a dependency:
 
    ```bash
    BODY_AND_COMMENTS="..."   # concatenated body + all comment bodies
