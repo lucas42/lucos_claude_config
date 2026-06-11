@@ -80,7 +80,6 @@
 - [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
 - [Migration finish-off state](project_migration_finishoff.md) — RESOLVED 2026-06-01: lucas42 declared metadata→eolas migration complete; retired from priorities.md, lucos_firewall now sole #1 strategic priority
 - [lucos_firewall rollout state](project_firewall_rollout.md) — **COMPLETE 2026-06-08: all 3 hosts enforcing (xwing 10:45, salvare 10:59, avalon 14:25), lucos#182 closed.** Four post-enforce regressions found+fixed (#13/#14 inter-container DROP, #19/#20 Docker FORWARD wipe, #16/#17 mDNS, backups#307/#310 host-net hairpin). Memory retains durable lessons: DRY_RUN override, revert hand, the **Compose-reuses-stale-network foot-gun**, host-net+router INPUT pattern
-- [aithne autonomous build](aithne-autonomous-build.md) — **RETIRED 2026-06-10: lucas42 back, autonomous period over.** Non-migration build complete; bootstrap-admin chain (#48 design / #49 impl / #50 ADR) all merged with lucas42's own #50 approval at 11:09Z — do NOT re-cite #50 as awaiting sign-off. Migration umbrella #12 now has **no formal blocker** (#11 found zero brokering consumers; build parity + deploy done) — awaits lucas42's direction to scope the ~11 identity-consumer sub-tickets. Only possible residual: #8 prod machine-key provisioning in lucos_creds (verify live before citing)
 
 ## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
 
