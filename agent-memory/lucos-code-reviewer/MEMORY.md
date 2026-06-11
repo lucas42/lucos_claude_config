@@ -161,11 +161,12 @@ There are two distinct auto-merge workflows — do not conflate them:
 - If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
 
 ### Reporting supervised repo PR status
-- After bot approval on a supervised repo: `auto_merge: null` is **expected** (bot approval correctly did nothing). Report as: **"awaiting lucas42's approval — the workflow will auto-merge once he approves"**. Do NOT say he needs to click Merge.
-- After lucas42 approves: workflow calls `gh pr merge --auto --merge`, setting `auto_merge` non-null. PR merges once CI passes.
-- NEVER claim "auto-merge triggered/succeeded" based solely on the workflow check-run having `conclusion: success`. On supervised repos, the bot-approval run succeeds but does nothing. The only reliable signal after lucas42 approves is `auto_merge` being non-null on the PR itself.
-- Only flag as stuck (criterion 7) if `unsupervisedAgentCode: true` but `auto_merge` is still null after bot approval.
-- Confirmed wrong: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" when PR was awaiting lucas42. Also reported "awaiting lucas42 approval **to merge**" on lucos_eolas #218 and lucos_contacts #672, implying he had to click Merge. Corrected by lucos-site-reliability 2026-04-29.
+- **Always check `state`/`merged_at` first.** If `merged_at` non-null → merged (report "merged", stop). Only then interpret `auto_merge`.
+- After bot approval on a supervised repo: `auto_merge: null` is expected (bot correctly did nothing). Report as: **"awaiting lucas42's approval — the workflow auto-merges once he approves"**. Do NOT say he needs to click Merge.
+- **`auto_merge: null` does NOT indicate supervision.** On unsupervised repos, `code-reviewer-auto-merge.yml` may merge synchronously (without setting `auto_merge`) when CI is already green. Always run `check-unsupervised` — never infer from `auto_merge` alone. (Confirmed failure: lucos PR #238 — reported "awaiting lucas42 (supervised)" when `lucos` is unsupervised; PR merged 1 second later on bot approval.)
+- If unsupervised and `auto_merge: null` and PR still open: check if the auto-merge workflow run is still `in_progress`. If it just completed and PR is open, flag as stuck (criterion 7).
+- NEVER claim "auto-merge triggered/succeeded" based solely on the workflow check-run `conclusion: success`. On supervised repos the run succeeds but does nothing.
+- Confirmed wrong: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" awaiting lucas42. Also lucos_eolas #218 and lucos_contacts #672 implied he needed to click Merge. Corrected by lucos-site-reliability 2026-04-29.
 
 ## gh-as-agent Body Field Gotchas
 
