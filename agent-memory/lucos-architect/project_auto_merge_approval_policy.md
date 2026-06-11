@@ -7,7 +7,9 @@ metadata:
 
 # Data-driven auto-merge approval policy — lucos ADR-0013
 
-**Status (2026-06-11):** Proposed. Draft PR lucas42/lucos#237 (lucos is unsupervised → draft blocks auto-merge until lucas42 signs off). Originating ticket: lucos_configy#224.
+**Status (2026-06-11):** **Accepted** — lucas42 approved PR lucas42/lucos#237 unconditionally (ratifies ADR as written, incl. supervised-requires-both + auth_scopes-deferred). PR marked ready. Originating ticket: lucos_configy#224. **Impl follow-ups raised (dependency-ordered):** lucos_configy#231 (field, Ready) → lucas42/.github#70 (workflow enforce, blocked on #231 deploy) → lucos_claude_config#114 (instruction→configy lookup, blocked on #70).
+
+**Gotcha for impl:** lucos is unsupervised → auto-merge fires on the **bot's** approval, not lucas42's; lucas42's approval alone does NOT trigger the unsupervised path, and marking-ready fires no review event. PR #237 needs lucos-code-reviewer to review before it merges. **#114 nuance:** "drop the static list" = replace hardcoded list with a configy `additionalReviewers` *lookup* — the agent must still REQUEST the declared reviewers (else workflow blocks merge with nobody invited).
 
 **Why:** lucas42 (configy#224, 2026-06-11) wants the per-repo required-reviewer policy moved out of `lucos-code-reviewer`'s instructions into `lucos_configy`, enforced by the auto-merge GitHub Action rather than the agent.
 
