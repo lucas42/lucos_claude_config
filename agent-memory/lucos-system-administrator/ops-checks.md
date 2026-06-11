@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-09
-resource_checks: 2026-06-04
-syslog_review: 2026-06-04
-software_updates: 2026-06-04
-sandbox_drift: 2026-06-04
-repos_dashboard: 2026-06-09
+container_status: 2026-06-11
+resource_checks: 2026-06-11
+syslog_review: 2026-06-11
+software_updates: 2026-06-11
+sandbox_drift: 2026-06-11
+repos_dashboard: 2026-06-11
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1268,6 +1268,36 @@ All already tracked by audit tool. No action needed.
 - All other images: within 60 days (most recent: Jun 3–4 2026). Fine.
 
 **No new issues raised.**
+
+---
+
+### 2026-06-11 (checks 1–6 due; monthly checks last ran 2026-06-04 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- Jun 5: lucos-agent tried to read `/etc/docker/daemon.json` via sudo — expected from DNS outage investigation.
+- Jun 7: tried `systemctl status named` via sudo — expected from DNS work.
+- Jun 8: tried ip6tables, iptables, docker volume du — expected from firewall/backup investigation.
+- Jun 10: tried sqlite3 read of aithne credential store volume — expected from aithne ops.
+- All sudo failures, all expected from recent agent ops work. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.5.3, containerd 2.2.1→2.2.4, buildx 0.31.1→0.34.1, compose 5.1.0→5.1.4. Routine.
+- Xwing: Docker CE 29.4→29.5.3, containerd 2.2.2→2.2.4, buildx 0.33.0→0.34.1, compose 5.1.2→5.1.4; kernel 6.12.47→6.18.33 (large jump from stable/trixie), cloud-init, initramfs-tools, libcamera, libpisp, raspi-config, raspi-firmware, rpi-connect, rpi-eeprom, rpi-loop-utils, rpi-swap, rpicam-apps, userconf-pi. Routine.
+- Salvare: Docker CE 29.3→29.5.3, containerd 2.2.1→2.2.4, buildx, compose; dpkg/dpkg-dev from oldstable, kernel 6.12.25→6.12.87 (large jump), raspi-firmware, raspi-utils, rpi-eeprom, rpicam-apps. Routine.
+
+**Resources**:
+- Avalon: 2.9Gi available of 7.6Gi. Swap 173Mi/4.5Gi (4%). Disk 27% (460G/1.8T). Load 2.34/3.22/3.53 (96 days uptime). Journal 105.7M. Fine.
+- Xwing: 493Mi available of 906Mi. Swap 139Mi/905Mi (15%). Disk **76%** (85G/117G) — up from 69% (77G) on 2026-06-04 (+8G in 7 days). At this rate will approach 80% in ~7 days. Root cause is backup accumulation — tracked in lucos_backups#318 and lucos_backups#324. Load 1.11/0.99/1.12. Fine otherwise. **Watch item.**
+- Salvare: 3.4Gi available of 3.7Gi. No swap. Disk **78%** (43G/58G) — up from 76% (42G) on 2026-06-04 (~1G/week growth). 13G free. Slower growth than xwing. Load 0.04. Fine otherwise. **Watch item.**
+- Local VM: disk was 77% (74G/96G). Docker images 44.21GB (31.93GB reclaimable), build cache 21.74GB. Pruned: 1.6GB unused images + 16.7GB build cache = 18.3GB freed. Now 52% (49G/96G). Fine.
+
+**Sandbox drift**: 2 remote commits pulled (PR #89 — dependabot auto-merge workflow bump to v1.20.0). `.github/workflows/` change only — no live VM action needed. Clean.
+
+**Repos dashboard**: 0 failing conventions (57 repos). Completely clean.
+
+**Issues raised**: None. Xwing and salvare disk growth tracked by existing lucos_backups#318 and #324.
 
 ---
 
