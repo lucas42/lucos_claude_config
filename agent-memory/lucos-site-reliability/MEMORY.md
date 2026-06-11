@@ -69,6 +69,7 @@
 ## Monitoring coverage: HTTP vs scheduled-jobs
 
 - [fetch-info requires http_port; non-HTTP boxes covered via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — `info-systems-list.json` built from configy `/systems/http` at Docker build (Dockerfile L17); a domain-but-no-http_port system (e.g. lucos_dns) has NO fetch-info/tls, only `config-sync`+`circleci`. Don't assume domain⇒fetch-info. schedule_tracker overdue (age≥freq×3)=liveness, consec-errors (5/4/3/2 by cadence)=staleness; grace is frequency-derived, not a free knob. Verified 2026-06-05 (lucos#217 DNS-secondary SOA design).
+- [public-port TCP reachability checks (`port-N-reachable`, source `ports`)](pattern_monitoring_public_port_reachability.md) — fetcher_ports probes configy `public_ports` (mail 25, creds 2202, locations 8883, dns 53, dns_secondary 53). KEY GOTCHA: `/systems/http` FILTERS to http_port systems (dns/router absent); use full `/systems` for any non-http box attribute. Liveness floor only (DNS green ≠ resolution works). dependsOn [lucos_dns] only. Shipped lucos_monitoring#281/PR#282 2026-06-12.
 
 ## avalon IPv6 docker bridging
 
