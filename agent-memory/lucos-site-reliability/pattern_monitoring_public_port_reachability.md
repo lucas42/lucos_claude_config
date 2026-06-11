@@ -16,3 +16,5 @@ Mechanics worth remembering:
 - dependsOn is `[lucos_dns]` ONLY (not router): a raw TCP probe bypasses nginx, so a router-deploy dependency would suppress the very outage it catches. (failThreshold:2 + this dependsOn via local `make_port_probe_check/1`, deliberately NOT fetcher_info's `make_direct_probe_check` which stamps [router,dns].)
 
 State-server detail: checks merge per-`Source` (`source_checks_map`), so the `ports` source coexists with `info`/`circleci`/`scheduled_jobs` rather than clobbering. A new source for an already-seen system is safe.
+
+Post-deploy verified 2026-06-12: all 5 went green at first poll on production — positive evidence the avalon host-net hairpins work for ports 25/2202/8883/53 (monitoring is host-net on avalon, connecting to public hostnames that resolve back to avalon). Contrast the NAT-loopback breakage in [[project_firewall_rollout]] (backups#307/#310) — these TCP hairpins are fine.
