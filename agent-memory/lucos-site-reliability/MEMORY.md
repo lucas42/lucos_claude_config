@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Dev cross-service wiring (host.docker.internal, linked creds)
+
+- [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — dev `*_ORIGIN` = `http://host.docker.internal:<hostPort>` not bridge IP (172.17.0.1 → 400 DisallowedHost; only `host.docker.internal` is in Django ALLOWED_HOSTS). Linux needs `extra_hosts: host.docker.internal:host-gateway`. Auth is a lucos_creds LINKED credential (`client/env => server/env`) auto-managing KEY_* + CLIENT_KEYS — never hand-edit. **403 from a stale local .env vs creds masquerades as a wrong key — diff local .env vs fresh creds fetch before writing.** Proven aithne→contacts 2026-06-12 (lucos_aithne#86).
+
 ## lucos_firewall ADR-0007 enforce rollout (lucos#182)
 
 - [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
