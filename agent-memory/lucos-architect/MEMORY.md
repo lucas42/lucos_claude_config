@@ -142,7 +142,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - **lucos_media_seinn** — Node.js player. Playback sync #14.
 - **lucos_media_linuxplayer** — Node.js + mplayer on ARM. Primary cause of stale-position on device switch.
 - **lucos_configy** — Rust API. Single-host-for-domain (#25) Option A.
-- **lucos_monitoring** — Erlang OTP. Flappiness threshold #74 awaiting lucas42 decision (per-check `failThreshold` in /_info).
+- **lucos_monitoring** — Erlang OTP. Flappiness/consecutive-failure threshold #74 = CLOSED (was per-check `failThreshold`). No open warning-tier/degraded-vs-unhealthy issue exists (verified 2026-06-12) — don't cite #74 for that.
 - **lucos_root** — Static+Apache. /_info 3-tier schema accepted (lucos#35).
 - **lucos_repos** — Go+SQLite, convention auditing. Greenfield #22. Blast radius #159 → ADR-0003 dry-run sweep. ADR-0004 auto-close audit-finding issues (#248, PR #251 merged).
 - **lucas42/.github** — Reusable workflow repo. Dependabot auto-merge SHA pinning issue (#34). Tag-based versioning (#35), smoke test gate (#38).
