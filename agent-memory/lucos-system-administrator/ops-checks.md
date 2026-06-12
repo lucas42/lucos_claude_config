@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-11
+container_status: 2026-06-12
 resource_checks: 2026-06-11
 syslog_review: 2026-06-11
 software_updates: 2026-06-11
 sandbox_drift: 2026-06-11
-repos_dashboard: 2026-06-11
+repos_dashboard: 2026-06-12
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1298,6 +1298,16 @@ All already tracked by audit tool. No action needed.
 **Repos dashboard**: 0 failing conventions (57 repos). Completely clean.
 
 **Issues raised**: None. Xwing and salvare disk growth tracked by existing lucos_backups#318 and #324.
+
+---
+
+### 2026-06-12 (checks 1 + 6 due; weekly checks last ran 2026-06-11 — not due; monthly checks last ran 2026-06-04 — not due)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 60 repos checked (up from 57 on 2026-06-11 — 3 new repos added), 0 failing conventions. Completely clean.
+
+**No new issues raised.**
 
 ---
 
