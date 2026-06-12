@@ -8,6 +8,10 @@
 
 - [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
 
+## Scratch Go images / outbound TLS
+
+- [x509 "unknown authority" from our OWN svc = client scratch image has no CA bundle](pattern_scratch_image_no_ca_bundle.md) — served cert valid + `docker exec sh`→"not found" = `FROM scratch` Go image missing `/etc/ssl/certs/ca-certificates.crt`. Latent until first outbound HTTPS; a deploy adding a new dep surfaces it. Fix=`COPY --from=builder` the CA bundle (dev PR, no restart helps). `/_info` green ≠ fixed (outbound-only path). First hit lucos_aithne#106 2026-06-12 (→contacts). Other estate scratch Go svcs at risk.
+
 ## lucos_router (TLS / domain serving)
 
 - [New service's TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — router domain discovery is PULL-ONLY (no configy push). `update-domains.sh` (certbot certonly per domain) runs only on container startup + daily cron at **22:16 UTC** (`16 22 * * *`). New configy domain waits up to ~24h for its cert; restart lucos_router to force it. LE backdates `notBefore` ~1h (don't misread as issuance time). NOT an incident. First hit aithne 2026-06-09; doc gap = lucos_router#95.
