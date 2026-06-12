@@ -62,6 +62,7 @@
 - See `~/.claude/references/docker-conventions.md` for conventions. Missing role suffix in container_name/image is a recurring review comment.
 - **Healthcheck URLs: always `127.0.0.1`, never `localhost`** — Alpine resolves `localhost` to `::1`; services bind `0.0.0.0` (IPv4 only). Fixed in lucos_arachne#91 and lucos_contacts#535.
 - **`php:*-apache`**: has `curl` but not `wget` — use `curl -sf http://127.0.0.1/` for healthchecks.
+- [FROM scratch + CA bundle](feedback_scratch_image_ca_bundle.md) — scratch images have no trust store; copy `ca-certificates.crt` (and `zoneinfo`) from builder the moment you add any outbound HTTPS call. Bit us in lucos_aithne#106.
 
 ## Python test stubs (sys.modules injection)
 
