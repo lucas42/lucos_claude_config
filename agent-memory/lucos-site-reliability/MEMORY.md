@@ -145,6 +145,7 @@
 
 ## Standing Rules
 
+- [Flag follow-up disposition to coordinator, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — for a follow-up *I* raised, recommend close-vs-park to team-lead and let them set issue state; board/triage disposition is the coordinator's lane. Don't toggle state on crossed messages. Bit me 2026-06-12: closed lucos#242 directly → 3-toggle churn + stale statement to lucas42.
 - [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — revocation / single-active / TTL / what-voids-what is implementation-defined, not a safe default; grep the store/handler or hedge. Bit me 2026-06-12 ("fresh --bootstrap-invite supersedes" was false; propagated to lucas42 via team-lead before checking the store).
 
 - [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — never use `[ -n "$x" ]` on `--jq` output for existence checks; use `--silent` + `$?`. Bit me on 2026-05-21 estate-wide stale-auto-merge sweep — categorised all 65 repos as hits.
