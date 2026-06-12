@@ -88,6 +88,28 @@ Always set `restart: always` on persistent service containers. Without it, conta
 - **Never use `localhost` in healthcheck probe URLs — always use `127.0.0.1`.** Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. Services typically bind only `0.0.0.0:PORT` (IPv4), so the healthcheck gets "Connection refused" on `::1` and reports `(unhealthy)` even though the service is externally functional. This is a silent false-negative — the container stays "Up" but shows unhealthy, accumulating thousands of consecutive failures. Seen in production: [lucos_arachne#91](https://github.com/lucas42/lucos_arachne/issues/91), [lucos_contacts#534](https://github.com/lucas42/lucos_contacts/issues/534).
 - Correct form: `test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT}/_info"]`
 
+## `FROM scratch` runtime images — CA bundle requirement
+
+If the runtime stage uses `FROM scratch` (or a distroless variant that does **not** include a CA bundle), and the binary makes **any outbound HTTPS call**, the final build stage **MUST** copy the CA certificate bundle:
+
+```dockerfile
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+```
+
+Without this, Go's TLS client has no trust roots and will reject every valid Let's Encrypt cert with `x509: certificate signed by unknown authority`. The failure is **latent** — it only fires when the outbound-HTTPS path is first exercised, and `/_info` stays green in the meantime because the check probe doesn't touch the outbound path.
+
+If the binary uses `time.LoadLocation`, also copy:
+
+```dockerfile
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+```
+
+**Also applies to:** any image used only to ship static assets (`FROM scratch` as an export/artifact stage) is exempt — this rule only applies when the runtime executable runs inside the scratch stage.
+
+**Note:** `gcr.io/distroless/static-debian12` already ships a CA bundle and tzdata, so services using that base are covered without an explicit `COPY`. See `lucos_root` for an example.
+
+Incident history: `lucos_aithne` 2026-06-12 — a deploy adding the first `contacts.Get()` call surfaced a latent missing-CA-bundle gap; ~1h55m admin-only degradation. Fixed in lucas42/lucos_aithne#107.
+
 ## Alpine DNS gotcha
 
 Docker service names with underscores may fail DNS resolution in Alpine containers (musl libc — RFC non-compliant hostname rejection). Workaround: set `hostname:` with a hyphenated name in docker-compose and map it in SSH config / application config.
