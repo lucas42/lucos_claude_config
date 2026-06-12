@@ -145,6 +145,7 @@
 
 ## Standing Rules
 
+- [Finalize a PR before dispatching to an auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) — on unsupervised repos, approval auto-merges the reviewed SHA; post-dispatch amendments race the merge → stale `main`. Make all edits first, `git show HEAD:<path>|grep` to verify the pushed branch, then dispatch + don't touch. Keep incident reports DRAFT until truly final. Bit me 3× on 2026-06-12 (#241/#243).
 - [Flag follow-up disposition to coordinator, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — for a follow-up *I* raised, recommend close-vs-park to team-lead and let them set issue state; board/triage disposition is the coordinator's lane. Don't toggle state on crossed messages. Bit me 2026-06-12: closed lucos#242 directly → 3-toggle churn + stale statement to lucas42.
 - [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — revocation / single-active / TTL / what-voids-what is implementation-defined, not a safe default; grep the store/handler or hedge. Bit me 2026-06-12 ("fresh --bootstrap-invite supersedes" was false; propagated to lucas42 via team-lead before checking the store).
 
