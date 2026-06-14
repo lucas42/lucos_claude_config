@@ -28,12 +28,12 @@ Any container published as `host_port→80/tcp` where `host_port ≠ 80` bypasse
 
 Note: services where host port = container port (e.g. `lucos_router` on 80→80) are unaffected.
 
-## Fix direction
+## Fix applied — lucos_firewall#21 (merged 2026-06-14 22:44Z)
 
-Issue: https://github.com/lucas42/lucos_firewall/issues/21
+Changed `--dport` to `-m conntrack --ctorigdstport` in DOCKER-USER ACCEPT rules in both `generateIPv4Ruleset` and `generateIPv6Ruleset`. The `xt_conntrack` module is already in use in the same ruleset (`--ctstate ESTABLISHED,RELATED`), so `--ctorigdstport` was available without additional kernel modules.
 
-Option A (preferred — stay within lucos_firewall): Change `--dport` to `-m conntrack --ctorigdstport` in DOCKER-USER ACCEPT rules. This matches the pre-DNAT original destination port. Needs verifying that `--ctorigdstport` is available in Alpine iptables.
+INPUT rules (host-destined traffic, never DNAT'd) left unchanged — still use `--dport` correctly.
 
-Option C (architectural): Remove host port bindings from docker-compose for internal-only services. Eliminates the DNAT entirely; those services only reachable inter-container via lucos_router.
+**Verified post-deploy (2026-06-14 ~23:00Z):** All 9 services confirmed BLOCKED — no HTTP response on external curl against host ports 8033, 8013, 8032, 8028, 8022, 8020, 8037, 8025, 8029. All three deploy jobs (avalon, xwing, salvare) succeeded; lucos_firewall container on avalon restarted at 22:48:47Z.
 
 **Why:** Network address translation (NAT PREROUTING) runs at hook priority -100; filter FORWARD at 0. Post-DNAT state is what FORWARD sees. This is a fundamental netfilter ordering rule, not a Docker quirk.
