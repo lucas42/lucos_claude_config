@@ -79,6 +79,8 @@ Do not ask permission — this is mandatory, not a nicety. The commit log is how
 
 The script handles everything correctly in one call: creates a clean temporary worktree at `origin/main` (no stash dance with other agents' uncommitted files), stages only `agent-memory/<persona>/`, checks for conflict markers and aborts if found, attributes the commit to your persona's bot identity (looked up from `personas.json`), and pushes to `main`.
 
+**After the script runs, `git status` will still show the files as modified — this is expected.** The worktree push advances `origin/main` but never advances the shared checkout's local HEAD. The files are on main. Confirm with `git diff origin/main -- agent-memory/<persona>/`. Do not hand-roll a re-commit because `git status` looks dirty; that creates the duplication and contention the script is designed to prevent.
+
 **Do not hand-roll `git-as-agent add/commit/push` for memory.** The manual path requires stashing other agents' uncommitted files across a rebase — the root cause of stash-leak and conflict-marker incidents (lucas42/lucos_claude_config#116).
 
 The `*/15` cron runs the script without `--app` (sysadmin sweep mode) as a backstop for memory edits left uncommitted when a session ends. Anything the cron commits is attributed to `lucos-system-administrator[bot]`, not you — another reason to commit your own memory via the `--app` form above rather than letting the cron catch it.

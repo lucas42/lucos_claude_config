@@ -193,4 +193,10 @@ echo "$(date -Iseconds) Committed. Pushing to main..."
 git push origin HEAD:main
 
 echo "$(date -Iseconds) Push complete."
+# Note: 'git status' in the shared checkout will still show these files as modified after
+# this script runs. That is expected — the worktree push advances origin/main but never
+# advances the shared checkout's local HEAD. The files ARE on main. To confirm, run:
+#   git diff origin/main -- <path>
+# Do not hand-roll a re-commit just because 'git status' looks dirty; that's how
+# duplicate/contention cycles start.
 # EXIT trap handles worktree cleanup.
