@@ -13,21 +13,14 @@ metadata:
 
 **My mistake (2026-05-31):** I hit a non-fast-forward push (the cron had swept my files first) and inferred the manual commit was therefore "redundant and contention-prone", and flagged it for removal. Wrong — the contention is handled by a recipe, not by removing the step. My session's changes landed via the cron and so were mis-attributed to the cron bot; can't retroactively fix that, but follow the recipe next time.
 
-**How to apply (updated 2026-06-15).** The worktree-isolation this memory used to describe manually is now productized as `scripts/commit-agent-memory.sh` (commits the memory dirs to `main` via a clean temp worktree at `origin/main` — no shared-tree stash/rebase contention — and now includes a conflict-marker guard, added after my malformed file reached main this session). **BUT it commits with a FIXED identity `lucos-system-administrator[bot]` (script line 31), so it does NOT preserve per-agent attribution** — running it for your own memory attributes it to the sysadmin bot, the exact mis-attribution this memory exists to prevent.
-
-So there is a live tension: clean tooling (the script) vs per-agent attribution (lucas42's requirement). Until resolved:
-- **If attribution matters, self-commit** with `git-as-agent --app <persona>` (stage only `agent-memory/<persona>/`), and land it via a throwaway worktree + cherry-pick — clean AND correctly attributed:
+**How to apply — RESOLVED 2026-06-15 (`lucos_claude_config` commit `aca3305`).** Commit your own memory in-session with:
 ```
-git-as-agent --app <persona> add agent-memory/<persona>/ && git-as-agent --app <persona> commit -m "..."
-MYSHA=$(git -C ~/.claude rev-parse HEAD); WT=$(mktemp -d)
-git -C ~/.claude worktree add -q "$WT" origin/main
-cd "$WT" && git-as-agent --app <persona> cherry-pick "$MYSHA" && git-as-agent --app <persona> push -q origin HEAD:main
-cd ~/.claude && git worktree remove --force "$WT"
+~/.claude/scripts/commit-agent-memory.sh --app <persona>     # e.g. --app lucos-architect
 ```
-- **Do NOT hand-roll `rebase --autostash` against the shared tree** — it races the cron and fragments (mess this session, 2026-06-15: leaked stashes + a re-committed conflict-marker file).
+That single call is the complete path now: it commits via a clean temp worktree at `origin/main` (no shared-tree stash/rebase contention), **attributes to `<persona>`'s bot identity** (looked up from `personas.json`), **scopes staging to `agent-memory/<persona>/` only** (no cross-attribution of other personas' uncommitted writes), and runs the conflict-marker guard. The no-args form is unchanged — sysadmin-bot full sweep, which is what the Stop hook / cron call.
 
-**Clean resolution to pursue (flagged to sysadmin, refines lucas42/lucos_claude_config#116):** parametrise `commit-agent-memory.sh` with `--app <persona>` so the clean worktree path *also* attributes per-persona — then "everyone uses the script" becomes the complete fix, clean AND attributed.
+- **Do NOT hand-roll `git-as-agent add/commit/(stash/rebase)/push` for memory.** That manual path is what caused this session's mess (2026-06-15: leaked stashes + a re-committed conflict-marker file). The whole point of the script is that no persona reasons about stashes / worktrees / push ordering. The earlier manual worktree-cherry-pick recipe is **obsolete** — the `--app` flag does it natively.
 
-**Status:** standalone race/attribution fix (#113) declined, folded into lucas42/lucos#155 (per-agent isolation, which dissolves the shared-tree root cause). Conflict-marker guard is now IN the script (resolved this session).
+**Status:** the clean-tooling-vs-attribution tension is **resolved** by `--app` (aca3305 — I flagged the gap, sysadmin implemented). Standalone race fix #113 folded into lucas42/lucos#155 (per-agent isolation). The script's line-113 push has no retry — a known, deliberately-unhardened low-urgency gap (don't add the retry without a triggering incident; sysadmin's call, matches the #285 proportionality principle).
 
 See [[reference_creds_store_enumeration]] for an unrelated same-session note.
