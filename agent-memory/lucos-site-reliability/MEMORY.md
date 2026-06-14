@@ -37,6 +37,8 @@
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
 - [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
 
+- [Scope-cutover convergence + holder-enumeration gap](pattern_scope_cutover_convergence_and_enumeration_gap.md) — verify creds scope cutovers (eolas/media-metadata) via lucos_router access log (media API = media-api.l42.eu NOT media-metadata.l42.eu); auto-fire client redeploys on server PR merge; verify BOTH read+write per client. LESSON: a client granted only some capabilities it uses → 403 (mma eolas:write-only broke its reconcile_tag_names READS); the MONITORING BOARD catches this (infrequent reads invisible in router log), not the access log alone. 499=client-closed≠auth.
+
 ## CI/CD pipeline (deploy orb)
 
 - [deploy-avalon exit 18 "pull access denied for *_test" = orb pull was profile-blind](pattern_deploy_orb_pull_profile_blind.md) — orb pull step used `yq` (profile-blind) vs publish's `docker compose config` (profile-aware), so it tried to pull a repo's deliberately-unpublished profiled `test` image. Prod stays UP (pull runs before `compose up`) = P2 not outage. FIXED in `lucos/deploy@0.0.185` (orb#184, 2026-06-07). Gotcha: re-running a failed workflow reuses old compiled orb version — trigger a FRESH pipeline to pick up an orb fix.
