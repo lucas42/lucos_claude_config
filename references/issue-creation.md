@@ -64,6 +64,8 @@ When asked to create a new issue:
    rm "$BODY_FILE"
    ```
 
+   **The body-file path must be absolute** (`mktemp` gives you one). `gh-as-agent` resolves an `@`-path from a different working directory than your interactive shell, so a relative path like `body=@notes.md` fails with `error parsing "body" value: open notes.md: no such file or directory` and nothing is posted. Don't hand-write body files to a local dir and reference them relatively.
+
    **Why Pattern B is required:** `gh api` performs template substitution on `{owner}/{repo}` (and similar tokens) **inside argument values**, including inside `--field body="..."`. The single-quoted heredoc only blocks shell expansion; the substitution happens downstream inside `gh` itself. Documentation-style placeholders get silently rewritten to real repo names in the posted text — and the corruption is not visible in the heredoc you wrote, only in the final issue. If in doubt, use Pattern B.
 
    The same rule applies to `PATCH` calls that update an existing issue body (`repos/.../issues/{number}` with `--method PATCH`) and to comments (`repos/.../issues/{number}/comments`).
