@@ -82,6 +82,18 @@ cd "$WORKTREE_DIR"
 # Stage only agent-memory/ and projects/ — nothing else.
 git add agent-memory/ projects/
 
+# Safety guard: refuse to commit any file containing git conflict markers.
+# Conflict-marker-laden files on main corrupt the persona's loaded context.
+# Checks the staged index (post-add content), not the working tree.
+# This catches a real incident: a conflict in agent-memory/lucos-architect/
+# reference_firewall_dockeruser_scope.md landed on main (commit before c1ef559).
+CONFLICT_FILES=$(git grep -l --cached "^<<<<<<< " -- agent-memory/ projects/ 2>/dev/null || true)
+if [ -n "$CONFLICT_FILES" ]; then
+    echo "$(date -Iseconds) ERROR: Conflict markers found in staged files — aborting commit. Resolve conflicts manually then re-run:"
+    echo "$CONFLICT_FILES"
+    exit 1
+fi
+
 # If nothing actually changed after the copy (e.g. all changes were already on
 # main from a previous tick), exit cleanly without an empty commit.
 # The EXIT trap handles worktree cleanup.
