@@ -144,6 +144,9 @@ Before applying any workflow change that wires in a security tool config (CodeQL
 ## Production SSH: use `<host>.s.l42.eu`, never `<host>.l42.eu`, and let SSH config supply the user
 `avalon.l42.eu` is NXDOMAIN. Correct form: `avalon.s.l42.eu`. SSH config sets `User lucos-agent` for `*.s.l42.eu` — never override with `lucas@`. SRE tripped on both mistakes (2026-05-30). See `ssh-hostname-convention.md`.
 
+## DOCKER-USER post-DNAT bypass: containers with container port 80 bypass firewall
+`--dport 80` in FORWARD matches ALL DNAT'd-to-container-port-80 services regardless of host port. 9 exposed on avalon. Fix: `--ctorigdstport` or remove host port bindings. See `docker-dnat-docker-user-bypass.md` and lucas42/lucos_firewall#21.
+
 ## Docker fixed-cidr-v6 IPAM persistence — flush network/files/ to pick up changes
 `fixed-cidr-v6` in daemon.json only applies on bridge creation. Flush `/var/lib/docker/network/files/` + restart to change it. See `docker-fixed-cidr-v6-ipam-persistence.md`.
 
