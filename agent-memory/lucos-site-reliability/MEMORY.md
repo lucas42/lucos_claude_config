@@ -15,6 +15,7 @@
 ## lucos_router (TLS / domain serving)
 
 - [New service's TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — router domain discovery is PULL-ONLY (no configy push). `update-domains.sh` (certbot certonly per domain) runs only on container startup + daily cron at **22:16 UTC** (`16 22 * * *`). New configy domain waits up to ~24h for its cert; restart lucos_router to force it. LE backdates `notBefore` ~1h (don't misread as issuance time). NOT an incident. First hit aithne 2026-06-09; doc gap = lucos_router#95.
+- [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md) — configy-driven `certbot certonly` (update-domains.sh) AND stock Debian `/etc/cron.d/certbot` `certbot renew` (configy-unaware, iterates `/etc/letsencrypt/renewal/*.conf`). Decommissioned domains left orphaned renewal configs the stock cron retried forever (router#90, comhra 2026-06-03). RESOLVED via PR #91 (1.0.20): update-domains.sh now `certbot delete`s certs not in the active HTTP domain set. **Durable nuance:** reaping criterion is "not HTTP-served", broader than "decommissioned" → also reaps `http_port=null` systems (e.g. dns.l42.eu) — harmless/self-healing, but a cert vanishing from the router store ≠ domain dead.
 
 ## DNS (l42.eu) estate-wide outages
 
