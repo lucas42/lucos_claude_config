@@ -99,6 +99,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Docker Healthy ≠ network reachability — recurring estate-wide pattern](reference_docker_healthy_not_reachability.md) — 2 of last 3 incidents (creds CRLF 2026-05-09, xwing 2026-05-28); systemic healthcheck-design concern
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md) — delete-on-absence loops must raise on an empty-but-non-erroring source, else they wipe everything (creds#333 ADR-0001, 2026-06-04)
 - [Sweep-vs-CI race false positives](reference_sweep_vs_ci_race.md) — required-status-checks-coherent flags the slow CircleCI rollup as "stale" when the ~07:15 sweep collides with dependabot auto-merges; NOT a stale cache; fix lucos_repos#413 (2026-06-09)
+- [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md) — flat scope list; `domain:` ≠ owning service; enforcement backend-side/default-deny; NO scope→backend mapping exists (so don't filter scope pickers by backend — creds#386)
 
 ## Project memories
 
@@ -107,6 +108,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [File uploader](project_file_uploader.md) — lucos#209: **PARKED (Ideation) 2026-06-08**; ADR-0013 draft PR #235 **CLOSED 2026-06-09** + branch deleted; build tickets held; revive as ADR-0001 in a new repo (don't reopen #235); design/Q&A valid for future revisit
 - [Google Photos migration](project_photos_google_migration.md) — lucos_photos#424: PLAN FINALISED 2026-06-09; date-cutoff dedup (taken<1Feb2026); 4 tickets: #425 desc / #427 migration-script(Blocked) / #426 face-spike / lucos_backups#318 incremental-backup-ADR(blocker); aurora 954.4G
 - [DNS secondary modelling](project_dns_secondary_modelling.md) — configy one-system/one-domain/one-host vs heterogeneous multi-host; recommend two-systems-one-repo; ADR lucos#213; dns#79/#95/configy#208 on hold
+- [C4 estate model](project_c4_estate_model.md) — lucos_repos ADR-0006 (draft PR #423, tracking #422); generated from configy/_info/loganne/compose/creds, typed-by-source, divergence-as-audit; first-cut 41 systems
 
 ## Auto-merge & security checks
 
