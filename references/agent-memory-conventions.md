@@ -69,24 +69,19 @@ These exclusions apply even when the user explicitly asks you to save something.
 
 ## Committing memory changes
 
-After **any** write to `~/.claude/agent-memory/<persona>/` (new file, edit, delete, or a `MEMORY.md` update), commit and push the change **with your own persona identity** via `git-as-agent --app <persona-bot>` in the same turn. Do not ask permission. This is deliberate and not optional: the commit log is how lucas42 sees **which agent changed which memory**, so that attribution must come from you committing as yourself — it is the primary path, not a nicety. Brief commit message naming what was saved.
-
-Stage only your own memory path, so you don't sweep up other agents' in-progress edits in the shared working tree:
+After **any** write to `~/.claude/agent-memory/<persona>/` (new file, edit, delete, or a `MEMORY.md` update), commit and push the change **in the same turn** using the shared commit script:
 
 ```
-git-as-agent --app <persona-bot> add agent-memory/<persona>/
-git-as-agent --app <persona-bot> commit -m "<persona>: <what was saved>"
-git-as-agent --app <persona-bot> push
+~/.claude/scripts/commit-agent-memory.sh --app <persona>
 ```
 
-**If the push is rejected as non-fast-forward**, the `scripts/commit-agent-memory.sh` cron (`*/15`) has pushed ahead of you — this is expected occasionally, not an error. Rebase your commit on top and retry; `autoStash` keeps other agents' uncommitted working-tree files safe across the rebase:
+Do not ask permission — this is mandatory, not a nicety. The commit log is how lucas42 sees which agent changed which memory; the `--app` flag ensures the commit is attributed to your persona's bot, not the sysadmin sweep bot.
 
-```
-git -c rebase.autoStash=true pull --rebase origin main
-git-as-agent --app <persona-bot> push
-```
+The script handles everything correctly in one call: creates a clean temporary worktree at `origin/main` (no stash dance with other agents' uncommitted files), stages only `agent-memory/<persona>/`, checks for conflict markers and aborts if found, attributes the commit to your persona's bot identity (looked up from `personas.json`), and pushes to `main`.
 
-That cron is a **backstop, not the primary path**: it exists only to catch memory edits left uncommitted when a session ends, so nothing is ever lost. But anything *it* commits is attributed to `lucos-system-administrator[bot]`, not you — so if you rely on it instead of committing yourself, your authorship is erased from the log. Always commit your own memory; let the cron only ever catch what you genuinely didn't get to.
+**Do not hand-roll `git-as-agent add/commit/push` for memory.** The manual path requires stashing other agents' uncommitted files across a rebase — the root cause of stash-leak and conflict-marker incidents (lucas42/lucos_claude_config#116).
+
+The `*/15` cron runs the script without `--app` (sysadmin sweep mode) as a backstop for memory edits left uncommitted when a session ends. Anything the cron commits is attributed to `lucos-system-administrator[bot]`, not you — another reason to commit your own memory via the `--app` form above rather than letting the cron catch it.
 
 (The cron covers **only** `agent-memory/` and `projects/`. Other config files — `agents/`, `CLAUDE.md`, `settings.json`, workflow/reference docs — are never auto-committed and always need a deliberate `git-as-agent --app <persona-bot>` commit+push.)
 
