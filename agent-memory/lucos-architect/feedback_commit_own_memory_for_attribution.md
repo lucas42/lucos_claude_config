@@ -13,19 +13,21 @@ metadata:
 
 **My mistake (2026-05-31):** I hit a non-fast-forward push (the cron had swept my files first) and inferred the manual commit was therefore "redundant and contention-prone", and flagged it for removal. Wrong — the contention is handled by a recipe, not by removing the step. My session's changes landed via the cron and so were mis-attributed to the cron bot; can't retroactively fix that, but follow the recipe next time.
 
-**How to apply — on a non-ff push, don't hand-stash other agents' files.** The documented recipe (`references/agent-memory-conventions.md`, authoritative) is:
+**How to apply (updated 2026-06-15).** The worktree-isolation this memory used to describe manually is now productized as `scripts/commit-agent-memory.sh` (commits the memory dirs to `main` via a clean temp worktree at `origin/main` — no shared-tree stash/rebase contention — and now includes a conflict-marker guard, added after my malformed file reached main this session). **BUT it commits with a FIXED identity `lucos-system-administrator[bot]` (script line 31), so it does NOT preserve per-agent attribution** — running it for your own memory attributes it to the sysadmin bot, the exact mis-attribution this memory exists to prevent.
+
+So there is a live tension: clean tooling (the script) vs per-agent attribution (lucas42's requirement). Until resolved:
+- **If attribution matters, self-commit** with `git-as-agent --app <persona>` (stage only `agent-memory/<persona>/`), and land it via a throwaway worktree + cherry-pick — clean AND correctly attributed:
 ```
-git -c rebase.autoStash=true pull --rebase origin main   # then re-push; stage only your own path
-```
-**But that recipe is fragile and failed twice on 2026-06-09:** `pull --rebase` aborts with "untracked working tree files would be overwritten by checkout" when another agent's *new* memory file (now also on origin) sits untracked in the shared `~/.claude` tree — autoStash doesn't cover untracked files, so the rebase can't detach HEAD. **Reliable fallback that worked both times: commit locally, then land it via a throwaway worktree at origin/main and cherry-pick:**
-```
-MYSHA=$(git -C ~/.claude rev-parse HEAD)        # after committing your staged memory locally
-WT=$(mktemp -d); git -C ~/.claude worktree add -q "$WT" origin/main
+git-as-agent --app <persona> add agent-memory/<persona>/ && git-as-agent --app <persona> commit -m "..."
+MYSHA=$(git -C ~/.claude rev-parse HEAD); WT=$(mktemp -d)
+git -C ~/.claude worktree add -q "$WT" origin/main
 cd "$WT" && git-as-agent --app <persona> cherry-pick "$MYSHA" && git-as-agent --app <persona> push -q origin HEAD:main
 cd ~/.claude && git worktree remove --force "$WT"
 ```
-This never touches the shared working tree (no stash, no index.lock contention) — it's the same isolation the cron already uses, and is exactly the worktree-isolation fix I proposed as #113 Option B′.
+- **Do NOT hand-roll `rebase --autostash` against the shared tree** — it races the cron and fragments (mess this session, 2026-06-15: leaked stashes + a re-committed conflict-marker file).
 
-**Status (2026-06-09):** the standalone race/attribution fix (#113 Option C/B′) was **declined by lucas42** as more complexity than the friction warrants and **folded into the agent-isolation work on lucas42/lucos#155** (lucos_claude_config#113 closed not_planned). So: don't re-propose a standalone fix; the manual-commit recipe above still stands until lucos#155 delivers per-agent isolation (which dissolves the shared-working-tree root cause). The worktree-cherry-pick fallback above is the interim workaround when autoStash aborts.
+**Clean resolution to pursue (flagged to sysadmin, refines lucas42/lucos_claude_config#116):** parametrise `commit-agent-memory.sh` with `--app <persona>` so the clean worktree path *also* attributes per-persona — then "everyone uses the script" becomes the complete fix, clean AND attributed.
+
+**Status:** standalone race/attribution fix (#113) declined, folded into lucas42/lucos#155 (per-agent isolation, which dissolves the shared-tree root cause). Conflict-marker guard is now IN the script (resolved this session).
 
 See [[reference_creds_store_enumeration]] for an unrelated same-session note.
