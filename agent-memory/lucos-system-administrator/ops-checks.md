@@ -1321,6 +1321,16 @@ All already tracked by audit tool. No action needed.
 
 ---
 
+### 2026-06-14 (checks 1 + 6 due; weekly checks last ran 2026-06-11 — not due until 2026-06-18; monthly checks last ran 2026-06-04 — not due until 2026-07-04)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 1 failing convention — `lucos_backups` `env_var_passthrough`: VERSION env var read in code at src/classes/host.py but missing from docker-compose.yml passthrough. Issue lucos_backups#328 already auto-raised — no action needed.
+
+**No new issues raised.**
+
+---
+
 ### 2026-06-08 (checks 1 + 6 due; weekly checks last ran 2026-06-04 — not due; monthly checks last ran 2026-06-04 — not due)
 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
