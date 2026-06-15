@@ -190,7 +190,29 @@ git \
 
 echo "$(date -Iseconds) Committed. Pushing to main..."
 
-git push origin HEAD:main
+# Push with bounded retry on non-fast-forward rejection.
+# A concurrent session can push to origin/main in the window between our
+# 'git worktree add --quiet "$WORKTREE_DIR" origin/main' (which fetches once)
+# and this push, causing a non-ff failure.  In the worktree model the retry
+# is: re-fetch origin/main, rebase our single commit on top, push again.
+# Content conflicts can't occur because each persona writes exclusively to its
+# own agent-memory/<persona>/ subtree — subtrees are disjoint.
+MAX_PUSH_RETRIES=3
+push_attempt=0
+until git push origin HEAD:main; do
+    push_attempt=$((push_attempt + 1))
+    if [ "$push_attempt" -ge "$MAX_PUSH_RETRIES" ]; then
+        echo "$(date -Iseconds) ERROR: Push to main failed after $MAX_PUSH_RETRIES attempts — giving up." >&2
+        exit 1
+    fi
+    echo "$(date -Iseconds) Push rejected (non-fast-forward); re-fetching origin/main and rebasing (attempt $push_attempt of $MAX_PUSH_RETRIES)..."
+    git fetch origin main
+    git rebase origin/main || {
+        git rebase --abort 2>/dev/null || true
+        echo "$(date -Iseconds) ERROR: Rebase failed — unexpected conflict during retry. Aborting." >&2
+        exit 1
+    }
+done
 
 echo "$(date -Iseconds) Push complete."
 # Note: 'git status' in the shared checkout will still show these files as modified after
