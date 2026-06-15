@@ -16,4 +16,6 @@ metadata:
 2. **Did the run succeed before failing?** Job log: look for `INFO ... installation token refreshed` + a run of determinate/passed results *before* the first 403. 753 passes-then-403 ⇒ not auth (and expiry would be 401).
 3. **Blast radius + window:** `grep "status 403"` the job log (`gh-as-agent ... actions/jobs/<id>/logs`). Abrupt onset, everything-after fails, ~60s window = rate-limit fingerprint. The repos a reviewer names are usually just the *tail* (sort late, caught in the window) — not the whole set.
 
+**audit-dry-run is NOT a required/blocking check** — on 2026-06-15 PR #432 auto-merged (15:41:29Z) with audit-dry-run still `failure`; the only required gate was `ci/circleci: lucos/build`. So a red audit-dry-run is advisory noise, doesn't block merge — don't scramble to re-run it to "unblock" a PR (and my App lacks Actions:write to re-run GHA anyway).
+
 **NOT an incident** — production self-heals on next sweep. It's CI flakiness. Fix = honour `Retry-After` + bound fetch concurrency; the binary also swallows the 403 body so logs never say "rate limit" (observability gap). Tracked: **lucas42/lucos_repos#433** (filed 2026-06-15). Installation id at the time: 114293989. Related deploy mechanics: [[pattern_lucos_repos_deploy_triggers_sweep]].
