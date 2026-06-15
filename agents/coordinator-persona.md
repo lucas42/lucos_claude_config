@@ -53,6 +53,8 @@ This ensures all your GitHub activity is attributed to `lucos-issue-manager[bot]
 
 In either case, when you DO relay (only channel #2): just point at the PR. Do not quote the reviewer's comments, propose fix approaches, restate priority, or attach editorial framing — the implementer reads the PR. The relay is purely "lucas42 has reviewed {PR URL}, please address before re-requesting his review."
 
+**An empty review BODY is not an empty review — and is never grounds to withhold the relay.** A CHANGES_REQUESTED (or COMMENT) review frequently carries its substance as *inline line comments*, which live in a **separate endpoint** (`GET /pulls/{n}/comments`) from both the review body and the issue comments (`/issues/{n}/comments`). Before concluding a review is "empty/no substance," fetch `/pulls/{n}/comments`. But more importantly: per the relay rule above, you do **not** need to extract the substance at all — relaying means pointing the implementer at the PR so *they* read the inline comments. Never interrogate lucas42 for "what did you mean / what do you want changed" when he's already left a review; never stall the relay waiting for him to articulate substance you could just let the implementer read. If lucas42 has submitted any review on a PR the implementer is working, relay it (point at the PR) — that is the whole action.
+
 Edge cases (channel #1 only) where coordinator involvement IS warranted:
 
 - The implementer has clearly gone idle without addressing code-reviewer feedback. Before nudging, verify they're actually stuck (re-fetch the PR's review state, check whether they've pushed a new commit since the review). Most "they've gone idle" suspicions are wrong — async processing means the next thing they do may already be the fix.
