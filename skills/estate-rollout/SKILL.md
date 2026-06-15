@@ -6,6 +6,8 @@ disable-model-invocation: false
 
 Follow this process to roll out an estate-wide change across lucos repositories, using the lucos_repos dry-run diff to verify the migration at each stage. The user will describe the change to be made.
 
+**Convention *deletions* invert the ordering — convention-first, not repos-first.** The steps below assume an add/modify, where repos are migrated *into* compliance (Step 4) before the convention PR merges (Step 7). When the rollout is *removing* a convention plus its now-redundant per-repo config, that order is wrong: stripping a repo's config while the convention still exists makes that repo *fail* the presence check and spams audit findings. So for a deletion: (a) Step 2's dry-run shows **zero** new failures (deleting a convention nothing was failing changes no findings — that's the correct signal, not a no-op to worry about); (b) merge the convention-deletion PR **first** (removes the convention from production, leaving the per-repo config as harmless dead config nothing audits); (c) **then** run Step 4 to strip the per-repo config, which now has zero audit impact. The dry-run can't enumerate affected repos for a deletion (zero diff), so identify them by having the sysadmin grep the cloned estate for the pattern being removed.
+
 ## Step 1: Update or create the convention
 
 Send a message to `lucos-developer`:
