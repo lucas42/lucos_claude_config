@@ -1,6 +1,6 @@
 ---
 name: sift
-description: Re-rank Luke's spotted-roles queue in the round — assess each role against his standing filters, place into priority tiers, flag deadlines, and surface drop candidates. A comparative ranking pass over the whole queue, not a per-role operation. Interactive — proposes the re-rank for sign-off before writing.
+description: Re-rank Luke's spotted-roles queue in the round — assess each role against his standing filters, place into priority tiers, flag deadlines, and surface drop candidates. A comparative ranking pass over the whole queue, not a per-role operation. Non-gated — execute the re-rank, write it, and report; don't wait for sign-off.
 disable-model-invocation: false
 ---
 
@@ -71,20 +71,18 @@ For every role in the queue (existing + un-triaged), produce a compact read:
 Sort the field into the tiers (current headings: `Top priority — apply this week` / `Second tier — apply this month if capacity allows` / `Lower priority — kept for optionality`). Apply these ordering rules:
 
 - **Autonomy first, then enjoyment-fit, then level/comp/domain** — the established weighting.
-- **Deadline pressure rises within a tier.** A strong-fit role with a hard near-term close is the *first* thing to do in its tier even if a deadline-free role edges it on raw desirability (the Thomson Reuters "apply first — only hard deadline" placement is the pattern).
+- **Deadline pressure rises within a tier — but only for a genuinely imminent close.** A strong-fit role with a hard close ~**a week or less** away (where the application lead time actually threatens making the cut) is the *first* thing to do in its tier even if a deadline-free role edges it on raw desirability (the Thomson Reuters "apply first — only hard deadline" placement is the pattern). A close that's a **fortnight or more** out is comfortable lead time, **not** urgency — note it for visibility but rank the role purely on merit; don't let it lift the role above deadline-free roles that edge it on fit (per `feedback_deadline_urgency_threshold.md`, Luke 2026-06-15). The deadline is a logistics fact, not a fit signal, until it's imminent — and equally, never *demote* a role for having a comfortably-distant deadline.
 - **Respect Luke's deliberate manual positioning** per the prioritised-list rule — if he's hand-placed something, don't silently reorder it; surface the proposed change and let him keep it.
 - **An unfetchable JD is NOT a demotion signal.** When a JD can't be fetched (JS-rendered ATS, tenant-gated API, no readable mirror — having genuinely exhausted the fetch routes in Step 3), rank the role on the signal that *is* available (title / summary / employer / level), exactly as for any other thin LinkedIn-only entry. Make "open in a browser to confirm live-status + read the JD" an explicit pre-`/tailor` **action flag**, and state in the entry that the unconfirmed fields are unknown *because of tooling, not merit*. Don't conflate "I can't verify this" with "this ranks lower" (per `feedback_unfetchable_jd_not_a_demotion.md`).
 - **Drop candidates**: expired closing dates, confirmed-duplicate-of-already-applied, or roles a filter clearly rules out. Propose these for removal with a one-line reason; don't unilaterally delete unless it's an unambiguous expiry/duplicate.
 
-## Step 6: Propose the re-rank for sign-off (gate)
+## Step 6: Decide the re-rank (non-gated — don't wait for sign-off)
 
-Ranking is judgement-heavy and Luke has strong, specific views — **do not rewrite `spotted.md` before he signs off.** Present a concise proposal:
+**Don't wait on Luke's confirmation to write the re-rank.** Stated 2026-06-15 ("don't wait on my confirmation for future sifts"). Make the tier calls yourself against the filters, write `spotted.md` (Step 7), then report what moved (Step 8). Luke reads the result and adjusts afterwards if he disagrees — that's cheaper than gating every pass on a back-and-forth.
 
-- The **tier each role lands in**, and specifically **what moved** (promotions, demotions, drops) with a one-line reason each.
-- Any role where the call genuinely needs Luke's judgement (an acceptable-domain-stretch question, a comp-floor edge case) — ask it directly rather than guessing. Use `AskUserQuestion` with clear "tick to approve" semantics per `feedback_askuserquestion_phrasing.md`.
-- Don't recap roles whose position didn't change beyond a one-line "unchanged: …" summary.
-
-Get sign-off (with any adjustments) before writing.
+- This was previously a sign-off gate; it no longer is. Don't present a proposal and stop.
+- **Genuine judgement calls** (an acceptable-domain-stretch, a comp-floor edge case, displacing a role Luke deliberately hand-placed): make your best call and **flag it clearly in the report** so Luke can veto — don't block the whole pass waiting for an answer. Only use `AskUserQuestion` for a call you genuinely cannot make without his input, and even then rank everything else and write first, leaving just that one flagged. Per `feedback_askuserquestion_phrasing.md` if you do ask.
+- Respect Luke's deliberate manual positioning (Step 5) — if a merit re-rank would move a role he hand-placed, surface that in the report rather than burying it.
 
 ## Step 7: Write and commit
 
