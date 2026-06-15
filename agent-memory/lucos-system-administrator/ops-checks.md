@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-14
+container_status: 2026-06-15
 resource_checks: 2026-06-11
 syslog_review: 2026-06-11
 software_updates: 2026-06-11
 sandbox_drift: 2026-06-11
-repos_dashboard: 2026-06-14
+repos_dashboard: 2026-06-15
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1339,6 +1339,16 @@ All already tracked by audit tool. No action needed.
 
 **Cert spot-check** (opportunistic — locations.l42.eu was 31 days on 2026-06-04):
 - locations.l42.eu: Sep 3 2026 (87 days) — RENEWED ✓ (certbot triggered 2026-06-05 as expected)
+
+**No new issues raised.**
+
+---
+
+### 2026-06-15 (checks 1 + 6 due; weekly checks last ran 2026-06-11 — not due until 2026-06-18; monthly checks last ran 2026-06-04 — not due until 2026-07-04)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 1 failing convention — `lucos_backups` `env_var_passthrough`: VERSION env var read at src/classes/host.py:36 but missing from docker-compose.yml passthrough. Issue lucos_backups#328 already open (last updated 2026-06-14T16:41Z). 60 repos total. No new action needed.
 
 **No new issues raised.**
 
