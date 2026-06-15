@@ -41,7 +41,7 @@ Extract the repository (`{owner}/{repo}`) and issue number from the URL. Fetch t
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/{owner}/{repo}/issues/{number}
 ```
 
-Read the full issue body.
+Read the full issue body **and all of its comments** (`GET .../issues/{number}/comments`). This is mandatory, not optional: decisions that resolve open questions in the body — the chosen approach where the body lists options, sign-offs on items the body says "need a decision", a determination that part of the body is moot — are routinely recorded in **comments**, not folded back into the body. So the body alone frequently reads as "under-specified / not Ready" when the matter is actually settled in the thread. **Never judge an issue not-implementable, escalate "this isn't Ready", or question its Ready status from the body alone — read the comments first.**
 
 ## Step 2: Pre-dispatch dependency check
 
