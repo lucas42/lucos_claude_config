@@ -38,6 +38,18 @@ if ! git merge-base --is-ancestor HEAD origin/main 2>/dev/null; then
     exit 0
 fi
 
+# Guard: if HEAD is AT origin/main (they point to the same commit), the branch
+# is empty — it was just created from main with no commits yet.  It is
+# in-progress, not merged.  Return early.
+#
+# Without this guard, git merge-base --is-ancestor passes trivially when
+# HEAD == origin/main (every commit is an ancestor of itself), which causes
+# return-to-main to switch back immediately, delete the fresh branch, and send
+# the next commit to main.  Reproduced and fixed in lucos_claude_config#117.
+if [[ "$(git rev-parse HEAD 2>/dev/null)" == "$(git rev-parse origin/main 2>/dev/null)" ]]; then
+    exit 0
+fi
+
 echo "$(date -Iseconds) Branch '$current_branch' merged into origin/main — switching working tree to main."
 
 # Attempt checkout.  If dirty files that differ between the current branch and
