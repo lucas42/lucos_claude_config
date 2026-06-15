@@ -68,6 +68,7 @@
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — circleci-check red + `test` failed + `deploy-avalon` not_run = flaky `TestEnvironmentRestrictedAccess` scp assertion (exit 255/"Connection closed" vs 1/"lost connection"). Re-run workflow from failed → deploys. NOT a product bug, NOT the scope migration (that's startup in-code). Tracked lucos_creds#358; if open on recurrence, re-run + comment, don't refile.
 
 
+- [CircleCI "Docker Login (mirror)" exit 1 = TIMEOUT reaching docker.l42.eu, not bad creds](pattern_docker_mirror_login_timeout_transient.md) — log shows `context deadline exceeded` hitting the self-hosted mirror; transient. Confirm mirror healthy NOW (`/v2/` 401 in <0.5s, `_info` registry+upstream ok) THEN rerun `from_failed`. Single self-recovered blip → no issue; WATCH if recurs under load. lucos_repos build 2270, 2026-06-15.
 - ["blob unknown to registry" on push = upstream Hub transient](pattern_docker_push_blob_unknown_upstream.md) — build compiles fine, fails only at push; rerun with identical code clears it → NOT our code. Mirror not implicated (pull-through). Fix = push-step retry in orb (lucos_deploy_orb#182). First hit lucos_monitoring 2026-06-03.
 
 ## media_metadata_api integrity checks
