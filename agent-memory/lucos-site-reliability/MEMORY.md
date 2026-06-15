@@ -64,6 +64,7 @@
 
 ## CI / docker build failures
 
+- [lucos_repos audit-dry-run mass 403s = GitHub secondary rate-limit, NOT lost access](pattern_repos_audit_dryrun_secondary_ratelimit.md) — burst content fetches (92 repos × ~30 conventions) trip the limit; 403≠401. Proof: live `/api/status` reads repos fine + run passed 753 checks before 1st 403 + abrupt onset/~60s window. Reviewer's named repos = tail of set. Non-incident, CI flakiness. lucos_repos#433 (2026-06-15).
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — circleci-check red + `test` failed + `deploy-avalon` not_run = flaky `TestEnvironmentRestrictedAccess` scp assertion (exit 255/"Connection closed" vs 1/"lost connection"). Re-run workflow from failed → deploys. NOT a product bug, NOT the scope migration (that's startup in-code). Tracked lucos_creds#358; if open on recurrence, re-run + comment, don't refile.
 
 
