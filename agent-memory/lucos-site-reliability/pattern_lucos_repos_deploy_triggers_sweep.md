@@ -34,7 +34,7 @@ If a deploy *didn't* fire a sweep (e.g. you need to recheck after a non-deploy c
 - Returns `409 Conflict` if a sweep is already in progress
 - Same code path as scheduled and startup sweeps — equivalent behaviour
 
-Companion endpoint: `POST /api/pr-sweep` for the dependabot PR sweep.
+**GOTCHA (cost me time 2026-06-15):** `/api/sweep` is the AUDIT sweep ONLY — it does NOT refresh the PR sweeper. To clear a `stale-dependabot-prs` alert after a Dependabot PR is merged/closed, you MUST hit the SEPARATE `POST /api/pr-sweep` (PR sweeper, own 6h ticker, reads `pulls?state=open`). I reflexively called `/api/sweep` for a stale-dependabot-prs alert, waited 20min, stayed red; `/api/pr-sweep` cleared it in ~30s. Don't conflate the two sweepers.
 
 ## Verification signals
 
