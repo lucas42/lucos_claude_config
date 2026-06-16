@@ -33,6 +33,10 @@
 
 - [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer `KEY_LUCOS_LOGANNE`; `/events` filters are CLIENT-SIDE only (`source`/`type`/`limit` ignored until lucos_loganne#522). cred event `type=credentialUpdated`; deploy `type=deploySystem`. eolas containers are `lucos_eolas_web`/`_app`, NOT `lucos_eolas`.
 
+## Proxy/aggregator handler 502s
+
+- [Misleading "502 could not reach X" can be a DECODE failure of a 200 upstream](pattern_misleading_502_decode_not_unreachable.md) — thin proxy handlers that map ANY client error to one 502 string report a JSON decode failure of a successfully-reached (200) upstream as "could not reach". Test the upstream directly (curl from host w/ prod key) BEFORE blaming network/routing. Suspect mock/prod JSON type divergence (string vs number id) in Go structs; immune sibling path decodes into map[string]any. First hit aithne#121 2026-06-16 (`contactListItem.ID string` vs `"id": 788`); same handler underpins #120 grants-UI.
+
 ## Ops-check gotchas
 
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
