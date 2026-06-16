@@ -26,10 +26,10 @@ lucos_contacts_web: 2026-06-15
 lucos_creds: 2026-06-04
 lucos_creds_configy_sync: 2026-06-15
 lucos_creds_ui: 2026-06-15
-lucos_dns_sync: 2026-06-01
+lucos_dns_sync: 2026-06-16
 lucos_eolas_app: 2026-06-14
 lucos_eolas_db: 2026-06-15
-lucos_eolas_web: 2026-06-01
+lucos_eolas_web: 2026-06-16
 lucos_locations_mosquitto: 2026-06-08
 lucos_locations_otfrontend: 2026-06-09
 lucos_locations_otrecorder: 2026-06-09
@@ -60,9 +60,9 @@ lucos_arachne_mcp: 2026-06-04
 lukeblaney_blog: 2026-06-06
 lucos_docker_health_app: 2026-06-03
 
-lucos_docker_mirror_web: 2026-06-12
-lucos_docker_mirror_registry: 2026-05-31
-lucos_docker_mirror_info: 2026-06-01
+lucos_docker_mirror_web: 2026-06-16
+lucos_docker_mirror_registry: 2026-06-16
+lucos_docker_mirror_info: 2026-06-16
 lucos_firewall: 2026-06-02
 
 ## SSH Hostname Note
@@ -77,4 +77,6 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-05-25: lucos_comhra_agent and lucos_comhra_llm decommissioned (no longer present on avalon; loganne system map no longer includes lucos_comhra). UNRECOVERED monitoring alerts for those systems are stale window artefacts.
 - 2026-06-03 Check 6 (/_info): `dns.l42.eu/_info` returns empty body but `lucos_dns` is healthy in monitoring — monitoring polls lucos_dns's /_info from a different endpoint than the public dns.l42.eu host. NOT a defect; don't re-chase. Six services omit Tier-1 checks/metrics (configy, scenes, static_media, private, semweb, lukeblaney.co.uk) — tracked in lucas42/lucos#212 (P3 hygiene, zero runtime impact). `title` is Tier-2 (optional) — missing-title is never a defect.
 - 2026-06-03 Check 5: deriving service domains for /_info checks — use configy `config/systems.yaml` (31 mappings); `installation/repositories` for the repo list (NOT orgs/lucas42 — 404).
+- 2026-06-16: `lucos_root` container renamed to `lucos_root_app` on avalon (update Check 4 tracking key when next reviewed). Check 4 this run: docker_mirror trio + eolas_web + dns_sync all clean (eolas_web only benign nginx large-body buffering warns; dns_sync config-sync succeeds every 15min; registry only benign OnExpire noise).
+- 2026-06-16: contacts circleci flap 06-15 15:33→16:06 = `Docker Login (mirror)` step 502+timeout because lucos_docker_mirror was redeploying (v1.0.37, containers restarted 15:32:01-34, deploySystem 15:33:09) while a Dependabot-merge build burst (#739) ran concurrently. build failed pre-deploy (prod untouched), self-recovered next pipeline. SAME root cause as lucos_deploy_orb#188 (fail-open mirror login) — commented there with the deploy-collision evidence, did NOT refile. If this recurs, it's #188.
 - 2026-06-11: lucos_aithne is a NEW service (replacing lucos_authentication, tracking lucos_aithne#12) under heavy active development (v1.1.x→v1.12.0, 30+ deploys 06-09→06-11). Its 06-09→06-10 flaps (fetch-info/tls/db) = deploy churn + new-service cert latency (lucos_router#95). Its new volume `lucos_aithne_credential_store` appearing on avalon before being declared in configy caused the backups volume-config/volume-host flaps 06-09 23:08-23:53 (same root cause; now declared with recreate_effort: considerable, green). Don't re-investigate these as separate incidents while aithne is being stood up. Bootstrap warning (BOOTSTRAP_ADMIN_CONTACT_ID still set post-enrolment) is lucas42's WIP — he set it.
