@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-15
+container_status: 2026-06-16
 resource_checks: 2026-06-11
 syslog_review: 2026-06-11
 software_updates: 2026-06-11
 sandbox_drift: 2026-06-11
-repos_dashboard: 2026-06-15
+repos_dashboard: 2026-06-16
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1349,6 +1349,16 @@ All already tracked by audit tool. No action needed.
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
 
 **Repos dashboard**: 1 failing convention — `lucos_backups` `env_var_passthrough`: VERSION env var read at src/classes/host.py:36 but missing from docker-compose.yml passthrough. Issue lucos_backups#328 already open (last updated 2026-06-14T16:41Z). 60 repos total. No new action needed.
+
+**No new issues raised.**
+
+---
+
+### 2026-06-16 (checks 1 + 6 due; weekly checks last ran 2026-06-11 — not due until 2026-06-18; monthly checks last ran 2026-06-04 — not due until 2026-07-04)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 0 failing conventions. 60 repos — completely clean.
 
 **No new issues raised.**
 
