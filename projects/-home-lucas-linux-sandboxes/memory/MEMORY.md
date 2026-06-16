@@ -15,6 +15,7 @@
 ## External Tool References
 
 - [arachne MCP tool name lookups](reference_arachne_mcp_tools.md) — `find_entities` returns `rdfs:label` (alternate names); use `get_entity` by URI for canonical `skos:prefLabel`
+- [aithne agent-principal model](reference_aithne_agent_principal_model.md) — agent-operating creds live in lucos_agent/**development** (agent-writable, NOT a prod cred); but minting a prod aithne machine key + granting its scope are two `aithne:admin` HTTP-only actions that need lucas42 at cutover. JWT: `principal_class`/`scopes`/`aud=="l42.eu"`
 - [Media systems domain mapping](media-manager-domain-mapping.md) — lucos_configy/config/systems.yaml is canonical; beware lucos_media_manager (ceol.l42.eu) vs lucos_media_metadata_manager (media-metadata.l42.eu)
 - [lucos_creds key rotation on cred update](reference_lucos_creds_key_rotation.md) — linked-credential/scope changes rotate the key → need coordinated redeploys. **The 401/403 window is during convergence (the client+server redeploys), NOT at the lucos_creds-change moment — a creds change alone changes nothing live until the systems redeploy to pick up the new key.** Consult before describing any scope/cred-change cutover window. (proven rollout sequence + loganne two-event audit pattern)
 
