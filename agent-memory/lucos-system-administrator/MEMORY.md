@@ -1,5 +1,8 @@
 # lucos-system-administrator Memory
 
+## lucos_creds quoted values: bash source strips `"`, direct file reads preserve `"`
+String values stored as `"value"` with surrounding double-quotes. `os.environ` (after bash source) gives clean value; direct Python file reads include the quotes (length off by 2). See `lucos-creds-quoted-values.md`.
+
 ## Docker live-restore skips ALL network init (incl. built-ins) when containers running
 `docker restart` will never recreate bridge/host/none while containers are up. Stop all containers first. See `docker-live-restore-network-init-skip.md`.
 
