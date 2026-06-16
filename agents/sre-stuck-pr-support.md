@@ -27,6 +27,21 @@ SRE responsibility covers **infrastructure-level** stuck PRs — not code-level 
   repos/lucas42/<repo>/contents/.github/workflows/code-reviewer-auto-merge.yml --jq '.path' 2>/dev/null
 ```
 
+## The draft-approval re-trigger trap
+
+A PR approved + green + marked-ready but **not merging**, with the `reusable / auto-merge` check at `conclusion: failure` and `auto_merge: null`, is usually the **approvals-fired-while-draft** quirk:
+
+1. The reviewer(s) approved while the PR was still a **draft**.
+2. `code-reviewer-auto-merge.yml` fired on the `pull_request_review` event, passed its reviewer-match logic, then `gh pr merge --auto` failed with `GraphQL: Pull Request is still a draft (mergePullRequest)` (it retries a few times, all fail).
+3. The author later marked it ready — but `ready_for_review` is **not** a trigger for that workflow (it only listens to `pull_request_review: submitted` and `pull_request: closed`), so nothing re-fires.
+
+**Confirm before acting** (don't just assume — read the evidence):
+- `issues/<N>/timeline` → find the `ready_for_review` timestamp.
+- The failed auto-merge run's timestamps → if every run predates `ready_for_review`, they all ran against a draft.
+- The failed job log → look for `Pull Request is still a draft (mergePullRequest)`.
+
+**Fix:** emit a fresh `pull_request_review: submitted` event by having the **expected reviewer** (the one the workflow matches on — usually `lucos-code-reviewer`, *not* `lucos-security`) submit a new APPROVE on the current HEAD. The HEAD is unchanged, so it's a re-trigger, not a re-review. **Re-running the old failed run does NOT work** — its event payload is frozen with `draft=true`, so it'll fail identically. As SRE you can't emit the reviewer's approval yourself; SendMessage the code reviewer to re-approve.
+
 ## Verification after infrastructure fixes
 
 After any remediation action, re-check the PR's CI status, `mergeable_state`, and auto-merge status. Report the result — do not assume success. If the fix didn't work, investigate further or re-escalate.
