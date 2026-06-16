@@ -93,6 +93,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md)
 - [Encryption-at-rest ≠ ransomware defence](reference_encryption_at_rest_vs_ransomware.md) — encryption=confidentiality; ransomware-availability lever is append-only/immutable destination (backups ADR-0002 PR#319, 2026-06-09)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
+- [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md) — fresh origin/main local grep is authoritative; code-search missed 3 confirmed consumers (aithne#12, 2026-06-16)
 - [Enumerating the lucos_creds store over SSH](reference_creds_store_enumeration.md) — `ls` lists all system/env pairs; agent key is dev-scoped only (no prod visibility); sync manages only PORT/APP_ORIGIN
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md) — open env namespace; single-valued allowed-environment; bright-line no-prod-secrets rule; agents get standard test envs via set-valued key (#360); creds#363/PR#364
 - [Dependabot security updates are independent of dependabot.yml schedule](reference_dependabot_security_vs_version_feeds.md)
