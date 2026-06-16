@@ -136,6 +136,10 @@ Always manually review generated migration files before committing. Autogenerate
 
 - [Migrations: always use ./update.sh](feedback_lucos_eolas_migrations.md) — never run makemigrations directly; script handles Docker build, migration gen, makemessages, and locale sync in one step
 
+## lucos_aithne agent credentials
+
+- [Per-agent principals + env-var naming](aithne_agent_credentials.md) — `LUCOS_<PERSONA>_AITHNE_CLIENT_SECRET` in `lucos_agent/development`; slug = personas.json slug; no shared `lucos_agent` identity (§4/§6)
+
 ## lucos_arachne ingestor
 
 - **Entry**: `ingestor/ingest.py`. Tests: `python3 -m pytest` in `ingestor/`. All 117 pass.
