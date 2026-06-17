@@ -6,6 +6,29 @@ disable-model-invocation: false
 
 Follow this process. Do not ask for clarification — immediately begin.
 
+## How teams work in this Claude Code version
+
+Teams are **session-keyed and auto-created**. There is no named-team concept and no
+team-creation/deletion tool: the team forms implicitly the moment you spawn the first
+teammate with the **Agent tool**, and its config lives at:
+
+```
+~/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json
+```
+
+The `team_name` input on the Agent tool is accepted but ignored, so you cannot choose a
+name — the team is identified by this session's id. Throughout this skill, derive the
+config path from the session id rather than hardcoding a name:
+
+```bash
+TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
+cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
+```
+
+Because the team is keyed to the **current** session, a fresh session always starts with
+no team — you will not pick up a stale team from a previous session. The only "existing
+team" case is re-running `/team` within the same live session.
+
 ## Step 0: Parse arguments
 
 Examine the text provided as arguments to `/team` (everything after the `/team` command, stripped of leading/trailing whitespace):
@@ -18,17 +41,18 @@ Continue with Step 1.
 
 ## Step 1: Check for existing team
 
-Before creating a new team, check whether `lucos-all-hands` already exists:
+Before spawning, check whether this session already has a team:
 
 ```bash
-cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
+TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
+cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
 ```
 
-**If NO_TEAM:** Proceed to Step 2 (create a new team).
+**If NO_TEAM** (or the config has no members besides `team-lead`): Proceed to Step 2.
 
-**If the config exists:**
+**If the config exists with teammate members:**
 
-In **selective mode**: read the existing roster (the `name` fields in the `members` array) and compare it against your requested teammate list. If they differ in any way (different members, different count), stop immediately with this error:
+In **selective mode**: read the existing roster (the `name` fields in the `members` array, excluding `team-lead`) and compare it against your requested teammate list. If they differ in any way (different members, different count), stop immediately with this error:
 
 > A team already exists with a different roster (`{existing members}`). To add a new teammate to the running team, use `/team add {name}`. To replace the team with a different roster, shut down the current team first.
 
@@ -50,10 +74,20 @@ Run this with `run_in_background: true`. You will be notified automatically when
 
 After the background sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **stop here** and reuse the existing team.
 
-If no teammate reply appeared by the time the background sleep completes, the team is stale. Clean up and proceed:
+If no teammate reply appeared by the time the background sleep completes, the team is stale. Do **not** delete the session team directory — the harness owns it and auto-removes it when the session ends. Instead, prune only the dead member entries (those whose tmux pane is no longer alive), then fall through to Step 2/Step 4, which will respawn the missing personas:
 
 ```bash
-rm -rf ~/.claude/teams/lucos-all-hands ~/.claude/tasks/lucos-all-hands
+python3 - <<'PY'
+import json, os, subprocess
+cfg = os.path.expanduser(f"~/.claude/teams/session-{os.environ['CLAUDE_CODE_SESSION_ID'][:8]}/config.json")
+config = json.load(open(cfg))
+alive = set(subprocess.check_output(['tmux', 'list-panes', '-a', '-F', '#{pane_id}'], text=True).split())
+before = len(config['members'])
+config['members'] = [m for m in config['members']
+                     if m.get('backendType') != 'tmux' or m.get('tmuxPaneId') in alive]
+json.dump(config, open(cfg, 'w'), indent=2)
+print(f"Pruned {before - len(config['members'])} dead member entr(ies)")
+PY
 ```
 
 ## Step 2: Discover and filter personas
@@ -74,26 +108,30 @@ If any persona file is missing, stop with an error: "No persona file found for `
 
 In both modes, derive the **teammate name** from each filename without the `.md` suffix (e.g. `lucos-developer`).
 
-## Step 3: Create the team
+## Step 3: Spawn teammates
 
-Use the TeamCreate tool to create a team named `lucos-all-hands`.
+There is no separate team-creation step — the team forms automatically when the first
+teammate is spawned. Spawn each teammate with the **Agent tool**.
 
-## Step 4: Spawn teammates
+**Never spawn a teammate whose name already exists in the team config AND whose tmux pane is still alive.** Spawning a duplicate name is a sign something has gone wrong (a stale entry that should have been pruned in Step 1b, or a roster mismatch that should have stopped earlier) — stop and investigate rather than continuing. Dead/pruned entries are fine to respawn.
 
-**Never spawn a teammate if one with the same name already exists in the team config.** If TeamCreate appends a numeric suffix (e.g. `lucos-developer-2`), something has gone wrong — the cleanup step should have prevented this. Stop and investigate rather than continuing with suffixed names.
+For **each** persona in your list (all discovered in spawn-all, or only the selective list), spawn a teammate using the **Agent tool** with these parameters:
+- `subagent_type`: the persona name (e.g. `lucos-developer`) — this is what loads the persona; it is required
+- `name`: the same persona name (gives the teammate its canonical SendMessage address, e.g. `lucos-developer@session-…`)
+- `prompt`: `"You have joined the lucos agent team. Wait for instructions."`
+- `run_in_background`: `true`
 
-For **each** persona in your list (all discovered in spawn-all, or only the selective list), spawn a teammate using TeamCreate with these parameters:
-- `team_name`: `lucos-all-hands`
-- `name`: the teammate name (e.g. `lucos-developer`, `lucos-architect`)
-- `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
+Do **not** pass `model` — the Agent tool resolves each persona's model from its agent-file frontmatter (e.g. `lucos-architect` runs on opus, others on sonnet). Do **not** rely on `team_name` — it is ignored in this version.
+
+> **Expected UI note:** because the Agent tool is also the generic subagent tool, every teammate you spawn is shown twice — once in the team roster (titled by its `subagent_type`) and once in the lead's own frame's subagent list (labelled by its `name`). These are **two views of one process**, not duplicates: there is a single tmux pane / pid per teammate, and nothing is tracked in `~/.claude/tasks/`. This is inherent to spawning teammates via the Agent tool in this version and cannot be suppressed; it is not a leak. If you mention it to the user, say so plainly rather than implying two sets of agents exist.
 
 ### Spawn order (colour workaround)
 
-Claude Code assigns teammate colours from a fixed palette in spawn order (blue, green, yellow, purple, orange, pink, cyan, red, ...) and ignores the `color` frontmatter field. To ensure each teammate gets the colour defined in its agent file, **spawn teammates in palette order**:
+Claude Code assigns teammate colours from a fixed palette in spawn order (blue, green, yellow, purple, orange, pink, cyan, red, ...) and ignores the `color` frontmatter field — it records whatever colour the spawn slot dictates. To ensure each teammate gets the colour defined in its agent file, **spawn teammates in palette order**:
 
 1. Read each agent file's `color` frontmatter value.
 2. Sort the agents by their intended colour's position in the palette: blue=1, green=2, yellow=3, purple=4, orange=5, pink=6, cyan=7, red=8.
-3. Spawn them one at a time in that order. Each spawn must complete before the next begins.
+3. Spawn them one at a time in that order. Each Agent-tool spawn must return before the next begins.
 
 If a new persona is added whose colour already appears in the list, or whose colour is unknown, spawn it last (after all known-colour agents).
 
@@ -105,7 +143,7 @@ Do **not** hardcode the list of personas. Use whatever files the glob (or select
 
 ## Add-Teammate Mode
 
-Use this path when `/team add {name}` is called. The coordinator persona is assumed to already be loaded — do **not** re-run Steps 1–4 or reload it at the end.
+Use this path when `/team add {name}` is called. The coordinator persona is assumed to already be loaded — do **not** re-run Steps 1–3 or reload it at the end.
 
 ### A1: Normalise and validate the teammate name
 
@@ -122,7 +160,8 @@ If not found, stop: "No persona file found for `{teammate-name}`. Check the name
 ### A2: Check the existing team
 
 ```bash
-cat ~/.claude/teams/lucos-all-hands/config.json 2>/dev/null || echo "NO_TEAM"
+TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
+cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
 ```
 
 If NO_TEAM, stop: "No running team found. Use `/team` to start a team first."
@@ -141,25 +180,25 @@ If **ALIVE**, stop: "`{teammate-name}` is already a member of this team."
 If **DEAD** (crashed), the config entry is stale. Remove it before respawning:
 
 ```bash
-python3 -c "
-import json
-with open('/home/lucas.linux/.claude/teams/lucos-all-hands/config.json') as f:
-    config = json.load(f)
+python3 - <<'PY'
+import json, os
+cfg = os.path.expanduser(f"~/.claude/teams/session-{os.environ['CLAUDE_CODE_SESSION_ID'][:8]}/config.json")
+config = json.load(open(cfg))
 config['members'] = [m for m in config['members'] if m['name'] != '{teammate-name}']
-with open('/home/lucas.linux/.claude/teams/lucos-all-hands/config.json', 'w') as f:
-    json.dump(config, f, indent=2)
+json.dump(config, open(cfg, 'w'), indent=2)
 print('Removed stale entry for {teammate-name}')
-"
+PY
 ```
 
 Then proceed to A3.
 
 ### A3: Spawn the new teammate
 
-Spawn using the Agent tool with:
-- `team_name`: `lucos-all-hands`
+Spawn using the **Agent tool** with:
+- `subagent_type`: `{teammate-name}` (required — loads the persona)
 - `name`: `{teammate-name}`
-- `prompt`: `"You have joined the lucos-all-hands team. Wait for instructions."`
+- `prompt`: `"You have joined the lucos agent team. Wait for instructions."`
+- `run_in_background`: `true`
 
 ### A4: Report
 
@@ -169,8 +208,12 @@ Tell the user: "`{teammate-name}` has been added to the team."
 
 ## Shutting down the team
 
+There is no team-deletion tool in this version — shutdown is driven entirely through
+`SendMessage`, and the harness removes the session team directory automatically once the
+processes exit.
+
 When the user asks to shut down the team:
 
 1. Send a `shutdown_request` to every teammate **individually** (one SendMessage per teammate). Do not broadcast to `"*"` — structured messages cannot be broadcast and will error.
-2. **Wait for every teammate to confirm shutdown** before proceeding. Do not call TeamDelete while any shutdown requests are still pending — that orphans processes.
-3. Only after all confirmations are received, call TeamDelete to clean up.
+2. **Wait for every teammate to confirm shutdown** (each replies with a `shutdown_approved` / `teammate_terminated` message and releases its tmux pane) before reporting completion.
+3. Once all teammates have confirmed, the team is down — no explicit delete call is needed or possible.
