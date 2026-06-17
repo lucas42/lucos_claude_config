@@ -56,6 +56,8 @@ ENDBODY
 
 The same gotcha applies to `PATCH` calls that update an existing issue/PR body and to comments. See [`references/issue-creation.md`](issue-creation.md) for the canonical issue-creation patterns.
 
+**Always verify the comment/body rendered after posting.** Every failure mode above (`@path` literal, ignored `body-file` field, `{owner}/{repo}` substitution) fails *silently* — the wrapper returns an `html_url` and a success exit code while the body on the record is a path string, null, or corrupted text. The only reliable detection is to re-fetch and check: `gh-as-agent --app <persona> repos/lucas42/{repo}/issues/comments/{id} --jq '.body[0:80]'` and confirm it's your intended content (not starting with `@`, no leftover `{owner}` tokens). Treat this as the same non-optional step as confirming a deploy shipped the right commit — a silent `@path` glitch otherwise strands the entire write (e.g. a design write-up left unposted while only the superseded version stays visible).
+
 ## What never to do
 
 - **Never** use `gh api` directly (without the wrapper) — it would post under the wrong identity.
