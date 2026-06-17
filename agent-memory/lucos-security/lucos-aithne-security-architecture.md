@@ -48,7 +48,7 @@ metadata:
 - #160: no rate limiting on auth endpoints
 - #159: consumer migration checklist
 - #162: incident response runbook (FIXED in PR #165, timing corrected in PR #172)
-- #150: per-token scope downscoping not supported (all granted scopes always in token)
+- #150: per-token scope downscoping (FIXED in PR #175 — RFC 6749 §4.4 scope param, intersection with granted set)
 - #151: SIGNING_KEK re-keying procedure (FIXED in PR #174 — --rekey subcommand)
 - #148: dev/prod issuer model for local-dev human auth
 - #156/#157/#158: local-verification-contract gaps
