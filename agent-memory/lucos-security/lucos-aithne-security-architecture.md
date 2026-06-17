@@ -19,9 +19,10 @@ metadata:
 - **SIGNING_KEK rotation requires `--rekey` first (from #151).** You cannot just update the KEK in creds and redeploy — aithne will crash on startup because the stored signing keys are still wrapped with the old KEK. Correct sequence: run `aithne --rekey <new-kek>` to re-wrap stored keys in-place, THEN update creds, THEN redeploy.
 
 ## Effective revocation window
-- **Compromised machine key (client_secret)**: revoke credential + grant → attacker blocked from minting → existing tokens expire in ≤15 min JWT TTL + up to 5 min consumer JWKS cache = **≤20 min total window**.
-- **Signing-key rotation does NOT shorten this window** — the old key is still served in JWKS for 15 min. Signing-key rotation only helps if the signing key ITSELF is compromised (attacker can forge arbitrary tokens).
-- Runbook gap raised: lucas42/lucos_aithne#162
+- **Scenario A — Compromised machine key (client_secret)**: revoke credential + grant → attacker blocked from minting → existing tokens expire in ≤15 min JWT TTL + up to 5 min consumer JWKS cache = **≤20 min total window**. NOT driven by VerificationWindow.
+- **Scenario B — Compromised signing key**: rotate signing key → old key stays in JWKS for VerificationWindow (30 min) + up to 5 min consumer JWKS cache = **≤35 min total window**.
+- **Signing-key rotation does NOT shorten the Scenario A window** — the old key is still served in JWKS for 30 min (VerificationWindow). Signing-key rotation only helps in Scenario B.
+- Runbook: lucas42/lucos_aithne#162 (merged in PR #165). PR #172 corrects Scenario B timing after PR #169 (VerificationWindow widened 15→30 min).
 
 ## Machine key authentication
 - OAuth2 client_credentials grant: UUID v4 client_secret (122 bits entropy), stored as SHA-256 hash.
