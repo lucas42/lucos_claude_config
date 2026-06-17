@@ -38,18 +38,42 @@ ENDBODY
 
 For bodies that contain `{owner}/{repo}` or other curly-brace placeholders, **or that begin with an `@`-mention** (e.g. a `@lucas42` ping comment), use the file-backed pattern (`-F body=@file`) from [`references/issue-creation.md`](../../references/issue-creation.md) instead — `gh api` silently corrupts curly-brace placeholders and mangles a leading `@` inside `--field body=`, so the heredoc `--field` form fails for both.
 
-## Step 3 — Start from an up-to-date main branch
+## Step 3 — Implement in an isolated git worktree off a fresh `origin/main`
 
-Before creating a feature branch, **always switch to `main` and pull first** — never run `git checkout -b` from whatever happens to be checked out:
+The working directory for each repo (`~/sandboxes/{repo}`) is **shared by all teammate agents**. A plain `git checkout -b` there is unsafe when another agent may be implementing in the same repo: a sibling can switch that shared HEAD between your `checkout` and your `commit`, so `git-as-agent commit` lands your work on *their* branch and your own branch pushes empty. Branching off a stale main is the other failure. **Both are avoided by doing all your work in a dedicated worktree** — a separate working directory with its own HEAD, branched off freshly-fetched `origin/main`.
 
 ```bash
-git checkout main && git pull origin main
-git checkout -b descriptive-branch-name
+REPO={repo}; NUM={number}
+MAIN="$HOME/sandboxes/$REPO"                  # shared checkout — only used to manage the worktree
+WT="$HOME/sandboxes/.worktrees/$REPO-$NUM"    # your isolated working dir for this issue
+BRANCH=descriptive-branch-name
+
+git -C "$MAIN" fetch origin main
+mkdir -p "$HOME/sandboxes/.worktrees"
+git -C "$MAIN" worktree remove --force "$WT" 2>/dev/null || true   # clear any stale worktree at this path
+git -C "$MAIN" worktree add "$WT" -b "$BRANCH" origin/main
+cd "$WT"     # do ALL implementation here; this HEAD is immune to sibling checkouts
 ```
 
-This guards against two failure modes:
-- **Behind main:** branching off a stale main produces a PR that's "behind main", which blocks auto-merge on repos with strict branch protection and requires a manual rebase after the fact.
-- **Inheriting another teammate's commits:** if the working tree is shared and another teammate's in-progress branch is the current HEAD, `git checkout -b` from there silently includes *their* commits in your branch. The result is a PR that bundles another ticket's work (a scope mismatch the reviewer will reject) and duplicates a commit that already has its own PR. Switching to `main` first makes your branch contain only your own change. If you ever see a sibling teammate's commit in your `git log` before you've started, you branched from the wrong place — reset to `origin/main` and re-apply only your own work.
+Why this fixes both failure modes:
+- **Fresh base:** `-b "$BRANCH" origin/main` branches off freshly-fetched `origin/main`, so the PR is never "behind main" and never inherits a sibling's in-progress commits.
+- **Isolated HEAD:** the worktree's HEAD is independent of the shared checkout, so a sibling switching branches in `~/sandboxes/{repo}` cannot move your HEAD mid-operation — `git-as-agent commit` commits to *your* branch every time.
+
+> The worktree is a clean checkout — regenerate any git-ignored build artifacts the repo needs before building/testing (e.g. a fetched config file), exactly as in a fresh clone.
+
+Implement (Step 4), then commit and push with `-C "$WT"` (or from `cd "$WT"`) so the wrapper acts on the isolated worktree:
+
+```bash
+git-as-agent --app <persona> -C "$WT" add <files>
+git-as-agent --app <persona> -C "$WT" commit -m "…"      # Refs #{number}; see Step 5
+git-as-agent --app <persona> -C "$WT" push -u origin "$BRANCH"
+```
+
+`create-pr` (Step 6) and the review loop are unchanged: `create-pr` acts on the **pushed branch** via `--head "$BRANCH"`, so it is location-independent — run it as in Step 6. Keep the worktree for the life of the issue (commit and push review fixes from it the same way). Once the PR is merged or closed, remove it:
+
+```bash
+git -C "$MAIN" worktree remove --force "$WT"
+```
 
 ## Step 4 — Implement the changes
 
