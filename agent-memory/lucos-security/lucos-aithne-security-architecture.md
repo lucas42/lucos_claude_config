@@ -16,6 +16,7 @@ metadata:
 - EC P-256 keys, stored AES-256-GCM encrypted (KEK = `SIGNING_KEK`, 32-byte env var).
 - 30-day rotation at startup; on-demand via `POST /admin/rotate-signing-key` (requires `aithne:admin`).
 - **JWKS verification window = 15 min**: `ListVerificationKeys` returns old keys for 15 min after retirement so in-flight tokens remain verifiable.
+- **SIGNING_KEK rotation requires `--rekey` first (from #151).** You cannot just update the KEK in creds and redeploy — aithne will crash on startup because the stored signing keys are still wrapped with the old KEK. Correct sequence: run `aithne --rekey <new-kek>` to re-wrap stored keys in-place, THEN update creds, THEN redeploy.
 
 ## Effective revocation window
 - **Compromised machine key (client_secret)**: revoke credential + grant → attacker blocked from minting → existing tokens expire in ≤15 min JWT TTL + up to 5 min consumer JWKS cache = **≤20 min total window**.
