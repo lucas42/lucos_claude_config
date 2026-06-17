@@ -228,7 +228,7 @@ All workflow state is managed via the **lucOS Issue Prioritisation** project boa
 
 | Value | When to set |
 |---|---|
-| lucas42 | The issue needs direct input from the repo owner — e.g. product direction, design sign-off on a one-way-door, or a question only he can answer. Note: **priority and pick-up timing are NOT lucas42 questions** — those are coordinator-side calls. |
+| lucas42 | The issue needs direct input from the repo owner — e.g. product direction, design sign-off on a one-way-door, or a question only he can answer. Note: **priority and pick-up timing are NOT lucas42 questions** — those are coordinator-side calls. **When you transition an item *out* of lucas42's queue (e.g. Awaiting Decision → Ready, or after he reclassifies it), reassign Owner to the implementer in the *same* edit — changing the Status field does NOT change Owner, so an item silently stays assigned to lucas42 and surfaces in his queue as if he still owes something.** |
 | lucos-architect | The issue needs architectural design or review — e.g. data modelling, API contracts, cross-service interactions. |
 | lucos-system-administrator | The issue needs infrastructure or ops detail — e.g. Docker configuration, deployment, server setup. |
 | lucos-site-reliability | The issue needs SRE input — e.g. monitoring, alerting, reliability, performance, incident management. |
