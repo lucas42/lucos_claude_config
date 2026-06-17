@@ -8,6 +8,19 @@ When planning estate-wide rollouts or any bulk merge operation, assume that ever
 
 ## Standard configs
 
+## Serial-group requirements (enforced by `circleci-deploy-serial-group` audit convention)
+
+Both `lucos/build*` and `lucos/deploy-*` jobs **must** declare a `serial-group`. The convention source is `lucos_repos/conventions/circleci-deploy-serial-group.go` — it is the authoritative check, not these templates. Before removing either serial-group as "non-standard", verify against that source first.
+
+| Job | Required `serial-group` | Why |
+|---|---|---|
+| `lucos/build` (and any `lucos/build*`) | `<< pipeline.project.slug >>/build/<< pipeline.git.branch >>` | Prevents concurrent pipelines from computing the same `VERSION` and overwriting each other's Docker images. Branch-scoped form lets PR builds run in parallel without blocking behind `main`. |
+| `lucos/deploy-avalon` | `deploy-avalon` | Prevents concurrent deploys to the same host from racing in containerd (blob-lease conflicts observed 2026-04-21). |
+
+Note: the deploy serial-group is the bare form (`deploy-avalon`) — **not** prefixed with `<< pipeline.project.slug >>`.
+
+---
+
 When a project has no tests, the standard `.circleci/config.yml` is:
 
 ```yaml
@@ -19,9 +32,10 @@ workflows:
   build-deploy:
     jobs:
       - lucos/build:
+          serial-group: << pipeline.project.slug >>/build/<< pipeline.git.branch >>
           platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
-          serial-group: << pipeline.project.slug >>/deploy-avalon
+          serial-group: deploy-avalon
           requires:
             - lucos/build
           filters:
@@ -53,9 +67,10 @@ workflows:
     jobs:
       - test
       - lucos/build:
+          serial-group: << pipeline.project.slug >>/build/<< pipeline.git.branch >>
           platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
-          serial-group: << pipeline.project.slug >>/deploy-avalon
+          serial-group: deploy-avalon
           requires:
             - test
             - lucos/build
