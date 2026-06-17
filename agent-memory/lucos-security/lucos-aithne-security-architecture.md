@@ -16,7 +16,7 @@ metadata:
 - EC P-256 keys, stored AES-256-GCM encrypted (KEK = `SIGNING_KEK`, 32-byte env var).
 - 30-day rotation at startup; on-demand via `POST /admin/rotate-signing-key` (requires `aithne:admin`).
 - **JWKS verification window = 15 min**: `ListVerificationKeys` returns old keys for 15 min after retirement so in-flight tokens remain verifiable.
-- **SIGNING_KEK rotation requires `--rekey` first (from #151).** You cannot just update the KEK in creds and redeploy — aithne will crash on startup because the stored signing keys are still wrapped with the old KEK. Correct sequence: run `aithne --rekey <new-kek>` to re-wrap stored keys in-place, THEN update creds, THEN redeploy.
+- **SIGNING_KEK rotation requires `--rekey` first (#151 shipped, PR #174 merged).** You cannot just update the KEK in creds and redeploy — aithne will crash on startup because the stored signing keys are still wrapped with the old KEK. Correct sequence: stop service → `docker run --rekey` with SIGNING_KEK + NEW_SIGNING_KEK → update SIGNING_KEK in lucos_creds → restart service.
 
 ## Effective revocation window
 - **Scenario A — Compromised machine key (client_secret)**: revoke credential + grant → attacker blocked from minting → existing tokens expire in ≤15 min JWT TTL + up to 5 min consumer JWKS cache = **≤20 min total window**. NOT driven by VerificationWindow.
@@ -44,11 +44,11 @@ metadata:
 - Grant is per-principal, per-scope, per-environment. Default-deny.
 
 ## Known open issues (pre-estate-rollout)
-- #155: non-constant-time machine key comparison
+- #155: non-constant-time machine key comparison (FIXED in PR #173 — subtle.ConstantTimeCompare)
 - #160: no rate limiting on auth endpoints
 - #159: consumer migration checklist
-- #162: incident response runbook (credential compromise)
+- #162: incident response runbook (FIXED in PR #165, timing corrected in PR #172)
 - #150: per-token scope downscoping not supported (all granted scopes always in token)
-- #151: SIGNING_KEK re-keying procedure
+- #151: SIGNING_KEK re-keying procedure (FIXED in PR #174 — --rekey subcommand)
 - #148: dev/prod issuer model for local-dev human auth
 - #156/#157/#158: local-verification-contract gaps
