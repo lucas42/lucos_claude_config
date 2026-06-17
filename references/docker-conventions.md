@@ -3,13 +3,14 @@
 ## Container naming
 
 - `container_name` must be set on every container
-- Names must follow the pattern `lucos_<project>_<role>` (e.g. `lucos_photos_api`, `lucos_photos_postgres`)
-- Single-container services typically use `_app` as the role
+- **Multi-container services:** use `lucos_<project>_<role>` for every container (e.g. `lucos_photos_api`, `lucos_photos_postgres`, `lucos_arachne_web`)
+- **Single-container services:** use `lucos_<project>` with **no `_<role>` suffix** (e.g. `lucos_aithne`, `lucos_notes`). The suffix is a discriminator between containers in the same stack; a single-container stack has nothing to discriminate.
 
 ## Image naming (built containers only)
 
 - Set `image:` on any container built from a Dockerfile
-- Pattern: `lucas42/lucos_<project>_<role>` (e.g. `lucas42/lucos_photos_api`)
+- **Multi-container services:** `lucas42/lucos_<project>_<role>` (e.g. `lucas42/lucos_photos_api`)
+- **Single-container services:** `lucas42/lucos_<project>` with no suffix (e.g. `lucas42/lucos_aithne`)
 
 ## Environment variables in compose
 
