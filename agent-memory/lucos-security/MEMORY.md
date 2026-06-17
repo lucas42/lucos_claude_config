@@ -192,14 +192,9 @@ See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_eve
 
 See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dismissed 2026-05-30. Guard is `fetchEntityNameFromSource` hostname whitelist (scheme=https, host=eolas.l42.eu), NOT `ValidateURIOrigin`. Webhook paths bypass `ValidateURIOrigin`; `/webhooks` has Bearer auth.
 
-## Risk Pattern: Zombie Credentials in Downstream Keystores
+## Topic Files
 
-See `risk-zombie-credentials-downstream.md` — removing a service from CLIENT_KEYS does NOT revoke pre-registered keys in downstream stores (typesense, etc.). Decommission checklist gap.
-
-## Risk Pattern: Webhook Fan-out Amplification
-
-See `risk-webhook-fanout-amplification.md` — client-side error bursts amplify ~2× via loganne fan-out (seinn incident 2026-05-22). Low risk currently but monitor if retry multiplier or subscriber count grows.
-
-## Reference: Loganne Agent Access
-
-See [reference-loganne-access.md](reference-loganne-access.md) — bearer token via `KEY_LUCOS_LOGANNE` in `~/sandboxes/lucos_agent/.env`; server-side filtering does NOT work, filter client-side; event type is `credentialUpdated`.
+- [Zombie Credentials risk](risk-zombie-credentials-downstream.md) — removing from CLIENT_KEYS doesn't revoke pre-registered downstream keys.
+- [Webhook Fan-out Amplification](risk-webhook-fanout-amplification.md) — ~2× amplification via loganne fan-out; low risk currently.
+- [Loganne Agent Access](reference-loganne-access.md) — bearer via KEY_LUCOS_LOGANNE; filter client-side; event type credentialUpdated.
+- [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
