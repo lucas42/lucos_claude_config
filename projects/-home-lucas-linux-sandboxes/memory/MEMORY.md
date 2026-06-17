@@ -94,5 +94,7 @@
 
 - [No confabulated quotes in consult relay](feedback_confabulated_quote_in_consult_relay.md) — paste verbatim quotes from the just-fetched tool result, never from memory (fabricated a lucas42 #264 comment to the architect on 2026-05-30)
 
+- [SendMessage running teammates, not subagents](feedback_sendmessage_not_subagents.md) — when the team is running (e.g. after /coordinator restore), dispatch via SendMessage to existing teammates; never spawn fresh Agent-tool subagents (flagged 2026-06-17)
+
 - [No extra host binaries](feedback_no_extra_host_binaries.md) — lucas42 rejects installing new packages on hosts; favour tools already supported estate-wide (scp over rsync, 2026-06-08); surface host-provisioning cost + get his nod before adding a host dependency
 - [Rejected command ≠ no side effects](feedback_rejected_command_side_effects.md) — a "rejected"/interrupted compound Bash can still have created the issue/board item; re-fetch actual state before asserting "it didn't run" (orphaned lucos_backups#314 on 2026-06-08); isolate side-effecting creation from board setup
