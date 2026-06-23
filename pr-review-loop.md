@@ -26,17 +26,20 @@ Wait for the lucos-code-reviewer to respond.
 
 If the code reviewer **approved** the PR:
 
-- **Check whether lucas42 has a pending CHANGES_REQUESTED** (query the GitHub API). If so, re-request lucas42's review now — the code reviewer's approval is the gate; only after they approve do you put the PR back in lucas42's queue. Use the developer app (not the coordinator, which lacks `pull_requests: write`):
-  ```bash
-  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer \
-      repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
-      --method POST \
-      --field 'reviewers[]=lucas42'
-  ```
-  Then wait for lucas42's approval before reporting back.
-- If lucas42 has no pending CHANGES_REQUESTED: **do not merge.** Never call the merge API — merging is handled by auto-merge (GitHub) or the user. **Before reporting back, re-fetch `pulls/{n}` and check `merged` and `state` — the PR may have already merged between your analysis and the send.** Report the current state accurately: if it's merged, say so; if it's still open, report it as approved and awaiting merge. Your job is done once the PR is approved or merged.
+- **Check supervision status**: run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised, exit 1 = supervised).
+  - **Unsupervised repo**: do NOT re-request lucas42. The code-reviewer's approval triggers auto-merge. Never add lucas42 to the reviewer list — it puts a pointless request in his queue for a PR that has already or will auto-merge without him. Your job is done once the PR is approved or merged.
+  - **Supervised repo**: check whether lucas42 has a pending CHANGES_REQUESTED (query `pulls/{n}/reviews`). If so, re-request his review now — the code reviewer's approval is the gate before putting the PR back in lucas42's queue. Use the developer app (not the coordinator, which lacks `pull_requests: write`):
+    ```bash
+    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer \
+        repos/lucas42/{repo}/pulls/{number}/requested_reviewers \
+        --method POST \
+        --field 'reviewers[]=lucas42'
+    ```
+    Then wait for lucas42's approval before reporting back. If lucas42 has no pending CHANGES_REQUESTED, the PR sits open until he reviews — do not merge.
 
-Do not determine or report whether the repo is supervised or unsupervised — the coordinator handles that. Do not wait for CI, do not poll CI status.
+**Never call the merge API** — merging is handled by auto-merge (GitHub) or the user. **Before reporting back, re-fetch `pulls/{n}` and check `merged` and `state` — the PR may have already merged between your analysis and the send.** Report the current state accurately: if it's merged, say so; if it's still open, report it as approved and awaiting merge.
+
+Do not report the supervision status to the coordinator — they run `check-unsupervised` independently. Do not wait for CI, do not poll CI status.
 
 If the code reviewer's response contains `SPECIALIST_REVIEW_REQUESTED: <persona>`, go to step 4.
 
