@@ -43,6 +43,18 @@ metadata:
 - Each AI agent has its own `client_id` (slug e.g. `lucos-architect`) and `client_secret` stored in `lucos_agent/development`.
 - Grant is per-principal, per-scope, per-environment. Default-deny.
 
+## Re-mint CORS policy (ADR-0003 §2) — conscious decision 2026-06-23
+
+ADR-0003 specifies `*.l42.eu` glob for `/auth/remint` CORS. Implementation used explicit membership (OIDC-derived redirect_uris) based on an overcautious #181 review note that said "a glob is acceptable only as a conscious threat-model decision" but didn't make the call.
+
+**The conscious call (made on #191):** The glob is safe. The endpoint is "harmless-if-forged" — a cross-origin trigger from an unregistered `*.l42.eu` origin can only refresh the victim's own session, and the attacker cannot read the HttpOnly response cookie or CORS-blocked response body. The only residual risk of the glob is a mild timing oracle (200 vs 401 reveals "user has an active aithne session"). Explicit per-consumer membership defended against a phantom threat.
+
+**Implementation:** origin-suffix check (`strings.HasSuffix(origin, ".l42.eu")`), echo matched origin in `Access-Control-Allow-Origin` + `Allow-Credentials: true`.
+
+**Load-bearing invariant:** The glob is ONLY safe while the endpoint remains "re-issue existing session only." Any future change adding a readable response body or externally-observable side-effect MUST also tighten the CORS policy. The warning in `remint.go` must be preserved.
+
+**Tracked in:** lucas42/lucos_aithne#191.
+
 ## Known open issues (pre-estate-rollout)
 - #155: non-constant-time machine key comparison (FIXED in PR #173 — subtle.ConstantTimeCompare)
 - #160: no rate limiting on auth endpoints
