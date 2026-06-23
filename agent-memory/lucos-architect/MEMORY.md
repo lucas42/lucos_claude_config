@@ -75,6 +75,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Check shared failure domain before diagnosing a "two-paths" split](feedback_check_shared_failure_domain_before_diagnosing_split.md) — divergent answers from two endpoints during an incident may be probe-timing artifact, not a resilience difference, if both share a failure domain (#410 per-repo-vs-bulk configy was one DNS outage, 2026-06-07; real fix was fail-closed-and-silent → .github#68)
 - [Crossed-message thrash: let the decisive event settle it](feedback_crossed_message_thrash_let_decisive_event_settle.md) — in a fast crossed-message loop over an equivalent/reversible choice, re-verify live state each turn, hold the reversible action, and converge on the irreversible event (ADR-0012 tracker #107↔#227 flipped 3×, 2026-06-08; the merge settled it)
 - [Defense-in-depth failure reverts to baseline](feedback_defense_in_depth_reverts_to_baseline.md) — don't pitch a 2nd-layer control's failure as high-leverage if the base layer (app-auth) independently holds; failure reverts to an accepted baseline (monitoring#285 perimeter-check overkill, 2026-06-15)
+- [Route-registration order for auth exemption](feedback_route_registration_order_for_auth_exemption.md) — exempt /_info etc. by declaring routes before the auth middleware, not an in-middleware path allow-list (drift = security hazard); in-middleware check is ASGI fallback only (lucas42, aithne#187, 2026-06-23)
 
 ## Reference memories
 
