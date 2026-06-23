@@ -146,13 +146,13 @@ If you do recommend `// codeql[...]` inline comments, note that they require the
 
 ## PR State — Re-Fetch Before Any Summary Reference
 
-**Re-fetch every PR's current state immediately before any SendMessage that references that PR's merge/approval status** — not just the final Step 8 completion report, but any mid-session "review complete" or queue-state message.
+**Re-fetch every PR's current state as the last action before each SendMessage that references that PR's merge/approval status.** "Last action" means the API call immediately precedes the SendMessage — a fetch from earlier in the same session does not count. Merges can happen between your fetch and your send, especially when you are doing parallel work (waiting on CI, reviewing another PR) in between.
 
-Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or "merging in order", query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields. State observed during review is not state at compose time — merges can happen while you are reviewing later PRs in the same session.
+Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or "merging in order", query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields.
 
-**This applies to every PR named in the message**, not just the one you just reviewed. If a completion message lists three PRs as "awaiting lucas42", re-fetch all three. A teammate's earlier report about a PR's state is conversation-memory the moment it arrives in your inbox — not a live API result.
+**This applies to every PR named in the message**, not just the one you just reviewed. If a completion message lists three PRs, re-fetch all three immediately before sending. **Session-carry-over is the highest-risk case**: when a completion report includes status for a PR reviewed earlier in the same session (e.g. "navbar PR #177 is still awaiting lucas42"), that earlier status is the most likely to be stale — the PR may have merged while you were reviewing subsequent PRs. Re-fetch it like any other.
 
-Confirmed failures: lucos_media_seinn PR #459 and lucos_loganne PR #475 reported as "awaiting lucas42" when both had merged hours earlier. lucos_media_metadata_api PRs #260 and #261 included in a "PRs awaiting lucas42" queue summary after both had already merged (12:53Z and 13:14Z) during the same review session.
+Confirmed failures: lucos_media_seinn PR #459 and lucos_loganne PR #475 reported as "awaiting lucas42" when both had merged hours earlier. lucos_media_metadata_api PRs #260 and #261 included in a queue summary after both had already merged during the same session. lucos_aithne #187 reported as "still a draft" after it had already merged — re-fetch done earlier in session but not co-located with the SendMessage. lucos_navbar #177 reported as "awaiting lucas42" when it had merged 13 minutes before the message (same root cause: session-carry-over without re-fetch).
 
 ## lucos Infrastructure Conventions
 
@@ -162,6 +162,8 @@ Be alert to violations of lucos-specific patterns when reviewing. Key reference 
 - CircleCI config (orb pattern, parallel jobs): [`references/circleci-conventions.md`](../references/circleci-conventions.md)
 - CodeQL, Dependabot, auto-merge: [`references/github-config.md`](../references/github-config.md)
 - `/_info` endpoint requirements: [`references/info-endpoint-spec.md`](../references/info-endpoint-spec.md)
+
+**`.circleci/config.yml` removals — use the lucos_repos audit as the tie-breaker, not the local doc.** When a PR removes a key from `.circleci/config.yml` (any job type — build, test, deploy), the authoritative source is the lucos_repos audit enforcement, not `circleci-conventions.md`. The local doc can be incomplete: it showed `serial-group:` on deploy jobs but omitted the build serial-group, so a doc-only check would have validated the removal as fine. The enforced conventions live in `lucos_repos/docs/convention-guide.md` and the audit checks (e.g. `circleci-deploy-serial-group`); if a removed key would trigger an audit finding, it's required — doc silence does not sanction it. **Do not accept the issue's characterisation of what is "non-standard" as a substitute for checking the enforcement source.** (Missed instance: lucos_aithne PR #168 — issue #153 called the build serial-group "non-standard"; the local doc backed that up silently; the audit bot caught it post-merge as #177.)
 
 ## Communication Conventions
 
