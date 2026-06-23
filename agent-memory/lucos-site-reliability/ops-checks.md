@@ -8,7 +8,7 @@ external_deps: 2026-06-03
 
 ## Container Log Review History
 
-lucos_schedule_tracker: 2026-06-03
+lucos_schedule_tracker: 2026-06-23
 lucos_media_weightings: 2026-06-17
 lucos_photos_worker: 2026-06-12
 lucos_arachne_explore: 2026-06-12
@@ -23,7 +23,7 @@ lucos_contacts_app: 2026-06-14
 lucos_contacts_db: 2026-06-14
 lucos_contacts_googlesync_import: 2026-06-15
 lucos_contacts_web: 2026-06-15
-lucos_creds: 2026-06-04
+lucos_creds: 2026-06-23
 lucos_creds_configy_sync: 2026-06-15
 lucos_creds_ui: 2026-06-15
 lucos_dns_sync: 2026-06-16
@@ -36,19 +36,19 @@ lucos_locations_otrecorder: 2026-06-09
 lucos_mail_smtp: 2026-06-17
 lucos_photos_api: 2026-06-08
 lucos_arachne_ingestor: 2026-06-06
-lucos_arachne_search: 2026-06-03
+lucos_arachne_search: 2026-06-23
 lucos_arachne_triplestore: 2026-06-17
 lucos_mail_docs: 2026-06-06
 lucos_photos_postgres: 2026-06-11
 lucos_photos_redis: 2026-06-06
 lucos_scenes: 2026-06-11
 lukeblaney_co_uk: 2026-06-09
-lucos_media_manager: 2026-06-03
+lucos_media_manager: 2026-06-23
 lucos_media_metadata_api: 2026-06-08
 lucos_monitoring: 2026-06-17
 lucos_media_seinn: 2026-06-12
 tfluke: 2026-06-12
-lucos_media_metadata_api_exporter: 2026-06-03
+lucos_media_metadata_api_exporter: 2026-06-23
 lucos_media_metadata_manager: 2026-06-04
 lucos_notes: 2026-06-04
 lucos_root: 2026-06-06
