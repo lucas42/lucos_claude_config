@@ -88,6 +88,8 @@ In GitHub comments and issue/PR bodies, references to issues in **other reposito
 
 The `Refs #N` / `Closes #N` keywords in commits and PR descriptions also need the prefix when the target is in another repo (e.g. `Refs lucas42/lucos_arachne#326`).
 
+**Beware closing keywords in *prose*.** GitHub's auto-close parser fires on `close`/`closes`/`closed`/`fix`/`fixes`/`fixed`/`resolve`/`resolves`/`resolved` immediately followed by an issue reference *anywhere* in a PR body or commit message — not just on a dedicated `Closes:` line, and including ordinary descriptive sentences. A phrase like "the release that closes lucas42/lucos_navbar#174" will **auto-close** that issue on merge (cross-repo closes work with the qualified form), even when you only meant to mention it. When you want to *reference* an issue without closing it, keep the keyword away from the number — write "the release that ships lucas42/lucos_navbar#174", "the work for lucas42/lucos_navbar#174", etc. (Real incident 2026-06-22: aithne PR #186's body read "the `lucos_navbar` release that closes lucas42/lucos_navbar#174" and silently closed an unimplemented, dependency-blocked navbar issue the instant it merged.)
+
 ## Git commit identity
 
 Use the `git-as-agent` wrapper for all commit-writing git operations — **never** run `git config user.name` or `git config user.email`, as that would affect all future commits in the environment.
