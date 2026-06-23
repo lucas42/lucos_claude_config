@@ -182,3 +182,6 @@ Step 9 added 2026-06-09: `POST /api/v1.1/project/github/lucas42/{repo}/follow` r
 
 ## xwing SSH from sandbox: use avalon jump host
 Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at this time"). Use `-J avalon.s.l42.eu`. For salvare: `-J xwing.s.l42.eu` (or `-J avalon.s.l42.eu,xwing.s.l42.eu`). See `xwing-ssh-via-avalon.md`.
+
+## lucos_creds SSH exec write format
+`{system}/{environment}/{KEY}={value}` — no command prefix. e.g. `ssh -P 2202 creds.l42.eu "lucos_notes/development/AITHNE_ORIGIN=https://aithne.l42.eu"`. Empty value = delete the credential. "No assignment character found" = missing `=`.
