@@ -79,6 +79,8 @@ git -C "$MAIN" worktree remove --force "$WT"
 
 Read the codebase first to understand existing patterns, conventions, and architecture. Use `find`, `grep`, and file reads to orient yourself. Match the style and structure already in use.
 
+**Read and grep source from the worktree (`$WT`), not the shared `~/sandboxes/{repo}` checkout.** The shared checkout can be parked on another agent's (or a stale) branch, so source you read there may predate `origin/main` — and any "fact" you document or cite from it (a function signature, an error path, a constant) can be silently wrong. Your worktree was branched off freshly-fetched `origin/main` in Step 3, so it is the authoritative current source; `cd "$WT"` before grepping, or use `git show origin/main:path/to/file`. This applies especially when verifying a claim about the code (e.g. pushing back on review feedback) — a refuting grep run against a stale tree is worse than no grep.
+
 If the service runs in Docker, **verify the build locally before pushing.** Run `docker build` and `docker run` (or `docker compose up`) and confirm the container starts, passes its healthcheck, and behaves as expected. Don't rely on CI or production to catch container-level issues — a broken build pushed to `main` triggers an immediate production deploy and can cause a crash-loop.
 
 Persona-specific implementation guidance (e.g. the developer's testing rules, the architect's ADR conventions) lives in the persona file or in a persona-specific reference. This workflow does not duplicate it.
