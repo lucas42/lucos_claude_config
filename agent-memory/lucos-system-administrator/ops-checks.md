@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-06-17
-resource_checks: 2026-06-11
-syslog_review: 2026-06-11
-software_updates: 2026-06-11
-sandbox_drift: 2026-06-11
-repos_dashboard: 2026-06-17
+container_status: 2026-06-23
+resource_checks: 2026-06-23
+syslog_review: 2026-06-23
+software_updates: 2026-06-23
+sandbox_drift: 2026-06-23
+repos_dashboard: 2026-06-23
 docker_image_staleness: 2026-06-04
 backup_verification: 2026-06-04
 certificate_expiry: 2026-06-04
@@ -1369,6 +1369,33 @@ All already tracked by audit tool. No action needed.
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
 
 **Repos dashboard**: 0 failing conventions. 60 repos — completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-06-23 (checks 1–6 due; monthly checks last ran 2026-06-04 — not due until 2026-07-04)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo):
+- Jun 17: lucos-agent sudo failures checking docker volume paths (aithne_credential_store, creds_store, media_metadata_api_db, repos_data, schedule_tracker_db, contacts_db_data, eolas_db_data, photos_postgres_data, photos_redis_data). All expected from agent ops work. No hardware errors.
+
+**Software updates** (no security-tagged packages on any host):
+- Avalon: Docker CE 29.3→29.6.0, containerd 2.2.1→2.2.5, buildx →0.34.1, compose →5.1.4. All from `bookworm` (not `-security`). Routine.
+- Xwing: Docker CE 29.4→29.6.0, containerd 2.2.2→2.2.5, buildx →0.34.1, compose →5.1.4, libc6 (from `stable`, NOT `stable-security`), libssl3/openssl (from `stable`, NOT `stable-security`), kernel →6.18.34, various rpi packages. All routine.
+- Salvare: Docker CE 29.3→29.6.0, containerd 2.2.1→2.2.5, buildx, compose, libc6 (from `oldstable`, NOT `oldstable-security`), libssl3/openssl (from `oldstable`, NOT `oldstable-security`), kernel →6.12.93, raspi packages. All routine.
+
+**Resources**:
+- Avalon: 3.7Gi available of 7.6Gi. Swap 268Mi/4.5Gi (6%). Disk 29% (497G/1.8T). Load 6.14/6.06/5.24 (108 days uptime — expected). Journal 109.4M. Fine.
+- Xwing: 464Mi available of 906Mi. Swap 154Mi/905Mi (17%). Disk **25% (28G/117G)** — huge improvement from 76% on 2026-06-11. /srv/backups now only 12G. Load 2.41. Fine. lucos_backups pruning fix (#318/#324) clearly deployed.
+- Salvare: 3.4Gi available of 3.7Gi. No swap. Disk **55% (31G/58G)** — improved from 78% on 2026-06-11. Load 0.13. Fine.
+- Local VM: disk 64% (61G/96G). Docker images 30.94GB (21.32GB reclaimable), build cache 9.557GB. Memory 2.7Gi available. Under 80% threshold — no action needed.
+
+**Sandbox drift**: 1 remote commit (7560c63 — PR #92, seed `enabledMcpjsonServers` in `~/.claude.json` during provisioning for arachne MCP).
+- **Live VM action applied**: ran provisioning Python script — added `"arachne"` to `enabledMcpjsonServers` under `projects[~/sandboxes]` in `~/.claude.json`. Repo pulled to main. Drift resolved.
+
+**Repos dashboard**: 60 repos, 0 failing conventions. Completely clean.
 
 **No new issues raised.**
 
