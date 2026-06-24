@@ -76,6 +76,7 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Crossed-message thrash: let the decisive event settle it](feedback_crossed_message_thrash_let_decisive_event_settle.md) — in a fast crossed-message loop over an equivalent/reversible choice, re-verify live state each turn, hold the reversible action, and converge on the irreversible event (ADR-0012 tracker #107↔#227 flipped 3×, 2026-06-08; the merge settled it)
 - [Defense-in-depth failure reverts to baseline](feedback_defense_in_depth_reverts_to_baseline.md) — don't pitch a 2nd-layer control's failure as high-leverage if the base layer (app-auth) independently holds; failure reverts to an accepted baseline (monitoring#285 perimeter-check overkill, 2026-06-15)
 - [Route-registration order for auth exemption](feedback_route_registration_order_for_auth_exemption.md) — exempt /_info etc. by declaring routes before the auth middleware, not an in-middleware path allow-list (drift = security hazard); in-middleware check is ASGI fallback only (lucas42, aithne#187, 2026-06-23)
+- [Scope-first, not principal_class; don't accrete ADR complexity](feedback_scope_first_not_principal_class.md) — authorise on scopes (ADR-0001 §6), principal_class only for contact-matching; trim not append through review rounds (lucas42, eolas#322, 2026-06-24)
 
 ## Reference memories
 
