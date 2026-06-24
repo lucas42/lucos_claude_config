@@ -70,11 +70,12 @@ Minor style nits and personal preferences are still non-blocking. This rule is a
 
 ### Verify external state before speculating
 
-**Before adding any "concern" note in a review about external state (git tags, PyPI versions, deployment status, GitHub Actions run state), verify against the source of truth.** Do not accept claims in the PR description as fact — the description is written by the author before the state is confirmed.
+**Before adding any "concern" note in a review about external state (git tags, PyPI versions, deployment status, GitHub Actions run state, issue open/closed status), verify against the source of truth.** Do not accept claims in the PR description as fact — the description is written by the author before the state is confirmed. This applies equally when you are the author: before encoding a referenced issue as a prerequisite or required fix in a review comment or follow-up issue, verify that issue is still open and not closed/superseded.
 
 - **Git tags:** `gh-as-agent --app lucos-code-reviewer repos/lucas42/{repo}/tags --jq '.[0] | {name}'` — one command, five seconds.
 - **PyPI releases:** `gh-as-agent --app lucos-code-reviewer repos/lucas42/{repo}/releases --jq '.[0] | {tag_name, published_at}'`
 - **CI run outcome:** fetch the specific run or check-run via the Actions API — don't infer from the PR description's account of what happened.
+- **Referenced issue state:** `gh-as-agent --app lucos-code-reviewer repos/lucas42/{repo}/issues/{n} --jq '{state, state_reason, closed_at}'` — if `state: "closed"`, read the issue body/comments to determine whether it was resolved, superseded, or rejected before citing it as a prerequisite.
 
 Speculation about external state gets relayed forward as fact unless something stops it. A note like "semantic-release may publish v2.0.1 rather than v2.0.0 because the v2.0.0 tag was already created" is indistinguishable from a verified claim to anyone who reads the review. Verifying takes 5 seconds; issuing a correction downstream takes much longer.
 

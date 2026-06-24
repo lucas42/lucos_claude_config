@@ -27,4 +27,7 @@ When reviewing an auth-migration PR (lucos_authentication → lucos_aithne), ver
 - `/_info` exempt from auth (before auth middleware in route table)
 - `render-ui` dev bypass only when `ENVIRONMENT == "development"`
 
-**Why:** These were all real bugs caught in lucos_arachne migration PRs #637–#675, not theoretical. The consumer migration guide (`lucos_aithne/docs/consumer-migration-guide.md`) covers the three-branch pattern and AITHNE_ORIGIN; the security hardening items were missing (tracked in lucos_aithne#198).
+**NOT a requirement — superseded:**
+- OIDC-client registration for keepalive re-mint CORS preflight: `*.l42.eu` glob in lucos_aithne PR #191 replaced the OIDC-redirect_uri-derived per-consumer allow-list. lucas42/lucos_arachne#676 (which proposed per-consumer registration) was closed as superseded by #191 and the model-conflation was explicitly rejected. Do not raise this as a migration prerequisite.
+
+**Why:** These were all real bugs caught in lucos_arachne migration PRs #637–#675, not theoretical. The consumer migration guide (`lucos_aithne/docs/consumer-migration-guide.md`) covers the three-branch pattern and AITHNE_ORIGIN; the security hardening items were missing (tracked in lucos_aithne#198). P2b (OIDC-client registration) was mistakenly included in #198 without verifying #676's state — it was already closed/superseded.
