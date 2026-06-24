@@ -35,7 +35,7 @@ lucos_locations_otfrontend: 2026-06-09
 lucos_locations_otrecorder: 2026-06-09
 lucos_mail_smtp: 2026-06-17
 lucos_photos_api: 2026-06-08
-lucos_arachne_ingestor: 2026-06-06
+lucos_arachne_ingestor: 2026-06-24
 lucos_arachne_search: 2026-06-23
 lucos_arachne_triplestore: 2026-06-17
 lucos_mail_docs: 2026-06-06
@@ -49,9 +49,9 @@ lucos_monitoring: 2026-06-17
 lucos_media_seinn: 2026-06-12
 tfluke: 2026-06-12
 lucos_media_metadata_api_exporter: 2026-06-23
-lucos_media_metadata_manager: 2026-06-04
-lucos_notes: 2026-06-04
-lucos_root: 2026-06-06
+lucos_media_metadata_manager: 2026-06-24
+lucos_notes: 2026-06-24
+lucos_root_app: 2026-06-06
 lucos_router: 2026-06-17
 semweb: 2026-06-06
 lucos_time: 2026-06-11
