@@ -44,6 +44,15 @@ If you're unsure, **assume it's a rollout and use one issue**. The coordinator c
 4. In both cases, cross-reference the ADR or design discussion that motivated the follow-up.
 5. Do not set labels or project-board fields — the coordinator owns triage. See [`references/label-workflow.md`](label-workflow.md).
 
+## Follow-ups that fall under an existing tracking/umbrella issue
+
+When the follow-up is one consumer/sub-task of work an existing umbrella issue already tracks (e.g. a per-consumer migration under a migration-tracking issue), two steps prevent duplicates:
+
+1. **Before creating**, check the umbrella's consumer/sub-task list for an already-listed equivalent. If the umbrella plans to raise sub-tickets itself (e.g. "raised wave by wave"), your new ticket *is* one of those — don't create a parallel one.
+2. **At creation**, cross-link the new ticket into the umbrella's body (annotate the relevant row/wave with `lucas42/<repo>#N` — "ticket raised") so the umbrella's own sub-ticket process links it rather than raising a duplicate. Setting board fields on the new ticket is not enough — the umbrella's body is what the wave sweep reads.
+
+The failure mode this prevents: a follow-up raised early off a *different* track (e.g. an ADR reference-design) is the same work the umbrella will later schedule, but isn't recorded there — so the umbrella's wave sweep duplicates it. (Lesson from 2026-06-24: `lucos_eolas#321` / `lucos_contacts#753` were raised off the ADR-0002 track but not linked into the `lucos_aithne#12` consumer-migration umbrella, which plans to raise eolas/contacts sub-tickets in Waves 3/4 — caught at triage before duplication.)
+
 ## See also
 
 - [`references/issue-creation.md`](issue-creation.md) — how to actually create the issue (gh-as-agent patterns, file-backed body for placeholders).
