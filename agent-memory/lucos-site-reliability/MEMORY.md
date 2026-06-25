@@ -12,6 +12,10 @@
 
 - [x509 "unknown authority" from our OWN svc = client scratch image has no CA bundle](pattern_scratch_image_no_ca_bundle.md) — served cert valid + `docker exec sh`→"not found" = `FROM scratch` Go image missing `/etc/ssl/certs/ca-certificates.crt`. Latent until first outbound HTTPS; a deploy adding a new dep surfaces it. Fix=`COPY --from=builder` the CA bundle (dev PR, no restart helps). `/_info` green ≠ fixed (outbound-only path). First hit lucos_aithne#106 2026-06-12 (→contacts). Other estate scratch Go svcs at risk.
 
+## lucos_aithne (signing key / deploy verification)
+
+- [aithne signing_key_age is NOT a deploy-confirmation signal](pattern_aithne_signing_key_age_not_deploy_signal.md) — key lives in persistent credential_store vol, survives restarts; rotates at startup ONLY if already > rotation interval. Old key ≠ stale process. Verify deploy via container `StartedAt`+image tag on avalon, not key age. 2026-06-25 false alarm: all 5 pipelines deployed OK, container on 1.20.17/09f1d95d, key 15.5d was a red herring.
+
 ## lucos_router (TLS / domain serving)
 
 - [New service's TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — router domain discovery is PULL-ONLY (no configy push). `update-domains.sh` (certbot certonly per domain) runs only on container startup + daily cron at **22:16 UTC** (`16 22 * * *`). New configy domain waits up to ~24h for its cert; restart lucos_router to force it. LE backdates `notBefore` ~1h (don't misread as issuance time). NOT an incident. First hit aithne 2026-06-09; doc gap = lucos_router#95.
