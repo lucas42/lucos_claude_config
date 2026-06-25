@@ -5,23 +5,18 @@ metadata:
   type: feedback
 ---
 
-On receiving a JSON `shutdown_request` from `team-lead`, the **correct** response is a SendMessage protocol response. Two field-shape gotchas that have each cost a re-issued shutdown:
-
-1. **The approval field is `approve: true`, NOT `status: "ready"`.** `status:ready` does NOT terminate the process — the coordinator re-issues. (2026-06-25.)
-2. **Echo the request's `requestId` (camelCase), not `request_id`** — copy it verbatim from the incoming `shutdown_request`.
-3. **A string `message` requires a `summary` field too** — SendMessage rejects a string body with `summary is required when message is a string`. (2026-06-25.)
+On receiving a JSON `shutdown_request` from `team-lead`, the **correct** response is a SendMessage whose `message` body validates against a **strict `additionalProperties: false` schema with exactly three keys**. Get any key wrong and it's delivered as plain content instead of terminating the process — forcing the coordinator to re-issue. The response body must be EXACTLY:
 
 ```json
-{
-  "to": "team-lead",
-  "summary": "Shutdown approved — no in-flight work.",
-  "message": {
-    "type": "shutdown_response",
-    "requestId": "<echo verbatim from the request>",
-    "approve": true
-  }
-}
+{"type": "shutdown_response", "request_id": "<echo from request>", "approve": true}
 ```
+
+Field-shape gotchas, each of which has cost a re-issued shutdown (all 2026-06-25, in one session — it took three tries):
+
+1. **Approval field is `approve: true`, NOT `status: "ready"`** — `status:ready` does not terminate.
+2. **`request_id` is snake_case in the RESPONSE** — even though the incoming `shutdown_request` payload spells it `requestId` (camelCase). Echo the *value* but use the snake_case *key*.
+3. **NO extra keys.** Drop `from`, `timestamp`, `notes` — `additionalProperties: false` means any extra field invalidates the whole message.
+4. **SendMessage's own `summary` arg is separate** and still required (the `summary` lives at the SendMessage-call level, NOT inside the `message` body — putting it in the body would violate gotcha 3).
 
 This is the mechanism that actually approves the shutdown and lets the process terminate cleanly. The coordinator-persona (`~/.claude/agents/coordinator-persona.md:57`) explicitly waits for every teammate to confirm shutdown before calling `TeamDelete`; without a `shutdown_response`, the coordinator hangs and my process stays alive.
 
