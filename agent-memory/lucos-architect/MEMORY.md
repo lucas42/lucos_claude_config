@@ -94,7 +94,8 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Service-worker-backed UI is a system component](reference_service_worker_ui_as_system_component.md)
 - [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md)
 - [Encryption-at-rest ≠ ransomware defence](reference_encryption_at_rest_vs_ransomware.md) — encryption=confidentiality; ransomware-availability lever is append-only/immutable destination (backups ADR-0002 PR#319, 2026-06-09)
-- [Quiesce-during-read backup pattern](reference_quiesce_during_read_backup.md) — engine-agnostic `docker pause` around the LOCAL read fixes the live-tar smear; guarantee=crash-consistency; guaranteed-unpause is dominant risk; no per-engine strategies (lucas42, backups#344, 2026-06-17)
+- [Quiesce-during-read backup pattern](reference_quiesce_during_read_backup.md) — engine-agnostic `docker pause` around LOCAL read; crash-consistency; guaranteed-unpause is dominant risk (backups#344)
+- [navbar keepalive vs consumer service workers](reference_navbar_keepalive_sw_interception.md) — cross-origin remint POST intercepted by SWs; exempt aithne origin/`/auth/*` (not blanket); only notes+seinn affected (navbar#180)
 - [Convention catalogue + enforced-vs-guidance boundary](reference_convention_catalogue.md) — lucos_repos ADR-0007 MERGED; generated `docs/conventions.md` + golden-file test; docs LINK the catalogue, never paraphrase enforced rules; docs refactor = claude_config#120
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md) — fresh origin/main local grep is authoritative; code-search missed 3 confirmed consumers (aithne#12, 2026-06-16)
