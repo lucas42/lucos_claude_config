@@ -5,14 +5,19 @@ metadata:
   type: feedback
 ---
 
-On receiving a JSON `shutdown_request` from `team-lead`, the **correct** response is a SendMessage protocol response:
+On receiving a JSON `shutdown_request` from `team-lead`, the **correct** response is a SendMessage protocol response. Two field-shape gotchas that have each cost a re-issued shutdown:
+
+1. **The approval field is `approve: true`, NOT `status: "ready"`.** `status:ready` does NOT terminate the process — the coordinator re-issues. (2026-06-25.)
+2. **Echo the request's `requestId` (camelCase), not `request_id`** — copy it verbatim from the incoming `shutdown_request`.
+3. **A string `message` requires a `summary` field too** — SendMessage rejects a string body with `summary is required when message is a string`. (2026-06-25.)
 
 ```json
 {
   "to": "team-lead",
+  "summary": "Shutdown approved — no in-flight work.",
   "message": {
     "type": "shutdown_response",
-    "request_id": "<echo from the request>",
+    "requestId": "<echo verbatim from the request>",
     "approve": true
   }
 }
