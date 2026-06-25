@@ -98,3 +98,5 @@
 
 - [No extra host binaries](feedback_no_extra_host_binaries.md) — lucas42 rejects installing new packages on hosts; favour tools already supported estate-wide (scp over rsync, 2026-06-08); surface host-provisioning cost + get his nod before adding a host dependency
 - [Rejected command ≠ no side effects](feedback_rejected_command_side_effects.md) — a "rejected"/interrupted compound Bash can still have created the issue/board item; re-fetch actual state before asserting "it didn't run" (orphaned lucos_backups#314 on 2026-06-08); isolate side-effecting creation from board setup
+
+- [aithne key-age ≠ deploy signal](feedback_aithne_key_age_not_deploy_signal.md) — `/_info` `signing_key_age` is a liveness signal, NOT deploy confirmation; the key persists across restarts (rotates only if already past the interval), so it never resets on a normal redeploy. Confirm deploys via container/image (SRE) or a `/_info` version field — not the key-age proxy. (Misread it on 2026-06-25, polled 40 min + escalated; aithne had already deployed.)
