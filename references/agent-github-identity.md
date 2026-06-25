@@ -121,15 +121,15 @@ There is no safe "do this once" shortcut — every commit-writing operation need
 
 `~/.claude` is a version-controlled git repository (`lucas42/lucos_claude_config`). When you edit any file under `~/.claude` — your own persona file, memory files, or any other config — you **must commit and push** the changes.
 
-**Before committing, verify you are on `main`.** The `~/.claude` checkout is shared — other work can leave it on a feature branch. Run `git -C ~/.claude status` first; if not on main, run `git -C ~/.claude checkout main && git -C ~/.claude pull --ff-only` before proceeding.
+**Use `commit-claude-main` — do not hand-roll `checkout main` + `git add/commit/push`.** The `~/.claude` checkout is *shared* and routinely dirty with other agents' uncommitted memory files, so a manual `pull --ff-only` / rebase collides with their untracked files and a plain `git push` is rejected non-fast-forward. `commit-claude-main` commits the current on-disk content of the files you name onto a freshly-fetched `origin/main` via an **isolated throwaway worktree** — it never checks out main, never pulls/stashes/rebases the shared tree, and never touches other agents' uncommitted files:
 
 ```bash
-cd ~/.claude && git add {changed files} && \
-  ~/sandboxes/lucos_agent/git-as-agent --app <persona> commit -m "Brief description of the change" && \
-  git push origin main
+~/sandboxes/lucos_agent/commit-claude-main --app <persona> -m "Brief description" {changed files…}
 ```
 
-If you skip this step, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
+Paths are relative to `~/.claude/` (e.g. `agents/<persona>.md`). On success it prints the commit SHA; on a push race (a concurrent push between its fetch and push) it exits non-zero — just re-run. If it reports "all specified files already match origin/main", the content is already landed (e.g. by the backstop) — nothing to do. For **agent-memory** commits specifically, `~/.claude/scripts/commit-agent-memory.sh --app <persona>` is the memory-scoped equivalent (see [`agent-memory-conventions.md`](agent-memory-conventions.md)).
+
+If you skip committing, your changes will be lost when the environment is reproduced, and other agents in future sessions won't see your updates.
 
 ### Keep instruction-file text lean — lesson narrative goes in the commit message
 
