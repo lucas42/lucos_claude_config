@@ -106,8 +106,9 @@ Detailed per-project notes are in `project-details.md`. This file is an index wi
 - [Docker Healthy ≠ network reachability — recurring estate-wide pattern](reference_docker_healthy_not_reachability.md) — 2 of last 3 incidents (creds CRLF 2026-05-09, xwing 2026-05-28); systemic healthcheck-design concern
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md) — delete-on-absence loops must raise on an empty-but-non-erroring source, else they wipe everything (creds#333 ADR-0001, 2026-06-04)
 - [Sweep-vs-CI race false positives](reference_sweep_vs_ci_race.md) — required-status-checks-coherent flags the slow CircleCI rollup as "stale" when the ~07:15 sweep collides with dependabot auto-merges; NOT a stale cache; fix lucos_repos#413 (2026-06-09)
-- [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md) — flat scope list; `domain:` ≠ owning service; enforcement backend-side/default-deny; NO scope→backend mapping exists (so don't filter scope pickers by backend — creds#386)
-- [creds key value and scope are independent](reference_creds_scope_keyvalue_independent.md) — client presents key only, scope is server-side; scope-change 401 window avoidable (preserve value on scope-only edit); true key-rotation overlap → defer to aithne JWKS (2026-06-15)
+- [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md) — flat scope list; `domain:` ≠ owning service; backend-side/default-deny; NO scope→backend mapping (don't filter scope pickers by backend — creds#386)
+- [creds key value and scope are independent](reference_creds_scope_keyvalue_independent.md) — client presents key only, scope server-side; preserve value on scope-only edit to avoid 401 window; key-rotation overlap → aithne JWKS (2026-06-15)
+- [aithne `next=` must be a full URL, not a path](reference_aithne_next_param_full_url.md) — bare path resolves relative to aithne's origin → post-login redirect gets stuck; recurring (2026-06-26)
 
 ## Project memories
 
