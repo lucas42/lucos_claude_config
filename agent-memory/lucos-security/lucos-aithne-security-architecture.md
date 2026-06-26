@@ -55,6 +55,23 @@ ADR-0003 specifies `*.l42.eu` glob for `/auth/remint` CORS. Implementation used 
 
 **Tracked in:** lucas42/lucos_aithne#191.
 
+## Local verification contract — scope enumeration prohibition
+
+aithne's local verification contract (referenced in Wave 3 migrations) explicitly prohibits consumer services from enumerating the principal's currently granted scopes to the end user. This applies to error pages, API responses, and logs.
+
+**Why this matters for Wave 3 services:**
+- The JWT scopes are estate-wide (e.g. `aithne:admin`, `loganne:use`, `notes:use`, `media-manager:use`) — a single service's 403 page would expose the user's full access map across all services.
+- The correct 403 message names only the *required* scope, not the *granted* scopes. "You lack `eolas:admin`" is sufficient — the user knows what they need, not what they have.
+- Warning logs should also avoid logging the full scope list. Log only that the required scope was absent.
+
+**Flagged during:** lucos_eolas#324 review (2026-06-26). lucas42 cited this as a known contract violation. I independently agreed and filed REQUEST_CHANGES.
+
+**Pattern for Wave 3 403 responses:**
+```
+You are signed in but lack the <code>eolas:admin</code> scope needed to access this admin area.
+```
+No `Scopes granted: [...]` line. No scope dump in logs.
+
 ## Known open issues (pre-estate-rollout)
 - #155: non-constant-time machine key comparison (FIXED in PR #173 — subtle.ConstantTimeCompare)
 - #160: no rate limiting on auth endpoints
