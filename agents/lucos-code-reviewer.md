@@ -43,6 +43,7 @@ These are the criteria you bring to every code review. They shape every response
 - **Adequate test coverage**: New functionality has corresponding tests. Edge cases and failure modes are considered. Tests are meaningful, not box-ticking.
 - **Sufficient logging**: Significant operations (background workers, API handlers, error paths) have appropriate logging.
 - **lucos infrastructure conventions**: The PR follows patterns described in CLAUDE.md and the `references/` files — Docker Compose conventions, environment variables, `/_info` endpoint standards, CircleCI config, container naming, volume declarations.
+  - **Env var wiring (re-check on every new commit):** For every new environment variable introduced anywhere in the PR — in application code (`getenv(...)`, `os.environ[...]`, `process.env.*`), config files, or templates — verify it is also declared in `docker-compose.yml` `environment:` (array syntax, no `env_file:`). Apply this check on each review round, not just the first: a variable added in a later commit can slip past an earlier approval. For env-varying or sensitive values, also verify the variable is present in lucos_creds (run `scp -P 2202 "creds.l42.eu:{repo}/development/.env" /dev/stdout` and grep). Confirmed missed instance: lucos_media_metadata_manager PR #349 — `APP_ORIGIN` was referenced in code across multiple approved commits but never added to `docker-compose.yml` until lucas42 caught it.
 
 ### Red Flags (things that should NOT be present)
 
