@@ -14,6 +14,8 @@
 
 ## External Tool References
 
+- [issue-manager App lacks PR write](reference_issue_manager_no_pr_write.md) — coordinator App is 403 on PR comments/closes (Issues:write only); route `@dependabot recreate`, PR closes, and PR comments to lucos-code-reviewer
+
 - [arachne MCP tool name lookups](reference_arachne_mcp_tools.md) — `find_entities` returns `rdfs:label` (alternate names); use `get_entity` by URI for canonical `skos:prefLabel`
 - [aithne agent-principal model](reference_aithne_agent_principal_model.md) — agent-operating creds live in lucos_agent/**development** (agent-writable, NOT a prod cred). Cutover needs lucas42 to mint the prod machine key (`/admin/machine-keys`, `aithne:admin`-gated) AND grant the scope the resource checks (`/admin/grants`) — per ADR-0001 §6, non-human resources MUST gate on a scope, so the grant is the norm (two actions). Gating on `principal_class` alone is a §6 divergence (the arachne `/mcp` canary shipped that way, flagged 2026-06-16). Mechanism note: default-deny is at the resource, NOT token issuance — zero-grant principals still get a scopeless JWT. JWT: `principal_class`/`scopes`/`aud=="l42.eu"`
 - [Media systems domain mapping](media-manager-domain-mapping.md) — lucos_configy/config/systems.yaml is canonical; beware lucos_media_manager (ceol.l42.eu) vs lucos_media_metadata_manager (media-metadata.l42.eu)
