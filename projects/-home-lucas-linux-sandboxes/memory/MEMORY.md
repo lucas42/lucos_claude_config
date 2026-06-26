@@ -27,6 +27,7 @@
 
 ## Feedback
 
+- [Dep "removed transitive" may be a rename](feedback_dep_rename_vs_repin.md) — before re-pinning a vanished bundled dep's old name, check for an upstream RENAME (webpack 5.108 bundles renamed minimizer-webpack-plugin, not terser-webpack-plugin); migrate the import, don't re-pin the legacy alias
 - [Don't auto-revert agent work](feedback_revert_policy.md) — when user says an agent shouldn't have done something, ask whether to revert rather than assuming revert is needed
 - [Check before chasing](feedback_check_before_chasing.md) — don't repeatedly ask user to merge PRs; check PR state or system status first
 - [Delegate questions to agents](feedback_delegate_not_guess.md) — when unsure about something, ask the most suitable agent rather than guessing
