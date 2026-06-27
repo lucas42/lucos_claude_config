@@ -18,6 +18,14 @@ source ~/sandboxes/lucos_agent/.env && \
   curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
 ```
 
+## Before declaring a root cause — or clearing a component as innocent
+
+Two checks at the moment you're about to assert causation (or innocence). Both failures look identical from the inside: a plausible, internally-consistent story standing in for a verified cause.
+
+1. **Reproduce against the EXACT thing reported — not a synonym.** If the symptom is "can't connect to `localhost:8027`", test `localhost:8027`, *not* `127.0.0.1:8027`. On a dual-stack host `localhost`, `127.0.0.1`, and `::1` are **different endpoints** with different reachability — `localhost` resolves to `::1` first, and an IPv6 publish can be accepted-then-**reset** (which blocks IPv4 fallback) while `127.0.0.1` works fine. Test all three separately before declaring the network — or any component — innocent. The address you must exercise is the one the user *can't* reach, not the one you assume is equivalent.
+
+2. **A repro under environment-specific conditions is a candidate, not a confirmed cause.** Before presenting a reproduced failure as the *user's* root cause, confirm the **observed signatures match theirs** — same error string, same container state (e.g. did they actually see `Restarting`?), same surfaces. If your sandbox has triggers the user's machine doesn't (a stale local `.env`, qemu arch emulation, different DNS resolution), a failure you reproduce under them is your environment's, not necessarily theirs.
+
 ## Investigating missing env vars in a container
 
 The chain from a secret to a running container has **four** links, and any one of them can independently be the gap:
