@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## lucos_backups startup crash-loop (masquerades as network)
+
+- [Backups "up but no HTTP" = ssh-add gates server start](pattern_backups_sshadd_gates_server_start.md) — startup.sh `set -e` runs init-agent.sh (`ssh-add`) BEFORE the server → any ssh-add failure crash-loops the container, no HTTP. Bridge/IPv6 #307 INNOCENT (curl of published 8027 works when server runs; ipam auto-adds IPv4). First diag = `docker ps`/`docker logs`, not network. Triggers: stale local .env mangled key (`error in libcrypto`→re-fetch creds) / qemu ssh-agent flake. Fix=non-fatal ssh init, lucos_backups#354 (2026-06-27).
+
 ## Dev cross-service wiring (host.docker.internal, linked creds)
 
 - [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — dev `*_ORIGIN` = `http://host.docker.internal:<hostPort>` not bridge IP (172.17.0.1 → 400 DisallowedHost; only `host.docker.internal` is in Django ALLOWED_HOSTS). Linux needs `extra_hosts: host.docker.internal:host-gateway`. Auth is a lucos_creds LINKED credential (`client/env => server/env`) auto-managing KEY_* + CLIENT_KEYS — never hand-edit. **403 from a stale local .env vs creds masquerades as a wrong key — diff local .env vs fresh creds fetch before writing.** Proven aithne→contacts 2026-06-12 (lucos_aithne#86).
