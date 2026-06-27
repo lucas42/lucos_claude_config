@@ -38,12 +38,25 @@ If both: **CSRF vulnerability**. Require a fix before merge.
 
 **Option B:** Add explicit `*.l42.eu` origin check for cookie-authenticated mutations — same pattern as `checkCSRF()` in lucos_backups Wave 4.
 
+## Required in every Wave 4 PR (not just CSRF)
+
+**`principal_class` allowlist** — validate `principal_class` against `('human', 'agent')` and fail-closed on unknown values. Defence-in-depth against future aithne principal types silently gaining access. Required before APPROVE on every Wave 4 PR; all three reviewed services had it added (backups had it from the start, contacts and creds required it).
+
+## Wave 4 services: CSRF approach by framework
+
+**Django services** (contacts, eolas, etc.): check for `@csrf_exempt` + form-data mutation endpoints. Cookie SameSite=None makes these exploitable. Fix: JSON body enforcement (forces CORS preflight).
+
+**Node/Express services** (lucos_creds): explicit `csrfMiddleware` checks `Origin` header on POSTs. Absent-Origin is allowed through (OWASP-recommended). This is NOT the `@csrf_exempt` pattern and is not vulnerable to simple form CSRF. Acceptable for Wave 4.
+
 ## Found in
 
-- lucas42/lucos_contacts#755 — `/agent/add` uses `request.POST.get('name')` under `@csrf_exempt`. Flagged REQUEST_CHANGES 2026-06-27.
+- lucas42/lucos_contacts#755 — `/agent/add` uses `request.POST.get('name')` under `@csrf_exempt`. Flagged REQUEST_CHANGES 2026-06-27. Fixed: JSON-only enforcement.
+- lucas42/lucos_creds#416 — explicit `csrfMiddleware`; CSRF acceptable. Missing `principal_class` allowlist — flagged REQUEST_CHANGES 2026-06-27.
 
 ## Possibly also in
 
-- lucas42/lucos_eolas (Wave 4 reference, #321 merged 2026-06-26) — should be checked for the same pattern. Developer cited eolas as the reference.
+- lucas42/lucos_eolas (Wave 4 reference, #321 merged 2026-06-26) — should be checked for `@csrf_exempt` + form-data mutations. Developer cited eolas as the reference.
 
-**Why:** The consumer migration guide checklist (lucos_aithne#159) says "CSRF mitigation for cookie-auth mutation endpoints" — but the checklist assumes the service will add the check; it doesn't flag pre-existing `@csrf_exempt` as needing audit.
+## Drive-by: lucos_creds UI sshExec injection (#417)
+
+`ui/src/index.js` `sshExec()` uses `child_process.exec()` with shell string interpolation — same pattern as configy_sync (#395). Requires `creds:admin` to exploit. Filed lucas42/lucos_creds#417. Fix: `execFile` with arg list.
