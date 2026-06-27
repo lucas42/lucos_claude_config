@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Committing ~/.claude files
+
+- [Use commit-claude-main, not hand-rolled git-as-agent rebase/stash](feedback_commit_claude_main_for_dotclaude.md) — `~/sandboxes/lucos_agent/commit-claude-main --app lucos-site-reliability -m "..." <paths>` commits onto fresh origin/main via an isolated worktree; never touches the SHARED, routinely-dirty ~/.claude tree. A manual `pull --rebase`/stash can drop other sessions' in-flight memory. Helper works for every persona (no tooling gap). The always-loaded "git-as-agent for all git ops" rule is the trap. Bit me 2026-06-27.
+
 ## lucos_backups local `localhost` dead but `127.0.0.1` works (IPv6 publish)
 
 - [Backups `localhost:8027` reset but `127.0.0.1:8027` ok = enable_ipv6 dual-stack publish mismatch](pattern_backups_sshadd_gates_server_start.md) — #307 `enable_ipv6` makes Docker publish `[::]:8027` too, but `HTTPServer(('',port))` binds IPv4-only → IPv6 conns accepted+RESET → `localhost`(→`::1`) fails, reset blocks fallback. Fix=`ports: "0.0.0.0:$PORT:$PORT"` (IPv4-only publish), #355. METHOD LESSON: test `127.0.0.1` AND `localhost` AND `[::1]` — I curled only 127.0.0.1 first + wrongly cleared network (#354 closed not_planned: crash-loop was MY sandbox stale-key+qemu artifact, NOT lucas42's; broken SSH key SHOULD stay fatal). 2026-06-27.

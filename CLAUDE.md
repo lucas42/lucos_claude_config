@@ -8,6 +8,8 @@ Do not add `Co-Authored-By` trailers to git commits. The bot identity on each co
 
 **Always use `git-as-agent`** (not raw `git`) for all git operations — commits, rebases, cherry-picks, etc. This ensures commits are attributed to the correct bot identity. See [`references/agent-github-identity.md`](references/agent-github-identity.md) for details.
 
+**Exception — files under `~/.claude`:** commit them with `commit-claude-main --app <persona> -m "..." <files…>`, never a hand-rolled `git-as-agent` add/commit/pull-rebase/push. The `~/.claude` checkout is *shared* and routinely dirty with other agents' uncommitted memory files, so a manual rebase/stash on it can drop their in-flight work; `commit-claude-main` commits onto a freshly-fetched `origin/main` via an isolated throwaway worktree that never touches the shared tree. See the "Committing `~/.claude` changes" section of that reference.
+
 ## Terminology
 
 Avoid deprecated master/slave terminology in all infrastructure naming. Use primary/secondary instead — in volume names, directory names, comments, and documentation. BIND configuration uses `type secondary` (modern terminology); match this in surrounding infrastructure names.
