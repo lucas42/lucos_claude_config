@@ -1,8 +1,8 @@
 # SRE Agent Memory
 
-## lucos_backups startup crash-loop (masquerades as network)
+## lucos_backups local `localhost` dead but `127.0.0.1` works (IPv6 publish)
 
-- [Backups "up but no HTTP" = ssh-add gates server start](pattern_backups_sshadd_gates_server_start.md) — startup.sh `set -e` runs init-agent.sh (`ssh-add`) BEFORE the server → any ssh-add failure crash-loops the container, no HTTP. Bridge/IPv6 #307 INNOCENT (curl of published 8027 works when server runs; ipam auto-adds IPv4). First diag = `docker ps`/`docker logs`, not network. Triggers: stale local .env mangled key (`error in libcrypto`→re-fetch creds) / qemu ssh-agent flake. Fix=non-fatal ssh init, lucos_backups#354 (2026-06-27).
+- [Backups `localhost:8027` reset but `127.0.0.1:8027` ok = enable_ipv6 dual-stack publish mismatch](pattern_backups_sshadd_gates_server_start.md) — #307 `enable_ipv6` makes Docker publish `[::]:8027` too, but `HTTPServer(('',port))` binds IPv4-only → IPv6 conns accepted+RESET → `localhost`(→`::1`) fails, reset blocks fallback. Fix=`ports: "0.0.0.0:$PORT:$PORT"` (IPv4-only publish), #355. METHOD LESSON: test `127.0.0.1` AND `localhost` AND `[::1]` — I curled only 127.0.0.1 first + wrongly cleared network (#354 closed not_planned: crash-loop was MY sandbox stale-key+qemu artifact, NOT lucas42's; broken SSH key SHOULD stay fatal). 2026-06-27.
 
 ## Dev cross-service wiring (host.docker.internal, linked creds)
 
