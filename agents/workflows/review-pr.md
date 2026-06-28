@@ -62,6 +62,8 @@ Systematically evaluate the PR against the **Quality Checks** and **Red Flags** 
 
     **Do not add auth-*consumer* services to this list (e.g. `lucos_eolas`, `lucos_contacts`).** The list is only the core auth/perimeter/secret infrastructure above. For consumer services, you judge per-PR security relevance via the Step 4 change-nature triggers — requesting `lucos-security` on a specific consumer PR is correct; a blanket repo-level mandate is not.
 
+    **Always-review does NOT mean supervised.** These are orthogonal properties. `lucos_aithne` is on the always-review list (security sign-off required on every PR) *and* unsupervised (bot approval auto-merges; lucas42 is not required). Never read "this repo requires security review" as "this repo needs lucas42's approval to merge". Always run `check-unsupervised` independently to determine merge-gating — do not infer it from the always-review classification.
+
     **Exception — `lucos-security`-authored PRs (self-approval is structurally impossible).** When `lucos-security` is the *author* of the PR, GitHub will not accept a formal approving review from them on their own PR. In that case, an explicit, unambiguous **approving comment** from `lucos-security` on the PR — a clear "good to merge / security sign-off", not merely a neutral or descriptive remark — satisfies the security sign-off requirement. Treat it as the go-ahead and `APPROVE`. This applies *only* when security is the PR author and the formal approval is structurally blocked; for every other author, a formal `lucos-security` review/approval is still required. (Confirmed by lucas42, 2026-06-12, resolving the lucos_aithne#98 deadlock.)
 
 If you spot a concrete, fixable issue, **request changes** — even if the fix is minor. A note in an approval is easy to miss and may never get fixed. Reserve approvals-with-notes for genuinely subjective observations or things requiring significant design discussion. Do not bury actionable feedback as a parenthetical in an approval.
@@ -208,6 +210,10 @@ Before stating a repo's supervision status (e.g. "this needs lucas42's approval"
 ```
 
 Exit 0 = unsupervised (auto-merge fires on bot approval); exit 1 = supervised (needs human approval); exit 2 = error. Base the claim on the exit code. Do not infer from repo name, conversational recall, or proximity to similar-looking repos.
+
+**Invocation gotcha:** run `check-unsupervised` as a standalone command — never prepend `gh-as-agent` to it. `~/sandboxes/lucos_agent/gh-as-agent ~/sandboxes/lucos_agent/check-unsupervised {repo}` passes the script path as an API argument to `gh-as-agent`, returns exit 1, and silently misclassifies an unsupervised repo as supervised. (Confirmed: lucos_aithne#229.)
+
+**Always-review does NOT imply supervised.** These two classifications are independent. A repo on the always-review list (e.g. `lucos_aithne`) still requires a `check-unsupervised` run to determine merge-gating — never skip it because the repo is security-gated. `lucos_aithne` is always-review *and* unsupervised: bot approval auto-merges after the security pass; lucas42 is not required.
 
 **Do NOT use `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'`** — repos not in configy (e.g. `lucos`, `lucos_backups`) return empty output, which silently misclassifies them as supervised.
 
