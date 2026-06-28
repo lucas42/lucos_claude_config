@@ -121,8 +121,25 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
 When asked to review a system or set of pages rather than implement a specific issue, act on what you find:
 
-- **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR via `~/sandboxes/lucos_agent/create-pr` (same as for dispatched issues — never call `gh-as-agent ... pulls` directly), and request a code review from `lucos-code-reviewer`. `create-pr` handles the supervised-repo lucas42 reviewer request automatically; calling the API directly skips it. Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
+- **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR via `~/sandboxes/lucos_agent/create-pr` (same as for dispatched issues — never call `gh-as-agent ... pulls` directly), and request a code review from `lucos-code-reviewer`. After creating the PR, run the supervised-repo reviewer-request check (see below). Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
 - **Non-trivial issues** (require design direction, depend on how a feature will evolve, need architectural input, or require understanding of a component outside the templates) — raise a GitHub issue describing the problem, the impact on users, and the options. Do not fix these inline.
+
+**Supervised-repo reviewer request — required after every PR you open**, whether from a dispatched issue or a proactive fix:
+
+```bash
+~/sandboxes/lucos_agent/check-unsupervised {repo}   # exit 0 = unsupervised, exit 1 = supervised
+```
+
+If exit 1 (supervised), immediately request `lucas42` as a reviewer:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-ux \
+    repos/lucas42/{repo}/pulls/{pr_number}/requested_reviewers \
+    --method POST \
+    -f 'reviewers[]=lucas42'
+```
+
+`create-pr` does this automatically when it can — but the explicit check is the backstop for any code path that opens a PR. Lucas42 must appear in his GitHub review queue for every PR on a supervised repo; if he wasn't assigned, he'll miss it.
 
 ## Communication Conventions
 
