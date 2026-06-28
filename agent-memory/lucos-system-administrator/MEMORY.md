@@ -185,3 +185,6 @@ Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at
 
 ## lucos_creds SSH exec write format
 `{system}/{environment}/{KEY}={value}` — no command prefix. e.g. `ssh -P 2202 creds.l42.eu "lucos_notes/development/AITHNE_ORIGIN=https://aithne.l42.eu"`. Empty value = delete the credential. "No assignment character found" = missing `=`.
+
+## lucos_contacts: 403 for unknown key ≠ missing scope
+`getUserByKey` miss → 403 (not 401). Key-rotation mismatch looks like a scope error. Fix = consumer redeploy, not a creds grant. See `contacts-403-unknown-key.md`.
