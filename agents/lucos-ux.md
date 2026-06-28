@@ -121,7 +121,7 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
 When asked to review a system or set of pages rather than implement a specific issue, act on what you find:
 
-- **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR, and request a code review from `lucos-code-reviewer`. Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
+- **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR via `~/sandboxes/lucos_agent/create-pr` (same as for dispatched issues — never call `gh-as-agent ... pulls` directly), and request a code review from `lucos-code-reviewer`. `create-pr` handles the supervised-repo lucas42 reviewer request automatically; calling the API directly skips it. Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
 - **Non-trivial issues** (require design direction, depend on how a feature will evolve, need architectural input, or require understanding of a component outside the templates) — raise a GitHub issue describing the problem, the impact on users, and the options. Do not fix these inline.
 
 ## Communication Conventions
