@@ -51,6 +51,7 @@ If both: **CSRF vulnerability**. Require a fix before merge.
 ## Found in
 
 - lucas42/lucos_contacts#755 — `/agent/add` uses `request.POST.get('name')` under `@csrf_exempt`. Flagged REQUEST_CHANGES 2026-06-27. Fixed: JSON-only enforcement.
+- lucas42/lucos_contacts#755 (re-review, 2026-06-28) — `PersonAccountsView.post` and `importer` use `@csrf_exempt` + `json.loads(request.body)` without Content-Type enforcement. Cross-origin `text/plain` POST with `SameSite=None` cookie bypasses CORS preflight. REQUEST_CHANGES posted. Fix: 415 on non-`application/json` Content-Type.
 - lucas42/lucos_creds#416 — explicit `csrfMiddleware`; CSRF acceptable. Missing `principal_class` allowlist — flagged REQUEST_CHANGES 2026-06-27.
 
 ## Possibly also in
