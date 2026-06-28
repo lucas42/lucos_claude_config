@@ -1,5 +1,9 @@
 # SRE Agent Memory
 
+## Scope/key-rotation cutover: 403 ≠ missing-scope
+
+- [contacts returns 403 (not 401) for an unrecognised key](pattern_contacts_403_for_unrecognised_key.md) — during a creds key-rotation cutover, 401-vs-403 CANNOT classify key-mismatch vs missing-scope (you see ZERO 401s). Decider = read the server's live `CLIENT_KEYS` on the running container (`docker exec <svc>_app printenv CLIENT_KEYS`, redact keys): scope present→old-key→consumer redeploy fixes; scope absent→needs prod scope (lucas42). Stuck-403 after consumer redeploy = server's CLIENT_KEYS snapshot stale→redeploy the SERVER. 2026-06-28 Wave4: all consumers cleared on redeploy, none needed a grant. UA map: Go-http-client=aithne, python-httpx bulk /people=photos sweep_contact_display_names.
+
 ## Committing ~/.claude files
 
 - [Use commit-claude-main, not hand-rolled git-as-agent rebase/stash](feedback_commit_claude_main_for_dotclaude.md) — `~/sandboxes/lucos_agent/commit-claude-main --app lucos-site-reliability -m "..." <paths>` commits onto fresh origin/main via an isolated worktree; never touches the SHARED, routinely-dirty ~/.claude tree. A manual `pull --rebase`/stash can drop other sessions' in-flight memory. Helper works for every persona (no tooling gap). The always-loaded "git-as-agent for all git ops" rule is the trap. Bit me 2026-06-27.
