@@ -14,7 +14,6 @@ lucos_photos_worker: 2026-06-12
 lucos_arachne_explore: 2026-06-12
 lucos_arachne_web: 2026-06-14
 lucos_backups: 2026-06-26
-lucos_authentication: 2026-06-27
 lucos_repos_app: 2026-06-14
 lucos_dns_bind: 2026-06-11
 lucos_loganne: 2026-06-29
