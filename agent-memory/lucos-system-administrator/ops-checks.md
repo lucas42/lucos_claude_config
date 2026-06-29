@@ -1419,3 +1419,16 @@ All already tracked by audit tool. No action needed.
 
 **No new issues raised.**
 
+---
+
+### 2026-06-29 (checks 1 + 6 due; weekly checks last ran 2026-06-23 — not due until 2026-06-30; monthly checks last ran 2026-06-04 — not due until 2026-07-04)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (60 repos checked).
+
+**Repos dashboard**: 60 repos checked. 1 failing convention:
+- `lucos_contacts` `env_var_passthrough`: "Env vars read in code but missing from docker-compose.yml passthrough: ENVIRONMENT (first read at app/lucosauth/aithne.py:175)"
+- Root cause: aithne wave-4 auth PR (#755) added `aithne.py` which reads `ENVIRONMENT`, but docker-compose.yml wasn't updated.
+- **Fix applied**: added `- ENVIRONMENT` to app service environment array. PR #758 raised, approved by code-reviewer, awaiting lucas42's approval (supervised repo). Existing auto-raised issue lucos_contacts#756 will be closed by closing keyword in PR.
+
+**Issues raised**: None (auto-raised issue #756 already existed; PR #758 closes it).
+
