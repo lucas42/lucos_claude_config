@@ -17,7 +17,7 @@
 - [Synchronous external-service call in write hot path](review_sync_hotpath_external.md) — flag missing timeout/fallback; `fetchEolasName`→whole-dataset is a companion smell; root cause of 2026-05-29 502 incident
 - [SSRF/request-forgery false-positive assessment](feedback_ssrf_request_forgery_assessment.md) — cite `fetchEntityNameFromSource` hostname whitelist (NOT `ValidateURIOrigin`) as the universal guard on `fetchEolasName` paths
 - [Robustness gaps must block — "unlikely in practice" is not a valid downgrade](feedback_robustness_gaps_block.md) — exception-path resource leaks, partial cleanup on error, missing guards: request changes even if the fix is one line and the failure scenario is improbable (lucos_backups #292/#293)
-- [Auth migration PR checklist](review_aithne_migration_prs.md) — three-branch pattern, algorithm pinning, kid sanitisation, open-redirect in next=, JWKS failure logging, AITHNE_ORIGIN env var, inline ENVIRONMENT read; all real bugs from lucos_arachne #637–#675
+- [Aithne auth integration checklist](review_aithne_migration_prs.md) — three-branch pattern, algorithm pinning, kid sanitisation, open-redirect in next=, JWKS failure logging, AITHNE_ORIGIN env var, inline ENVIRONMENT read; real bugs from lucos_arachne #637–#675 (migration complete 2026-06-29; applies to new integrations too)
 
 ## Cross-Repo Review Rules
 
