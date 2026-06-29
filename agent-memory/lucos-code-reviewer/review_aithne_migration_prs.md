@@ -1,11 +1,11 @@
 ---
 name: review-aithne-migration-prs
-description: Review checklist for lucos_authentication → lucos_aithne migration PRs, derived from lucos_arachne migration review findings
+description: Security checklist for PRs adding lucos_aithne auth to a service (migration complete as of 2026-06-29; checklist applies to new integrations too)
 metadata:
   type: feedback
 ---
 
-When reviewing an auth-migration PR (lucos_authentication → lucos_aithne), verify ALL of the following:
+When reviewing a PR that adds or modifies lucos_aithne authentication in a service, verify ALL of the following:
 
 **Three-branch auth pattern (mandatory shape):**
 - Valid token + required scope → proceed
