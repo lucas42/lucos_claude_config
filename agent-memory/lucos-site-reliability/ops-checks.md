@@ -17,8 +17,8 @@ lucos_backups: 2026-06-26
 lucos_authentication: 2026-06-27
 lucos_repos_app: 2026-06-14
 lucos_dns_bind: 2026-06-11
-lucos_loganne: 2026-06-09
-lucos_configy: 2026-06-09
+lucos_loganne: 2026-06-29
+lucos_configy: 2026-06-29
 lucos_contacts_app: 2026-06-14
 lucos_contacts_db: 2026-06-14
 lucos_contacts_googlesync_import: 2026-06-15
@@ -31,8 +31,8 @@ lucos_eolas_app: 2026-06-14
 lucos_eolas_db: 2026-06-15
 lucos_eolas_web: 2026-06-16
 lucos_locations_mosquitto: 2026-06-27
-lucos_locations_otfrontend: 2026-06-09
-lucos_locations_otrecorder: 2026-06-09
+lucos_locations_otfrontend: 2026-06-29
+lucos_locations_otrecorder: 2026-06-29
 lucos_mail_smtp: 2026-06-17
 lucos_photos_api: 2026-06-27
 lucos_arachne_ingestor: 2026-06-24
@@ -44,7 +44,7 @@ lucos_photos_redis: 2026-06-26
 lucos_scenes: 2026-06-11
 lukeblaney_co_uk: 2026-06-09
 lucos_media_manager: 2026-06-23
-lucos_media_metadata_api: 2026-06-08
+lucos_media_metadata_api: 2026-06-29
 lucos_monitoring: 2026-06-17
 lucos_media_seinn: 2026-06-12
 tfluke: 2026-06-12
