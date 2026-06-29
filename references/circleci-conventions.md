@@ -8,6 +8,18 @@ When planning estate-wide rollouts or any bulk merge operation, assume that ever
 
 ## Standard configs
 
+## Platform selection
+
+The `platform` value for `lucos/build` must match the actual deploy targets — do not copy the dual-arch default unless the service genuinely deploys to both avalon and xwing/salvare.
+
+| Deploy target(s) | `platform` value | Notes |
+|---|---|---|
+| avalon only (`linux/amd64`) | *(omit)* | Orb default: builds amd64-only. No wasted arm64 build. |
+| xwing and/or salvare only (`linux/arm64`) | `platform: "linux/arm64"` | Both xwing and salvare are aarch64. |
+| avalon + xwing/salvare (both arches) | `platform: "linux/amd64,linux/arm64"` | Dual-arch build only when required. |
+
+If `platform` is omitted, the orb's default builds an amd64-only image (CI runners are x86_64).
+
 ## Serial-group requirements (enforced by `circleci-deploy-serial-group` audit convention)
 
 Both `lucos/build*` and `lucos/deploy-*` jobs **must** declare a `serial-group`. The convention source is `lucos_repos/conventions/circleci-deploy-serial-group.go` — it is the authoritative check, not these templates. Before removing either serial-group as "non-standard", verify against that source first.
@@ -33,7 +45,6 @@ workflows:
     jobs:
       - lucos/build:
           serial-group: << pipeline.project.slug >>/build/<< pipeline.git.branch >>
-          platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
           serial-group: deploy-avalon
           requires:
@@ -68,7 +79,6 @@ workflows:
       - test
       - lucos/build:
           serial-group: << pipeline.project.slug >>/build/<< pipeline.git.branch >>
-          platform: "linux/amd64,linux/arm64"
       - lucos/deploy-avalon:
           serial-group: deploy-avalon
           requires:
