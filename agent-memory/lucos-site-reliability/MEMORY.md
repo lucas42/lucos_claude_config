@@ -78,6 +78,7 @@
 
 ## Scheduled-job check failures (deterministic, won't self-clear)
 
+- [backup-without-original red forever on a decommissioned system's retained backups](pattern_backups_without_original_on_decommission.md) — benign; check keys off LIVE host volumes, decommed volume gone from host+configy but backups kept (lucas42 steer) → permanent alert. First hit avalon/lucos_authentication_config 2026-06-30. Fix = configy-absence as signal, lucos_backups#359 (lucos-developer). Don't re-investigate per future decommission.
 - [host-tracking-failures "<host>: 'low'" = invalid recreate_effort in configy](pattern_backups_invalid_effort_crashes_host_tracking.md) — quoted word is a Python KeyError repr; a volume's `recreate_effort` not in effort_labels.yaml (valid: small/considerable/huge/automatic/tolerable/remote/unknown) crashes that host's entire getData(). Backups still run (P2). Fix configy value. First hit 2026-06-09 lucos_dns_configy-sync-cache `low`→`automatic` (lucos_configy#220); hardening lucos_backups#316.
 
 - [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — schedule-tracker debug `"Backups failed for: repo:<name>"`; empty repo → ref-less codeload URL → wget exit 8. Volumes+other repos fine. First hit lucos_dns_secondary 2026-06-06. Tracked lucos_backups#298.
