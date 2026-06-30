@@ -61,6 +61,10 @@
 
 - [aithne contact id is JSON string (ExternalID) in principal world, int (contactListItem) in contacts proxy](pattern_aithne_contactid_string_vs_int_divergence.md) — same id, two types. JS cross-referencing both (Set.has, ===) MUST String()-coerce or it silently matches nothing w/ green CI. Bit grants picker 2026-06-26 (PR #222/#219): name lookup dead, numeric-ID-only survived (P2). Owner lucos-developer. Same class as aithne#121. PR #222 tests asserted endpoints, not picker-resolves-name → gap.
 
+## arachne↔eolas ingest (dual path + hyphenated-pk bug)
+
+- [arachne has TWO eolas ingest paths; hyphenated pks silently fail the webhook path](pattern_arachne_eolas_dual_ingest_hyphen_pk.md) — per-item webhook (server.py) vs daily bulk (`ingest.py`, full `/metadata/all/data/` dump). eolas `urls.py` entrypoint pk regex `\w+` excludes hyphens → `art-x-*` lang codes → `302 /login/` → webhook ingest gets HTML not RDF → fails; bulk masks it (Na'vi/Simlish present, new Ewokese absent). 2026-06-30 lucos_eolas#329. Includes triplestore SPARQL mechanics (Basic auth lucos_arachne:$KEY_LUCOS_ARACHNE, http://triplestore:3030/{raw_arachne,arachne}/sparql), ingestor needs `pipenv run` (no `requests` in base py), ad-hoc bulk-ingest remediation cmd.
+
 ## Proxy/aggregator handler 502s
 
 - [Misleading "502 could not reach X" can be a DECODE failure of a 200 upstream](pattern_misleading_502_decode_not_unreachable.md) — thin proxy handlers that map ANY client error to one 502 string report a JSON decode failure of a successfully-reached (200) upstream as "could not reach". Test the upstream directly (curl from host w/ prod key) BEFORE blaming network/routing. Suspect mock/prod JSON type divergence (string vs number id) in Go structs; immune sibling path decodes into map[string]any. First hit aithne#121 2026-06-16 (`contactListItem.ID string` vs `"id": 788`); same handler underpins #120 grants-UI.
