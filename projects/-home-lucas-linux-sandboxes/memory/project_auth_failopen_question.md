@@ -1,11 +1,13 @@
 ---
-name: Auth fail-open/fail-closed question unresolved
-description: The question of whether lucos_media_metadata_manager fails open or closed when auth.l42.eu is unreachable was never explicitly verified — should be addressed when auth service work happens
+name: Auth fail-open/fail-closed question RESOLVED — fail closed
+description: Resolved 2026-06-30 — post-aithne-migration security review confirmed all consumers FAIL CLOSED on auth failure (correct); the JWKS serve-stale gap is the residual reliability concern
 type: project
 originSessionId: 9777c034-07fc-4b8e-9216-8d1573f7ea53
 ---
-When working on the authentication service or any service that depends on auth.l42.eu, verify and document whether each service fails-open or fails-closed when auth.l42.eu is unreachable or returns unexpected responses.
+**RESOLVED 2026-06-30** by the lucos-security review during the lucos_authentication → lucos_aithne post-migration review.
 
-**Why:** lucos_media_metadata_manager#215 raised this as a potential P0 security issue (if fail-open, unauthenticated access is possible when auth is degraded). The issue was closed because it was out of scope for the immediate monitoring request, but the underlying question was never answered.
+**Answer: FAIL CLOSED (correct security behaviour).** Every migrated consumer returns 401 / redirects to aithne login on auth failure; a missing or invalid token never grants access. The 5-minute JWKS cache gives ~5 min resilience during an aithne outage, but once the cache expires AND aithne is unreachable, consumers fail closed (a 401 storm) — i.e. *more* closed than the local-verification contract intends, never fail-open.
 
-**How to apply:** When auth service work is in scope, add "verify fail-open/fail-closed behaviour" to the checklist for any service touching auth. If fail-open is discovered, raise a separate security issue immediately.
+**Residual concern (not fail-open):** the JWKS **serve-last-known-good / serve-stale** gap — most consumers use off-the-shelf `createRemoteJWKSet` (jose) / `PyJWKClient` which raise on a failed refresh instead of serving the last-known-good key set. Tracked by lucas42/lucos_aithne#241 (security, umbrella), lucas42/lucos_arachne#697 (architect — /mcp HIGH, /explore MED), and lucas42/lucos#255 (architect — the 4 JS consumers, may suit an estate-rollout). `lucos_contacts` already has the correct pattern (`_LKGJWKSClient`) — the reference for the others to copy.
+
+**How to apply:** The original fail-open/fail-closed question is closed — don't re-raise it. If auth-resilience work comes up, the live item is the serve-stale gap above, not fail-open.
