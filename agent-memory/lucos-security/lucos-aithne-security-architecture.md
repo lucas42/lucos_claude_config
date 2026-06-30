@@ -81,11 +81,21 @@ No `Scopes granted: [...]` line. No scope dump in logs.
 **Issues raised 2026-06-30:**
 - lucos_router#100: Missing HSTS header in nginx config (LOW)
 - lucos_aithne#241: JWKS serve-stale not implemented in any consumer (availability gap per contract §1)
-- lucos_aithne#250: Wave 3 services missing principal_class allowlist check (LOW, defence-in-depth per contract §5)
+- lucos_aithne#250: Wave 3 services missing principal_class allowlist check — **SUPERSEDED by #268** (see below)
 
 **arachne MCP principal_class concern (memory 2026-06-16): RESOLVED.** arachne MCP uses scope gate (`arachne:read`), NOT principal_class alone.
+
+## `principal_class` allowlist — REVERSED DECISION (2026-06-30)
+
+lucas42 reversed the premise of #250: consumers MUST NOT hardcode a `principal_class` allowlist. Tracked in lucas42/lucos_aithne#268.
+
+**Rationale accepted by security review:** Scope default-deny (ADR-0001 §6) already prevents a new class from silently gaining access — no explicit grant = scopeless token = rejected everywhere. The allowlist guards a door scope already locks, and its failure mode (estate-wide flag-day when a new class is legitimately introduced) is worse than the risk it mitigates.
+
+**Do NOT raise `principal_class` allowlist absence as a finding** in any Wave 3/4 consumer. The contract §5 now explicitly says: `principal_class` is informational, consumers MUST NOT reject on absent/unrecognised class, scope is the sole gate.
+
+Consumer cleanup tickets (removing hardcoded allowlists): lucas42/lucos_backups#363, lucas42/lucos_creds#430, lucas42/lucos_photos#456, lucas42/lucos_media_metadata_manager#357.
 
 ## Known open issues
 - #148: dev/prod issuer model for local-dev human auth
 - #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30)
-- #250: Wave 3 principal_class allowlist gap (raised 2026-06-30)
+- #268: Flip contract §5 — principal_class allowlist removal + ADR-0001 §6 clarification
