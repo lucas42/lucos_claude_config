@@ -102,6 +102,8 @@ Very occasionally — when there's a major issue happening *right now* and you c
 
 **The moment `create-pr` returns a URL, your next action is `SendMessage to: "lucos-code-reviewer"` with `review PR {url}`.** Then drive [`pr-review-loop.md`](../pr-review-loop.md) to completion. No fast-paths, no exceptions.
 
+**Reach the reviewer (and any specialist, e.g. `lucos-security`) via `SendMessage` to the existing teammate — never spawn one with the `Agent` tool.** When the team is running, `lucos-code-reviewer` and the specialist personas already exist as teammates; `Agent`-spawning a fresh `lucos-*` creates a *duplicate* agent that does duplicate work, posts duplicate reviews, and sits outside the team flow (you can't drive the loop through the team's routing). This holds for kicking off the initial review, for specialist sign-offs, and for every re-request after a pushed fix.
+
 This applies to **every PR you raise**, including all of these tempting fast-path cases:
 
 - Single-file deletions / cleanups
