@@ -62,3 +62,9 @@ For ad-hoc dispatch (where the user gives you a URL directly), omit the owner an
 The `/dispatch` skill handles all pre-dispatch validation (dependency checks, existing PR checks, convention/estate-rollout detection), dispatches to the correct teammate based on the owner, and handles post-completion (CI verification, auto-merge, unblocking dependents).
 
 Wait for `/dispatch` to complete and report its outcome.
+
+## One invocation = one ticket — do NOT auto-advance
+
+A single `/next` invocation handles **exactly one** ticket: the one `get-next-implementation-issue` returns. If that ticket turns out **not to be dispatchable** — for example it's a no-op / already-done / un-implementable issue (resolve it: close or reclassify), its owner is a non-teammate (e.g. `lucas42` for a manual production action), or the owning teammate is already busy with an active task and you're holding it — then **handle that one ticket, report what you did, and STOP.**
+
+**Do NOT re-run `get-next-implementation-issue` to skip to the next ticket within the same invocation.** Auto-advancing past a non-dispatchable ticket hides the queue state from lucas42 and risks silently working down the column without his oversight. If lucas42 wants the next ticket after a non-dispatchable one is dealt with, he will run `/next` again. The only loop within a single invocation is `get-next → /dispatch` for the **one** ticket returned; never `get-next → (not dispatchable) → get-next again`.
