@@ -82,7 +82,7 @@
 
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
 - [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
-- [Auth fail-open/fail-closed unresolved](project_auth_failopen_question.md) — verify and document when auth service work happens; raised during 2026-04-11 incident investigation
+- [Auth fail-open/fail-closed RESOLVED](project_auth_failopen_question.md) — RESOLVED 2026-06-30: consumers FAIL CLOSED (correct); residual is the JWKS serve-stale gap (aithne#241/arachne#697/lucos#255), not fail-open
 - [Migration finish-off state](project_migration_finishoff.md) — RESOLVED 2026-06-01: lucas42 declared metadata→eolas migration complete; retired from priorities.md, lucos_firewall now sole #1 strategic priority
 - [lucos_firewall rollout state](project_firewall_rollout.md) — **COMPLETE 2026-06-08: all 3 hosts enforcing (xwing 10:45, salvare 10:59, avalon 14:25), lucos#182 closed.** Four post-enforce regressions found+fixed (#13/#14 inter-container DROP, #19/#20 Docker FORWARD wipe, #16/#17 mDNS, backups#307/#310 host-net hairpin). Memory retains durable lessons: DRY_RUN override, revert hand, the **Compose-reuses-stale-network foot-gun**, host-net+router INPUT pattern
 
