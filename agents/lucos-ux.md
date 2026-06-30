@@ -119,6 +119,14 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
 ## Proactive UX Reviews (ad-hoc, not assigned issues)
 
+**Verify sandbox currency before filing issues based on local code reads.** The `~/sandboxes` checkouts are not auto-updated — they can be weeks behind `origin/main`. Before asserting that a cross-repo file has a bug or stale reference, run:
+
+```bash
+git -C ~/sandboxes/{repo} log HEAD..origin/main --oneline
+```
+
+If the output is non-empty, the checkout is stale and the issue may already be fixed on `origin/main`. Either fetch first or hedge the finding explicitly as unverified against the current branch. Filing a bug based on a stale snapshot is worse than not filing it.
+
 When asked to review a system or set of pages rather than implement a specific issue, act on what you find:
 
 - **Trivial fixes** (single-file template or JS change, clear correct answer, no design decision needed) — fix them directly, open a PR via `~/sandboxes/lucos_agent/create-pr` (same as for dispatched issues — never call `gh-as-agent ... pulls` directly), and request a code review from `lucos-code-reviewer`. After creating the PR, run the supervised-repo reviewer-request check (see below). Examples: wrong alt text, ASCII arrows instead of Unicode, redundant ARIA attributes, duplicate page titles.
