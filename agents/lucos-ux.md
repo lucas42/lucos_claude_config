@@ -119,13 +119,15 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
 
 ## Proactive UX Reviews (ad-hoc, not assigned issues)
 
-**Verify sandbox currency before filing issues based on local code reads.** The `~/sandboxes` checkouts are not auto-updated — they can be weeks behind `origin/main`. Before asserting that a cross-repo file has a bug or stale reference, run:
+**When filing any finding about what code a service runs — still-calls-X, broken, not-migrated — verify against `origin/main` or a live runtime probe. A local grep alone is not sufficient evidence.** The `~/sandboxes` checkouts are not auto-updated and can be weeks stale. The pattern:
 
 ```bash
-git -C ~/sandboxes/{repo} log HEAD..origin/main --oneline
+git -C ~/sandboxes/{repo} fetch -q
+git -C ~/sandboxes/{repo} grep "pattern" origin/main -- path/to/file
+# or: git -C ~/sandboxes/{repo} show origin/main:path/to/file | grep "pattern"
 ```
 
-If the output is non-empty, the checkout is stale and the issue may already be fixed on `origin/main`. Either fetch first or hedge the finding explicitly as unverified against the current branch. Filing a bug based on a stale snapshot is worse than not filing it.
+If the pattern is absent on `origin/main`, the issue is already fixed — do not file. If fetching is impractical, hedge the finding explicitly ("as of local checkout, unverified against origin/main") rather than stating it as fact.
 
 When asked to review a system or set of pages rather than implement a specific issue, act on what you find:
 
