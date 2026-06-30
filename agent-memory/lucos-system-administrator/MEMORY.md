@@ -188,3 +188,6 @@ Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at
 
 ## lucos_contacts: 403 for unknown key ≠ missing scope
 `getUserByKey` miss → 403 (not 401). Key-rotation mismatch looks like a scope error. Fix = consumer redeploy, not a creds grant. See `contacts-403-unknown-key.md`.
+
+## Root-owned files in /srv/backups/local/volume/: use container-root pattern
+`lucos-agent` has no write access. `docker run --rm -v /srv/backups/local/volume:/backup alpine rm -f /backup/<file>` bypasses host ownership. See `backup-volume-root-cleanup.md`.
