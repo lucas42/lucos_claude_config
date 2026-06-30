@@ -31,6 +31,7 @@
 ## lucos_aithne (signing key / deploy verification)
 
 - [aithne signing_key_age is NOT a deploy-confirmation signal](pattern_aithne_signing_key_age_not_deploy_signal.md) — key lives in persistent credential_store vol, survives restarts; rotates at startup ONLY if already > rotation interval. Old key ≠ stale process. Verify deploy via container `StartedAt`+image tag on avalon, not key age. 2026-06-25 false alarm: all 5 pipelines deployed OK, container on 1.20.17/09f1d95d, key 15.5d was a red herring.
+- [aithne KEK breaking-migration deploy race + recovery gotchas](pattern_aithne_kek_migration_deploy_race.md) — 2026-06-30 ~46min auth outage: SIGNING_KEK raw→sha256 change (#260) auto-deployed before its one-time `--migrate-kek`→crash-loop. RECOVERY GOTCHAS: image no-entrypoint→`/lucos_aithne --migrate-kek`; PORT required before subcommand; creds .env QUOTES values→feed migrate-kek the UNQUOTED bytes (off-by-quote=exit0-then-crash); `docker start` reuses OLD env→must REDEPLOY. SECRET HANDOFF: lucas42 writes prod+dev-temp-key, agent reads dev, deletes after. ORB health-gates (`--wait` ×3) but NO rollback→crash-loop persists. Open: #261/#262/lucos#260.
 
 ## lucos_router (TLS / domain serving)
 
