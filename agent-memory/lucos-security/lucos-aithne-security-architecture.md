@@ -72,12 +72,20 @@ You are signed in but lack the <code>eolas:admin</code> scope needed to access t
 ```
 No `Scopes granted: [...]` line. No scope dump in logs.
 
-## Known open issues (pre-estate-rollout)
-- #155: non-constant-time machine key comparison (FIXED in PR #173 — subtle.ConstantTimeCompare)
-- #160: no rate limiting on auth endpoints
-- #159: consumer migration checklist
-- #162: incident response runbook (FIXED in PR #165, timing corrected in PR #172)
-- #150: per-token scope downscoping (FIXED in PR #175 — RFC 6749 §4.4 scope param, intersection with granted set)
-- #151: SIGNING_KEK re-keying procedure (FIXED in PR #174 — --rekey subcommand)
+## Post-migration security review (2026-06-30)
+
+**Fail-open vs fail-closed: FAIL CLOSED (correct).** All migrated services return 401/403 on auth failure. No fail-open behaviour found. The 5-min JWKS cache provides resilience during brief outages, but serve-stale is not implemented — a JWKS outage at cache-miss time causes a 401 storm (security-correct but more aggressive than the contract intends). See lucos_aithne#241.
+
+**Decommission clean:** lucos_authentication is archived + NXDOMAIN. lucos_comhra also archived + NXDOMAIN. All actively-deployed Wave 3/4 services confirmed migrated on GitHub main. Residual: lucos_backups#361 (stale backup config entry, already tracked).
+
+**Issues raised 2026-06-30:**
+- lucos_router#100: Missing HSTS header in nginx config (LOW)
+- lucos_aithne#241: JWKS serve-stale not implemented in any consumer (availability gap per contract §1)
+- lucos_aithne#250: Wave 3 services missing principal_class allowlist check (LOW, defence-in-depth per contract §5)
+
+**arachne MCP principal_class concern (memory 2026-06-16): RESOLVED.** arachne MCP uses scope gate (`arachne:read`), NOT principal_class alone.
+
+## Known open issues
 - #148: dev/prod issuer model for local-dev human auth
-- #156/#157/#158: local-verification-contract gaps
+- #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30)
+- #250: Wave 3 principal_class allowlist gap (raised 2026-06-30)
