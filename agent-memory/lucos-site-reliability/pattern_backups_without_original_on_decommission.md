@@ -1,11 +1,15 @@
 ---
 name: pattern-backups-without-original-on-decommission
-description: lucos_backups backup-without-original check fires forever on a decommissioned system's retained backups; benign, fix tracked
+description: lucos_backups backup-without-original check no longer fires on decommissioned retained backups (RESOLVED PR #360); if it reds now it's a GENUINE unexpected deletion of a configy-declared volume
 metadata:
   type: project
 ---
 
-`lucos_backups` `/_info` `backup-without-original` check goes red (and **never self-clears**) when a system is decommissioned but its backups are intentionally retained.
+**RESOLVED 2026-06-30:** lucos_backups#359 fix shipped as PR #360 (merged 01:15:35Z, check recovered 01:18Z). The check `techDetail` now reads "...no longer present on their source host **but are still declared in configy**" — i.e. it only flags volumes still in configy. So **decommissioning a system no longer reds this check.** If `backup-without-original` reds now, the named volume IS still in configy → it's a GENUINE unexpected deletion / failed restore → investigate, don't dismiss as decommission. The 2026-06-29 23:07→2026-06-30 01:18 flap was the lucos_authentication decommission tripping the OLD logic, cleared by the #360 deploy. Historical context below.
+
+---
+
+`lucos_backups` `/_info` `backup-without-original` check went red (and **never self-cleared**, pre-#360) when a system was decommissioned but its backups were intentionally retained.
 
 **Why:** the check (`src/utils/tracking.py`) flags any backup of type volume/volume-snapshot whose `(source_host, name)` key isn't in `live_volume_keys` (= volumes physically present on hosts). Archival tears down the source volume AND removes it from configy `volumes.yaml`, but lucas42's standing steer is to KEEP backups of decommed systems (archival checklist line 143: "storage is cheap, regret is expensive"). So the retained copies have no live original → permanent alert. First hit: `avalon/lucos_authentication_config` after lucos_authentication decommission (lucas42/lucos_authentication#143), red on 2026-06-30, copies on all 4 hosts.
 
