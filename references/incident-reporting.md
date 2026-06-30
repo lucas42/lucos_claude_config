@@ -170,7 +170,7 @@ As responses arrive:
 
 Only once the incident is resolved AND the team's responses have settled (Step 3) AND every follow-up issue is filed and linked in the Follow-up Actions table (Step 1.3):
 
-1. **Mark the draft PR ready for review** (GraphQL `markPullRequestReadyForReview` — see `references/github-workflow.md` for the mutation and node-id lookup).
+1. **Tick the outstanding-items checkboxes in the PR body** (the TBD list from Step 2) now that each is done, *then* **mark the draft PR ready for review** (GraphQL `markPullRequestReadyForReview` — see `references/github-workflow.md` for the mutation and node-id lookup). The code-reviewer verifies those checkboxes on unsupervised repos and an unchecked gate can hold the approval, so don't leave them unticked even when the body text demonstrably satisfies them.
 2. **Drive the code-reviewer review loop to approval and merge**, per `pr-review-loop.md` — message `lucos-code-reviewer` and don't stop at "marked ready". On `lucos` (unsupervised) reviewer approval triggers auto-merge.
 
 After merge the report is final. If something material develops *afterwards*, the report is still amendable via a fresh follow-up PR referencing the original — but that's the rare exception; the draft-stays-open lifecycle exists so nearly everything lands before this single merge.
