@@ -10,8 +10,8 @@ external_deps: 2026-06-03
 
 lucos_schedule_tracker: 2026-06-23
 lucos_media_weightings: 2026-06-17
-lucos_photos_worker: 2026-06-12
-lucos_arachne_explore: 2026-06-12
+lucos_photos_worker: 2026-07-01
+lucos_arachne_explore: 2026-07-01
 lucos_arachne_web: 2026-06-14
 lucos_backups: 2026-06-26
 lucos_repos_app: 2026-06-14
@@ -45,8 +45,8 @@ lukeblaney_co_uk: 2026-06-30
 lucos_media_manager: 2026-06-23
 lucos_media_metadata_api: 2026-06-29
 lucos_monitoring: 2026-06-17
-lucos_media_seinn: 2026-06-12
-tfluke: 2026-06-12
+lucos_media_seinn: 2026-07-01
+tfluke: 2026-07-01
 lucos_media_metadata_api_exporter: 2026-06-23
 lucos_media_metadata_manager: 2026-06-24
 lucos_notes: 2026-06-24
@@ -54,7 +54,7 @@ lucos_root_app: 2026-06-26
 lucos_router: 2026-06-17
 semweb: 2026-06-27
 lucos_time: 2026-06-30
-lucos_aithne: 2026-06-11
+lucos_aithne: 2026-07-01
 lucos_arachne_mcp: 2026-06-26
 lukeblaney_blog: 2026-06-27
 lucos_docker_health_app: 2026-06-24
@@ -84,4 +84,5 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-06-29 ops run: Monitoring 54/54 healthy (0 failing/0 unknown). Loganne 48h: 3 flaps. (1) monitoring fetch-info 06-29 07:32→07:33 1min "HTTP Request timed out" = known self-probe flap (accept, #186 not_planned). (2) loganne webhook-error-rate 06-28 20:09→20:11 2min = brief genuine webhook-delivery transient to a dependsOn consumer, self-healed; already has failThreshold:2 + dependsOn deploy-suppression; logs rotated by 07:16 redeploy; no action. (3) backups create-backups 06-28 03:42→06-29 03:44 (~24h across runs) = transient codeload.github.com 400 Bad Request on VALID refs (puppet-conf/master, .github/main, lucos_media_player/main all verified valid), different repo each run, wget --tries doesn't retry 4xx → single transient repo miss reds the WHOLE run. Data safe (each repo re-archived next run, 14-24 instances). FILED lucos_backups#358 (P3): retry transient codeload HTTP errors + isolate per-repo failure from run status. Same amplification class as #298 (empty-repo, closed). Check 3 30d: only >30min candidate = that same backups flap (scheduled-job staleness, not a real outage) → no incident report. Check 4 (5 oldest): media_metadata_api/configy/locations_otrecorder clean; locations_otfrontend = benign per-request BrokenPipe tracebacks (local client disconnect) + PHP-scanner 401/404 noise; loganne = repeated "Event missing level, defaulting to routine" from deploy_orb events lacking `level` — server GRACEFULLY DEFAULTS, not a crash (distinct from client-lib pattern_loganne_client_level_required_arg), no action. Monthly 5/6/7 not due (last 2026-06-03, 26d; due ~07-03).
 - 2026-06-27 ops run: Monitoring 54/54 healthy (0 failing/0 unknown). Loganne 36h: 0 monitoringAlert/Recovery events — quiet. Check 3 30d: only candidate = lucos_repos stale-dependabot-prs hygiene check (06-22 07:31Z→06-23 08:41Z; by-design, recovered) + media_import all_files recovered 06-23 (=#173) — no incident reports needed. Check 4 (5 oldest): semweb/lukeblaney_blog/lucos_authentication/lucos_locations_mosquitto/lucos_photos_api all clean or benign. semweb=PHP-scanner 404 probes + content-negotiation misses; blog=0 errors; authentication=1 url.parse DEP0169 warn + normal contacts polling (superseded by aithne); locations_mosquitto=external port-scanner TLS noise on public 8883 (unsupported protocol/no shared cipher/eof), healthcheck connects fine every 10s; photos_api=0 errors. Monthly 5/6/7 not due (last 2026-06-03, 24d; due ~07-03).
 - 2026-06-30 ops run: Monitoring 53/53 healthy (0 failing/0 unknown). **System count 54→53 = lucos_authentication DECOMMISSIONED** (no longer running on avalon; replaced by lucos_aithne). Loganne 48h: 3 flaps. (1) backups backup-without-original 06-29 23:07→06-30 01:18 (~2h11m) = the authentication decommission tripping the OLD check logic; **RESOLVED by lucos_backups#360** (the #359 fix, merged 01:15:35Z, recovered 01:18) — check now only flags configy-declared volumes, decommissions no longer red it. (2) monitoring fetch-info 06-29 07:32→07:33 = known self-probe flap (accept, #186 not_planned). (3) loganne webhook-error-rate 06-28 20:09→20:11 = known brief webhook transient (has failThreshold:2+dependsOn). (2)&(3) already triaged in 06-29 run. Check 3 30d: both >30min candidates were lucos_backups scheduled-check staleness (06-29 create-backups #358 codeload transient; 06-30 backup-without-original decommission flap) — no incident reports needed. Check 4 (5 oldest): lukeblaney_co_uk (vuln-scanner 404 noise only), dns_bind (notify-refused to home secondary IPv6 at 06-29 22:48 restart = known #103/#104 home-IPv6 issue, primary green), photos_postgres (benign nightly-backup transaction WARNINGs), scenes/time (12 lines, clean). Monthly 5/6/7 not due (last 2026-06-03, 27d; due ~07-03).
+- 2026-07-01 ops run: Monitoring 53/53 healthy (0 failing/0 unknown). Loganne 54h: 3 untriaged flaps, ALL explained. (1)+(2) aithne fetch-info/circleci 06-30 16:01 + fetch-info 16:35→16:38 AND docker_health `avalon` 15:56→16:14 (~18min, unhealthy container=lucos_aithne) = SAME cause: an aithne DEPLOY STORM (16 deploys 06-30 14:38→18:35Z, v1.20.32→v2.1.2; the v2.0.x major = KEK migration work). Pure deploy churn on the actively-developed service; docker_health can't deploy-suppress per-container so an 18min unhealthy window during a migration deploy is inherent/expected — no fix. (3) lucos_time `media` 07-01 07:20 1min flap = HEAD probe to staticmedia.l42.eu/time/big_00-00.mp4, already failThreshold:5, now ok — single transient, benign. backups + monitoring-fetch-info flaps in window = known (triaged 06-30 run). Check 3 30d: only >30min candidates = 2× lucos_backups scheduled-check staleness (06-29 #358 codeload, 06-30 #360 decommission) — no reports. The 06-30 aithne KEK ~46min outage IS covered (didn't surface in 30d script = alerts within deploy-suppression windows; report `docs/incidents/2026-06-30-aithne-kek-migration-deploy-race.md` merged via lucos#259). Check 4 (5 oldest): aithne/tfluke/photos_worker/arachne_explore CLEAN over 20d; media_seinn = single benign media-manager probe timeout (813ms→ceol.l42.eu) in 20d. Monthly 5/6/7 not due (last 2026-06-03, 28d; due ~07-03).
 - 2026-06-11: lucos_aithne is a NEW service (replacing lucos_authentication, tracking lucos_aithne#12) under heavy active development (v1.1.x→v1.12.0, 30+ deploys 06-09→06-11). Its 06-09→06-10 flaps (fetch-info/tls/db) = deploy churn + new-service cert latency (lucos_router#95). Its new volume `lucos_aithne_credential_store` appearing on avalon before being declared in configy caused the backups volume-config/volume-host flaps 06-09 23:08-23:53 (same root cause; now declared with recreate_effort: considerable, green). Don't re-investigate these as separate incidents while aithne is being stood up. Bootstrap warning (BOOTSTRAP_ADMIN_CONTACT_ID still set post-enrolment) is lucas42's WIP — he set it.
