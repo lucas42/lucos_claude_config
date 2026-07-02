@@ -48,9 +48,11 @@ The `remote-build.yml` command in `lucos_deploy_orb` passes `DOCKERHUB_USERNAME`
 
 Prefer v2 API structured status responses over raw log output wherever possible.
 
-## Fixed: CircleCI Token in Query Parameter (lucos_monitoring)
+## Fixed Issues (do not re-raise)
 
-The v1.1 query-param token exposure in `src/fetcher.erl` was fixed in lucos_monitoring#25. As of 2026-03-17, `checkCI` uses `{"Circle-Token", Token}` as an HTTP header and calls the v2 API (`/api/v2/project/.../pipeline`, `/api/v2/pipeline/.../workflow`). Issue #59 confirmed resolved. Do not re-raise.
+- **CircleCI token in query param** (lucos_monitoring): fixed lucos_monitoring#25/#59 — `checkCI` now uses `Circle-Token` header + v2 API.
+- **Unauthenticated MCP endpoint** (lucos_arachne): fixed PR #292 (closes #291) — Bearer auth via `CLIENT_KEYS`, `/_info` still open.
+- **DOMPurify XSS** (lucos_arachne): fixed PR #52 — `dompurify >= 3.3.2` override (GHSA-v2wj-7wpq-c8vv).
 
 ## Risk Pattern: OS Command Injection via `os:cmd` with Unvalidated Input
 
@@ -79,14 +81,6 @@ The intended path is: lucos-security raises PR -> lucos-code-reviewer approves i
 vue-leaflet-antimeridian uses Vue 2 (via vue2-leaflet peerDep). Vue 2 is EOL and contains an unfixed ReDoS in `parseHTML`. **lucas42 has consciously accepted this risk** (see lucas42/vue-leaflet-antimeridian#4, 2026-03-03). No fix available without a full Vue 3 migration.
 
 Do not raise this alert again. If the alert resurfaces, reference the accepted risk decision in #4.
-
-## Fixed: Unauthenticated MCP Endpoint in lucos_arachne (Merged 2026-04-09)
-
-`lucos_arachne`'s MCP server was publicly accessible with no auth, exposing the full knowledge graph (contacts, media metadata, etc.) to anyone who knew the URL. Fixed in PR #292 (closes #291): Bearer token auth via `CLIENT_KEYS` added to incoming MCP requests, consistent with the `lucos_photos` auth pattern. `/_info` kept unauthenticated for monitoring. `CLIENT_KEYS` added to the `mcp` container's env block in `docker-compose.yml`. Do not re-raise.
-
-## Fixed: DOMPurify XSS in lucos_arachne (Merged 2026-03-05)
-
-DOMPurify 3.3.2 released 2026-03-05 fixes raw-text/jsdom parsing bypass (GHSA-v2wj-7wpq-c8vv). Added `dompurify >= 3.3.2` override to `explore/package.json` and regenerated `explore/package-lock.json`. PR lucas42/lucos_arachne#52 merged. DOMPurify 3.3.2 confirmed in lock file. Dependabot alert #15 remained technically open on 2026-03-05 (likely GitHub lag). No further action needed unless it persists beyond a few days.
 
 ## Issue Filing: One Finding Per Issue
 
@@ -199,3 +193,4 @@ See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dis
 - [Loganne Agent Access](reference-loganne-access.md) — bearer via KEY_LUCOS_LOGANNE; filter client-side; event type credentialUpdated.
 - [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
 - [Wave 4 CSRF / SameSite=None risk](risk-wave4-csrf-samesite-none.md) — @csrf_exempt + form-data mutations become CSRF-vulnerable when aithne_session (SameSite=None) replaces SameSite=Lax session. Check every Wave 4 PR.
+- [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — id_token/userinfo carry no `scopes` claim; generic OIDC RPs (oauth2-proxy) can't gate on aithne scope without an aithne-side change first.
