@@ -2,6 +2,8 @@
 
 ## Method: don't trust local checkouts
 
+- [Container restart clears docker logs → false "onset"; don't generalize transient 403s](pattern_container_restart_log_buffer_artifact.md) — before reporting an onset time / "ongoing failure since X" from logs, check `StartedAt` + tally the FULL status distribution + the job-success stream + run a live probe. 2026-07-02 lucos_arachne#711: I misreported a mostly-working eolas ingest (12×200/2×403, self-recovering) as a persistent 403 outage; "onset 06-30 12:35" was just the fresh log buffer after the 12:04 deploy-restart.
+- [eolas dual auth: @api_auth static-key vs AithneAuthMiddleware+@require_scope JWT](pattern_eolas_dual_auth_static_key_vs_jwt_middleware.md) — data/bulk endpoints use `@api_auth` (static CLIENT_KEYS `key|scope`); middleware parses EVERY bearer as JWT → "Not enough segments" for static keys but NEVER blocks → that log is NOISE, not the cause of an @api_auth 403. Decider = live CLIENT_KEYS + probe. arachne registered `lucos_arachne:production=<key>|eolas:read`, works (200).
 - [Sandbox checkouts are months-stale + contain undeployed repos](pattern_stale_sandbox_checkouts.md) — verify code against `git show origin/main:<path>` AND live HTTP probes before raising any migration/decom "still uses old thing" finding. 2026-06-30: nearly raised 6 false aithne-migration incidents off stale `~/sandboxes` auth code; live probes (all redirect to aithne.l42.eu/auth/login) + origin/main (`_ResilientJWKSClient`) proved them migrated.
 
 ## lucos-search widget emits eolas URI, not contacts
