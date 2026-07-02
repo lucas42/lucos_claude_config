@@ -28,7 +28,8 @@ Touches **monitoring, logging, observability, reliability, or incident managemen
 
 ### Architecture — consult `lucos-architect`
 
-**Introduces a new data model / entity type, or makes a significant change to an existing one** (e.g. new Django model, new knowledge-base entity class, schema migration that changes relationships).
+- **Introduces a new data model / entity type, or makes a significant change to an existing one** (e.g. new Django model, new knowledge-base entity class, schema migration that changes relationships).
+- **Changes how systems authenticate to each other, or changes an inter-service contract** — a shared auth *mechanism* / token scheme (e.g. static bearer keys ↔ M2M / OAuth `client_credentials` tokens) or the request/response contract between services. This sets estate-wide patterns, so it is an architectural decision, **not** a routine change — **even when the issue is framed as a "bug fix."** The tell: the *fix* changes the *mechanism* by which services authenticate (or the cross-service contract), rather than correcting a value / parse error *within* the existing mechanism. Consult the architect before Ready, and surface the premise to lucas42 (Awaiting Decision) if it would change an estate-wide convention — do **not** let it flow straight to Ready/dispatch as a bug. Security review at PR time is necessary but **not sufficient** here: it checks the code for vulnerabilities, not whether the estate *should* change its inter-service auth model.
 
 ### Frontend / UX — handled differently from the others
 
