@@ -4,6 +4,10 @@
 
 - [Sandbox checkouts are months-stale + contain undeployed repos](pattern_stale_sandbox_checkouts.md) — verify code against `git show origin/main:<path>` AND live HTTP probes before raising any migration/decom "still uses old thing" finding. 2026-06-30: nearly raised 6 false aithne-migration incidents off stale `~/sandboxes` auth code; live probes (all redirect to aithne.l42.eu/auth/login) + origin/main (`_ResilientJWKSClient`) proved them migrated.
 
+## lucos-search widget emits eolas URI, not contacts
+
+- [lucos-search option value = eolas person URI even in contact mode](pattern_lucos_search_emits_eolas_uri_not_contacts.md) — shared `lucos_search_component` sets option value to the entity's canonical eolas URI (`eolas.l42.eu/metadata/person/{N}/`); `data-is-contact="true"` only adds Typesense filter `is_contact:=true`, doesn't change the URI. Contacts URI is `owl:sameAs` only → consumers wanting a contact id must reverse-map, not string-munge. Bit lucos_photos contact-linking 2026-07-02 (regex expected contacts.l42.eu/people/{id}).
+
 ## Scope/key-rotation cutover: 403 ≠ missing-scope
 
 - [contacts returns 403 (not 401) for an unrecognised key](pattern_contacts_403_for_unrecognised_key.md) — during a creds key-rotation cutover, 401-vs-403 CANNOT classify key-mismatch vs missing-scope (you see ZERO 401s). Decider = read the server's live `CLIENT_KEYS` on the running container (`docker exec <svc>_app printenv CLIENT_KEYS`, redact keys): scope present→old-key→consumer redeploy fixes; scope absent→needs prod scope (lucas42). Stuck-403 after consumer redeploy = server's CLIENT_KEYS snapshot stale→redeploy the SERVER. 2026-06-28 Wave4: all consumers cleared on redeploy, none needed a grant. UA map: Go-http-client=aithne, python-httpx bulk /people=photos sweep_contact_display_names.
