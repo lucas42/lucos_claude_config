@@ -1,558 +1,154 @@
 # SRE Agent Memory
 
-## Method: don't trust local checkouts
-
-- [Container restart clears docker logs → false "onset"; don't generalize transient 403s](pattern_container_restart_log_buffer_artifact.md) — before reporting an onset time / "ongoing failure since X" from logs, check `StartedAt` + tally the FULL status distribution + the job-success stream + run a live probe. 2026-07-02 lucos_arachne#711: I misreported a mostly-working eolas ingest (12×200/2×403, self-recovering) as a persistent 403 outage; "onset 06-30 12:35" was just the fresh log buffer after the 12:04 deploy-restart.
-- [eolas dual auth: @api_auth static-key vs AithneAuthMiddleware+@require_scope JWT](pattern_eolas_dual_auth_static_key_vs_jwt_middleware.md) — data/bulk endpoints use `@api_auth` (static CLIENT_KEYS `key|scope`); middleware parses EVERY bearer as JWT → "Not enough segments" for static keys but NEVER blocks → that log is NOISE, not the cause of an @api_auth 403. Decider = live CLIENT_KEYS + probe. arachne registered `lucos_arachne:production=<key>|eolas:read`, works (200).
-- [Sandbox checkouts are months-stale + contain undeployed repos](pattern_stale_sandbox_checkouts.md) — verify code against `git show origin/main:<path>` AND live HTTP probes before raising any migration/decom "still uses old thing" finding. 2026-06-30: nearly raised 6 false aithne-migration incidents off stale `~/sandboxes` auth code; live probes (all redirect to aithne.l42.eu/auth/login) + origin/main (`_ResilientJWKSClient`) proved them migrated.
-
-## aithne re-login storms (session keepalive)
-
-- [PWA service-worker render drops aithne_origin → empty aithne-origin → dead navbar keepalive → 15-min re-login storm](pattern_pwa_sw_render_drops_aithne_origin.md) — aithne_session=15-min JWT; navbar keepalive re-mints via `aithne.l42.eu/auth/remint` every ~10min, reads target from `aithne-origin` attr. DIAGNOSE via router access log (persists across app redeploy): count `/auth/login` (bounces) vs `/auth/remint` per consumer referer — 0 remints + many logins = dead keepalive. notes#445 (2026-07-03): SW client-renders page.mustache with state data lacking aithne_origin → `aithne-origin=""` → 0 remints (vs seinn 160). Server res.locals injection bypassed because SW answers, not server. NOT the #441 JWKS gap (plain token expiry). Fix=SW supplies aithne_origin.
-
-## lucos-search widget emits eolas URI, not contacts
-
-- [lucos-search option value = eolas person URI even in contact mode](pattern_lucos_search_emits_eolas_uri_not_contacts.md) — shared `lucos_search_component` sets option value to the entity's canonical eolas URI (`eolas.l42.eu/metadata/person/{N}/`); `data-is-contact="true"` only adds Typesense filter `is_contact:=true`, doesn't change the URI. Contacts URI is `owl:sameAs` only → consumers wanting a contact id must reverse-map, not string-munge. Bit lucos_photos contact-linking 2026-07-02 (regex expected contacts.l42.eu/people/{id}).
-
-## Scope/key-rotation cutover: 403 ≠ missing-scope
-
-- [contacts returns 403 (not 401) for an unrecognised key](pattern_contacts_403_for_unrecognised_key.md) — during a creds key-rotation cutover, 401-vs-403 CANNOT classify key-mismatch vs missing-scope (you see ZERO 401s). Decider = read the server's live `CLIENT_KEYS` on the running container (`docker exec <svc>_app printenv CLIENT_KEYS`, redact keys): scope present→old-key→consumer redeploy fixes; scope absent→needs prod scope (lucas42). Stuck-403 after consumer redeploy = server's CLIENT_KEYS snapshot stale→redeploy the SERVER. 2026-06-28 Wave4: all consumers cleared on redeploy, none needed a grant. UA map: Go-http-client=aithne, python-httpx bulk /people=photos sweep_contact_display_names.
-
-## Committing ~/.claude files
-
-- [Use commit-claude-main, not hand-rolled git-as-agent rebase/stash](feedback_commit_claude_main_for_dotclaude.md) — `~/sandboxes/lucos_agent/commit-claude-main --app lucos-site-reliability -m "..." <paths>` commits onto fresh origin/main via an isolated worktree; never touches the SHARED, routinely-dirty ~/.claude tree. A manual `pull --rebase`/stash can drop other sessions' in-flight memory. Helper works for every persona (no tooling gap). The always-loaded "git-as-agent for all git ops" rule is the trap. Bit me 2026-06-27.
-
-## lucos_backups local `localhost` dead but `127.0.0.1` works (IPv6 publish)
-
-- [Backups `localhost:8027` reset but `127.0.0.1:8027` ok = enable_ipv6 dual-stack publish mismatch](pattern_backups_sshadd_gates_server_start.md) — #307 `enable_ipv6` makes Docker publish `[::]:8027` too, but `HTTPServer(('',port))` binds IPv4-only → IPv6 conns accepted+RESET → `localhost`(→`::1`) fails, reset blocks fallback. Fix=`ports: "0.0.0.0:$PORT:$PORT"` (IPv4-only publish), #355. METHOD LESSON: test `127.0.0.1` AND `localhost` AND `[::1]` — I curled only 127.0.0.1 first + wrongly cleared network (#354 closed not_planned: crash-loop was MY sandbox stale-key+qemu artifact, NOT lucas42's; broken SSH key SHOULD stay fatal). 2026-06-27.
-
-## Dev cross-service wiring (host.docker.internal, linked creds)
-
-- [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — dev `*_ORIGIN` = `http://host.docker.internal:<hostPort>` not bridge IP (172.17.0.1 → 400 DisallowedHost; only `host.docker.internal` is in Django ALLOWED_HOSTS). Linux needs `extra_hosts: host.docker.internal:host-gateway`. Auth is a lucos_creds LINKED credential (`client/env => server/env`) auto-managing KEY_* + CLIENT_KEYS — never hand-edit. **403 from a stale local .env vs creds masquerades as a wrong key — diff local .env vs fresh creds fetch before writing.** Proven aithne→contacts 2026-06-12 (lucos_aithne#86).
-
-## lucos_firewall ADR-0007 enforce rollout (lucos#182)
-
-- [Firewall enforce rollout — hairpin is the single point of failure](project_firewall_rollout.md) — DRY_RUN logs the RULESET not would-deny packets (no `-j LOG` exists). Router reaches every web svc via `172.17.0.1:<port>` host-gateway hairpin; survival under enforce rests entirely on #14 `-i br+ RETURN`, never tested live. xwing=ready canary, salvare=trivially safe, avalon=flip last (35 svcs + same-bridge ICC). Auto-rollback does NOT cover hairpin failure.
-
-## Scratch Go images / outbound TLS
-
-- [x509 "unknown authority" from our OWN svc = client scratch image has no CA bundle](pattern_scratch_image_no_ca_bundle.md) — served cert valid + `docker exec sh`→"not found" = `FROM scratch` Go image missing `/etc/ssl/certs/ca-certificates.crt`. Latent until first outbound HTTPS; a deploy adding a new dep surfaces it. Fix=`COPY --from=builder` the CA bundle (dev PR, no restart helps). `/_info` green ≠ fixed (outbound-only path). First hit lucos_aithne#106 2026-06-12 (→contacts). Other estate scratch Go svcs at risk.
-
-## lucos_aithne (signing key / deploy verification)
-
-- [aithne signing_key_age is NOT a deploy-confirmation signal](pattern_aithne_signing_key_age_not_deploy_signal.md) — key lives in persistent credential_store vol, survives restarts; rotates at startup ONLY if already > rotation interval. Old key ≠ stale process. Verify deploy via container `StartedAt`+image tag on avalon, not key age. 2026-06-25 false alarm: all 5 pipelines deployed OK, container on 1.20.17/09f1d95d, key 15.5d was a red herring.
-- [aithne KEK breaking-migration deploy race + recovery gotchas](pattern_aithne_kek_migration_deploy_race.md) — 2026-06-30 ~46min auth outage: SIGNING_KEK raw→sha256 change (#260) auto-deployed before its one-time `--migrate-kek`→crash-loop. RECOVERY GOTCHAS: image no-entrypoint→`/lucos_aithne --migrate-kek`; PORT required before subcommand; creds .env QUOTES values→feed migrate-kek the UNQUOTED bytes (off-by-quote=exit0-then-crash); `docker start` reuses OLD env→must REDEPLOY. SECRET HANDOFF: lucas42 writes prod+dev-temp-key, agent reads dev, deletes after. ORB health-gates (`--wait` ×3) but NO rollback→crash-loop persists. Open: #261/#262/lucos#260.
-
-## lucos_router (TLS / domain serving)
-
-- [New service's TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — router domain discovery is PULL-ONLY (no configy push). `update-domains.sh` (certbot certonly per domain) runs only on container startup + daily cron at **22:16 UTC** (`16 22 * * *`). New configy domain waits up to ~24h for its cert; restart lucos_router to force it. LE backdates `notBefore` ~1h (don't misread as issuance time). NOT an incident. First hit aithne 2026-06-09; doc gap = lucos_router#95.
-- [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md) — configy-driven `certbot certonly` (update-domains.sh) AND stock Debian `/etc/cron.d/certbot` `certbot renew` (configy-unaware, iterates `/etc/letsencrypt/renewal/*.conf`). Decommissioned domains left orphaned renewal configs the stock cron retried forever (router#90, comhra 2026-06-03). RESOLVED via PR #91 (1.0.20): update-domains.sh now `certbot delete`s certs not in the active HTTP domain set. **Durable nuance:** reaping criterion is "not HTTP-served", broader than "decommissioned" → also reaps `http_port=null` systems (e.g. dns.l42.eu) — harmless/self-healing, but a cert vanishing from the router store ≠ domain dead.
-
-## DNS (l42.eu) estate-wide outages
-
-- [All l42.eu names SERVFAIL = apex zone failed to load on avalon](pattern_l42_dns_apex_zone_outage.md) — `*.l42.eu` SERVFAIL but `*.s.l42.eu` OK = l42.eu apex not loaded. `dig l42.eu SOA @178.32.218.44` (avalon=primary/dns; xwing 152.37.104.10=secondary/dns2). rndc broken→reload via `kill -HUP` named PID. Zones generated by lucos_dns_sync from configy (chicken-and-egg: apex down→can't self-heal). Secondary never works (TSIG BADKEY, lucos_dns#103); hardening lucos_dns#104. First hit 2026-06-07.
-
-## Backups DB-consistency walk-back (#344/#345/#346)
-
-- [DB-specific backups walked back → engine-agnostic quiesce](project_backups_db_consistency_walkback.md) — `full-snapshot` tar (+ incremental rsync) smears the LIVE volume → torn DB snapshot. lucas42 rejected per-engine `backup_strategy:sqlite`/`postgres` (2026-06-18); #346 → draft, #344/#345 → Needs Analysis (SRE). Fix = separate consistency (quiesce) from transport. **CoW snapshot OUT: all 3 hosts plain ext4, no LVM/ZFS/btrfs.** Chosen = `docker pause` owner around read; 9 DB vols all on avalon, ≤239MB → freeze negligible. Architect to ratify before redesign.
-
-## aurora QNAP (backup destination)
-
-- [aurora access + rsync facts](reference_aurora_access_and_rsync.md) — agent SSH key can't reach aurora directly (Permission denied publickey); route via the lucos_backups container's fabric/ProxyJump path. Verified 2026-06-09: rsync 3.0.7, real hardlinks at `/share/backups/` (not SMB/NFS). Backs ADR-0002 rsync --link-dest choice (lucos_backups#319).
-
-## salvare IPv6 / home-ISP prefix
-
-- [home-host backups red = ISP dropped upstream IPv6 transit](pattern_salvare_ipv6_prefix_withdrawal.md) — `lucos_backups/host-tracking-failures` red for xwing/salvare/aurora = ISP stopped routing `/64` upstream BOTH ways while LAN v6 stays healthy (NOT a prefix withdrawal — verified: xwing↔salvare LAN v6 fine, CPE answers v6, only internet↔home transit dead). deploys/docker_health on `salvare-v4` stay green. Self-resolves when transit returns; don't force IPv4. Diagnosed 2026-06-05.
-
-## Loganne read / self-verify
-
-- [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer `KEY_LUCOS_LOGANNE`; `/events` filters are CLIENT-SIDE only (`source`/`type`/`limit` ignored until lucos_loganne#522). cred event `type=credentialUpdated`; deploy `type=deploySystem`. eolas containers are `lucos_eolas_web`/`_app`, NOT `lucos_eolas`.
-
-## aithne contact-id type divergence
-
-- [aithne contact id is JSON string (ExternalID) in principal world, int (contactListItem) in contacts proxy](pattern_aithne_contactid_string_vs_int_divergence.md) — same id, two types. JS cross-referencing both (Set.has, ===) MUST String()-coerce or it silently matches nothing w/ green CI. Bit grants picker 2026-06-26 (PR #222/#219): name lookup dead, numeric-ID-only survived (P2). Owner lucos-developer. Same class as aithne#121. PR #222 tests asserted endpoints, not picker-resolves-name → gap.
-
-## arachne↔eolas ingest (dual path + hyphenated-pk bug)
-
-- [arachne has TWO eolas ingest paths; hyphenated pks silently fail the webhook path](pattern_arachne_eolas_dual_ingest_hyphen_pk.md) — per-item webhook (server.py) vs daily bulk (`ingest.py`, full `/metadata/all/data/` dump). eolas `urls.py` entrypoint pk regex `\w+` excludes hyphens → `art-x-*` lang codes → `302 /login/` → webhook ingest gets HTML not RDF → fails; bulk masks it (Na'vi/Simlish present, new Ewokese absent). 2026-06-30 lucos_eolas#329. Includes triplestore SPARQL mechanics (Basic auth lucos_arachne:$KEY_LUCOS_ARACHNE, http://triplestore:3030/{raw_arachne,arachne}/sparql), ingestor needs `pipenv run` (no `requests` in base py), ad-hoc bulk-ingest remediation cmd.
-
-## Proxy/aggregator handler 502s
-
-- [Misleading "502 could not reach X" can be a DECODE failure of a 200 upstream](pattern_misleading_502_decode_not_unreachable.md) — thin proxy handlers that map ANY client error to one 502 string report a JSON decode failure of a successfully-reached (200) upstream as "could not reach". Test the upstream directly (curl from host w/ prod key) BEFORE blaming network/routing. Suspect mock/prod JSON type divergence (string vs number id) in Go structs; immune sibling path decodes into map[string]any. First hit aithne#121 2026-06-16 (`contactListItem.ID string` vs `"id": 788`); same handler underpins #120 grants-UI.
-
-## Ops-check gotchas
-
-- [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — parsing for `ok` returns all-None → false "everything unknown" alarm; use `summary` for counts. Bit me 2026-05-31.
-- [docker_mirror_registry OnExpire errors are benign](pattern_docker_mirror_registry_onexpire_benign.md) — registry TTL-expiry noise, not a disk incident; `disk` check is independent. Don't re-investigate each rotation.
-
-- [Scope-cutover convergence + holder-enumeration gap](pattern_scope_cutover_convergence_and_enumeration_gap.md) — verify creds scope cutovers (eolas/media-metadata) via lucos_router access log (media API = media-api.l42.eu NOT media-metadata.l42.eu); auto-fire client redeploys on server PR merge; verify BOTH read+write per client. LESSON: a client granted only some capabilities it uses → 403 (mma eolas:write-only broke its reconcile_tag_names READS); the MONITORING BOARD catches this (infrequent reads invisible in router log), not the access log alone. 499=client-closed≠auth.
-
-## CI/CD pipeline (deploy orb)
-
-- [deploy-avalon exit 18 "pull access denied for *_test" = orb pull was profile-blind](pattern_deploy_orb_pull_profile_blind.md) — orb pull step used `yq` (profile-blind) vs publish's `docker compose config` (profile-aware), so it tried to pull a repo's deliberately-unpublished profiled `test` image. Prod stays UP (pull runs before `compose up`) = P2 not outage. FIXED in `lucos/deploy@0.0.185` (orb#184, 2026-06-07). Gotcha: re-running a failed workflow reuses old compiled orb version — trigger a FRESH pipeline to pick up an orb fix.
-
-## Monitoring: circleci estate-wide alert storm
-
-- [Estate-wide circleci alert storm = CircleCI API outage tripping UnknownsGate, not workflow failures](pattern_circleci_unknownsgate_estate_storm.md) — N systems all alert `circleci` within seconds + recover ~1min later = CircleCI API 503/unreachable for ≥3 consecutive 60s polls → UnknownsGate (threshold 3) flips ok:unknown→false → alert at ~2-min mark. CHECK the Loganne `failingChecks[].debug` FIRST (503/transport=unknown path; "Workflow X failed"=ok:false path) — don't reason from gate code. Fix lever = UnknownsGate threshold (lucos_monitoring#279, 3→5), NOT failThreshold (rejected #226). Hit 2026-06-09.
-
-## Scheduled-job check failures (deterministic, won't self-clear)
-
-- [backup-without-original red forever on a decommissioned system's retained backups](pattern_backups_without_original_on_decommission.md) — benign; check keys off LIVE host volumes, decommed volume gone from host+configy but backups kept (lucas42 steer) → permanent alert. First hit avalon/lucos_authentication_config 2026-06-30. Fix = configy-absence as signal, lucos_backups#359 (lucos-developer). Don't re-investigate per future decommission.
-- [host-tracking-failures "<host>: 'low'" = invalid recreate_effort in configy](pattern_backups_invalid_effort_crashes_host_tracking.md) — quoted word is a Python KeyError repr; a volume's `recreate_effort` not in effort_labels.yaml (valid: small/considerable/huge/automatic/tolerable/remote/unknown) crashes that host's entire getData(). Backups still run (P2). Fix configy value. First hit 2026-06-09 lucos_dns_configy-sync-cache `low`→`automatic` (lucos_configy#220); hardening lucos_backups#316.
-
-- [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — schedule-tracker debug `"Backups failed for: repo:<name>"`; empty repo → ref-less codeload URL → wget exit 8. Volumes+other repos fine. First hit lucos_dns_secondary 2026-06-06. Tracked lucos_backups#298.
-- [loganne client `level` now a REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — callers missing it crash `TypeError: updateLoganne() missing 1 required positional argument: 'level'`. Job does real work but skips success tick → check red while function looks fine. First hit lucos_arachne ingest.py 2026-06-06 (lucos_arachne#608). Estate-wide sweep risk flagged.
-- [#311 scp→rsync swap: rsync runs on the SOURCE HOST via Fabric, not the container](pattern_backups_rsync_binary_missing_from_image.md) — `rsync: not found` because **avalon has no rsync** (host.py copyTo → `self.connection.run` = Fabric SSH to source host). #313's Dockerfile `apk add rsync` was the WRONG layer (container had rsync 3.4.3, STILL failed). Fix = install rsync on avalon (sysadmin, host-level). xwing/salvare/aurora already have it → only avalon-source volumes fail. Check `which rsync` on the HOST not the container. Caught 2026-06-08 by ad-hoc run.
-- create-backups red for `media_manager_stateFile` + `photos_photos` = lucos_backups#309 (raised 2026-06-08), NOT firewall. (1) media_manager_stateFile: local `tar: short read` = live file written during archive. (2) photos_photos: 6.6G volume > hardcoded 600s scp-to-aurora timeout (avalon→ProxyJump xwing→aurora.local), worsens as photos grows. Proof not-firewall: other avalon+xwing volumes copy to aurora fine same run; host-tracking green; mid-transfer timeout ≠ INPUT-drop. If red recurs for these volumes, it's #309 — don't re-investigate or blame enforce.
-- [Incremental rsync path: TWO serial bugs from the photos seed — RESOLVED+GREEN](pattern_incremental_rsync_container_proxyjump_hostkey.md) — `incremental` backup (#324) had (1) #327 host-key on ProxyJump hop (empty container known_hosts) — fixed #329/v1.1.14 (mount host known_hosts); (2) #330 publish `rm && mv` UNQUOTED → `&&` ran on LOCAL shell, `mv` on avalon not aurora (tell: Irish-locale mv error) → data stranded in `.partial` — fixed #331/v1.1.15 (shlex.quote in runOnRemote). **photos_photos GREEN 2026-06-14.** Durable lessons: StrictHostKeyChecking=no doesn't reach ProxyJump hop; rsync `--rsh` splits on whitespace; runOnRemote compound cmds need shlex.quote; CI-unexercised backup path hides bugs in SERIES; create-backups monitoring check needs a real RUN (seed doesn't clear it); monitoring `/api/status` uses `status` not `ok`. Restore-half of lucos_photos#427 still open.
-
-## lucos_locations (OwnTracks) silent data gaps
-
-- [lucos_locations stops recording silently when the phone stops publishing; /_info only checks TLS](pattern_locations_silent_data_gap.md) — OwnTracks on avalon (mosquitto→otrecorder→otfrontend). Data-stall from ANY non-cert cause stays /_info-green. Recurred: #5 (2025, expired cert, weeks) + 2026-06-29 (phone stopped, client-side, 3 days). Diagnose: recorder `/api/0/last` tst + `/store/rec/<u>/<dev>/YYYY-MM.rec` mtime + mosquitto log non-healthcheck client (`cheetah`). Fix class = data-freshness check, issue #91. Monitor OUTCOME not each cause.
-
-## media_import full scan (weekly all_files)
-
-- [all_files red = weekly full scan hard-killed by redeploys](pattern_media_import_fullscan_killed_by_redeploy.md) — import.py (cron Thu 00:45, ~12h) is a cron GRANDCHILD; docker stop SIGTERMs PID1 (startup.sh) only → import.py SIGKILLed, handler never fires → silent death, stale /var/state checkpoint, no schedule update. Frequent morning Dependabot redeploys land mid-scan. new_files (per-min) fine. Restore=ad-hoc resume run. xwing OOM secondary (sysadmin). lucos_media_import#173 (2026-06-23).
-
-## Base-image bump outages (runtime-only breaks)
-
-- [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — Dependabot a8→b2-alpine reds repos stale-dependabot-prs: required ci/circleci:test fails deterministically (psycopg can't find libpq.so at runtime on newer Alpine base). Fix=`apk add libpq`. Hit contacts#741→#748 + eolas#311→#316 (estate pattern). Not a flake — don't re-run CI.
-
-- [Auto-merged base-image bump breaks at deploy/runtime, not build](pattern_baseimage_bump_runtime_break.md) — red `main` right after a Dependabot base bump = RUNTIME failure (build passes, daemon fails at deploy → slips through build-gated auto-merge). Diagnose: build✅ + deploy-host❌ → read container logs on host. 2026-06-11 lucos_mail: alpine 3.21→3.24 pulled Dovecot 2.4 (needs `dovecot_config_version` 1st line) → smtp crash-loop, mail down 14min. Restore: cancel broken reruns (verify avalon lock not orphaned via Loganne) → rerun last-GREEN pipeline → pin base via 1-line PR → fix-forward issue (lucos_mail#60). Recurrence trap: auto-merge re-bumps daily until fix-forward lands. Durable fix = a CI TEST JOB that boots the stack (blocks the bad bump in CI) — NOT "gate on deploy" (lucas42 reframed my take 2026-06-11, test-job lucos_mail#61). A temporary Dependabot `ignore` is a *possible* stopgap before the next daily run; whether to use it is the owner's call (here team-lead flip-flopped close→keep→close→open across crossed messages and ultimately left the disposition of ignore PR #62 to lucas42, who closed it for good — rely on test job #63, which is merged+verified to block the bad bump; aligns with his "let bumps flow, prefer no ignores" lean). Durable fix is the test job, not the ignore. PROCESS LESSON: don't ping-pong a PR on crossed/contradictory messages — I toggled #62 close→reopen→close→reopen chasing each steer, which was churn. Wait for a *definitive* word before re-opening a PR you closed. Mechanic that saved it: reopen-at-same-commit (recreate the deleted branch ref to the old head SHA, then PATCH state=open) preserves the reviewer approval + green CI. Gap: lucos_mail has NO smtp probe (tls/fetch-info/circleci/apache only).
-
-## CI / docker build failures
-
-- [lucos_repos audit-dry-run mass 403s = GitHub secondary rate-limit, NOT lost access](pattern_repos_audit_dryrun_secondary_ratelimit.md) — burst content fetches (92 repos × ~30 conventions) trip the limit; 403≠401. Proof: live `/api/status` reads repos fine + run passed 753 checks before 1st 403 + abrupt onset/~60s window. Reviewer's named repos = tail of set. Non-incident, CI flakiness. lucos_repos#433 (2026-06-15).
-- [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — circleci-check red + `test` failed + `deploy-avalon` not_run = flaky `TestEnvironmentRestrictedAccess` scp assertion (exit 255/"Connection closed" vs 1/"lost connection"). Re-run workflow from failed → deploys. NOT a product bug, NOT the scope migration (that's startup in-code). Tracked lucos_creds#358; if open on recurrence, re-run + comment, don't refile.
-
-
-- [CircleCI "Docker Login (mirror)" exit 1 = TIMEOUT reaching docker.l42.eu, not bad creds](pattern_docker_mirror_login_timeout_transient.md) — log shows `context deadline exceeded` hitting the self-hosted mirror; transient. Confirm mirror healthy NOW (`/v2/` 401 in <0.5s, `_info` registry+upstream ok) THEN rerun `from_failed`. Single self-recovered blip → no issue; WATCH if recurs under load. lucos_repos build 2270, 2026-06-15.
-- ["blob unknown to registry" on push = upstream Hub transient](pattern_docker_push_blob_unknown_upstream.md) — build compiles fine, fails only at push; rerun with identical code clears it → NOT our code. Mirror not implicated (pull-through). Fix = push-step retry in orb (lucos_deploy_orb#182). First hit lucos_monitoring 2026-06-03.
-- [arachne multi-component CI dep-skew + #633 dependabot regression](project_arachne_multicomponent_ci_depskew.md) — CI co-installs mcp/+ingestor/ reqs in ONE pip resolve → shared-dep (pytest) skew = ResolutionImpossible → gates ALL arachne deploys. Fix=per-component venvs (#652, Option 3). #633 silently deleted pip/mcp tracker; dup `/./x` docker entries. Squint at dependabot.yml diffs.
-
-## media_metadata_api integrity checks
-
-- [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — job reports schedule_tracker success on total eolas-fetch failure (resolved=0) → green monitoring, zero work; eolas bulk endpoint at the 30s-timeout cliff post-migration. Names never backfill. lucos_media_metadata_api#302.
-- [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — flip predicate to requiresURI → check red → backfill migration → green. Not a bug; don't treat as incident. Per-predicate logging being added under lucos_media_metadata_api#295. Confirmed by lucas42 2026-05-31.
-
-## Monitoring self fetch-info flap
-
-- [monitoring's own fetch-info self-probe flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — post-deploy + steady-state flaps from the global 1s timeout (fetcher_info.erl:231) crossing global failThreshold:2. Suppression = estate-wide blast radius; #186 closed not_planned. Don't refile.
-
-## Monitoring coverage: HTTP vs scheduled-jobs
-
-- [fetch-info requires http_port; non-HTTP boxes covered via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — `info-systems-list.json` built from configy `/systems/http` at Docker build (Dockerfile L17); a domain-but-no-http_port system (e.g. lucos_dns) has NO fetch-info/tls, only `config-sync`+`circleci`. Don't assume domain⇒fetch-info. schedule_tracker overdue (age≥freq×3)=liveness, consec-errors (5/4/3/2 by cadence)=staleness; grace is frequency-derived, not a free knob. Verified 2026-06-05 (lucos#217 DNS-secondary SOA design).
-- [public-port TCP reachability checks (`port-N-reachable`, source `ports`)](pattern_monitoring_public_port_reachability.md) — fetcher_ports probes configy `public_ports` (mail 25, creds 2202, locations 8883, dns 53, dns_secondary 53). KEY GOTCHA: `/systems/http` FILTERS to http_port systems (dns/router absent); use full `/systems` for any non-http box attribute. Liveness floor only (DNS green ≠ resolution works). dependsOn [lucos_dns] only. Shipped lucos_monitoring#281/PR#282 2026-06-12.
-- [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE failures](reference_schedule_tracker_detection_semantics.md) — jobs surface via `schedule-tracker.l42.eu/jobs` + monitoring `fetcher_scheduled_jobs`, attributed to OWNING system (schedule_tracker's own `/_info` shows 0 job checks post-cutover — don't misread). check `ok = (any of last 2 runs OK) AND (completed within freq-derived window, e.g. 259200s)`. Intermittent/self-recovering failures stay GREEN BY DESIGN — not a gap. arachne bulk ingest = 19 per-source jobs (`job_name=<source>`), separate from the #702 `failed_item_ingest` webhook check. Confirmed 2026-07-02 lucos_arachne#711 (no monitoring gap; green was accurate).
-
-## avalon IPv6 docker bridging
-
-- [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time are IPv4-only](reference_avalon_ipv6_bridging.md) — daemon `ipv6:true` + global `fixed-cidr-v6 2001:41d0:8:dc2c::/64` + Docker 29 (ip6tables default-on). `lucos_dns_default`/`bridge`=EnableIPv6, ULA fd00:2::/64, NAT66→global works (lucos_dns_bind ping6's salvare). `lucos_monitoring_default`/`lucos_time_default`=IPv4-ONLY → can't egress IPv6 & DON'T reach salvare (salvare reports outbound). salvare IPv6-only reachable. #307 bridge-backups+enable_ipv6 SAFE for IPv6→salvare (verified; architect's monitoring-precedent evidence wrong, conclusion right). enable_ipv6 is per-network, not automatic. Verified 2026-06-08.
-- [Compose silently REUSES a stale network — correct compose can deploy stale config](compose-reuses-stale-network.md) — if `<project>_default` exists, Compose reuses it as-is, ignoring changed `enable_ipv6`/subnet/IPAM. Bit #307: correct compose (enable_ipv6+fd00:3::/64) but stale Sept-2024 IPv4-only network reused → backups→salvare broke. Diagnostic: live `docker network inspect` EnableIPv6/subnet ≠ compose; don't re-read compose, inspect the live net. Fix: `network rm`+recreate (plain `up` won't reconcile). Verify the dependent path, not just "container started".
-
-## Monitoring dependsOn / schedule_tracker mechanics
-
-- [Media cross-probe flap in a rollout burst = LEGIT 401 auth-fail during creds key-rotation convergence](pattern_deploy_window_boundary_crossprobe_flap.md) — weightings/metadata-mgr cross-probes flap during a media deploy burst because a lucos_creds scope/key rotation means clients get the new key BEFORE the server accepts it → ~2min real 401 window. Alerts are CORRECT; DON'T suppress. Check: credentialUpdated events + alert debug `401 Unauthorized` + router 401s w/ /_info 200. My "deploy-window boundary" guess REFUTED by lucas42 (evidence>timing). #286 to close as misdiagnosed; fix = key-overlap grace window in rotation sequence.
-- [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — not arbitrary outages. schedule_tracker job checks are lagging/threshold (daily job = ~2 days to alert), so dependsOn on them is worthless. No depends_on column in schedule_v3. Trace what it suppresses before proposing an edge. mma#299 closed not-planned 2026-06-01.
-- [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress filter (`is_dependency_suppressed/3`) AND unsuppress cascade (`find_dependent_systems/2`). A universal dependsOn (e.g. on synthetic fetch-info, #272) fans pending_verification estate-wide on every dep deploy. Missed read site 2 on 2026-06-03; architect caught it.
-- [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md) — `PUT /suppress/<system>` opens a 600s auto-expiring window that by design IGNORES pre-existing failures (snapshots them as continuing→keep alerting); zero effect on an already-failing check, board stays red. Can't mark an ongoing failure "known". Auth=Bearer from monitoring `CLIENT_KEYS` (lucos_agent key NOT in my .env — read via `docker exec lucos_monitoring printenv`). For a known trail: Loganne plannedMaintenance + GitHub comment + own sentinel. Verified 2026-06-08.
-- [red-means-down — no ack/known-issue board state](feedback_red_means_down_no_ack_state.md) — lucas42 declined lucos_monitoring#276 not_planned (2026-06-08): red correctly = "down", makes NO freshness claim; ack states invite "ack & forget"; fix the problem, board self-clears, why-trail on the ticket. Don't pitch board-level mute/ack/maintenance-badge features. Own sentinel for my alerting is fine (separate from shared board).
-
-## Docker daemon recovery
-
-- [Docker live-restore: true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — `sudo systemctl restart docker` silently fails to recreate missing built-in `bridge`/`host`/`none` networks if any containers are running. Daemon emits `there are running containers, updated network configuration will not take affect` (sudo to see). Fix: `docker stop` all containers → daemon restart → redeploy. Bit me on 2026-05-28 xwing recovery (Stage 5 of incident report).
-
-## Standing patterns from 2026-05-13 scheduled-jobs blackout
-
-- [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + lucos_creds value. Missing any one = silent broken deploy. Diagnostic signature: recurring `{no_scheme}` / similar warnings at 1/min, `docker exec printenv` returns empty.
-- [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — link 4 (container) empty does not imply link 1 (lucos_creds) missing; usually it's link 3 (docker-compose.yml). Walk in order. lucas42 corrected me 2026-05-23 on lucos_loganne#490.
-
-## lucos_monitoring re-alert per deploy
-
-- [Repeated alerts for the SAME static failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — N `monitoringAlert` with ZERO recoveries between ≠ flapping. Each `deploySystem` re-fires via `monitoring_state_server.erl:131` "still unhealthy after deploy — alerting" (`FailingNow>0` post-window). By design (ADR-0003, #252/#264). Diagnosed 2026-06-08: lucos_backups deployed 5× iterating #309 → 5 create-backups alerts ~1min after each. Loganne time field is `date`; deploySystem `system`=None (match humanReadable).
-
-## lucos_monitoring email quirks
-
-- [Alert suppression is asymmetric → orphaned "Everything OK" emails](pattern_monitoring_suppression_asymmetry.md) — suppressed failures (deploy-window / `dependsOn`) silence the failing email but NOT the recovery email. Diagnostic: `suppressed via dependency`/`Alert suppressed during deploy window` then later `Send notifications for X` with no emailed alert between. Tracked in lucos_monitoring#264; if it recurs before #264 ships, comment there, don't refile.
-
-## arachne ingestor surprises
-
-- [skos:prefLabel makes an ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — meta-entities with prefLabel get pulled into the searchindex doc-builder, forcing label+category lookup on their rdf:types. `is_meta_type` (#544, shipped) excludes OWL/RDFS but NOT SKOS. Recurred 2026-05-28 via #258 SKOS schemes (skos:Concept) → lucos_media_metadata_api#271.
-- [media_metadata → /v2/export → arachne pipeline + 2 landmines](pattern_media_metadata_arachne_pipeline.md) — exporter serves torn/empty exports (lucos_media_metadata_api#272); arachne ingest has no shrink-guard → empty export wipes 14,707 tracks. Never re-ingest against an unverified export. Includes ad-hoc trigger runbook.
-
-## linuxplayer phantom DELETE retries — RESOLVED 2026-05-21 (lucos_media_linuxplayer#123 closed)
-
-- [Linuxplayer phantom ?action=error DELETEs](pattern_linuxplayer_phantom_error_deletes.md) — historical pattern: bursts of 100+ DELETE/sec on ceol from `lucos_media_linuxplayer/<host>` for already-advanced-past playlist UUIDs, saturating loganne outbound. Fixed via #123 (closed 2026-05-21). If the burst recurs, re-open the issue, don't refile.
-
-## seinn thrash failure modes — distinguish before diagnosing
-
-- [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — `decodeAudioData` / `fetch` failures in `playTrack` produce a 2.4s thrash loop the cache-thrash banner (#460/#473) doesn't detect. Diagnostic: 100s of `trackUpdated` "errored" events with webhooks all `success` and `lastErrorMessage` ∈ {`Unable to decode audio data`, `Failed to fetch`}. Tracked in lucas42/lucos_media_seinn#482, fix shipped in PR #483 (2026-05-26). Incident report: lucos `docs/incidents/2026-05-26-seinn-playback-error-thrash.md`.
-
-## loganne event-loop-lag-low daily 02:00Z flap pattern
-
-- [Daily 02:00Z bulk weighting recompute → loganne flap](pattern_daily_weighting_cron_loganne_flap.md) — known recurring 1-2 brief alerts/day at 02:13-02:25Z UTC from the `lucos_media_weightings` daily bulk recompute (~220 trackWeightingUpdated → ~660 outbound fires in 30 min). Within calibration trade-off; do NOT refile or re-diagnose during ops checks.
-
-## Deploy-stuck triage
-
-- [Slow deploy to xwing-v4/salvare = home-ISP image pull, not a stall](pattern_homehost_deploy_pull_slowness.md) — "Pull container(s) onto remote box" step bandwidth-bound on home hosts; large rebuild (python:3.14 rollout) → ~7min pull. Check v1.1 job steps: all-succeeded-in-sequence + current step progressing = fine; real stall = one step >15min no progress. Verify via deploySystem Loganne event + monitoring (xwing-v4 SSH fails host-key from sandbox — known_hosts gap, TODO). Don't ticket the slowness. Confirmed 2026-06-11 media_import #450.
-
-## lucos_repos deploy mechanics
-
-- [Deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — `Start() → TriggerSweep()` means deploy → recovery is ~17-18min, not the 6h scheduled cadence. Also: `POST /api/sweep` (no auth) is the manual trigger; returns 409 if sweep in progress. I got the 6h recovery time wrong on 2026-05-28; lucas42 caught it.
-
-## GitHub Actions outage diagnosis
-
-- [Check GitHub status page early](pattern_github_actions_outage_diagnosis.md) — when Actions workflows aren't triggering on new PRs, hit `githubstatus.com/api/v2/components.json` and `/incidents/unresolved.json` BEFORE chasing per-repo theories. Smoking gun: PR commit SHA has CircleCI statuses + `claude` check-suite but ZERO `github-actions` check-suites. During an outage, do NOT close/reopen or push empty commits — events get dropped too, or queue and duplicate-fire on recovery. Bit me on lucas42/lucos_photos#407 / #408 (2026-05-26 Actions+Pages outage starting 10:57:13 UTC).
-
-## Webhook-burst diagnostic methodology
-
-- [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull avalon `lucos_router` nginx access log FIRST. Loganne's event record alone can't distinguish "downstream slow" from "outbound stalled" from "originating burst". Three filters: total host activity, sender user-agent, receiver+action originator.
-
-- [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — when two unusual things happen in the same window, default to "one caused the other" not "coincidence". Coincidence needs positive evidence. lucas42 corrected me 2026-05-21 on the linuxplayer/loganne burst.
-
-## Standing Rules
-
-- [Finalize a PR before dispatching to an auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) — on unsupervised repos, approval auto-merges the reviewed SHA; post-dispatch amendments race the merge → stale `main`. Make all edits first, `git show HEAD:<path>|grep` to verify the pushed branch, then dispatch + don't touch. Keep incident reports DRAFT until truly final. Bit me 3× on 2026-06-12 (#241/#243).
-- [Flag follow-up disposition to coordinator, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — for a follow-up *I* raised, recommend close-vs-park to team-lead and let them set issue state; board/triage disposition is the coordinator's lane. Don't toggle state on crossed messages. Bit me 2026-06-12: closed lucos#242 directly → 3-toggle churn + stale statement to lucas42.
-- [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — revocation / single-active / TTL / what-voids-what is implementation-defined, not a safe default; grep the store/handler or hedge. Bit me 2026-06-12 ("fresh --bootstrap-invite supersedes" was false; propagated to lucas42 via team-lead before checking the store).
-
-- [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — never use `[ -n "$x" ]` on `--jq` output for existence checks; use `--silent` + `$?`. Bit me on 2026-05-21 estate-wide stale-auto-merge sweep — categorised all 65 repos as hits.
-
-- [Verify body file content before create-pr / gh-as-agent body-file calls](feedback_verify_body_file_before_pr.md) — `/tmp/pr_body.md` persists across sessions; Write may fail silently when batched parallel with the consuming Bash call. Use unique tempfile names or do Read→Write→verify→Bash sequentially. Bit me on lucas42/lucos#167 2026-05-20.
-
-- [`gh api` file-backed body needs `@` prefix](feedback_gh_api_body_at_prefix.md) — for `gh-as-agent ... -X POST/PATCH`, use `--field "body=@FILE"` (with `@`), not `--field body-file=FILE`. The latter posts an empty body silently (`body: null`). Bit me on lucos_monitoring#252 2026-05-24 ops checks.
-
-- [Silent fallbacks are a security risk, not just an operational one](feedback_silent_fallbacks_are_a_security_risk.md) — when weighing "remove fallback for loud failure" vs "keep fallback for defence-in-depth", state both perspectives. Silent fallbacks expose data-poisoning attack surface. lucos-security framing 2026-05-18.
-
-## ADR Scope
-
-- [ADR-0006 covers consumer-side only](reference_adr_0006_consumer_side_only.md) — webhook consumer accept-202-enqueue pattern. Does NOT remediate producer-side outbound-client saturation (e.g. loganne undici `fetch failed` bursts before any TCP connection reaches the consumer). Different failure class. Architect flagged 2026-05-20.
-
-## Loganne — Webhook Retry API
-
-Loganne auto-retries failed webhooks only **once** (`src/webhooks.js`) then gives them up as permanent failures — so a downstream outage lasting more than ~20 seconds (e.g. a rolling monitoring redeploy) will leave events stranded in `status: failure`, which keeps `webhook-error-rate` red forever. **Restarting loganne does NOT clear them** — in-memory failure state survives restart via filesystem persistence, and there's no fresh-retry-on-boot path.
-
-The fix is the retry API (auth-required, Bearer `KEY_LUCOS_LOGANNE`):
-
-- `POST /events/retry-webhooks` — bulk retry, returns `{retriedCount: N}`. 60s global cooldown.
-- `POST /events/:uuid/retry-webhooks` — single event retry. 60s per-UUID cooldown. Returns 400 if the event has no failed hooks.
-
-Finding the stuck events: iterate `/events?limit=500` and filter on `e.webhooks.status === 'failure'`. Used 2026-04-21 to clear 3 `deploySystem → monitoring.l42.eu/suppress/clear` failures left by the morning deploy-storm gap.
-
-## Production Host Directory Structure
-
-No persistent per-service directories on production hosts. Docker Compose files deploy transiently to `/home/circleci/project` during CI only. Use container names directly:
-
-```bash
-docker logs lucos_monitoring   # correct
-docker restart lucos_monitoring
-# Wrong: cd /home/docker/lucos_time && docker compose stop
-```
-
-Container names match the service name in `docker-compose.yml`.
-
-## lucos_creds Self-Deploy
-
-**lucos_creds reads `.env` from a CircleCI `LUCOS_DEPLOY_ENV_BASE64` snapshot, not from creds.l42.eu.** See [reference_lucos_creds_self_deploy.md](reference_lucos_creds_self_deploy.md). Live store changes do NOT propagate until the snapshot is manually refreshed. When investigating "fix didn't take after redeploy" on lucos_creds, check the snapshot before anything else. Caused the 2026-05-09 CRLF incident.
-
-## Standing Rules
-
-**Healthcheck depth varies — `Healthy` is not proof of end-to-end working.** See [feedback_healthcheck_depth_varies.md](feedback_healthcheck_depth_varies.md). Always read the actual `healthcheck.test` line before treating Docker `Healthy` as recovery proof. `lucos_creds_configy_sync`'s healthcheck is `test -p /var/log/cron.log` — entirely uncorrelated with whether the cron's SSH key works. Bit me 2026-05-09 (lucos_creds CRLF incident).
-
-**When a fix to live state doesn't take after redeploy, ask whether deploy reads live state or a snapshot.** See [feedback_snapshot_indirection.md](feedback_snapshot_indirection.md). Bypasses exist for good reasons (avoiding circular deploy dependencies); always check `.circleci/config.yml` and project env vars for `*_DEPLOY_*` / `*_ENV_BASE64` patterns before concluding "user re-stored it wrong." Bit me 2026-05-09 — diagnosed lucas42's UI re-store as faulty when in fact `LUCOS_DEPLOY_ENV_BASE64` was overwriting it.
-
-**Keep the docker.l42.eu mirror in the orb.** See [feedback_keep_docker_mirror.md](feedback_keep_docker_mirror.md). Mirror-side bugs (digest-404, etc.) must be fixed at the mirror layer, not by removing the BuildKit mirror config from `publish-docker.yml`. Reason: Docker Hub rate-limit exposure across estate-wide concurrent CI is worse than the mirror's bugs. Confirmed 2026-04-19 when lucas42 rejected PR lucas42/lucos_deploy_orb#143.
-
-**Probe before requesting.** See [feedback_check_before_requesting.md](feedback_check_before_requesting.md). Never file a feature-request issue without first verifying (one curl / one grep) the feature doesn't already exist. Wasted a triage cycle on lucos_schedule_tracker#57 2026-04-19.
-
-**Verify issue state before citing an issue number.** When citing any `#N` in a GitHub issue body, PR, or teammate message as "open", "tracking X", "in progress", etc., verify first with `gh-as-agent repos/lucas42/<repo>/issues/<N> --jq '.state'`. **Strongest application is in final-artifact follow-up tables** — see [feedback_refetch_state_before_writing_final_artifact.md](feedback_refetch_state_before_writing_final_artifact.md) — where cached SendMessage knowledge from earlier in the same session can be tens-of-minutes stale by the time the artifact ships. Bit me 2026-05-28 on PR #199 (merged ~21 min before I wrote it as "Draft" in the completion summary). MEMORY.md is truncated in the system prompt (explicit warning at the bottom) — memory snippets may be stale by days or weeks. This bit me on 2026-04-22 when I cited `lucos_docker_mirror#19` (gunicorn saturation) as open in lucas42/lucos#106, but it had been closed since 2026-04-17 after the nginx migration. Don't trust system-prompt-loaded memory for issue state — always verify via API. **Extension for closed issues cited as design-preference evidence**: state alone is not enough — must fetch body + closing comment. See [feedback_verify_closed_issue_disposition.md](feedback_verify_closed_issue_disposition.md). Bit me 2026-05-04 when I cited `lucos_monitoring#186` as evidence lucas42 wanted to live with a cold-state cascade — actually I closed it as a duplicate of #87, no team disposition there.
-
-**No destructive remediation without a recovery path.** See [feedback_no_destructive_without_recovery_path.md](feedback_no_destructive_without_recovery_path.md). Before `docker rm -f` or similar on a production container, confirm a CI re-deploy or manual re-creation path exists. Applies especially to lucos: compose files live only on CircleCI runners transiently, not persistently on hosts. Bit me 2026-04-22 when I `rm -f`'d `lucos_dns_bind` to test if it cleared an `AlreadyExists` state — it did, but there was no compose file on avalon to recreate it.
-
-**Docker daemon config: prefer `systemctl reload docker` (SIGHUP) over `systemctl restart docker`.** Several `/etc/docker/daemon.json` fields are hot-reloadable via SIGHUP with zero container disruption: `registry-mirrors`, `live-restore`, `labels`, `insecure-registries`, `debug`, `max-concurrent-downloads`, `max-concurrent-uploads`. A full restart with `live-restore: false` SIGKILL's every container (see 2026-04-22 avalon incident). When proposing or reviewing a daemon config change, the first question is always: "can this be SIGHUP'd?" If yes, use `systemctl reload`. Even enabling `live-restore` itself is hot-reloadable — so lucos#107 can ship without a restart.
-
-**"No deploy event in Loganne" does NOT mean "no deploy happened."** The deploy orb's `Send deploy log to loganne` step is near the END of the deploy job and retries up to 6 times on failure. If every retry fails (e.g. because the deploy itself broke DNS/networking in a way that affects outbound HTTP), the deploy still HAPPENED — the container is running the new image on the host — but no `deploySystem` event gets recorded. **Always confirm a "no deploy today" claim by cross-checking the CircleCI pipeline history for the service AND the actual container `Created` timestamp on the host, not just the Loganne feed.** Learned 2026-04-22 when I misdiagnosed a 20-min `lucos_dns_bind` outage as a "CircleCI DNS blip" because no `deploySystem lucos_dns` event appeared in Loganne for the window.
-
-**Before filing a follow-up issue from an incident report, search for existing open issues on that repo.** The warm-up grace period I proposed in `lucos_monitoring#186` was already implemented by `#87` months ago. The rule in `sre-ops-checks.md` about duplicate-prevention applies to follow-up issues too, not just ops-check-triggered ones. **Also: re-read the commit that closed the issue** — "closed" could mean "implemented" (as with #87) or "won't fix" or "wrong analysis" — the status alone doesn't tell you whether your new issue is different.
-
-**Monitoring's post-restart cold-state window is ~2-3 minutes, not 1.** The first-poll-skip protection from `lucos_monitoring#87` only covers the FIRST poll. `lucos_monitoring#195` (merged 2026-04-26) added `failThreshold: 2` to `fetch-info` and `tls-certificate` checks only, but **post-restart estate-wide synchronised bursts ~2 min after each `lucos_monitoring` deploy still occur** because the failures persist across 2 consecutive polls. Mechanism: `src/fetcher_info.erl` has a 1-second hard timeout for both checks (`timeout 1s openssl s_client` for tls-certificate, `httpc:request {timeout, 1s}` for fetch-info), and `start/1` spawns ~25 polling processes at the same instant — the first batch is a thundering herd against cold DNS/TLS state. **Telltale signature**: many services flap the same check within 2-5 seconds, all recovering within 1 minute, including services on different hosts (avalon + xwing). If you see that pattern, check `/events?type=deploySystem` in Loganne for a `lucos_monitoring` deploy in the preceding ~3 minutes — if there is one, the burst is monitor-side, not real. There is **no public documentation** of the residual cascade — `lucos_monitoring#186` was filed by me proposing a warm-up window but closed by me as not_planned/duplicate (the warm-up already existed via `#87`), so do NOT cite #186 as evidence of any team disposition toward the residual. Confirmed 2026-04-26 by `lucos_docker_mirror#55` investigation: 3 monitoring deploys → 3 estate-wide bursts ~2 min later, including post-#195 burst at 12:06:35. Replaces the previous (incorrect) "1 min warm-up window" rule.
-
-**Check file reachability from entry point before diagnosing "deployed code doesn't behave as expected".** See [feedback_check_reachability_first.md](feedback_check_reachability_first.md). When source has a change but runtime doesn't reflect it, the first hypothesis to check is "is this file reached from the active entry point?" Bundlers silently drop unreachable code. Source map's `sourcesContent` is NOT proof the code is in the runtime bundle — it only proves webpack's loader saw the file. Bit me 2026-05-06 on lucos#126: wrote a long terser-DCE diagnosis when the actual cause was the beacon being added to `audio-element-player.js` while `src/client/player.js` only destructures `webPlayer` from `web-player.js`.
-
-**Loganne is for cross-estate events, not fine-grained instrumentation.** See [feedback_loganne_scope.md](feedback_loganne_scope.md). Loganne carries coarse user-facing state changes (deploys, alerts, `deviceSwitch`, `collectionSwitch`); it is NOT the channel for per-API-call timings, per-track-change events, or any high-frequency single-system signal. State changes are modelled as a single completion event, never start/end pairs. When proposing any cross-system instrumentation/observability approach, enumerate alternatives (in-process logs, dedicated metrics endpoint, OpenTelemetry tracing, app/access logs) with pros and cons rather than defaulting to Loganne. Bit me 2026-05-05 on lucos#126 — proposed Loganne timestamps for end-to-end latency, lucas42 rejected `collectionPopulated` and `nowPlayingChanged` on scope/noise grounds, kept only `sceneActivated`. Issue reopened for design discussion.
-
-**Enumerate existing surfaces before proposing new persistence.** See [feedback_enumerate_existing_mechanisms.md](feedback_enumerate_existing_mechanisms.md). When proposing any new persistence/storage/observability mechanism (file, volume, table, queue, cache, log stream), explicitly list ≥1 *existing* surface that could be extended (Loganne events, `/_info` fields, monitoring API state, lucos_configy, container logs) and justify rejection — before defaulting to "build a new thing." The inverse of [[feedback_loganne_scope]]: sometimes the right answer IS to extend Loganne. Bit me 2026-05-26 on `lucos_monitoring#260` — proposed a rolling log file on a named volume for check failure debug strings without considering whether the existing `monitoringAlert` event payload could carry a `failingChecks` field. lucas42 caught the omission first critique; cascading concerns (file-on-volume precedent, understated maintenance cost) only arose because the new-thing framing dragged them in. Re-proposed as Loganne-event extension; all three concerns dissolved.
-
-**Checks themselves (not just thresholds) live in /_info, not lucos_monitoring.** See [feedback_failthreshold_lives_in_info.md](feedback_failthreshold_lives_in_info.md). Each service declares its checks in `/_info.checks` with `{ok: bool, techDetail, optional failThreshold, optional dependsOn}` — the `ok` evaluation, threshold comparison, and suppression policy ALL live in the service's `/_info` handler. lucos_monitoring is a polling/aggregation layer with no system-specific logic except three synthetic cross-cutting probes (`fetch-info`, `tls-certificate`, `circleci`). Bit me twice: 2026-05-05 (proposed raising a failThreshold issue against lucos_monitoring for media_manager `empty-queue` flap) and 2026-05-22 (filed `lucos_loganne#484` with a "Proposed monitoring-side check" section; team-lead relayed lucas42's correction — both metrics AND checks need to be in loganne's own `/_info`).
-
-**The `url` field of an event is an identifier, not an API path.** See [pattern_url_field_is_not_an_api_path.md](pattern_url_field_is_not_an_api_path.md). When a webhook/event carries a `url` field, that URL points at the canonical resource on its source system — its path layout is unrelated to the API path on the *receiver*. Never `URI.create(event.url).getPath()` and pass the result to your own API client; extract the ID and use your own path conventions. Includes the related sub-pattern: tests that mock a dependency with the same broken call signature the production code uses lock in the wrong contract — match against the documented API spec, not against whatever the code currently does. Caught 2026-05-07 in `lucos_media_manager#249` (PR #246 → 410 Gone on deprecated v1 path).
-
-**Read the originating PR/issue body in full when writing incident-report causation.** See [feedback_read_pr_body_for_causation.md](feedback_read_pr_body_for_causation.md). Before writing the Summary or Timeline of an incident report, re-read the body of the PR/issue that triggered the incident and check whether the action was discretionary maintenance or instructed by that originating work. Don't reflex-frame triggers as "routine" — that under-states causation and weakens "what would have prevented this." Memory aid: don't write "routine" without proving it. Bit me 2026-05-09 on lucas42/lucos#135 — wrote "a routine SSH key rotation" when PR lucas42/lucos_backups#265's body had explicitly instructed lucas42 to run `rotate-ssh-key.sh` as the post-merge step. Required a flip-flop on a ready-for-review PR to fix.
-
-**Narrow the event window before counting categories.** See [feedback_narrow_event_window_before_categorising.md](feedback_narrow_event_window_before_categorising.md). When characterising the client/error/source mix of an incident burst, filter to the burst's [start,end] window before counting — counts over "today" or "this week" silently bucket unrelated background events into the burst's distribution and produce false-positive cross-client narratives. Bit me 2026-05-18 on the trackErrored burst: I cited 12 mpg123 errors as evidence of a cross-client pattern, but those were scattered across the day with none inside the burst window. Sysadmin partly pursued an xwing-NAT theory on the strength of that claim.
-
-**Don't overclaim attributions in incident reports.** See [feedback_no_attribution_overclaim.md](feedback_no_attribution_overclaim.md). When describing what others said or thought during an incident in the Detection/triage or What-Didn't-Work sections, restrict claims to what they actually said. Don't put your own initial-hypothesis framing on top of their narrower observation. Bit me on incident report PR #133 (2026-05-07): I'd written "lucas42's hunch ... framed the problem as load-related" — but he'd only said the load was the trigger; the load-related mechanism framing was mine. Permanent-record damage is the issue.
-
-**Verify an incident root cause by reproduction before publishing it.** See [feedback_verify_root_cause_by_reproduction.md](feedback_verify_root_cause_by_reproduction.md). A plausible recent-change mechanism is a lead, not a cause; reproduce it (or cite direct evidence the failing request took that path) or label it a hypothesis + keep Resolution UNRESOLVED. Red flags = stop: blamed thing absent from the affected record, diagnosis hinges on an unconfirmed user-action assumption, timing doesn't fit, a repro was offered and declined, cause inferred chiefly from recency. Bit me 2026-05-29 on the 22829 save-502 — shipped a composer/producer-eolas cause across 3 report PRs; real cause was a latent Album-in-`about` field bug found only by reproduction. Incident-report sibling of [[feedback_correlation_is_not_confirmed]].
-
-**Correlation is not "confirmed evidence" of root cause.** See [feedback_correlation_is_not_confirmed.md](feedback_correlation_is_not_confirmed.md). When investigating, don't write "confirmed", "established", "verified" about a finding unless I have data that distinguishes my hypothesis from other plausible candidates. "X named most often in failure list" ≠ "X confirmed as bottleneck". lucas42 made me walk back exactly this overclaim on the 2026-05-19 webhook incident (2026-05-20). The right next-action on correlation-only data is usually "add the diagnostic instrumentation that would distinguish" before "ship the fix the correlation suggests".
-
-**Confirm with team-lead before shipping an incident-report PR when verification is externally gated.** See [feedback_parallel_drafting_verification_scope.md](feedback_parallel_drafting_verification_scope.md). The standing parallel-drafting rule ("ship even with TBDs") was designed for in-hand verification windows of minutes-to-hours (cron rerun, deploy soak); it does NOT automatically apply to multi-day windows gated on someone else's PR shipping. Bit me 2026-05-09 on lucas42/lucos#135 — shipped the SSH-key-rotation incident report assuming the standard 5-min daemon-cooldown verification, but lucas42 chose to wait for lucos_backups#266 to ship rather than running an ad-hoc unstick on aurora, making aurora's recovery multi-day. team-lead overrode "ship" → "convert to draft and hold."
-
-**Don't accept flaps as "expected" or "known pattern."** See [feedback_no_flap_tolerance.md](feedback_no_flap_tolerance.md). Any monitoringAlert/Recovery cycle is signal, not noise — fix it via `dependsOn` / `failThreshold` / deploy-window suppression in the service's `/_info`, or file a ticket on `lucos_monitoring` proposing a new mechanism. If logs are gone, the next step is to add logs. lucas42 raised this 2026-04-30 after I shrugged off both a photos midnight db+redis blip and the morning deploy-storm flapping on weightings/media-api during ops checks.
-
-**Check recent fixes before filing flap-investigation issues.** See [feedback_check_recent_fixes_before_filing.md](feedback_check_recent_fixes_before_filing.md). Before filing a "recurring flap" issue, check (1) recently-closed issues in the same repo, (2) `git log origin/main --since="3 days ago"`, and (3) whether recent deploys post-date the most recent alert. Pre-fix alerts persist in your lookback window for days even after a fix has shipped — basing the decision-to-file on "is the pattern present in the lookback?" produces redundant tickets. Bit me 2026-05-06 on `lucas42/lucos_eolas#234`: filed a fetch-info-flap-investigation issue 22 hours after lucas42 had merged the actual fix (PR #231 closing #228). Zero post-fix alerts; the issue was wholly redundant and I had to recommend it be closed in my next comment.
-
-**PR state checks must include `merged` field before acting.** See [feedback_pr_check_merged_field_first.md](feedback_pr_check_merged_field_first.md). A merged PR has `mergeStateStatus: UNKNOWN`, `mergeable: UNKNOWN`, `autoMergeRequest: null` — the same values an open PR shows mid-computation. Always fetch `merged`/`merged_at`/`state` together before writing actions on a PR (close, reopen, merge, label, auto-merge toggle). Bit me 2026-05-26 on `lucos_loganne#498`: close+attempted-reopen on an already-merged PR during the stuck-PR investigation, produced orphan branch + noisy correction comment. Specific case of [[feedback_verify_before_propagating]].
-
-**Never dismiss `loganne webhook-error-rate` as "will clear with time."** It will NOT clear on its own — loganne retries failed webhooks only once, and restarting loganne doesn't re-try them either. The `POST /events/retry-webhooks` API call at the top of this memory file is what clears them. If a webhook-error-rate alert appears during ops checks, ACTIONABLE IMMEDIATELY: retry via the API. Learned 2026-04-22 — I saw the alert during ops checks, noted in memory that the retry API is the fix, and still reported it as "self-healing" in my completion manifest. **When your memory tells you how to fix a thing, FIX IT, don't paraphrase the memory as "transient" and move on.** **Extension 2026-05-07a:** when clearing the alert *after a deploy fix*, fresh-scan all failed events first — don't retry only the UUIDs from your diagnosis snapshot, more events may have accumulated while the buggy code was still live. Verify monitoring agrees before reporting done. See [feedback_rescan_before_webhook_cleanup.md](feedback_rescan_before_webhook_cleanup.md). **Extension 2026-05-07b:** before triggering ANY retry, sample the distribution of `e.webhooks.errorMessage` across the failure set. Transient-looking errors (504, Gateway Time-out) often mask permanent data-quality failures — retrying them doesn't help and gives a false sense of progress. See [feedback_sample_webhook_errors_first.md](feedback_sample_webhook_errors_first.md) — bit me on lucos_eolas#237: 42 stranded events looked like burst-overload 504s but ALL converted to permanent arachne#371 validator failures on retry. **Extension 2026-05-22:** snapshot the full per-failure diagnostic fields (`errorMessage`, `errorPhase`, original failed-attempt `durationMs`, event date, target URL) to disk **before** retry — retry overwrites the webhook delivery record with the success result, so failure-side fields are unrecoverable afterward. See [feedback_snapshot_before_retry.md](feedback_snapshot_before_retry.md). Bit me on the 2026-05-22 seinn-cache-eviction incident: I retried 19 stranded events without snapshotting; the `errorPhase` field shipped the day before (lucas42/lucos_loganne#480) would have told us connect-phase vs response-phase ETIMEDOUT — we lost that diagnostic for the burst.
-
-**Don't game API contracts to work around design issues.** See [feedback_dont_game_api_contracts.md](feedback_dont_game_api_contracts.md). Pass the truth through APIs even when the result is unhelpful; if a system's behavior is wrong, fix it at the source rather than passing dishonest values to manipulate downstream effects. Caught 2026-04-29 on arachne#419/420 + pythonclient#36 — passed `frequency=3 days` for a weekly cron to game schedule-tracker's `frequency × 3` threshold rule, then wrote README docs teaching others to do the same. lucas42 reverted both.
-
-**Read library READMEs before reverse-engineering APIs from source.** See [feedback_read_readmes.md](feedback_read_readmes.md). When touching code that calls a `lucos_*_pythonclient` or other shared lucos library, read `~/sandboxes/<library>/README.md` first; only fall back to source archaeology if the README is missing or incomplete (and if it is, file a follow-up doc PR). Caught 2026-04-29 on arachne#419 — I worked out `frequency`'s × 3 multiplier semantics from source on both sides, didn't read the README, and missed that the README itself was incomplete.
-
-**Active recurrence justifies higher priority than default-P3.** See [feedback_priority_active_recurrence.md](feedback_priority_active_recurrence.md). When filing a flap-investigation issue from ops checks, if the underlying problem is still firing in production today, propose `priority:medium` minimum — don't default to P3 just because user-visible impact is bounded. team-lead bumped `lucos_media_metadata_api#216` from my filed P3 to `priority:high` on 2026-05-08 citing "active alert recurrence + production reliability impact."
-
-**Don't file GitHub artifacts on behalf of another agent — even when their identity is blocked.** See [feedback_dont_file_on_behalf_of_other_agents.md](feedback_dont_file_on_behalf_of_other_agents.md). Identity-of-record matters on GitHub; the author field is what most readers see. If another agent can't file (e.g. their `gh-as-agent` returns 404), diagnose and unblock them, or report back to the user — don't work around it under your own identity. Body-text attribution isn't sufficient. lucas42 raised this 2026-05-14 after I filed two tickets architect had scoped because their `gh-as-agent` was 404ing on a simple `api ` prefix bug; the fix was a one-character correction to architect's tool usage, not a routing workaround.
-
-**Use the canonical persona name for SendMessage, not the envelope's `teammate_id`.** See [feedback_teammate_id_vs_name.md](feedback_teammate_id_vs_name.md). When replying to `<teammate-message teammate_id="...">`, the `teammate_id` attribute is a harness-internal id, not the target name. Canonical names are filenames in `~/.claude/agents/*.md` (plus `team-lead`).
-
-**Check user-agent first when hunting a misbehaving HTTP client.** See [feedback_check_user_agent_first.md](feedback_check_user_agent_first.md). The first diagnostic step in "which lucos service is sending these requests?" is reading the User-Agent in the receiver's access logs — *before* forming any hypothesis from indirect evidence (env var names, code-style guesses). Bit me 2026-05-01 on `lucos_schedule_tracker#68`: I named the pythonclient as the prime suspect from URL-joining-style reasoning when the user-agent was `node`, ruling it out instantly. ADR-0001 (`lucas42/lucos/docs/adr/0001-user-agent-strings-for-inter-system-http-requests.md`) also requires lucos services to identify themselves by system name in user-agent — a bare `node` is itself a compliance gap to flag.
-
-**Test follow-ups must be deterministic and actionable.** See [feedback_test_proposals_must_be_actionable.md](feedback_test_proposals_must_be_actionable.md). Before filing a CI/integration test as an incident follow-up, answer two questions: (1) is the test deterministic, and (2) would a failure lead to actionable work on our side? If the failing code path lives in a third-party library we don't own, the test is usually just an alarm clock for someone else's bug. lucas42 closed `lucas42/lucos_time#252` (non-deterministic date-walking calendar test against a polyfill we don't own) on 2026-05-01 with both objections. Note this is *additional* to the existing runtime-check calibration rule — being a "cheap CI assertion" does not by itself justify a test.
-
-**Diagnose through to root cause when the next step is more diagnostics, not a developer action.** See [feedback_diagnose_through_to_root_cause.md](feedback_diagnose_through_to_root_cause.md). When investigating an incident handed off to the developer, keep going if the next step is more diagnostics I'm better placed to do (query the producer, fetch raw bytes, decode IRIs against the store); park only when the next step is genuinely developer-side (write code, run tests, decide product call). Validated 2026-05-10 on lucos_arachne#479 — team-lead endorsed pushing through from "is phase 1 emitting?" to the namespace-mismatch root cause rather than parking with an open question.
-
-**Verify "alternative" implementations in an issue body actually produce equivalent results.** See [feedback_verify_alternatives_are_equivalent.md](feedback_verify_alternatives_are_equivalent.md). Listing two fix forms as "either is fine" is a claim of equivalence — verify each before claiming it. Includes a SPARQL gotcha: `COUNT(DISTINCT ?val)` over an OPTIONAL counts distinct values, not subjects-with-property. Caught by architect on lucos_arachne#477 (2026-05-10).
-
-**Read the full function before editing any part of it.** Partial edits risk removing assignments used further down (caused regression in lucos_backups PR #62).
-
-**Sandbox branch hygiene.** See [feedback_sandbox_branch_hygiene.md](feedback_sandbox_branch_hygiene.md). Sandbox repos persist git state between sessions — always `git checkout main && git reset --hard origin/main` before creating a feature branch, not just `git pull`. Branched from stale `fix-bulk-patch-tag-only-loganne` on 2026-04-24, dragging an unrelated prior-session commit into PR #203.
-
-**Test Locally Before Pushing**: Docker available locally. Always build and run container locally before opening a PR. Pushed untested fixes to production → 3-PR crash-loop incident 2026-03-14.
-
-**Push all content before requesting review**: `lucas42/*` repos have fast auto-merge — if a reviewer approves the PR, it merges within seconds, no merge-queue delay. Pushing new commits *after* review is requested is unsafe: the approval can land and auto-merge the incomplete state before the expansion lands. 2026-04-18: PR#96 (incident report) auto-merged the narrow first version seconds after reviewer approval, before my expanded second commit landed. Had to open PR#97 to fix up. Rule: make all commits, push all of them, THEN request review.
-
-**Cross-service watch heuristic — credential rotation must distribute the public material**: see [pattern_rotation_must_distribute.md](pattern_rotation_must_distribute.md). Any rotation script that writes a new credential to lucos_creds but doesn't push the public side to consumers leaves a latent gap that only surfaces on first real rotation. Bit lucos_backups 2026-05-09 (incident at `docs/incidents/2026-05-09-backups-ssh-key-rotation.md`). When spotted on a second service, ping lucos-architect (don't file per-service); two cases may justify a cross-cutting convention.
-
-**Diagnostic pattern — named volume shadows image contents at mount path**: see [pattern_named_volume_shadows_image.md](pattern_named_volume_shadows_image.md). Moving a build step from `startup.sh` into the `Dockerfile` is suspect if its output path is also mounted as a named volume — the volume's first-init-only semantics shadow image updates indefinitely. Hit 2026-03-20 on lucos_contacts (#561 → #668) and lucos_eolas (#98 → #212): 5+ weeks of stale static files served to users.
-
-**Diagnostic pattern — proxy in front of content-addressed store**: any time a reverse proxy (nginx, gunicorn, envoy, etc.) sits in front of a content-addressed store (Docker registry, blob storage, IPFS, etc.), a *partial write / mid-stream truncation* on the proxy side surfaces as **multiple different-looking errors upstream** — because the client's integrity check fails in a different spot depending on where in the stream it got cut off. On 2026-04-17 this produced three signatures (`context deadline exceeded`, BuildKit `unexpected commit digest`, `manifest unknown`) all from one gunicorn worker saturation. When you see 2+ distinct error messages from services that talk to the same proxied blob-y dependency, suspect one root cause at the proxy layer before three separate bugs.
-
-**Diagnostic pattern — "used to be fine" = slow-cooker cause**: when a component that was working starts misbehaving and nothing has obviously changed, the default hypothesis should be a gradually-accumulating cause, not a new bug. Check on-disk size, index/cache growth, log volume, table row counts, connection-pool waiters, memory RSS trend. Close-as-symptom fixes (bump the timeout, loosen the threshold) are a warning sign you haven't found the real cause. 2026-04-20 arachne incident: 12 days of TDB2 tombstone accumulation surfaced as two symptom tickets (lucos_arachne#321 raised timeout; lucos_arachne#343 dismissed flapping) before being diagnosed. Always ask "what changed about the data, not the code?" first.
-
-**Memory sizing refactors — check where the bytes went, not where they were**: when a design change removes a memory-heavy component ("we removed the OWL reasoner, saving ~500MB"), verify the replacement isn't just moving the bytes to a different place in the same budget. Pre-computed indexes, materialised views, cached derivations, memoised results — all still cost memory, just at a different time. lucos_arachne PR #268 cut container memory 2G → 1G on the assumption that removing the OWL reasoner freed enough RAM; the replacement (precomputed inferred graph) was persisted to the same TDB2 store and *grew* the mmap footprint. Rule: for any memory reduction PR, require a before/after measurement on production-shaped data before the limit change lands.
-
-**lucos_monitoring polls every 60 seconds, NOT every 10s.** Confirmed 2026-05-06 from `lucos_monitoring/src/fetcher_info.erl:32` — `timer:sleep(timer:seconds(60))`. With `failThreshold: 1` (default), one failed poll → alert. With `failThreshold: 2`, two consecutive fails → alert (~120s of failure). With `failThreshold: 3`, three consecutive fails → alert (~180s). This is the right tool for downstream-dependency checks (e.g. `dependsOn: foo` checks where the upstream's typical outage is <60-120s). I previously kept saying "failThreshold: 2 won't help if outages last 60s" — that was wrong because I had the poll interval as 10s in my head. Don't repeat that mistake — when reasoning about whether failThreshold tuning will suppress a flap, the calculation is `failThreshold × 60s ≥ outage_duration → alert suppressed`.
-
-## lucos_deploy_orb — Known Patterns
-- Issue #21 (port-contention-during-deploy): open. `docker compose up --wait` fails when new container can't bind host port held by old container.
-- Issue #42 (closed 2026-03-21): `loganne-publish` command no longer `--fail`s on transient outage. **Scope gap**: `deploy.yml`'s inline "Send deploy log to loganne" step still uses `curl ... --fail` (with `max_auto_reruns: 5` / `auto_rerun_delay: 30s` = 150s retry budget). When loganne itself is the repo being redeployed during an estate wave, the outage can exceed 150s and this step will hard-fail the deploy. If you see this pattern again, the fix would be a separate issue — not a re-open of #42.
-- Issue #43 (open): root cause tracking for 2026-03-20 stale CI failures.
-- Issue #71 (closed): `depends_on` with `condition: service_healthy` leaves containers stuck in "Created" state when `--wait-timeout` expires. Orb now handles this in retry path (starts `Created` containers before retry).
-- **Issue #144 (open, P2) — deploy retries are no-ops when container is `unhealthy`**: the retry logic in `deploy.yml` only handles `Created` state (from #71). If a container is running-but-unhealthy (e.g. first attempt timed out at 120s under load), `docker compose up --wait` on retry exits in 0.7s with terminal `unhealthy` state — never giving it a chance to become healthy. Fix: `docker restart` any `health=unhealthy` containers before retry to reset healthcheck into `start_period`. Observed 2026-04-19 on lucos_eolas + lucos_media_metadata_api during 15-pipeline estate wave (both services were actually healthy minutes later; only CI was red).
-- Issue #84 (open, P2): `Docker Tag & Push (Latest)` step tries to push upstream images (postgres, pgvector, owntracks/recorder) that weren't locally built. Affects repos with non-built services in docker-compose. Blocks deploys for lucos_eolas, lucos_contacts, lucos_photos, lucos_locations.
-- **calc-version runs on ALL branches** (not just main) — `build-amd64` has no branch filter. Version tags get pushed from branch builds. This caused a token burnout incident on 2026-04-16 when ~57 simultaneous branch builds hit GitHub's abuse detection. Fix needed: check `CIRCLE_BRANCH == main` before pushing tags.
-- **Estate-wide rollout + shared token = abuse detection risk**: GitHub flags tokens used for ~50+ simultaneous git push operations from distributed CI runners. Two observed symptoms: (a) 401 "Invalid username or token" (2026-04-16 PAT incident), (b) 403 "Permission to X denied to lucos-ci[bot]" via git-HTTPS even though the App has push access (2026-04-17 during estate-wide Dependabot merge wave; same repo pushed v1.0.7 and v1.0.8 OK at 07:04–07:05 then failed v1.0.9 at 07:07). Token generation API call still succeeds — throttling is at the git-receive-pack layer. Cooldown period unknown. Mitigation: add jitter (`sleep $((RANDOM % 30))`) before `git push` in calc-version, or stagger estate-wide triggers in batches of ~10 with a 2-min gap.
-- **CircleCI re-run vs new pipeline**: `rerun from_failed` uses the ORIGINAL pipeline config (including orb version resolved at creation). If the orb has changed, you need to trigger a NEW pipeline via `POST /api/v2/project/.../pipeline` with `{"branch": "main"}` to pick up the new version.
-- **Docker Hub rate limit**: Triggering ~86 concurrent builds overwhelms Docker Hub pull limits. Free/basic accounts get 200 pulls/6hrs. Stagger builds or accept transient failures.
-- **`lucos-ci` GitHub App (as of 2026-04-16)**: Replaced the old `GITHUB_TOKEN` PAT for CI git push + release creation. Uses `generate-github-token` orb command. Must be granted access to all repos individually.
-- **PR #109 mirror-redirect bug — FIXED 2026-04-18 by PRs #125 + #126**: The broad `ghcr.io/lucas42/mirror/*` `--build-context` rewrite was replaced by BuildKit `[registry."docker.io"] mirrors = ["docker.l42.eu"]` config scoped to docker.io only, with probe-and-fallback if the mirror is unavailable. Aftermath: 18 dependabot PRs were left with failing builds (orb version resolved at pipeline creation, so `rerun from_failed` would hit the same bug). Resolution: trigger fresh pipelines via CircleCI v2 API on each branch — they pick up the updated orb.
-- **Issue #130 (open, rewritten 2026-04-18) — Simplify push-release-tag.yml**: retry-with-increment loop is architecturally broken. Build order is `calc-version → publish-docker → push-release-tag`; by the time push-release-tag runs, the Docker image is already on Docker Hub tagged with the original VERSION. Bumping the git tag on conflict → silent git/Docker drift. Revised plan: (1) remove outer retry-with-increment loop entirely, (2) drop `push_tag_with_retry` / `create_release_with_retry` bash backoff loops, use CircleCI's native `max_auto_reruns` / `auto_rerun_delay`, (3) make job idempotent (check if tag/release already exists at current HEAD before pushing/creating), (4) fail loudly on unexpected tag conflicts rather than silently bumping. **Depends on #131** (serial-group) to remove main source of conflicts first. Original race observed 2026-04-18 on lucos_arachne (4/5 concurrent pipelines failed), lucos_eolas (1), lucos_docker_health (1); also 2026-04-17 on lucos_notes.
-- **CircleCI shell default is `bash -eo pipefail`** — `set -e` is always on. Pattern `func_that_might_fail; rc=$?` is broken: shell exits before `$?` is captured. Always use `rc=0; func_that_might_fail || rc=$?` instead. This bit us in push-release-tag.yml (issue #130).
-- **Issue #122 (closed 2026-04-17)**: orb now probes `docker.l42.eu/v2/` at build-start and sets `MIRROR_AVAILABLE=true/false`; "Docker Login (mirror)" no-ops when false; BuildKit is only configured to use the mirror when true. **Scope gap**: the probe is one-shot. If the mirror is reachable at probe time but saturates later (nginx connection refused, TLS handshake timeout mid-build), later steps still try the mirror. Observed 2026-04-21 estate wave — `Docker Login (mirror)` failed with `context deadline exceeded` / `connection refused` despite #122 fix. For true saturation resilience would need either (a) retry the probe in subsequent steps, or (b) fail-closed to upstream Docker Hub on any mirror error during build. Separate issue from #122 if raised.
-- **Issue #124 (open, P3)**: orb's own CI lacks a pre-publish test exercising the `:latest` tag push step end-to-end. A driver/tagging mismatch in `publish-docker.yml` (the `docker tag` bug fixed by #120) shipped undetected to production on 2026-04-17 because of this gap. Needs a check that both versioned AND floating tags exist after `publish-docker` runs.
-- **`docker tag` + buildx docker-container driver**: `docker buildx` with the `docker-container` driver does NOT load the built image into the host daemon. So `docker tag <image> :latest` followed by `docker push :latest` fails immediately with "No such image". Use `docker buildx imagetools create` instead — server-side manifest tag, no local image required. This was the root cause of 2026-04-17 `publish-docker.yml` bug (fixed by lucas42/lucos_deploy_orb#120); `publish-docker-multiplatform.yml` had already been migrated.
-- **`docker buildx bake --set` does NOT split list attributes on comma**. `--set service.tags=a,b` is parsed as ONE tag called "a,b" → `invalid reference format`. To set multiple values on a list attribute, use repeated `--set` invocations with `+=` append form: `--set service.tags=a --set service.tags+=b`. Introduced as estate-wide P1 in lucos_deploy_orb PR #139 (commit 499aea1b, 2026-04-18) — rolled both `:version` and `:latest` into a single comma-joined `--set`, broke every main-branch build. Issue #141.
-- **Issue #163 (open, P3) — `serial-group` on `lucos/build` also serialises PR pipelines**: `#131` added `serial-group: << pipeline.project.slug >>/build` to every consumer's workflow to prevent main-branch tag races. But there's no branch filter, so all PR pipelines queue behind the same lock. When `lucos/build` takes ~6 min and a burst of ~15 pipelines arrives within 30 min, tail-of-queue PRs wait 60+ min before `lucos/build` even *starts*. During that wait, GitHub shows no `ci/circleci: lucos/build` status at all (blocked jobs don't post pending status), so `mergeable_state: blocked` appears to indicate a "missing" required check. Observed on lucos_photos 2026-04-24 (PRs #354 #356). `autocancel_builds: false` on lucos_photos, so pushing an empty commit does NOT help — old pipeline keeps running, new pipeline joins back of queue. Workaround is purely psychological. Fix candidates: branch-scoped serial-group, branch filter on lucos/build, or make lucos/build skip tag-push on non-main.
-- Issue #103 (open): `scp … /dev/stdout >> "$BASH_ENV"` **truncates** `$BASH_ENV` — does NOT append. `/dev/stdout` is a symlink to `/proc/self/fd/1`; opening that path re-opens the underlying file with `O_WRONLY|O_CREAT|O_TRUNC` (scp-via-SFTP's default open flags), wiping whatever earlier steps wrote. `>>` on the outer shell is useless against a command that opens its destination as a path. Grep-filter workaround (`scp … /dev/stdout | grep …`) fails too: pipe fd is non-seekable and SFTP's positioned writes silently produce nothing. Fix: use `ssh remote cat file >> "$BASH_ENV"` instead — ssh writes to a real stdout stream. General rule: never use `/dev/stdout` as a command's destination path when you want shell redirection to behave; use `-` or a real stdout-emitting command.
-
-**`/_info` is availability/configuration, NOT content-rendering correctness.** See [pattern_info_endpoint_boundary.md](pattern_info_endpoint_boundary.md). Architectural boundary confirmed by lucos-architect on `lucas42/lucos_monitoring#207` (2026-04-29). When proposing a new monitoring check, decide which side of the boundary it sits on first: availability/configuration → `/_info` is fine; content rendering / page integrity / asset reachability → NOT `/_info` (use build-time CI assertion or a synthetic probe distinct from `/_info`). I drifted toward this category error proposing a `/_info` extension for UI integrity URLs because it would have been ergonomic — caught by ux raising the design question and architect rejecting it explicitly.
-
-## lucos_docker_mirror — Known Issues & Patterns
-- **Architecture (post-2026-04, ADR-0002)**: three containers on avalon — `lucos_docker_mirror_web` (**nginx** reverse proxy, port 8038; NOT gunicorn any more), `lucos_docker_mirror_info` (sidecar for `/_info`), `lucos_docker_mirror_registry` (upstream `registry:2.8.3` pull-through cache). Registry has `mem_limit: 512m`. Containers named with `_web` / `_info` / `_registry` suffixes.
-- **Gunicorn is history.** Issue #19 (closed) was the previous architecture. Migration tracked in #21/#22/#23. If you see memory notes about "gunicorn worker saturation" or similar — they're stale, discard.
-- **Issue #41 (open, P3) — registry leaks partial blob to client when upstream Docker Hub EOFs mid-stream**: `registry:2` streams blobs through without buffering. If Docker Hub closes the upstream connection mid-stream, the client receives HTTP 200 + partial body + EOF, looking like a successful-but-corrupt blob. BuildKit surfaces this as `unexpected commit digest ... failed precondition`. Observed 2026-04-19 on lucos_configy during a 15-pipeline estate wave (upstream EOF at 36MB of a 269MB `rust:1.95.0-alpine3.22` layer). Cached blob completed on retry, no persistent corruption. Possible fixes: nginx response buffering, pre-warming popular base images, client-side retry on BuildKit digest errors.
-- **`unexpected commit digest` is NOT always local saturation.** When debugging, pull the registry logs and look for `err.detail="unexpected EOF"` with `http.response.written=<partial-size>`. If you see that, the fault is upstream (Docker Hub). Our mirror is fine; `docker restart lucos_docker_mirror_web` does nothing useful in this case — the cached layer will complete naturally on the next pull.
-- **How to triage the 3 "mirror-ish" CI-side symptoms**:
-  1. `Docker Login (mirror): TLS handshake timeout` — usually NOT the mirror; it's a network blip between CircleCI runner and avalon. Retrying almost always works.
-  2. `failed to compute cache key: unexpected commit digest ...: failed precondition` — check registry logs first. `unexpected EOF` = upstream hiccup (issue #41). Any 5xx errors clustering + `/_info` timing out from outside but not from avalon = local saturation (unlikely on current nginx architecture).
-  3. `manifest unknown` 404s — could be the pre-existing registry:3-not-a-thing trap (see below), or a legitimately-missing upstream image. Not a saturation symptom.
-- **`registry:3` (distribution v3) breaks pull-through proxy for OCI image indexes.** Serves cached index manifests, but on digest lookups for child manifests not yet locally stored, does a local-only lookup and 404s in microseconds (no upstream fetch attempted). Dependabot-bumped lucos_docker_mirror from 2→3 on 2026-04-17 → broke every estate multi-platform build. Fix: pin `registry:2` and add dependabot `ignore` for major bumps on `registry`. Tracked in lucos_docker_mirror#35 (closed). `registry:2.8.3` is the current pin. **Issue #39 (open as of 2026-04-19) is the same bug seen from the orb side** — confirmed by lucas42 that it was raised during the registry:3 regression window and is not reproducible on registry:2.8.3 (I verified with a cold ppc64le memcached child-manifest probe). Can be closed.
-- **Estate-wide triggers**: 8s stagger is fine for the nginx mirror itself. The failure mode that surfaces at scale now is *upstream* — Docker Hub occasionally EOFs mid-blob when avalon is pulling lots of big layers in parallel. For safety, 20s stagger is a reasonable default when triggering 10+ pipelines at once; pre-warming common base images on avalon beforehand eliminates the upstream path entirely for the hottest layers.
-- **Incident report** for the OLD gunicorn era: `docs/incidents/2026-04-17-docker-mirror-overload-and-orb-publish-bug.md` (PR lucas42/lucos#92). Describes a symptom class we no longer see.
-
-## lucos_photos — Known Issues & Patterns
-- `pg_isready` fix tracked in open issue #39. Engine-at-import-time in open issue #40.
-- `/_info` checks/metrics both empty — issues #10 and #11 still open.
-- Worker not implemented — Loganne event delivery unresolved (issue #24 still open).
-- Issue #202 (Loganne 400 on photoProcessed events): open, P3. Non-fatal but every process_photo job emits it.
-- Issue #213 (Contact display names): `sweep_contact_display_names` builds double-slash URLs (trailing slash on `LUCOS_CONTACTS_ORIGIN` + leading slash on path). Fix: strip trailing slash.
-- **reprocess_photo idempotency trap**: `process_photo` short-circuits if original file AND thumbnail both exist. To force regeneration, delete thumbnails from `/data/photos/derivatives/` first (named `{sha256hash}_thumb.jpg`).
-
-## lucos_repos — Convention Checks
-- Docker healthcheck convention (#59, closed 2026-03-07): every service with `build:` in docker-compose must have `healthcheck:`.
-- YAML parse bug (#80, closed): `yaml.v3` can't unmarshal `workflows.version: 2` into struct — fixed in PR #81. Incident report at lucos/pull/44.
-- Audit sweep skips archived repos; treats 410 (issues disabled) as soft failure (#90, closed).
-- Rate limit bottleneck: GitHub Search API (30 req/min). `EnsureIssueExists` replaced with Issues List API (#67), backoff added (#68), success reporting fixed (#69).
-- **last-audit-completed alert**: trigger `POST https://repos.l42.eu/api/sweep` when alert fires. Takes 5-15min. `/api/rerun` does NOT satisfy the monitoring check — use `/api/sweep`.
-- Issue #285: 403 on public repos during audit = transient secondary rate limit, NOT permission error. `handleRateLimitError` must be wired into convention checks, not just `fetchReposPage`.
-
-## lucos_arachne — Known Issues & Patterns
-- Issue #319 (closed 2026-04-10): schedule-tracker notification timeout fixed by PR #320 (5s → 30s). **Do NOT confuse with the separate Typesense timeout.**
-- Issue #327 (open, P2): `connection_timeout_seconds: 2` in `searchindex.py:287` causes tracks bulk import (~18K docs) to timeout. Items upsert succeeds, tracks times out. Fix: increase to 30s.
-- Issue #250 (open): ingestor can't fetch contacts data — `contacts.l42.eu/people/all` requires auth.
-- Issue #116 (P3): ingestor makes blocking bulk fetch on container start (~17s).
-- **Do NOT recommend internal Docker URLs** between services — creates tight coupling. Use external HTTPS URLs.
-- Ingestor runs on cron: `15 04 * * *` UTC (Dockerfile). Initial ingest on container start via `startup.sh`.
-- **2026-04-20 TDB2 bloat incident** (report: `docs/incidents/2026-04-20-arachne-sparql-timeouts-tdb2-index-bloat.md`): PR #268's `DROP GRAPH` + re-INSERT ingestion pattern grew TDB2 indexes from <100MB to ~93GB in 40 days against 227K live quads. TDB2 B+tree tombstones are never reclaimed without explicit compaction. User-visible SPARQL timeouts, JVM swapping at 99%+ container memory. Resolution via online compaction + memory bump (PR #387). Strategic redesign in #386 (architect recommended: conditional refresh → diff-based → scheduled compaction).
-- **TDB2 online compaction command**: `POST /$/compact/arachne?deleteOld=true` via admin auth. Zero downtime, takes ~1 min for our data size, swaps `Data-0001` → `Data-0002` atomically. Use this whenever Fuseki on-disk size grows suspiciously large relative to live quad count (`SELECT (COUNT(*) AS ?n) { ?s ?p ?o }`). Sanity check: healthy ratio is <10× live quad size; 100× or more means bloat.
-- Follow-up issues from the 2026-04-20 incident: #388 (SPARQL-latency signal in /_info), #389 (scheduled compaction safety-net), #386 (strategic ingestion redesign with architect).
-
-## lucos_creds — Known Issues
-- Issue #199 (open, priority:low): SSH resolution to `lucos-creds` still failing from `lucos_creds_ui` despite `hostname: lucos-creds`. Docker DNS may not register hostname as alias on all network configs.
-- Issue #152 (closed 2026-04-10): circular self-deploy dependency fixed — creds no longer needs itself to deploy.
-- Issue #257 (closed 2026-04-16): creds SSH briefly unavailable during redeploy waves was deemed already addressed by `max_auto_reruns: 5` + `auto_rerun_delay: 30s` on `Populate known_hosts` (150s retry budget, added in orb commit `acb6704` on 2026-04-04). **Scope gap**: during the 2026-04-21 estate wave, creds' own redeploy outage exceeded 150s for some repos → all 5 retries burned, `getaddrinfo creds.l42.eu: Temporary failure in name resolution` → hard CI fail. If this recurs during a future large wave, the fix is either to extend the retry budget or to sequence creds' own deploy earlier so its outage ends before other repos need it. Separate issue if raised — do NOT re-open #257.
-
-## Monitoring API Structure
-
-**`/api/status` response**: `systems` is a **dict keyed by URL/name** (not a list). `checks` within each system is also a **dict keyed by check name** (not a list). Check for failures with `check.get('ok') == False` (not just falsy — missing `ok` means passing). Correct pattern:
-
-```python
-data = json.load(...)
-for url, s in data['systems'].items():
-    for cname, c in s.get('checks', {}).items():
-        if c.get('ok') == False:
-            print(url, cname, c.get('value',''))
-```
-
-## lucos_schedule_tracker — API
-- `DELETE /schedule/{system}` — idempotent, returns 204, no auth. Shipped in PR #56, 2026-04-18. Use for cleaning up stale tracked jobs when a scheduled runner stops reporting (e.g. when a metric is removed from a health-check service).
-
-## lucos_monitoring — Known Issues
-- Issue #148 (open, priority:low, owner:lucos-site-reliability): CircleCI check errors on repos with 0 active pipelines (`.github` has no CI config; `vue-leaflet-antimeridian` has config but project not activated). Fix: return neutral/unknown when 0 pipelines instead of erroring.
-- Issue #178 (open, P3): transient CircleCI workflow-fetch blip on the MOST RECENT pipeline lets a failed workflow from an OLDER pipeline win `keepLatestWorkflowPerName`, producing a false-positive `ok=false` for exactly one polling interval (~60s). Pattern: alert → recovery 60s later with no pipeline activity. `collectAllWorkflows` in `fetcher_circleci.erl` silently returns `[]` on HTTP error for each pipeline's workflow endpoint; if the most recent pipeline's fetch fails, only older pipelines contribute and an old failure can become the "latest". Fix: bail to `ok => unknown` if the most-recent pipeline's workflow fetch fails.
-- CircleCI check: v2 workflow-level API via #30/#32. Fix #48 (closed): check last 5 pipelines, flatten workflows, keepLatestWorkflowPerName to avoid race condition.
-- **Erlang OTP ssl startup**: `ensure_all_started(inets)` does NOT start ssl. Use `application:ensure_all_started([ssl, inets])` — walks full dependency chain. Closed as #52/#54.
-- lucos_arachne ingestor unhandled webhook types → 404, events dropped silently. Issue lucos_arachne#53.
-- media-api.l42.eu (lucos_media_manager) `/_info` times out — appears `unknown` in monitoring. Issue #146 (P2).
-- `LongPollControllerV3Test` flaky — issue #79 (priority:high). Related `ConcurrentModificationException` in Playlist.hashCode() — `LinkedList` not thread-safe. Issue #151 (P2).
-- Issue #41 (Emit Loganne events on health transitions): agent-approved, priority:medium.
-- Issue #50 (server.erl eaddrinuse retry): open, PR #51 in review.
-- Issue #132 (suppression bypassed on fetch-info failures): priority:high. Root cause: `fetcher_info.erl` returns `System = "unknown"` on unreachable `/_info`; suppression lookup uses this and always misses. Fix: use configy `id` field as authoritative identifier.
-
-## lucos_locations — Known Issues
-- Issue #9 (P3): mosquitto "protocol error" from TLS healthcheck. PR #15 approved (MQTT handshake in fallback), awaiting human merge.
-- Issue #10 (P3): otfrontend nginx logs `connect() failed (111)` to `[::1]:8080/_info` on every monitoring poll. External `/_info` returns 200 (static fallback) — potentially false health signal.
-
-## tfluke — Known Issues
-- Stale TfL API IDs: `london-overground` line ID, empty vehicle ID to arrivals, stop ID `490007268X`. Issue #227 (P3).
-
-## lucos_media_seinn — Known Issues
-- `ValidationError is not defined` in `src/server/v3.js:19` firing on every request. Issue #176 (P2).
-
-## lucos_docker_health — Known Issues
-- Issue #58 (P3): Docker socket `context deadline exceeded` flood (80+ warnings/2min) during deploy waves — log noise only, container recovers.
-
-## lucos_media_metadata_manager — Known Issues (media-metadata.l42.eu)
-- Issue #58 (P3): PHP warnings for missing isset() on optional POST fields (updatetrack.php, bulkupdatetracks.php:32).
-- Issue #149 (closed): healthcheck was calling `GET /v3/tracks` (46KB, 560ms) — exceeded 0.5s timeout. Fix: `GET /v3/tracks?limit=1`. **Pattern**: `/_info` healthchecks must never call large-payload endpoints.
-- **2026-04-11 incident**: PR #208's server-side redirect to strip `?token=` from URLs triggered a redirect loop. Root cause: PHP `setcookie()` called without `path=` option (original code, pre-2026-04-08) defaults to the request URI directory — so cookies set at `/tracks/21842` get `path=/tracks/`. The new `path=/` cookie couldn't overwrite it. Fixed by PR #212: client-side `replaceState` + expiry headers for legacy path-scoped cookies.
-- **PHP cookie path gotcha**: `setcookie()` without an explicit `path` option creates a cookie scoped to the request URI's directory, not `/`. Always specify `'path' => '/'` explicitly.
-- **Auth monitoring blind spot** (lesson still valid; example updated 2026-06-29 after lucos_authentication decommission): `/_info` doesn't require auth, so authentication failures are invisible to monitoring. Issue #215 raised then closed not_planned — lucas42's view: auth-service reachability is already monitored at the service level, and per-service auth health checking deferred until there's active auth service work. (Original example was auth.l42.eu, now decommissioned and replaced by lucos_aithne / aithne.l42.eu.)
-
-## lucos_media_manager — Known Issues (ceol.l42.eu)
-- Issue #215 (open, priority:low): unhandled `java.util.NoSuchElementException` from scanner bots sending non-standard HTTP methods (STATS, etc). Noisy in logs but non-fatal.
-
-## lucos_arachne — Known Issues
-- **Incident 2026-04-08 (outage 1)**: `apt-get install` change dropped `wget` from Dockerfile while healthcheck still used it. Fix: PR #278 (use `curl`). **Always verify healthcheck tools aren't dropped when modifying Dockerfile apt lines.**
-- **Incident 2026-04-08 (outage 2)**: rename `systems_to_graphs` → `live_systems` in `triplestore.py` — updated `ingest.py` but not `server.py`. Ingestor crash-looped. Fix: PR #280 (3-line rename). **Grep entire repo before renaming shared identifiers.**
-- Issue #116 (P3): ingestor makes blocking bulk fetch on container start (~17s). Open.
-- Issue #250 (open): ingestor can't fetch contacts data — `contacts.l42.eu/people/all` requires auth.
-- Issue #319 (closed 2026-04-10): schedule-tracker notification timeout — fixed by PR #320 (bumped client to 1.0.21, 30s timeout). Superseded by #327 (Typesense timeout).
-- **Triplestore 400**: multi-word language tags (e.g. "Scottish Gaelic") cause Fuseki 400 — space in IRI from `mapPredicate` without URL-encoding. Fix: `url.PathEscape(value)`. Issue #104.
-- Always verify PR numbers from git log — commit messages don't include them. Look up via `gh api repos/lucas42/{repo}/commits/{sha}/pulls`.
-
-## lucos_backups — Known Issues
-- lucos_backups#57 / PR #56: PyPI clients call `sys.exit()` at import if `SYSTEM` env var missing. **Always audit import-time env var requirements when switching to PyPI clients.**
-- Before raising issue during ops checks, search recently closed issues — the alert being red doesn't guarantee no issue exists.
-- Issue #157 (closed): SSH command 3s timeout too tight during heavy deploy waves — was about avalon timeouts, self-healing.
-- Issue #159 (closed 2026-04-12 via PR #160): IPv6 route flap from avalon to salvare — salvare has AAAA only, route from OVH occasionally unreachable. Fix routes Fabric connections via xwing ProxyJump. **PR #160 fix was incomplete — only covers `Host.__init__`'s primary connection, not the raw `ssh` / `scp` commands in `copyFileTo` and `fileExistsRemotely` (host.py:77, 82). Those still go direct and still fail on IPv6 route flaps. Tracked by lucos_backups#185 (open, P2).** Symptom on recurrence: schedule-tracker.l42.eu alerts on `lucos_backups` check with `ssh: connect to host salvare.s.l42.eu port 22: No route to host`. Backup /_info itself shows all checks OK — failure is in the cron scheduled run, not the live service. Alert clears only on next successful scheduled run (next ~03:25 UTC).
-
-## lucos_contacts — Known Issues & Patterns
-- Django `ALLOWED_HOSTS` must include `127.0.0.1` for IP-based Docker healthchecks (`wget http://127.0.0.1:<port>/_info`). General pattern for all Django services.
-- `schedule-tracker.l42.eu` check `lucos_contacts_googlesync_import` lags on recovery — self-heals without intervention.
-
-## xwing — Host Facts
-- Raspberry Pi 3, already 64-bit OS (Debian 13 trixie, aarch64). Confirmed 2026-03-16.
-- Runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media. pici retired (repo archived 2026-03-17).
-- `build-multiplatform` is now the standard for arm builds.
-
-## Hostname → Repo Mappings (non-obvious)
-- `media-api.l42.eu` → `lucos_media_metadata_api` (Go API)
-- `media-metadata.l42.eu` → `lucos_media_metadata_manager` (PHP web UI)
-- `ceol.l42.eu` → `lucos_media_manager` (player/queue UI)
-- `am.l42.eu` → `lucos_time`
-- Verify via `/_info` ci.circle field when in doubt.
-
-## Infrastructure Patterns
-- **Docker Hub rate limit hits at DEPLOY time, not build time** (2026-04-22): the `docker.l42.eu` mirror is wired via orb BuildKit config → covers CircleCI runner builds only. `lucos/deploy-*` uses `DOCKER_HOST=ssh://` to drive the remote host's Docker daemon, which runs `docker compose pull` directly against `registry-1.docker.io` — unauthenticated, 100/6hr per-IP. Estate-wide rollouts of ~37 repos blow this immediately. Symptom: all `lucos/deploy-avalon` jobs fail at `Pull container(s) onto remote box` with `toomanyrequests: unauthenticated pull rate limit`; `lucos/build` succeeds on the same workflow. Fix: add `registry-mirrors` to `/etc/docker/daemon.json` on avalon/xwing/salvare (sysadmin). Tracked in lucas42/lucos#106. First occurrence exposed it; not caused by the rollout — latent gap revealed by concurrent deploy load.
-- `depends_on` only waits for container start — always use `pg_isready` or equivalent in entrypoints.
-- **`eaddrinuse` crash-loop**: new container fails immediately when old one holds the host port; `restart: always` keeps retrying. Symptom: exit code 0, restart count climbing, logs show `eaddrinuse`. Fix tracked in lucos_monitoring#50 and lucos_deploy_orb#21.
-- **Missing PORT in deploy .env → silent no-host-port-binding**: container starts healthy internally but nginx router gets 502. Diagnose: `docker port <container>` returns empty. Fix: retrigger CI after creds corrected. Incident report: lucas42/lucos#53.
-- **Healthcheck tool by base image**: `nginx:N` (Debian) has `curl` not `wget`. Alpine has `wget` not `curl`. `openjdk:N-jdk-slim` has NEITHER — install `curl` explicitly. Wrong tool → permanently unhealthy → dependents stuck in `Created`.
-- **`docker compose up` does NOT stop removed services** — manually stop/remove containers for services deleted from docker-compose.
-- When removing a service from docker-compose, also remove its `/_info` health check — stale checks alert after container disappears.
-- Redis (`redis:7-alpine`) has persistence disabled by default — not suitable for durable queues without AOF/RDB config.
-- `lucos_monitoring` fetches `/_info` with 1-second hard timeout. Health checks inside `/_info` must complete in <0.5s.
-- Docker service names with underscores may fail DNS in Alpine (musl libc). Workaround: set `hostname:` with hyphenated name.
-- **Branch protection `Analyze (actions)` vs `CodeQL` mismatch**: repos with no analyzable source code (static/config) run CodeQL "default setup" (github-advanced-security app) which reports check name `CodeQL` with conclusion `neutral`. `neutral` does NOT satisfy a required check. If branch protection requires `Analyze (actions)` (GitHub Actions, app_id 15368), Dependabot PRs will block permanently — that job never runs. Fix: remove `Analyze (actions)` from required status checks (lucos-system-administrator). Affects lucos_private, lucos_static_media as of 2026-04-10.
-- Named Docker volumes must appear in `services.<name>.volumes`, top-level `volumes:`, AND `lucos_configy/config/volumes.yaml`.
-- **Bind-mounts of local files don't work with `DOCKER_HOST=ssh://` remote deploys.** The lucos deploy orb runs `docker compose up` against the remote Docker daemon on avalon/salvare/etc. Bind-mount sources (e.g. `./config.yml:/container/path`) are resolved on the **remote host's** filesystem, NOT the CircleCI runner's. The source file doesn't exist there, Docker auto-creates it as an empty directory, then `runc` fails with `not a directory: Are you trying to mount a directory onto a file`. Fix: use env vars or `COPY` config into the image. First hit: lucos_docker_mirror#5 on 2026-04-17 (initial deploy of new service).
-- **`registry:3` (distribution v3) breaks pull-through proxy for OCI image indexes.** Serves cached index manifests, but on digest lookups for child manifests not yet locally stored, does a local-only lookup and 404s in microseconds (no upstream fetch attempted). Dependabot-bumped lucos_docker_mirror from 2→3 on 2026-04-17 → broke every estate multi-platform build. Fix: pin `registry:2` and add dependabot `ignore` for major bumps on `registry`. Tracked in lucos_docker_mirror#35. registry:2.8.3 confirmed working via direct test: same digest that 404'd in 446µs now returns 200 in ~500ms with `Accept: application/vnd.oci.image.manifest.v1+json`.
-- **`REGISTRY_PROXY_PASSWORD` is optional in registry:2/3 proxy mode.** Without it, upstream pulls go anonymous (100/6hr/IP Docker Hub rate limit). Registry still starts healthy. Useful to know for emergency manual deploys where creds aren't available — degraded but functional.
-- **Manual container swap protocol** (when CI deploy is blocked but image is on Docker Hub):
-  1. `ssh <host> 'docker inspect <name> --format "{{json .}}"'` → extract env/network/volume/healthcheck/memory
-  2. Baseline monitoring (`curl https://monitoring.l42.eu/api/status`)
-  3. `docker stop <name> && docker rm <name>`
-  4. `docker run -d --name <same> --network <from-inspect> -v <volume> --restart always --health-cmd ... <image>:<version>`
-  5. Wait for healthy (`docker inspect --format '{{.State.Health.Status}}'`)
-  6. Wait 2min, recheck monitoring
-  7. Document via GitHub issue comment — what was done, why, and what self-heals on next CI
-- **SRE doesn't have production creds SCP access.** `scp -P 2202 creds.l42.eu:<system>/production/.env` → Permission denied (publickey). Only lucas42 key has production read. Agents have development read+write only. Don't waste time trying — escalate to lucas42 or deploy degraded.
-- **Docker Hub rate limit cascades in CI**: when mirror is broken, every CI pipeline pulls directly from Docker Hub, exhausting the shared lucas42 pull rate limit. `imagetools create` in `Docker Tag & Push (Latest)` is especially exposed because it does a manifest GET which counts as a pull. Symptom: pipeline builds+pushes successfully then fails at tag-latest with `429 Too Many Requests / toomanyrequests: You have reached your pull rate limit as 'lucas42'`. Fix: orb#137 (push both tags at build time, eliminate tag-latest round-trip).
-
-## Ops Checks
-- Tracking file: `ops-checks.md` — records last-run timestamps for monthly checks and per-container log review history.
-- **7 checks** (not 6). Mandatory completion manifest table at end of each run. See `~/.claude/agents/sre-ops-checks.md`.
-- CircleCI v2 API: extract token with `cut -d'"' -f2` to avoid surrounding quotes. Pipeline `state` is always "created" — check workflow state separately.
-- `lucos-site-reliability` app does NOT have org-level repo list access — use sandbox list or per-repo API calls.
-- **CI rerun ownership**: SRE diagnoses, asks lucos-system-administrator to trigger reruns (SRE token is read-only).
-
-## _info Schema Compliance
-- Spec doc: `~/.claude/references/info-endpoint-spec.md` and `lucos/docs/` (from lucos/issues/35, closed).
-- CI status monthly check: `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` — no auth needed.
-- CircleCI v2 rerun: `POST https://circleci.com/api/v2/workflow/{workflow_id}/rerun` with `-d '{"from_failed": true}'`.
-
-## lucos_photos_android — Known Issues & Patterns
-- Issue #28 (signing): Kotlin DSL variable shadowing — `keyPassword` in `SigningConfig.() -> Unit` lambda resolves to receiver member first. Prefix outer vals to avoid shadowing.
-- Issue #31 (sync re-scans): fix was `WorkManager.enqueueUniqueWork()` with named key (was plain `enqueue`).
-- Issue #30 (missing EXIF): photos genuinely lack DateTimeOriginal (screenshots, WhatsApp). Resolution: use file last-modified as fallback.
-
-## GitHub App Limitations
-- **`@dependabot` commands require push access** — no agent app has push access. Escalate `@dependabot rebase` etc. to lucas42 manually.
-
-## Loganne Webhook Retry Operations
-- Auto-retry fires ~30s after initial failure. Transient deploy-window failures self-heal.
-- Bulk retry: `POST /events/retry-webhooks` with `Authorization: Bearer $KEY_LUCOS_LOGANNE`.
-- Events API defaults to 7-day window. `webhook-error-count` metric covers all 10000 events in memory.
-- Wait ~60s before manually intervening — auto-retry will likely clear it.
-
-## GitHub API
-- Always use `--app lucos-site-reliability` with `gh-as-agent`. Never `gh api` or `gh pr create`.
-- Always use `<<'ENDBODY'` heredoc for `body` field — `-f body="..."` breaks newlines and backticks.
-- Issue comments: `repos/lucas42/{repo}/issues/{n}/comments --method POST`.
-- **Comment endpoint footgun**: POSTing to `repos/.../issues/comments/{comment_id}` OVERWRITES the existing comment's body (GitHub treats it as an update). To post a NEW comment, always use the issue-scoped endpoint `/issues/{n}/comments`. To edit, use `--method PATCH repos/.../issues/comments/{comment_id}`. Got burnt on lucos_deploy_orb#105 on 2026-04-17 — had to reconstruct a lost comment.
-- The `lucos` repo has auto-merge — do not tell lucas42 to manually merge it.
-- For `gh-as-agent` body with backtick code: use `BODY=$(cat <<'ENDBODY' ... ENDBODY)` and pass as `--field body="$BODY"`.
-- [Treat empty tool output as unknown](feedback_treat_empty_tool_output_as_unknown.md) — empty/late tool result = unknown, never data; re-run/wait before asserting (confabulation-on-empty mitigation, lucos#155)
+Index only — one line per entry, detail in the linked file. Verify ticket state before citing.
+
+## Consolidated topic files (bulk inline knowledge)
+- [Per-repo known issues + host facts + hostname→repo map](topic_per_repo_known_issues.md) — all repos' quirks/open tickets; xwing; media-api/media-metadata/ceol map.
+- [CI + infra patterns](topic_ci_infra_patterns.md) — deploy_orb, docker_mirror, DOCKER_HOST=ssh deploys, rate limits, healthcheck-by-base-image, manual container-swap, GitHub API/App conventions, Loganne retry ops, creds snapshot.
+- [Monitoring mechanics](topic_monitoring_mechanics.md) — poll interval=60s (not 10s); post-restart cold-state ~2-3min cascade.
+
+## Method: don't trust local checkouts / logs
+- [Container restart clears docker logs → false "onset"](pattern_container_restart_log_buffer_artifact.md) — check StartedAt + full status distribution + job-success stream + live probe before reporting an onset/ongoing failure. arachne#711.
+- [Sandbox checkouts months-stale + undeployed repos](pattern_stale_sandbox_checkouts.md) — verify vs `git show origin/main:<path>` AND live probes before any migration/decom finding; logs show symptoms not the blocking mechanism.
+
+## aithne / auth
+- [PWA service-worker render drops aithne_origin → dead navbar keepalive → 15-min re-login storm](pattern_pwa_sw_render_drops_aithne_origin.md) — diagnose via router log `/auth/login` vs `/auth/remint` per consumer referer; notes#445 (SW client-render, 0 remints vs seinn 160). NOT the #441 JWKS gap.
+- [eolas dual auth: @api_auth static-key vs AithneAuthMiddleware JWT](pattern_eolas_dual_auth_static_key_vs_jwt_middleware.md) — "Not enough segments" middleware log is NOISE, never blocks @api_auth.
+- [contacts returns 403 (not 401) for an unrecognised key](pattern_contacts_403_for_unrecognised_key.md) — decider=read server's live CLIENT_KEYS; stuck-403 after consumer redeploy = redeploy the SERVER.
+- [Scope-cutover convergence + holder-enumeration gap](pattern_scope_cutover_convergence_and_enumeration_gap.md) — verify via router access log; monitoring board (not log) catches infrequent-read 403s.
+- [aithne signing_key_age is NOT a deploy signal](pattern_aithne_signing_key_age_not_deploy_signal.md) — key persists across restarts; verify deploy via StartedAt+image tag.
+- [aithne KEK breaking-migration deploy race + recovery gotchas](pattern_aithne_kek_migration_deploy_race.md) — 2026-06-30 46min outage; migrate-kek quote/PORT/redeploy gotchas.
+- [aithne contact id: string (principal) vs int (contacts proxy)](pattern_aithne_contactid_string_vs_int_divergence.md) — JS cross-ref MUST String()-coerce.
+- [Scratch Go image has no CA bundle → x509 unknown authority on outbound](pattern_scratch_image_no_ca_bundle.md) — latent until first outbound HTTPS; /_info green ≠ fixed.
+
+## lucos-search / eolas / arachne
+- [lucos-search option value = eolas person URI even in contact mode](pattern_lucos_search_emits_eolas_uri_not_contacts.md) — reverse-map, don't string-munge.
+- [arachne has TWO eolas ingest paths; hyphenated pks fail webhook path](pattern_arachne_eolas_dual_ingest_hyphen_pk.md) — eolas urls.py pk regex `\w+` excludes hyphens; bulk masks it.
+- [arachne skos:prefLabel makes ontology meta-entity look indexable](pattern_arachne_preflabel_makes_indexable.md) — is_meta_type excludes OWL/RDFS not SKOS.
+- [media_metadata → /v2/export → arachne pipeline landmines](pattern_media_metadata_arachne_pipeline.md) — torn/empty export wipes tracks; no shrink-guard.
+- [arachne multi-component CI dep-skew + #633 regression](project_arachne_multicomponent_ci_depskew.md) — one pip resolve across components → ResolutionImpossible; per-component venvs (#652).
+- [Misleading "502 could not reach X" = DECODE failure of a 200 upstream](pattern_misleading_502_decode_not_unreachable.md) — test upstream directly; suspect mock/prod JSON type divergence.
+
+## Backups
+- [Backups localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 dual-stack publish mismatch](pattern_backups_sshadd_gates_server_start.md) — test 127.0.0.1 AND localhost AND [::1].
+- [DB-specific backups walked back → engine-agnostic quiesce](project_backups_db_consistency_walkback.md) — docker pause owner around read; all hosts plain ext4.
+- [aurora access + rsync facts](reference_aurora_access_and_rsync.md) — no direct SSH; route via container ProxyJump; real hardlinks.
+- [home-host backups red = ISP dropped upstream IPv6 transit](pattern_salvare_ipv6_prefix_withdrawal.md) — self-resolves; don't force IPv4.
+- [backup-without-original red forever on decommissioned system's retained backups](pattern_backups_without_original_on_decommission.md) — benign; fix=configy-absence signal (#359).
+- [host-tracking "<host>: 'low'" = invalid recreate_effort in configy](pattern_backups_invalid_effort_crashes_host_tracking.md) — KeyError repr; fix configy value.
+- [backups create-backups red on empty (zero-commit) repo](pattern_backups_empty_repo_fails_run.md) — wget exit 8 on ref-less codeload. #298.
+- [#311 scp→rsync: rsync runs on SOURCE HOST via Fabric; avalon has no rsync](pattern_backups_rsync_binary_missing_from_image.md) — check `which rsync` on the HOST.
+- [Incremental rsync path: ProxyJump host-key + unquoted rm&&mv bugs — RESOLVED](pattern_incremental_rsync_container_proxyjump_hostkey.md) — shlex.quote in runOnRemote; StrictHostKeyChecking=no doesn't reach ProxyJump hop.
+
+## Router / DNS / firewall
+- [New service TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — update-domains.sh on startup + daily 22:16 UTC; NOT an incident.
+- [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md) — configy certonly + stock certbot renew; reaping = "not HTTP-served".
+- [All l42.eu SERVFAIL = apex zone failed to load on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon; reload via kill -HUP named PID.
+- [Firewall enforce rollout — hairpin is single point of failure](project_firewall_rollout.md) — COMPLETE 2026-06-08; durable: DRY_RUN override, Compose reuses stale network.
+- [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time IPv4-only](reference_avalon_ipv6_bridging.md) — enable_ipv6 per-network.
+- [Compose silently REUSES a stale network](compose-reuses-stale-network.md) — inspect live net, not compose; network rm+recreate to reconcile.
+
+## Dev wiring / creds
+- [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — *_ORIGIN=host.docker.internal; diff local .env vs fresh creds before writing.
+- [Use commit-claude-main for ~/.claude files, not hand-rolled rebase/stash](feedback_commit_claude_main_for_dotclaude.md) — shared tree; manual rebase drops others' in-flight memory.
+- [lucos_creds reads .env from CircleCI snapshot, not live store](reference_lucos_creds_self_deploy.md) — check snapshot on "fix didn't take".
+- [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + creds value.
+- [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — usually link 3 (compose), not link 1 (creds).
+
+## Monitoring
+- [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — use `summary` for counts.
+- [docker_mirror_registry OnExpire errors benign](pattern_docker_mirror_registry_onexpire_benign.md) — TTL noise, not disk.
+- [Estate circleci alert storm = CircleCI API outage tripping UnknownsGate](pattern_circleci_unknownsgate_estate_storm.md) — check Loganne failingChecks[].debug first; fix=UnknownsGate threshold.
+- [monitoring self fetch-info flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — global 1s timeout; #186 closed.
+- [fetch-info requires http_port; non-HTTP boxes via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — /systems/http filters; use full /systems for non-http attrs.
+- [public-port TCP reachability checks](pattern_monitoring_public_port_reachability.md) — liveness floor only; /systems/http filters out dns/router.
+- [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE fails](reference_schedule_tracker_detection_semantics.md) — intermittent stays GREEN by design.
+- [Media cross-probe flap in rollout burst = LEGIT 401 during key-rotation convergence](pattern_deploy_window_boundary_crossprobe_flap.md) — alerts CORRECT, don't suppress.
+- [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — worthless on lagging schedule_tracker checks.
+- [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress filter + unsuppress cascade.
+- [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md) — ignores pre-existing failures.
+- [red-means-down — no ack/known-issue board state](feedback_red_means_down_no_ack_state.md) — don't pitch mute/ack features.
+- [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
+- [Alert suppression asymmetric → orphaned "Everything OK" emails](pattern_monitoring_suppression_asymmetry.md) — #264.
+- [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or ticket.
+- [Checks AND thresholds live in /_info, not lucos_monitoring](feedback_failthreshold_lives_in_info.md) — monitoring is aggregation only.
+- [/_info = availability/config, NOT content-rendering correctness](pattern_info_endpoint_boundary.md) — content integrity → CI assertion/synthetic probe.
+
+## Scheduled-job / service-specific failures
+- [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError, skips success tick.
+- [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch failure (resolved=0). mma#302.
+- [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — not a bug.
+- [lucos_locations stops recording silently; /_info only checks TLS](pattern_locations_silent_data_gap.md) — monitor OUTCOME not each cause. #91.
+- [media_import all_files red = weekly full scan hard-killed by redeploys](pattern_media_import_fullscan_killed_by_redeploy.md) — cron grandchild SIGKILLed. #173.
+- [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — decodeAudioData/fetch fails; #482 fixed #483.
+- [Daily 02:00Z bulk weighting recompute → loganne flap](pattern_daily_weighting_cron_loganne_flap.md) — known, don't refile.
+- [linuxplayer phantom ?action=error DELETEs — RESOLVED #123](pattern_linuxplayer_phantom_error_deletes.md) — re-open if recurs.
+
+## CI / build / deploy
+- [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
+- [Auto-merged base-image bump breaks at deploy/runtime not build](pattern_baseimage_bump_runtime_break.md) — durable fix = CI test job booting the stack, not a Dependabot ignore.
+- [deploy-avalon exit 18 "pull access denied for *_test" = orb pull profile-blind](pattern_deploy_orb_pull_profile_blind.md) — FIXED orb 0.0.185; fresh pipeline to pick up orb fix.
+- [lucos_repos audit mass 403s = GitHub secondary rate-limit, not lost access](pattern_repos_audit_dryrun_secondary_ratelimit.md) — non-incident.
+- [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — flaky scp assertion; re-run from failed. #358.
+- [Docker Login (mirror) exit 1 = TIMEOUT reaching docker.l42.eu, transient](pattern_docker_mirror_login_timeout_transient.md) — confirm mirror healthy then rerun.
+- ["blob unknown to registry" on push = upstream Hub transient](pattern_docker_push_blob_unknown_upstream.md) — rerun clears; not our code.
+- [Slow deploy to home hosts = ISP image pull, not a stall](pattern_homehost_deploy_pull_slowness.md) — don't ticket.
+- [lucos_repos deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min; POST /api/sweep manual.
+- [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — don't close/reopen/empty-commit during outage.
+
+## Docker daemon / recovery
+- [Docker live-restore:true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — stop all containers → restart daemon → redeploy.
+
+## Diagnostic methodology / standing rules
+- [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
+- [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs evidence.
+- [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before shipping the correlation's fix.
+- [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead, not a cause.
+- [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
+- [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before hypothesising.
+- [Check file reachability from entry point before "deployed code misbehaves"](feedback_check_reachability_first.md) — bundlers drop unreachable code.
+- [Narrow the event window before counting categories](feedback_narrow_event_window_before_categorising.md) — filter to burst [start,end] first.
+- [named volume shadows image contents at mount path](pattern_named_volume_shadows_image.md) — first-init-only semantics shadow image updates; also "used-to-be-fine"=slow-cooker (check data/index/log growth) and proxy-over-content-addressed-store partial-write = many signatures one cause.
+- [credential rotation must distribute the public material](pattern_rotation_must_distribute.md) — latent gap until first real rotation; ping architect on 2nd case.
+- [The `url` field of an event is an identifier, not an API path](pattern_url_field_is_not_an_api_path.md) — extract ID, use own path conventions.
+
+## Standing rules — process / GitHub / PRs
+- [Finalize + push all content before dispatching to an auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) — approval auto-merges the reviewed SHA in seconds; keep incident reports DRAFT until final.
+- [Flag follow-up disposition to coordinator, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — don't toggle issue state on crossed messages.
+- [PR state checks must include `merged` field first](feedback_pr_check_merged_field_first.md) — merged PR shows UNKNOWN like an open one mid-compute.
+- [Verify issue state before citing a #N](feedback_refetch_state_before_writing_final_artifact.md) — strongest in final-artifact follow-up tables.
+- [Verify closed-issue disposition (body+closing comment) before citing as preference evidence](feedback_verify_closed_issue_disposition.md).
+- [Check recent fixes before filing flap-investigation issues](feedback_check_recent_fixes_before_filing.md) — pre-fix alerts persist in lookback for days.
+- [Probe before requesting a feature](feedback_check_before_requesting.md) — one curl/grep it doesn't already exist.
+- [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — grep store/handler or hedge.
+- [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — use `--silent`+$? for existence.
+- [Verify body-file content before create-pr / gh body-file calls](feedback_verify_body_file_before_pr.md) — unique tempfile names; Write may fail silently when batched.
+- [`gh api` file-backed body needs `@` prefix](feedback_gh_api_body_at_prefix.md) — else empty body silently.
+- [Use canonical persona name for SendMessage, not envelope teammate_id](feedback_teammate_id_vs_name.md).
+- [Don't file GitHub artifacts on behalf of another agent](feedback_dont_file_on_behalf_of_other_agents.md) — unblock them instead.
+- [Sandbox branch hygiene: reset --hard origin/main before branching](feedback_sandbox_branch_hygiene.md).
+- [No destructive remediation without a recovery path](feedback_no_destructive_without_recovery_path.md) — compose files live only on CI runners transiently.
+- [Treat empty tool output as unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run/wait before asserting.
+
+## Standing rules — incident reports / proposals
+- [Read the originating PR/issue body in full when writing causation](feedback_read_pr_body_for_causation.md) — don't reflex-frame triggers as "routine".
+- [Don't overclaim attributions in incident reports](feedback_no_attribution_overclaim.md) — restrict to what people actually said.
+- [Confirm with team-lead before shipping a report when verification is externally gated](feedback_parallel_drafting_verification_scope.md) — parallel-drafting rule is for minutes-hours, not multi-day.
+- [Active recurrence justifies priority above default-P3](feedback_priority_active_recurrence.md).
+- [Test follow-ups must be deterministic AND actionable](feedback_test_proposals_must_be_actionable.md) — no alarm clocks for third-party bugs.
+- [Loganne is for cross-estate events, not fine-grained instrumentation](feedback_loganne_scope.md) — enumerate alternatives.
+- [Enumerate existing surfaces before proposing new persistence](feedback_enumerate_existing_mechanisms.md) — inverse of loganne_scope.
+- [Verify "alternative" implementations are actually equivalent](feedback_verify_alternatives_are_equivalent.md) — SPARQL COUNT(DISTINCT) over OPTIONAL gotcha.
+- [Silent fallbacks are a security risk, not just operational](feedback_silent_fallbacks_are_a_security_risk.md).
+- [Don't game API contracts to work around design issues](feedback_dont_game_api_contracts.md) — fix at source.
+- [Read library READMEs before reverse-engineering APIs from source](feedback_read_readmes.md).
+- [ADR-0006 covers consumer-side only](reference_adr_0006_consumer_side_only.md) — not producer-side outbound saturation.
+- [Keep the docker.l42.eu mirror in the orb](feedback_keep_docker_mirror.md) — fix mirror-side bugs at the mirror layer.
+- [When a fix to live state doesn't take, ask whether deploy reads live state or a snapshot](feedback_snapshot_indirection.md).
+- [Healthcheck depth varies — `Healthy` ≠ end-to-end working](feedback_healthcheck_depth_varies.md) — read the healthcheck.test line.
+
+## Loganne webhook retry (actionable — never "self-heals")
+- [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer KEY_LUCOS_LOGANNE; /events filters client-side only.
+- [webhook-error-rate never clears itself — retry via API](feedback_rescan_before_webhook_cleanup.md) — fresh-scan all failed events before retry (see topic_ci_infra_patterns for the API).
+- [Sample errorMessage distribution before retrying](feedback_sample_webhook_errors_first.md) — transient-looking 504s often mask permanent data-quality fails.
+- [Snapshot per-failure diagnostic fields before retry](feedback_snapshot_before_retry.md) — retry overwrites the failure-side record.
