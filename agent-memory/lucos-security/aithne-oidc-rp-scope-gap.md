@@ -37,3 +37,23 @@ config choice in the consumer.
 frontend with no backend, put behind aithne via a sidecar OIDC RP rather than the
 Go/Node/Python local-verification pattern most consumers use. Check this gap early in any
 such design.
+
+## Update 2026-07-03: gap being closed via lucas42/lucos_aithne#277
+
+Reviewed and approved (design-sound) lucas42/lucos_aithne#277, which adds the
+requested∩granted `effectiveScopes` claim (reusing [[lucos-aithne-security-architecture]]'s
+`#258` intersection primitive) to the id_token and `/oauth2/userinfo`. Verified against
+`main`: `MintIDToken` (`token/token.go`) has no scopes param yet and issuance stays
+ungated (zero-grant principal still gets a valid id_token) — matches ADR-0001 §6.
+Sequencing is correctly Blocked on #258 (confirmed unimplemented — `effectiveScopes`
+doesn't exist in the codebase as of this review, #258 is Ready/unassigned-in-progress).
+
+**Side observation surfaced during review (not filed as a separate issue — status quo,
+not new):** `handleAuthorize` (`oidc.go`) accepts any `scope=` string from a registered
+client with no per-client allowed-scopes list and no consent screen. Combined with #258,
+any registered OIDC client can request arbitrary scope names and read back which ones the
+principal holds — a scope-enumeration side channel. Not a new risk from #277: the RP
+already gets the raw (unencrypted, signed-only) access_token JWT directly in the token
+response and could decode it itself. Strictly less exposure than pre-#258 (full grant set
+on every login), which lucas42 already accepted given first-party-only consumers. Revisit
+only if a less-trusted/third-party OIDC client is ever registered.
