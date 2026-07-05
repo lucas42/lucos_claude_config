@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-02
+container_status: 2026-07-05
 resource_checks: 2026-06-30
 syslog_review: 2026-06-30
 software_updates: 2026-06-30
 sandbox_drift: 2026-06-30
-repos_dashboard: 2026-07-02
+repos_dashboard: 2026-07-05
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1426,6 +1426,21 @@ All already tracked by audit tool. No action needed.
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
 
 **Repos dashboard**: 59 repos checked (was 60 on 2026-06-24 — 1 repo removed/archived since then), 0 failing conventions. Completely clean.
+
+**No new issues raised.**
+
+---
+
+### 2026-07-05 (checks 1 + 6 due; weekly checks last ran 2026-06-30, 5 days — not due until 2026-07-07; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare.
+
+**Repos dashboard**: 3 failing conventions, all on the same brand-new repo `lucas42/lucos_architecture_models` (created 2026-07-03, single "Initial commit" by lucas42, contains only a README — no CI config, no Dockerfile, no code yet):
+- `dependabot-configured` — dependabot.yml not found
+- `fork-pr-contributor-approval` — set to "first_time_contributors", expected "first_time_contributors_new_to_github"
+- `in-lucos-configy` — repo not listed in lucos_configy
+
+All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new issues raised. **Did not attempt fixes**: this is pre-scaffolding, not a routine hygiene gap. Running the standard `provision-repo-ci-secrets.sh` standup now would set branch protection requiring `ci/circleci: lucos/build` — a check that can never run since there's no `.circleci/config.yml` yet, which would permanently block all future PRs on this repo. Guessing the `in-lucos-configy` type (system/component/script) before the repo's actual shape exists also risks a wrong entry someone has to correct later. Flagging to dispatcher: recommend the standard new-repo standup once real scaffolding (CI config, Dockerfile if applicable) lands — not before.
 
 **No new issues raised.**
 
