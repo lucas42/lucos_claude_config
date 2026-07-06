@@ -44,7 +44,7 @@
 - [Loganne Agent Access](reference-loganne-access.md) — bearer via KEY_LUCOS_LOGANNE; filter client-side; event type credentialUpdated.
 - [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
 - [Wave 4 CSRF / SameSite=None risk](risk-wave4-csrf-samesite-none.md) — @csrf_exempt + form-data mutations become CSRF-vulnerable when aithne_session (SameSite=None) replaces SameSite=Lax session. Check every Wave 4 PR.
-- [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — id_token/userinfo still lack `scopes` (#277 open); auth-code token scope narrowing shipped+approved (#258/#279, 2026-07-06).
+- [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — CLOSED 2026-07-06: id_token/userinfo now carry `scopes` (#277/#280) atop access-token narrowing (#258/#279); generic OIDC RPs can gate on scope.
 - [aithne OIDC url-redirect false positive](lucos-aithne-oidc-url-redirect-fp.md)
 - [lucos_creds scoped key permissions + deploy-env-base64 risk](lucos-creds-scoped-key-permissions.md)
 - [Issue-body Open Questions lesson](lesson-issue-body-open-questions.md)
