@@ -57,3 +57,28 @@ already gets the raw (unencrypted, signed-only) access_token JWT directly in the
 response and could decode it itself. Strictly less exposure than pre-#258 (full grant set
 on every login), which lucas42 already accepted given first-party-only consumers. Revisit
 only if a less-trusted/third-party OIDC client is ever registered.
+
+## #258 shipped via PR #279 (reviewed + APPROVED 2026-07-06)
+
+`handleAuthCodeGrant` now intersects `authCode.Scope` (requested) against
+`GetActiveScopes` (granted) before minting the access token — reuses
+`parseScopeParam`/`toSet` from the `client_credentials` downscoping path
+(`machine_credentials.go`). Closes the over-scoping gap #258 described (access token
+used to always carry the full grant-store set regardless of what was requested).
+
+**Judgment call made on review, for reuse if this resurfaces:** `/oauth2/authorize`
+requires `openid` in scope but no aithne scope, so `scope=openid` alone now yields an
+access token with an **empty** scope set — differs from `client_credentials`'
+omitted-scope→full-set fallback. Assessed this as **not a defect**: it's the safe
+failure direction (ADR-0001 §6 — gate on scope, never bare session validity), and the
+two grants have different minimum-scope contracts by construction (`authCode.Scope`
+can never be truly empty since openid is mandatory, so client_credentials' fallback
+branch has no equivalent trigger here). Net effect: OIDC path is *more* conservative,
+not less. Worth an onboarding-docs note ("request every aithne scope you need —
+`openid` alone gets nothing") but not a merge blocker. Don't re-litigate this as a
+finding unless the actual behaviour changes.
+
+#277 (the id_token/userinfo `effectiveScopes` claim) is still open/unimplemented as of
+2026-07-06 — no conflict with #279 yet, but whoever implements #277 should be pointed
+at the `requestedScopes`/`grantedSet` intersection already written in
+`handleAuthCodeGrant` for consistency.

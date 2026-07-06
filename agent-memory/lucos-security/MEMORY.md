@@ -193,4 +193,4 @@ See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dis
 - [Loganne Agent Access](reference-loganne-access.md) — bearer via KEY_LUCOS_LOGANNE; filter client-side; event type credentialUpdated.
 - [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
 - [Wave 4 CSRF / SameSite=None risk](risk-wave4-csrf-samesite-none.md) — @csrf_exempt + form-data mutations become CSRF-vulnerable when aithne_session (SameSite=None) replaces SameSite=Lax session. Check every Wave 4 PR.
-- [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — id_token/userinfo carry no `scopes` claim; generic OIDC RPs (oauth2-proxy) can't gate on aithne scope without an aithne-side change first.
+- [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — id_token/userinfo still lack `scopes` (#277 open); auth-code token scope narrowing shipped+approved (#258/#279, 2026-07-06).
