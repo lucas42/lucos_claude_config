@@ -1,192 +1,43 @@
 # lucos-security Agent Memory
 
-## Infrastructure: Repo Visibility
-
-All lucos repos on github.com/lucas42 are **public**. This is critical context for every security review:
-- Documentation committed to repos (including `docs/reviews/`, ADRs, CLAUDE.md) is publicly readable
-- GitHub issue trackers, including closed issues, are publicly readable
-- Git history (including PR commit history) is permanent and publicly searchable
-
-## Policy: Security Advisory Decision Rule (Agreed 2026-03-04)
-
-**Default path:** Security findings go as normal public GitHub issues. This keeps them in the normal triage/routing/implementation pipeline.
-
-**Advisory path (narrow exception):** A finding goes to a private GitHub Security Advisory ONLY if BOTH of these are true:
-1. An attacker with network access could exploit it **immediately**, without needing any other pre-existing access or insider knowledge
-2. The finding is not yet fixed
-
-Everything else — conditional exploitability, defence-in-depth gaps, theoretical attack chains, things requiring existing access to exploit further — goes as a normal public issue.
-
-**Do not over-classify.** Examples of things that do NOT need advisories:
-- Credentials that might appear in internal logs under specific error conditions
-- Attack chains that require existing privileged access to trigger
-- Things behind network controls (even imperfect ones)
-
-See lucas42/lucos#25 for the full discussion. The original (too-cautious) advisory criteria from the initial proposal were revised after feedback from lucas42 and lucos-issue-manager.
-
-**PROCESS NOTE:** When conducting a security audit, apply the routing decision to EACH FINDING BEFORE WRITING ANYTHING in public. Do not write findings to public comments and sort routing afterwards.
-
-## Risk Pattern: Prompt Injection via External Data Sources
-
-AI agents that consume external text (CI build logs, issue bodies, PR descriptions, log files) are vulnerable to prompt injection. This is a recurring risk class across lucos because:
-- All lucas42 repos are public, so anyone can open PRs and trigger CI builds
-- Lucos agents have access to infrastructure credentials, expanding blast radius
-- Agents are increasingly being given read access to third-party systems (CircleCI, etc.)
-
-Key principle: treat external text content (build logs, user-supplied strings, web page content) as **untrusted data**, not as trusted instructions. Mitigations:
-- Prefer structured API responses (status codes, timestamps, job names) over raw freeform text
-- When freeform text must be included in agent context, wrap it in clear delimiters with explicit framing that content is untrusted
-- Limit raw log/text access to only what is necessary; prefer human-in-the-loop for full log reads
-
-Flagged on: lucas42/lucos_deploy_orb#8 (CircleCI token for SRE agent)
-
-## Risk Pattern: CI Build Logs May Contain Secrets
-
-CircleCI secret masking in build logs is imperfect. Partial values, base64-encoded variants, secrets in error stack traces, and commands echoing their argument lists can slip through. A read token scoped to CircleCI also grants access to log output, not just pass/fail status.
-
-The `remote-build.yml` command in `lucos_deploy_orb` passes `DOCKERHUB_USERNAME` and `DOCKERHUB_ACCESS_TOKEN` as env vars to a remote SSH command -- these could appear in build logs.
-
-Prefer v2 API structured status responses over raw log output wherever possible.
-
-## Fixed Issues (do not re-raise)
-
-- **CircleCI token in query param** (lucos_monitoring): fixed lucos_monitoring#25/#59 — `checkCI` now uses `Circle-Token` header + v2 API.
-- **Unauthenticated MCP endpoint** (lucos_arachne): fixed PR #292 (closes #291) — Bearer auth via `CLIENT_KEYS`, `/_info` still open.
-- **DOMPurify XSS** (lucos_arachne): fixed PR #52 — `dompurify >= 3.3.2` override (GHSA-v2wj-7wpq-c8vv).
-
-## Risk Pattern: OS Command Injection via `os:cmd` with Unvalidated Input
-
-Erlang's `os:cmd/1` is equivalent to a shell `system()` call — any unsanitised input concatenated into the command string is injectable. Found in `lucos_monitoring/src/fetcher.erl` in `checkTlsExpiry/1`, where the `Host` value from `service-list` is concatenated directly. Mitigation: always use Erlang's native libraries or `open_port` with an explicit argument list rather than a shell string. Current exploitability is low (service-list is baked in at build time from internal configy), but the pattern is inherently fragile.
-
-## Risk Pattern: Unauthenticated State-Mutation Endpoints in Internal Services
-
-`lucos_monitoring/src/server.erl` exposes `/suppress/*` endpoints (PUT/DELETE/POST) with no authentication. These allow any network-reachable caller to open/close alert suppression windows. Pattern to watch for in other lucos services: internal services that have write/action endpoints often lack auth because they're assumed to be unreachable — but network_mode:host and firewall rules are not a substitute for endpoint auth.
-
-## Risk Pattern: XSS via Unescaped External Data in Erlang HTML Rendering
-
-`lucos_monitoring/src/server.erl` renders `techDetail` and `debug` fields from remote `/_info` endpoints directly into HTML without encoding. No Erlang HTML-escaping library is currently used. Any lucos service doing manual string concatenation into HTML should be checked for this. Fix: escape `<`, `>`, `&`, `"` before interpolation; run URL-linkification regex on already-escaped content.
-
-## Policy: lucos-security PRs Are NOT Auto-Merged (Decision: 2026-03-03)
-
-**lucas42 explicitly rejected auto-merging lucos-security[bot] PRs** (see lucas42/lucos#26, closed as "not planned").
-
-Rationale: Dependabot PRs are deterministic; LLM-generated PRs are non-deterministic and need human/reviewer approval before merging.
-
-The intended path is: lucos-security raises PR -> lucos-code-reviewer approves it -> auto-merge triggers. This is tracked in lucas42/lucos_photos#42.
-
-**Do not raise issues or PRs asking for lucos-security[bot] to be added to auto-merge conditions.**
-
-## Accepted Risk: ReDoS in vue 2 (vue-leaflet-antimeridian)
-
-vue-leaflet-antimeridian uses Vue 2 (via vue2-leaflet peerDep). Vue 2 is EOL and contains an unfixed ReDoS in `parseHTML`. **lucas42 has consciously accepted this risk** (see lucas42/vue-leaflet-antimeridian#4, 2026-03-03). No fix available without a full Vue 3 migration.
-
-Do not raise this alert again. If the alert resurfaces, reference the accepted risk decision in #4.
-
-## Issue Filing: One Finding Per Issue
-
-lucos-issue-manager prefers individual focused issues, not omnibus tickets. When a security scan reveals multiple findings in one repo, raise **one issue per finding** so each can be triaged, labelled, and implemented independently. Confirmed by lucos_notes#149 (omnibus CodeQL issue) being split into #150, #151, #152 before it could proceed.
-
-## Convention: CodeQL Top-Level Permissions Block Goes via lucos_repos (2026-03-06)
-
-When I raised lucas42/lucos#36 (add top-level `permissions: contents: read` to CodeQL workflow template), lucas42 directed this to be implemented as a convention definition in `lucos_repos` so per-repo issues can be raised automatically. **Do not raise per-repo issues for this manually** — it will be handled systematically via lucos_repos#51.
-
-General principle: GitHub Actions workflow conventions that apply across all repos should be defined in `lucos_repos`, not raised as individual per-repo issues.
-
-## CodeQL: `safe_path` Pattern is a False Positive for py/url-redirection
-
-`lucos_photos` uses a `safe_path()` wrapper that strips scheme and netloc before using user-supplied input in a redirect URL. CodeQL flags this as `py/url-redirection` but it is a false positive — the mitigation is in place. If this alert resurfaces, it should be dismissed with the note that `safe_path` provides the necessary guarantee. See lucos_photos#96 (closed as "not planned", 2026-03-06).
-
-## Convention: Dependabot Config Checks (Design 2026-03-07)
-
-For the `lucos_repos` Dependabot convention (lucos_repos#65), the security-critical checks are:
-1. `.github/dependabot.yml` exists
-2. At least one `github-actions` entry with `directory: "/"` is present (supply chain attack mitigation)
-3. `dependency-type: "all"` on all entries (keeps dep base current so security patches land on maintained code)
-
-Do NOT check for specific ecosystems (npm/pip/docker) per-repo — these vary legitimately and the convention framework doesn't know what ecosystems a repo uses.
-
-## Accepted Risk: Clear-text Logging in lucos_contacts_fb_import (2026-03-12)
-
-CodeQL `py/clear-text-logging-sensitive-data` alerts #1 and #2 in `lucos_contacts_fb_import` have been closed as not_planned (lucas42/lucos_contacts_fb_import#17). Rationale: the script runs locally on the user's own laptop, the logged data belongs to that user, and the log output serves a legitimate UX purpose during Facebook import. The CodeQL threat model (logs shipped to shared infrastructure) does not apply.
-
-Do not re-raise these alerts.
-
-## Design: lucos_creds Scoped Key Permissions (lucos_creds#87, approved 2026-03-13)
-
-`CLIENT_KEYS` format extended with `|` delimiter for optional scopes:
-```
-clientsystem:clientenv=key|scope1,scope2
-```
-Unscoped entries unchanged. Scopes only set after server is migrated (deploy first, set scopes second — env vars pulled at deployment time is the natural safety checkpoint).
-
-Key security decisions accepted:
-- **No scope = no permissions** (fail-closed by default on migrated systems)
-- Scope enforcement is server-side only; client never knows its own scopes
-- Scopes opaque to lucos_creds; each service defines its own vocabulary (`{resource}:{action}` convention)
-- Loganne audit trail for scope changes to be included
-- Scope-aware flag rejected — migration risk accepted given deployment-time env var pull
-
-Do not re-raise the scope-aware flag concern.
-
-## Lesson: Infrastructure Issue Bodies Must Block Triage When Scope Is Unverified (2026-03-21)
-
-When raising a security issue that proposes a specific remediation value (e.g. a permissions block, a config flag) for an infrastructure-touching change, if the exact value has not been verified, **make the unresolved question a hard gate in the issue body**. A hedging sentence ("exact scopes should be confirmed") is not enough — lucos-issue-manager will treat it as a minor caveat and approve anyway.
-
-Instead, write something like:
-
-> **Prerequisite: confirm the correct permissions value before approving this issue for implementation. See the "Scope Question" section below.**
-
-Or structure the issue body with a clear "Open Questions" section that explicitly says the issue should not be `agent-approved` until answered.
-
-This pattern is especially important for:
-- GitHub Actions workflow permission changes (can break the workflow that merges the PR itself)
-- Estate-wide convention changes via lucos_repos (50 simultaneous CI deployments if wrong)
-- Any remediation where the exact value determines whether the fix works at all
-
-**Root cause:** lucas42/lucos_repos#177 was approved by lucos-issue-manager before lucas42 had confirmed the correct `permissions` value, because the original issue body's hedge was too soft. The resulting rollout with `permissions: {}` broke auto-merge across all ~45 repos. See incident report: `docs/incidents/2026-03-21-permissions-block-rollout-without-smoke-tests.md`.
-
-## CodeQL: Supported Languages Only
-
-Do not raise CodeQL coverage issues for unsupported languages. Supported: C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. **PHP is not supported** — raising it wastes effort (closed as not_planned, lucos_media_metadata_manager#171). See `codeql-supported-languages.md`.
-
-## Ops Checks Schedule
-
-See `ops-checks.md` for tracking when periodic checks (e.g. monthly CodeQL coverage scan) were last run.
-
-## Policy: Never Recommend Semver-Major Dependabot Ignore Rules (2026-04-18)
-
-lucas42's position: major version bumps should flow through Dependabot. If a major bump causes a failure CI doesn't catch, the fix is **better CI**, not an ignore rule. Adding ignore rules causes version lag and masks CI coverage gaps.
-
-Do not raise issues proposing `ignore: version-update:semver-major` for any ecosystem or image. If a major bump breaks something, the issue to raise is about CI coverage improvement.
-
-Persona file updated with a standing instruction on 2026-04-18.
-
-## Risk: lucos_creds LUCOS_DEPLOY_ENV_BASE64 Silently Reverts Rotations
-
-`lucos_creds` bootstraps its own deploy from a manually-maintained base64 snapshot stored as a CircleCI env var (`LUCOS_DEPLOY_ENV_BASE64`). This snapshot overwrites the production `.env` on every redeploy. This creates a critical security risk beyond operational reliability:
-
-**A credential rotation applied only to the live lucos_creds store will silently fail to take effect.** The deploy writes `.env` from `LUCOS_DEPLOY_ENV_BASE64` (the stale snapshot), not from the live store — so the running service never sees the new value. There is no transient success: the credential never propagates to the running containers at any point unless `LUCOS_DEPLOY_ENV_BASE64` is also updated.
-
-**Affected credentials** (the ones in lucos_creds's own `.env`, not credentials it stores for other services):
-- `UI_PRIVATE_SSH_KEY` — SSH key for the UI service
-- `CONFIGY_SYNC_PRIVATE_SSH_KEY` — SSH key for configy sync
-- `KEY_LUCOS_CREDS` — the master credential for the credential store itself
-
-These are the most sensitive cryptographic material in the estate. `KEY_LUCOS_CREDS` especially — a silently-reverted rotation here is the worst case.
-
-**Status (2026-05-09):** Runbook in lucos_creds#304 should include explicit callout: *"Rotating any credential present in LUCOS_DEPLOY_ENV_BASE64 without also updating the CircleCI env var will silently undo the rotation on the next deploy."* Architectural auto-sync is deferred (cost). lucos_creds#306 adds startup validation of SSH key material.
-
-## CodeQL Dismissal Capability & False-Positive Policy
-
-See `codeql-dismissal-capability.md` — `lucos-security[bot]` has `security_events: write`, confirmed working. Query PR alerts via `refs/pull/{N}/merge`, 280-char comment limit, no approval workflow enforced.
-
-**Policy (2026-05-20):** See `codeql-false-positive-policy.md` — GHAS dismissal is the **only** mechanism for false positives. No inline suppression comments (also non-functional in lucos repos), no `paths-ignore` config exclusions. Dismiss directly via API.
-
-## False Positive: go/request-forgery on fetchEolasName (lucos_media_metadata_api)
-
-See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dismissed 2026-05-30. Guard is `fetchEntityNameFromSource` hostname whitelist (scheme=https, host=eolas.l42.eu), NOT `ValidateURIOrigin`. Webhook paths bypass `ValidateURIOrigin`; `/webhooks` has Bearer auth.
-
-## Topic Files
+## Standing Facts
+
+- All lucas42 GitHub repos are **public** — committed docs, issues (incl. closed), and PR history are all publicly readable. Factor this into every finding.
+- Security advisory routing rule and semver-major-ignore policy are documented in full in the persona file (`agents/lucos-security.md`) — don't duplicate here, just note deviations if any arise.
+
+## Policies & Conventions (one-liners — see linked topic file for detail where present)
+
+- **Advisory vs public issue** (lucas42/lucos#25, 2026-03-04): private advisory only if immediately network-exploitable AND unfixed; everything else is a public issue.
+- **lucos-security PRs are not auto-merged** (lucas42/lucos#26): path is security raises PR → code-reviewer approves → auto-merge. Don't ask for lucos-security[bot] to be added to auto-merge conditions.
+- **One finding per issue**, never omnibus (lucos_notes#149 split into #150–152).
+- **CodeQL top-level `permissions` block** is a `lucos_repos` convention (lucos_repos#51), not a per-repo manual issue.
+- **CodeQL supported languages only** — C/C++, C#, Go, Java/Kotlin, JS/TS, Python, Ruby, Swift. PHP not supported (lucos_media_metadata_manager#171). Detail: `codeql-supported-languages.md`.
+- **CodeQL dismissal is the only false-positive mechanism** (no inline suppression, no `paths-ignore`). `lucos-security[bot]` has confirmed `security_events: write`. Detail: `codeql-dismissal-capability.md`, `codeql-false-positive-policy.md`.
+- **Dependabot config convention** (lucos_repos#65): require `.github/dependabot.yml`, a `github-actions` entry with `directory: "/"`, `dependency-type: "all"` — don't check specific ecosystems per-repo.
+- **Never propose semver-major Dependabot ignore rules** — major bumps should flow through; breakage → raise a CI-coverage issue instead (2026-04-18).
+- **Open Questions must hard-gate triage** when a remediation value is unverified — a soft hedge gets approved anyway. Detail: `lesson-issue-body-open-questions.md` (root cause: lucos_repos#177 incident).
+- **Ops check schedule** tracked in `ops-checks.md`.
+
+## Accepted Risks / Closed Findings (do not re-raise)
+
+- **Vue 2 ReDoS** in vue-leaflet-antimeridian — accepted, no fix without Vue 3 migration (vue-leaflet-antimeridian#4, 2026-03-03).
+- **Clear-text logging** in lucos_contacts_fb_import — accepted, script runs locally on the user's own data (lucos_contacts_fb_import#17, 2026-03-12).
+- **`principal_class` allowlist absence** in Wave 3/4 consumers — do NOT raise; scope is the sole gate per aithne contract §5 (lucos_aithne#268). See `lucos-aithne-security-architecture.md`.
+- **CircleCI token in query param** (lucos_monitoring) — fixed #25/#59, now `Circle-Token` header + v2 API.
+- **Unauthenticated MCP endpoint** (lucos_arachne) — fixed PR #292, Bearer auth via `CLIENT_KEYS`; `/_info` still open.
+- **DOMPurify XSS** (lucos_arachne) — fixed PR #52, `dompurify >= 3.3.2` override (GHSA-v2wj-7wpq-c8vv).
+- **`safe_path` py/url-redirection** (lucos_photos) — false positive, mitigation already in place (lucos_photos#96).
+- **eolas SSRF `go/request-forgery`** on `fetchEolasName` — false positive, dismissed (lucos_media_metadata_api PR #284). Detail: `lucos-media-metadata-api-eolas-ssrf-pattern.md`.
+
+## Open Risk Patterns (watch for recurrence across repos)
+
+- **Prompt injection via external text** (CI logs, issue/PR bodies) + **secrets leaking through CircleCI log masking**. Detail: `risk-prompt-injection-and-ci-logs.md`.
+- **OS command injection via `os:cmd`** with unsanitised input — found in `lucos_monitoring/src/fetcher.erl` `checkTlsExpiry/1`; low exploitability today but fragile pattern to check for elsewhere.
+- **Unauthenticated state-mutation endpoints** on internal services — `lucos_monitoring` `/suppress/*` (PUT/DELETE/POST) has no auth; network isolation is not a substitute for endpoint auth.
+- **XSS via unescaped external data in manual HTML rendering** — `lucos_monitoring/src/server.erl` interpolates `techDetail`/`debug` unescaped; check any lucos service doing manual string-concat HTML.
+- **lucos_creds `LUCOS_DEPLOY_ENV_BASE64`** silently reverts rotations of its own most-sensitive creds (`KEY_LUCOS_CREDS` etc.) unless the CircleCI snapshot is updated too. Detail: `lucos-creds-scoped-key-permissions.md`.
+
+## Topic Files (full detail)
 
 - [Zombie Credentials risk](risk-zombie-credentials-downstream.md) — removing from CLIENT_KEYS doesn't revoke pre-registered downstream keys.
 - [Webhook Fan-out Amplification](risk-webhook-fanout-amplification.md) — ~2× amplification via loganne fan-out; low risk currently.
@@ -194,3 +45,8 @@ See `lucos-media-metadata-api-eolas-ssrf-pattern.md` — alert #2 on PR #284 dis
 - [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
 - [Wave 4 CSRF / SameSite=None risk](risk-wave4-csrf-samesite-none.md) — @csrf_exempt + form-data mutations become CSRF-vulnerable when aithne_session (SameSite=None) replaces SameSite=Lax session. Check every Wave 4 PR.
 - [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — id_token/userinfo still lack `scopes` (#277 open); auth-code token scope narrowing shipped+approved (#258/#279, 2026-07-06).
+- [aithne OIDC url-redirect false positive](lucos-aithne-oidc-url-redirect-fp.md)
+- [lucos_creds scoped key permissions + deploy-env-base64 risk](lucos-creds-scoped-key-permissions.md)
+- [Issue-body Open Questions lesson](lesson-issue-body-open-questions.md)
+- [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md)
+- [Relationships with teammates](relationships.md)
