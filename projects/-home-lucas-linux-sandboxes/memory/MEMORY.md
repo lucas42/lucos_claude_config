@@ -2,111 +2,101 @@
 
 ## Dispatcher Workflows
 
-- **PR review loop**: The review loop is now the responsibility of the implementation teammate, not the dispatcher. After creating a PR, the teammate drives the loop itself (messaging `lucos-code-reviewer`, addressing feedback, handling specialist reviews) and reports the outcome when done. See `~/.claude/pr-review-loop.md`.
+- **PR review loop** — implementation teammate drives it (not the dispatcher): messages `lucos-code-reviewer`, addresses feedback, handles specialist reviews, reports outcome. See `~/.claude/pr-review-loop.md`.
 
 ## User Preferences
 
-- **Workflow and config changes**: The team-lead (coordinator) can now edit `~/.claude` workflow files directly (persona files, skills, routine docs). Infrastructure scripts go to `lucos-system-administrator`. The `lucos-issue-manager` teammate no longer exists — its role is absorbed into the coordinator (loaded via `/team` skill).
-- **Repository secrets and settings** (e.g. setting GitHub secrets, enabling auto-merge) must be done via the `lucos-system-administrator` persona, as it's the only one with permissions for these changes.
-- **ADRs after system design**: Always create an ADR after completing a full system design or re-design. Route to `lucos-architect` persona.
-- **Don't bulk-re-quote agent output to the user.** Claude Code's UI now renders teammate messages directly to lucas42, so he reads each `<teammate-message …>` block as it arrives. Repeating its content verbatim duplicates text in his view. Limit own messages to coordinator-level framing, decisions made, and the specific user-input question. Verbatim relay still applies to SendMessage *between* agents (where the destination agent doesn't see the original). (Updated 2026-05-21 — superseded the older "always relay verbatim" rule when the UI changed.)
-- **Don't debug post-merge failures yourself.** When a build or deployment fails after a PR is merged, hand the investigation to the appropriate specialist persona (e.g. `lucos-site-reliability`) rather than diagnosing and pushing fixes directly. The dispatcher lacks the context and patience to trace through execution paths properly — specialist personas are better equipped for root cause analysis. (Learned from a Kotlin DSL variable-shadowing bug that was misdiagnosed as an empty env var.)
+- **Coordinator edits `~/.claude` directly** (persona/skill/routine files); infra scripts → `lucos-system-administrator`. The `lucos-issue-manager` teammate no longer exists — role absorbed into coordinator (via `/team`).
+- **Repo secrets & settings** (GitHub secrets, auto-merge) → `lucos-system-administrator` only.
+- **ADRs after system design** — always create one after a full system design/re-design; route to `lucos-architect`.
+- **Don't bulk-re-quote agent output to lucas42** — the UI renders `<teammate-message>` blocks to him directly; limit own messages to coordinator framing + decisions + the user-input question. Verbatim relay still applies to SendMessage *between* agents. (2026-05-21)
+- **Don't debug post-merge failures yourself** — hand build/deploy-after-merge investigations to the specialist persona (e.g. `lucos-site-reliability`); dispatcher lacks context for root-cause tracing.
 
 ## External Tool References
 
-- [issue-manager App lacks PR write](reference_issue_manager_no_pr_write.md) — coordinator App is 403 on PR comments/closes (Issues:write only); route PR closes/comments to lucos-code-reviewer. To regenerate a stuck Dependabot PR: CLOSE it (recreate command fails for all Apps)
-
-- [arachne MCP tool name lookups](reference_arachne_mcp_tools.md) — `find_entities` returns `rdfs:label` (alternate names); use `get_entity` by URI for canonical `skos:prefLabel`
-- [aithne agent-principal model](reference_aithne_agent_principal_model.md) — agent-operating creds live in lucos_agent/**development** (agent-writable, NOT a prod cred). Cutover needs lucas42 to mint the prod machine key (`/admin/machine-keys`, `aithne:admin`-gated) AND grant the scope the resource checks (`/admin/grants`) — per ADR-0001 §6, non-human resources MUST gate on a scope, so the grant is the norm (two actions). Gating on `principal_class` alone is a §6 divergence (the arachne `/mcp` canary shipped that way, flagged 2026-06-16). Mechanism note: default-deny is at the resource, NOT token issuance — zero-grant principals still get a scopeless JWT. JWT: `principal_class`/`scopes`/`aud=="l42.eu"`
-- [Media systems domain mapping](media-manager-domain-mapping.md) — lucos_configy/config/systems.yaml is canonical; beware lucos_media_manager (ceol.l42.eu) vs lucos_media_metadata_manager (media-metadata.l42.eu)
-- [lucos_creds key rotation on cred update](reference_lucos_creds_key_rotation.md) — linked-credential/scope changes rotate the key → need coordinated redeploys. **The 401/403 window is during convergence (the client+server redeploys), NOT at the lucos_creds-change moment — a creds change alone changes nothing live until the systems redeploy to pick up the new key.** Consult before describing any scope/cred-change cutover window. (proven rollout sequence + loganne two-event audit pattern)
+- [issue-manager App lacks PR write](reference_issue_manager_no_pr_write.md) — coordinator App 403 on PR comments/closes (Issues:write only); route to lucos-code-reviewer. Stuck Dependabot PR: CLOSE it (recreate fails for all Apps)
+- [arachne MCP tool name lookups](reference_arachne_mcp_tools.md) — `find_entities` returns `rdfs:label`; use `get_entity` by URI for canonical `skos:prefLabel`
+- [aithne agent-principal model](reference_aithne_agent_principal_model.md) — agent creds in lucos_agent/**development**; prod cutover needs lucas42 to mint prod machine key + grant a scope (ADR-0001 §6: non-human resources gate on a scope). Default-deny is at the resource, not token issuance. JWT: `principal_class`/`scopes`/`aud=="l42.eu"`
+- [Media systems domain mapping](media-manager-domain-mapping.md) — configy systems.yaml canonical; lucos_media_manager (ceol.l42.eu) vs lucos_media_metadata_manager (media-metadata.l42.eu)
+- [lucos_creds key rotation](reference_lucos_creds_key_rotation.md) — linked-cred/scope changes rotate the key → coordinated redeploys. The 401/403 window is during convergence (client+server redeploys), NOT at the creds-change moment. Consult before describing any cutover window
+- [aithne is ES256-only](project_lucos_worlds_state.md) — signs ID tokens ES256/EC only (deliberate; lucos_locations relies on it). Any adopted OIDC tool must support ES256 — verify signing-alg interop at adopt-eval, not just "has OIDC" (BookStack broke on this, #21)
 
 ## GitHub Comment Conventions
 
-- **Never use `#N` syntax for Dependabot alerts, CodeQL alerts, or secret-scanning alerts** in GitHub comments or PR descriptions. The `#N` syntax always links to issues/PRs, and alert numbering is separate. Instead, use the CVE or GHSA identifier (e.g. `CVE-2026-0540`, `GHSA-v2wj-7wpq-c8vv`) — GitHub auto-links these. If no CVE/GHSA exists, refer descriptively or use the full alert URL.
+- **Never use `#N` for Dependabot/CodeQL/secret-scanning alerts** in comments/PRs (`#N` links issues/PRs; alert numbering is separate). Use the CVE/GHSA id (auto-links) or the full alert URL.
 
 ## Feedback
 
-- [Dep "removed transitive" may be a rename](feedback_dep_rename_vs_repin.md) — before re-pinning a vanished bundled dep's old name, check for an upstream RENAME (webpack 5.108 bundles renamed minimizer-webpack-plugin, not terser-webpack-plugin); migrate the import, don't re-pin the legacy alias
-- [Don't auto-revert agent work](feedback_revert_policy.md) — when user says an agent shouldn't have done something, ask whether to revert rather than assuming revert is needed
-- [Check before chasing](feedback_check_before_chasing.md) — don't repeatedly ask user to merge PRs; check PR state or system status first
-- [Delegate questions to agents](feedback_delegate_not_guess.md) — when unsure about something, ask the most suitable agent rather than guessing
-- [Labels managed by coordinator](feedback_labels_owner.md) — label creation/management is the coordinator's responsibility, not other personas
-- [Developer message queue](feedback_developer_message_queue.md) — wait for developer to acknowledge corrections before dispatching new work; messages sent in quick succession get processed out of order
-- [One actively-worked issue per agent](feedback_developer_one_issue_per_session.md) — agents are dispatchable-again once PR is open + summary posted; do NOT wait for review/merge before sending the next issue
-- [Audit tool architecture is intentional](feedback_audit_architecture.md) — don't treat missing functionality as a bug; consult architect before proposing scope changes
-- [Complete triage inline](feedback_triage_inline_consultation.md) — don't park issues as "needs-design"; do agent consultation inline and finish the triage
-- [Never revert label changes blindly](feedback_never_revert_labels.md) — always read comments before changing labels back; someone changed them deliberately
-- [Estate rollouts should use PRs](feedback_estate_rollout_prs.md) — prefer PRs over direct pushes; exceptions for trivial version-bump-style changes
-- [Auto-commit ~/.claude changes](feedback_claude_config_commits.md) — commit and push changes to ~/.claude without asking
-- [Developer rebase issues](feedback_developer_rebase.md) — developer doesn't reliably rebase; verify results or use alternative approaches
-- [Auto-merge on approval](feedback_auto_merge_workflow.md) — PRs auto-merge when approved; don't ask user to manually merge
-- [No transient dismissals](feedback_no_transient_dismissals.md) — never hand-wave unhealthy systems as "transient"; name them, explain the cause, and state when/how alerts will clear
-- [Correct agents when wrong](feedback_correct_agents.md) — when an agent reports something factually incorrect, correct them and prompt instruction updates
-- [SendMessage has no broadcast mechanism](feedback_shutdown_no_broadcast.md) — to:"broadcast" / to:"*" goes to a phantom inbox; always fan out individual SendMessage calls per teammate
-- [Follow archival checklist](feedback_follow_archival_checklist.md) — always use lucos/docs/repo-archival.md when decommissioning repos or systems
-- [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — when an agent says they've raised an issue, triage it inline; don't wait for the next triage run
-- [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — don't raise issues proposing Dependabot semver-major ignores; major bumps should flow through and CI should catch breakage
-- [Consult github-workflow.md first](feedback_consult_github_workflow_doc.md) — when composing GitHub API instructions for agents, read the doc rather than recalling syntax (some PATCH fields silently ignored)
-- [Don't endorse unverified analysis](feedback_no_unverified_endorsement.md) — verbatim relay is fine, but no editorial praise of agent reasoning unless I've checked the substance against ground truth
-- [No inline lessons in instruction files](feedback_no_inline_lessons.md) — keep persona/skill text lean; put "Lesson from {date}" narrative in the commit message, not the file
-- [Question whether an issue should exist](feedback_question_issue_existence.md) — before triaging an agent-raised issue, check if it duplicates an existing tracking surface with a fully automated resolution path
-- [Dispatch what /next returns](feedback_dispatch_what_next_returns.md) — never reposition or skip an item /next returns based on labels or recent context; lucas42's manual board positioning is authoritative
-- [Don't act on ambiguous user replies](feedback_ambiguous_user_reply.md) — if a reply could answer either of two posed questions, ask which; avoid parallel-labeling collisions across sections
-- [Scope checks belong to reviewer](feedback_scope_checks_belong_to_reviewer.md) — PR-scope-vs-issue verification is code-reviewer's responsibility, not the coordinator's
-- [Ask about the plan first](feedback_ask_about_the_plan_first.md) — when relaying a multi-part agent plan, AskUserQuestion must lead with a plan-shape question, not just the niche details the agent flagged
-- [Re-fetch before accusing](feedback_refetch_before_accusing.md) — when a coordinator message contains a factual claim about another agent's GitHub state, re-fetch right before send, not at start of composing
-- [Ticket decisions are async](feedback_ticket_decisions_async.md) — don't AskUserQuestion to force synchronous answers on ticket routing; the ticket itself is the asynchronous venue. Continue dispatching other ready work while waiting.
-- [Template substitution in gh-as-agent](feedback_template_substitution.md) — bodies with `{repo}`/`{owner}` placeholders or leading `@`-mentions get silently corrupted by `gh api`; use the file-backed pattern
-- [No every-user-turn polling](feedback_no_every_turn_polling.md) — don't propose "re-check X on every user turn" as an instruction fix; produces weird inconsistencies
-- [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I sometimes confabulate fake `<teammate-message>` blocks OR tool output in my own reasoning and read them back as real (esp. when primed to expect a problem); verify against the actual result block / teammate jsonls, not my own narration
-- [Re-fetch issue comments before following up](feedback_refetch_issue_comments_before_following_up.md) — never post a progress/status comment on a GitHub issue without re-fetching its comments first, even on an issue I just filed
-- [Disambiguate AskUserQuestion layers](feedback_askuserquestion_layer_disambiguation.md) — option labels must name the system layer when the action could happen at multiple layers (code vs detector vs config)
-- [Migration scope matches spec scope](feedback_migration_scope_matches_spec.md) — when briefing a teammate to apply a spec / convention / rollout, the brief covers only what the spec requires; no adjacent "while you're at it" checks
-- [Ready means fully implementable](feedback_ready_means_fully_implementable.md) — if any cross-repo dependency is open, the issue is Blocked, not Ready, regardless of "parallel unit-testable" framings
-- [Ready = no deferred design choices](feedback_ready_no_deferred_design_choices.md) — settle meaningful design/approach/UX/mechanism choices AT TRIAGE; the tell is writing the open fork into your triage comment ("implementer should pick…")
-- [Verify project-state before citing](feedback_verify_project_state_before_citing.md) — never cite "parked / deferred / completed" from a MEMORY.md index line; re-read the memory file AND verify against the live ticket/board
-- [Don't shift work to coordinator](feedback_dont_shift_work_to_coordinator.md) — don't add workflow rules that move issue-close work (or similar) from GitHub automation onto the coordinator without lucas42 asking; trust the automation + brief transient inconsistencies
-- [Verify identifiers before propagating](feedback_verify_before_propagating.md) — when fan-out propagating a teammate's concrete identifier (URL/domain/repo/path) into multiple GitHub bodies, verify against an authoritative source first; an agent's report is not a verified fact
-- [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's design question verbatim; never augment with my own option list or "options I see" framing, which biases the agent toward the obvious defaults
-- [No verbatim quotes on the ticket](feedback_no_verbatim_quotes_on_ticket.md) — triage-decision comments on a ticket should be brief and reference prior comments by position; verbatim quotes are for SendMessage (where the inbox doesn't show the thread), not for the ticket itself
-- [Ticket is the venue, not AskUserQuestion](feedback_ticket_is_venue_not_askuserquestion.md) — when a design discussion lives on a GitHub ticket, lucas42 answers there; don't pull the specialist's decision points into AskUserQuestion in the coordinator session
-- [Dependabot recreate is deterministic](feedback_dependabot_recreate_deterministic.md) — never relay/endorse `@dependabot recreate` as a fix unless an input has demonstrably changed; recreate produces the same lockfile from the same inputs
-- [Verify permission claims before asserting](feedback_verify_permission_claims.md) — never write "{bot} doesn't have permission to X" or "only lucas42 can X" without probing the API or the App's permission listing; propagating unverified permission claims creates work for lucas42 that a bot could have done
-- [Don't gate read-only checks](feedback_no_gate_on_readonly_checks.md) — just run safe read-only verifications and report; confirm-first is only for state-changing/outward-facing actions, not for reading production state
-- [Dispatch URL only](feedback_dispatch_url_only.md) — dispatch SendMessage carries only `implement issue {url}`; never restate the ticket's design (redundant + an unversioned copy that can contradict the ticket)
-- [Harness problems → lucos#155](feedback_harness_problems_to_lucos155.md) — Claude Code harness/product-layer limitations (not infra/config-fixable) are tracked on lucas42/lucos#155; comment there, don't strand on per-repo tickets
-- [Empty tool output = unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — treat any empty/blank/late tool result as unknown; re-run or wait before asserting (receiver-side mitigation for confabulation-on-empty; captured for SRE during 2026-05-30 shutdown)
-- [Don't offer unschedulable /schedule](feedback_no_unschedulable_schedule_offer.md) — remote routines have no production SSH / gh-as-agent / local files; gate at OFFER time, don't offer /schedule for ops tasks needing production access; use dated ticket reminder + memory + local team instead
+- [Dep "removed transitive" may be a rename](feedback_dep_rename_vs_repin.md) — check for an upstream RENAME before re-pinning a vanished bundled dep; migrate the import
+- [Don't auto-revert agent work](feedback_revert_policy.md) — ask whether to revert rather than assuming
+- [Check before chasing](feedback_check_before_chasing.md) — check PR/system state before asking user to merge
+- [Delegate questions to agents](feedback_delegate_not_guess.md) — ask the most suitable agent rather than guessing
+- [Labels managed by coordinator](feedback_labels_owner.md) — not other personas
+- [Developer message queue](feedback_developer_message_queue.md) — wait for ack before dispatching next; rapid messages process out of order
+- [One actively-worked issue per agent](feedback_developer_one_issue_per_session.md) — dispatchable again once PR open + summary posted; don't wait for merge
+- [Audit tool architecture is intentional](feedback_audit_architecture.md) — consult architect before proposing scope changes
+- [Complete triage inline](feedback_triage_inline_consultation.md) — do agent consultation inline; don't park as "needs-design"
+- [Never revert label changes blindly](feedback_never_revert_labels.md) — read comments first; changes are deliberate
+- [Estate rollouts should use PRs](feedback_estate_rollout_prs.md) — prefer PRs; exception for trivial version bumps
+- [Auto-commit ~/.claude changes](feedback_claude_config_commits.md) — commit + push without asking
+- [Developer rebase issues](feedback_developer_rebase.md) — verify rebase results or use alternatives
+- [Auto-merge on approval](feedback_auto_merge_workflow.md) — don't ask user to manually merge
+- [No transient dismissals](feedback_no_transient_dismissals.md) — name unhealthy systems, explain cause, say when alerts clear
+- [Correct agents when wrong](feedback_correct_agents.md) — correct factual errors and prompt instruction updates
+- [SendMessage has no broadcast](feedback_shutdown_no_broadcast.md) — fan out individual SendMessage per teammate
+- [Follow archival checklist](feedback_follow_archival_checklist.md) — use lucos/docs/repo-archival.md when decommissioning
+- [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — inline, don't wait for next triage run
+- [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — let major bumps flow; CI catches breakage
+- [Consult github-workflow.md first](feedback_consult_github_workflow_doc.md) — read the doc, don't recall syntax (some PATCH fields silently ignored)
+- [Don't endorse unverified analysis](feedback_no_unverified_endorsement.md) — no editorial praise unless checked against ground truth
+- [No inline lessons in instruction files](feedback_no_inline_lessons.md) — narrative goes in the commit message, not the file
+- [Question whether an issue should exist](feedback_question_issue_existence.md) — check for a duplicate auto-resolving tracking surface
+- [Dispatch what /next returns](feedback_dispatch_what_next_returns.md) — don't reposition/skip; lucas42's board positioning is authoritative
+- [Don't act on ambiguous user replies](feedback_ambiguous_user_reply.md) — if it could answer either question, ask which
+- [Scope checks belong to reviewer](feedback_scope_checks_belong_to_reviewer.md) — PR-scope-vs-issue is code-reviewer's job
+- [Ask about the plan first](feedback_ask_about_the_plan_first.md) — AskUserQuestion leads with the plan-shape question
+- [Re-fetch before accusing](feedback_refetch_before_accusing.md) — re-fetch GitHub state right before send
+- [Ticket decisions are async](feedback_ticket_decisions_async.md) — don't force synchronous answers on ticket routing; keep dispatching ready work
+- [Template substitution in gh-as-agent](feedback_template_substitution.md) — `{repo}`/`@`-mention bodies get corrupted; use the file-backed pattern
+- [No every-user-turn polling](feedback_no_every_turn_polling.md) — don't propose "re-check X every turn" fixes
+- [Phantom teammate messages](feedback_phantom_teammate_messages.md) — I confabulate fake teammate blocks/tool output; verify against the real result block
+- [Re-fetch issue comments before following up](feedback_refetch_issue_comments_before_following_up.md) — even on an issue I just filed
+- [Disambiguate AskUserQuestion layers](feedback_askuserquestion_layer_disambiguation.md) — labels must name the system layer (code vs detector vs config)
+- [Migration scope matches spec scope](feedback_migration_scope_matches_spec.md) — brief covers only what the spec requires; no "while you're at it"
+- [Ready means fully implementable](feedback_ready_means_fully_implementable.md) — open cross-repo dependency ⇒ Blocked, not Ready
+- [Ready = no deferred design choices](feedback_ready_no_deferred_design_choices.md) — settle design/UX/mechanism at triage; tell is "implementer should pick…"
+- [Verify project-state before citing](feedback_verify_project_state_before_citing.md) — re-read the memory file AND the live ticket/board, not the index line
+- [Don't shift work to coordinator](feedback_dont_shift_work_to_coordinator.md) — don't move automation's work onto coordinator unasked
+- [Verify identifiers before propagating](feedback_verify_before_propagating.md) — verify a teammate's URL/repo/path before fan-out into GitHub bodies
+- [No options in specialist consultations](feedback_no_options_in_consultations.md) — relay lucas42's question verbatim; don't add my own option list
+- [No verbatim quotes on the ticket](feedback_no_verbatim_quotes_on_ticket.md) — brief ticket comments referencing prior by position; verbatim is for SendMessage
+- [Ticket is the venue, not AskUserQuestion](feedback_ticket_is_venue_not_askuserquestion.md) — when a design discussion lives on a ticket, lucas42 answers there
+- [Dependabot recreate is deterministic](feedback_dependabot_recreate_deterministic.md) — don't endorse `recreate` unless an input changed
+- [Verify permission claims before asserting](feedback_verify_permission_claims.md) — probe the API/App perms before "{bot} can't X" / "only lucas42 can X"
+- [Don't gate read-only checks](feedback_no_gate_on_readonly_checks.md) — run safe read-only verifications and report; confirm-first is for state-changing actions
+- [Dispatch URL only](feedback_dispatch_url_only.md) — dispatch carries only `implement issue {url}`; never restate the ticket's design
+- [Harness problems → lucos#155](feedback_harness_problems_to_lucos155.md) — track Claude Code harness limits there, not per-repo
+- [Empty tool output = unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run or wait before asserting
+- [Don't offer unschedulable /schedule](feedback_no_unschedulable_schedule_offer.md) — remote routines lack prod SSH/gh/local files; gate at offer time
+- [No parallel get-next/dispatch](feedback_no_parallel_getnext_dispatch.md) — run get-next to completion; dispatch exactly the URL it printed
+- [No confabulated quotes in consult relay](feedback_no_confabulated_quote_in_consult_relay.md) — paste verbatim from the just-fetched result, never from memory
+- [SendMessage running teammates, not subagents](feedback_sendmessage_not_subagents.md) — dispatch to existing teammates; don't spawn fresh Agent subagents
+- [No extra host binaries](feedback_no_extra_host_binaries.md) — favour estate-wide tools (scp over rsync); get lucas42's nod before adding a host dependency
+- [Rejected command ≠ no side effects](feedback_rejected_command_side_effects.md) — an interrupted compound Bash may still have created the issue/item; re-fetch state
+- [aithne key-age ≠ deploy signal](feedback_aithne_key_age_not_deploy_signal.md) — `/_info` `signing_key_age` is liveness, not deploy confirmation; confirm via container/image
+- [CHANGES_REQUESTED ≠ hard block](feedback_changes_requested_not_a_hard_block.md) — only blocks if required-review branch protection is set; the reliable block is converting the PR to draft
+- [Serialize same-repo dispatch](feedback_serialize_same_repo_dispatch.md) — don't run two concurrent PRs on one repo; wait for the first to merge. Parallelise only across repos
+- [No secondary sign-off gate](feedback_no_secondary_signoff_gate.md) — /next IS lucas42's sign-off; don't park implementable irreversible tickets in Awaiting Decision
 
 ## Active Projects
 
-- [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — new detection/resolution process in agent instructions (2026-03-19), with known stuck PRs left as a live test for the next session
-- [Media API v2→v3 migration](project_v3_migration.md) — completed and removed from strategic priorities as of 2026-04-08; lucos-lang deprecation was the final milestone
-- [Auth fail-open/fail-closed RESOLVED](project_auth_failopen_question.md) — RESOLVED 2026-06-30: consumers FAIL CLOSED (correct); residual is the JWKS serve-stale gap (aithne#241/arachne#697/lucos#255), not fail-open
-- [Migration finish-off state](project_migration_finishoff.md) — RESOLVED 2026-06-01: lucas42 declared metadata→eolas migration complete; retired from priorities.md, lucos_firewall now sole #1 strategic priority
-- [lucos_firewall rollout state](project_firewall_rollout.md) — **COMPLETE 2026-06-08: all 3 hosts enforcing (xwing 10:45, salvare 10:59, avalon 14:25), lucos#182 closed.** Four post-enforce regressions found+fixed (#13/#14 inter-container DROP, #19/#20 Docker FORWARD wipe, #16/#17 mDNS, backups#307/#310 host-net hairpin). Memory retains durable lessons: DRY_RUN override, revert hand, the **Compose-reuses-stale-network foot-gun**, host-net+router INPUT pattern
+- [lucos_worlds deploy + login blocker](project_lucos_worlds_state.md) — BookStack worldbuilding deployed 2026-07-07, infra-healthy but **login-blocked** (BookStack needs RS256, aithne signs ES256-only). lucas42 deciding the fix on lucas42/lucos_worlds#21, **2026-07-08 morning**. RBAC #17/#19 paused; stopgap (AUTH_METHOD=standard) available
+- [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — detection/resolution process in agent instructions (2026-03-19)
+- [Media API v2→v3 migration](project_v3_migration.md) — COMPLETE 2026-04-08 (lucos-lang deprecation was final milestone)
+- [Auth fail-open/fail-closed](project_auth_failopen_question.md) — RESOLVED 2026-06-30: consumers FAIL CLOSED; residual is the JWKS serve-stale gap (aithne#241/arachne#697/lucos#255)
+- [metadata→eolas migration](project_migration_finishoff.md) — RESOLVED 2026-06-01; lucos_firewall became sole #1 strategic priority
+- [lucos_firewall rollout](project_firewall_rollout.md) — COMPLETE 2026-06-08 (all 3 hosts enforcing, lucos#182 closed). Durable lessons in file: DRY_RUN override, Compose-reuses-stale-network foot-gun, host-net+router INPUT pattern
 
-## Agent Instruction Compliance (ADR-0001 in lucos_claude_config)
+## Agent Instruction Compliance
 
-- Long persona files suffer from attention degradation — agents skip instructions deep in the file and confabulate when asked why.
-- Key mitigations applied (2026-03-06): ops checks for SRE, sysadmin, and security were extracted into separate `*-ops-checks.md` files with explicit counts, criticality ordering, schedule grouping, and mandatory completion manifests. **These changes are untested** due to the caching issue above — need a fresh Claude session to verify.
-- The architect's MEMORY.md is 203 lines (3 over the 200-line truncation limit) — needs trimming.
-
-
-- [No parallel get-next/dispatch](feedback_no_parallel_getnext_dispatch.md) — run get-next to completion and dispatch exactly the URL it printed; never pre-fill /dispatch from memory (confabulated lucos_monitoring#286 on 2026-05-30)
-
-- [No confabulated quotes in consult relay](feedback_confabulated_quote_in_consult_relay.md) — paste verbatim quotes from the just-fetched tool result, never from memory (fabricated a lucas42 #264 comment to the architect on 2026-05-30)
-
-- [SendMessage running teammates, not subagents](feedback_sendmessage_not_subagents.md) — when the team is running (e.g. after /coordinator restore), dispatch via SendMessage to existing teammates; never spawn fresh Agent-tool subagents (flagged 2026-06-17)
-
-- [No extra host binaries](feedback_no_extra_host_binaries.md) — lucas42 rejects installing new packages on hosts; favour tools already supported estate-wide (scp over rsync, 2026-06-08); surface host-provisioning cost + get his nod before adding a host dependency
-- [Rejected command ≠ no side effects](feedback_rejected_command_side_effects.md) — a "rejected"/interrupted compound Bash can still have created the issue/board item; re-fetch actual state before asserting "it didn't run" (orphaned lucos_backups#314 on 2026-06-08); isolate side-effecting creation from board setup
-
-- [aithne key-age ≠ deploy signal](feedback_aithne_key_age_not_deploy_signal.md) — `/_info` `signing_key_age` is a liveness signal, NOT deploy confirmation; the key persists across restarts (rotates only if already past the interval), so it never resets on a normal redeploy. Confirm deploys via container/image (SRE) or a `/_info` version field — not the key-age proxy. (Misread it on 2026-06-25, polled 40 min + escalated; aithne had already deployed.)
-
-- [CHANGES_REQUESTED ≠ hard block](feedback_changes_requested_not_a_hard_block.md) — a review only hard-blocks a merge if the repo enforces required-review branch protection (often it doesn't; Apps 403 on the protection endpoint). `mergeable_state: clean` with a CR standing ⇒ no required-review protection. The reliable structural block before a fix lands is converting the PR to **draft**. Don't claim a CR "hard-blocks" unverified. (2026-06-25, seinn#522.)
-
-- [Serialize same-repo dispatch](feedback_serialize_same_repo_dispatch.md) — don't dispatch two Ready issues on the **same repo** to different agents concurrently (the per-agent one-issue rule isn't enough); concurrent PRs on one repo risk conflicts. Wait for the first to **merge**, then dispatch the next. Only parallelise across different repos. (2026-06-25, seinn#524/#525.)
-
-- [No secondary sign-off gate](feedback_no_secondary_signoff_gate.md) — don't park a fully-implementable irreversible ticket (decommission/teardown) in Awaiting Decision; /next IS lucas42's sign-off, so it's a redundant second approval. Irreversibility safety = the agent's execution-time confirm-first, not a board latch. (2026-06-29, lucos_authentication#143.)
+- Long persona files cause attention degradation (agents skip deep instructions + confabulate); mitigated 2026-03-06 by extracting SRE/sysadmin/security ops checks into separate `*-ops-checks.md` files with explicit counts + completion manifests.
