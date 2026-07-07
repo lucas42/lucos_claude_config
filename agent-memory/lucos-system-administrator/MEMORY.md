@@ -20,7 +20,7 @@
 - **lucos_backups architecture**: single container on avalon handles ALL hosts. `lucos_backups.md`.
 - **Script repo structure** (confirmed 2026-03-05): `lucos_agent` = GitHub API tooling; `~/.claude/scripts/` = self-referential cron; `lucos_agent_coding_sandbox` = VM provisioning. Don't consolidate.
 - **xwing TLS renewal**: certbot auto-renews at 30 days — don't raise issues unless it fails to renew past that mark.
-- **New repo standup**: run `provision-repo-ci-secrets.sh` (sets `LUCOS_CI_PRIVATE_KEY` via Python/`re.DOTALL`, `LUCOS_CI_APP_ID`, fork-pr-approval policy, and CircleCI follow — step 9, added 2026-06-09, registers the webhook so `ci/circleci:*` statuses appear). `grep|cut` truncates multiline PEM. `new-repo-provisioning-script.md`.
+- **New repo standup**: run `~/.claude/scripts/provision-repo-ci-secrets.sh` (NOT in `~/sandboxes/lucos_agent/` — check this path first). Sets CI secrets, fork-pr-approval policy, branch protection, auto-merge/delete-branch settings, CircleCI follow. Docker-deploy CircleCI SSH key is the one genuinely-manual step (lucas42-only). `new-repo-provisioning-script.md`.
 - **PEM key formatting**: always extract with Python `re.DOTALL`, never `grep|cut`. `pem-key-formatting.md`.
 - **Planned maintenance notifications**: (1) GitHub comment pre-reboot, (2) Loganne `POST https://loganne.l42.eu/events` after recovery.
 - **VM SSH key for git ops**: `~/.ssh/id_ed25519_lucos_agent` (no passphrase); `commit-agent-memory.sh` sets `GIT_SSH_COMMAND` for cron.

@@ -14,9 +14,12 @@ Covers in one shot:
 4. **CircleCI follow** — `POST /api/v1.1/project/github/lucas42/{repo}/follow` registers the GitHub webhook. Without this, `ci/circleci:*` statuses never appear and all PRs stay blocked (discovered lucos_aithne standup 2026-06-09).
 5. **Initial pipeline trigger on main** — follow registers webhook for future pushes only; existing commits on the repo are NOT retroactively built. Script now explicitly triggers main so the first build runs immediately. If PR branches were pushed before provisioning, trigger each manually: `curl -X POST -H 'Circle-Token: $TOKEN' https://circleci.com/api/v2/project/github/lucas42/{repo}/pipeline -d '{"branch":"<branch>"}'`
 
-**What the script does NOT cover (still manual):**
-- CircleCI SSH key (`docker-deploy@creds.l42.eu`) — private key not in agent environment; lucas42 adds it in CircleCI project settings → Additional SSH Keys → hostname `creds.l42.eu`
-- Enabling "Allow auto-merge" in GitHub repo settings
+Script also now sets (as of lucos_worlds standup, 2026-07-07):
+6. Branch protection on `main` requiring `ci/circleci: lucos/build` (no approval/strict-mode requirement — those would block Dependabot auto-merge). Add test/CodeQL check names manually if the repo has them.
+7. `delete_branch_on_merge = true` **and** `allow_auto_merge = true` — both are plain repo-settings PATCHes the agent App already has permission for; there's no reason either was ever "still manual."
+
+**What the script does NOT cover (still manual, genuinely — needs a human-held secret):**
+- CircleCI SSH key (`docker-deploy@creds.l42.eu`) — this is the same unrestricted-including-production operational key documented in `lucos_creds`' `authorized_keys` (ADR-0002); agents must never hold it. lucas42 adds it in CircleCI project settings → SSH Keys → hostname `creds.l42.eu` (fingerprint `b7:75:7e:64:66:44:40:06:95:b4:ad:cd:07:a7:6f:08`, shared across all repos). Symptom when missing: `lucos/build` fails with `docker-deploy@creds.l42.eu: Permission denied (publickey)`.
 
 **Verification:** after the next workflow run, check "Generate GitHub App token" step:
 - `success` → both secrets valid ✓
@@ -25,4 +28,6 @@ Covers in one shot:
 
 For supervised repos (no `unsupervisedAgentCode: true`): only lucas42's approval event triggers the auto-merge workflow; code-reviewer approval is intentionally skipped.
 
-Created after lucos_dns_secondary standup (2026-06-07/08). CircleCI follow step added after lucos_aithne standup (2026-06-09).
+**Lesson (lucos_worlds standup, 2026-07-07):** before concluding "no provisioning script exists" and reimplementing PEM extraction / secret-setting / CircleCI-follow by hand, search `~/.claude/scripts/` specifically — that's where this script actually lives, not `~/sandboxes/lucos_agent/`. Wasted real effort re-deriving steps 1-4/6/9 by hand this session before finding the script already covered them (and had caught two steps — fork-pr-contributor-approval, branch protection — my manual pass had missed entirely).
+
+Created after lucos_dns_secondary standup (2026-06-07/08). CircleCI follow step added after lucos_aithne standup (2026-06-09). Branch protection + auto-merge/delete-branch steps consolidated after lucos_worlds standup (2026-07-07).

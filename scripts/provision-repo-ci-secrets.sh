@@ -163,12 +163,13 @@ python3 "$DEP_SCRIPT" | \
 rm "$DEP_SCRIPT"
 echo "LUCOS_CI_PRIVATE_KEY set in Dependabot secrets."
 
-# --- Step 7: Enable delete-branch-on-merge ---
+# --- Step 7: Enable delete-branch-on-merge and auto-merge ---
 "$GH_AS_AGENT" --app lucos-system-administrator \
     "repos/lucas42/${REPO}" \
     --method PATCH \
-    -f delete_branch_on_merge=true > /dev/null
-echo "delete_branch_on_merge enabled."
+    -f delete_branch_on_merge=true \
+    -f allow_auto_merge=true > /dev/null
+echo "delete_branch_on_merge and allow_auto_merge enabled."
 
 # --- Step 8: Branch protection on main ---
 # Requires PRs pass CI (ci/circleci: lucos/build) before merge.
@@ -243,7 +244,7 @@ echo "Done. Provisioned for lucas42/${REPO}:"
 echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted) — Actions + Dependabot secrets"
 echo "  - LUCOS_CI_APP_ID — Actions + Dependabot secrets"
 echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
-echo "  - delete_branch_on_merge = true"
+echo "  - delete_branch_on_merge = true, allow_auto_merge = true"
 echo "  - Branch protection on main (required: ci/circleci: lucos/build, strict=false)"
 echo "  - CircleCI follow (GitHub webhook registered — ci/circleci:* statuses will appear)"
 echo "  - Initial pipeline triggered on main (future pushes auto-build via webhook)"
