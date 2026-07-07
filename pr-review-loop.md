@@ -57,6 +57,8 @@ Address the code review feedback yourself -- you are the implementation teammate
 
 Push the fixes, increment the iteration count, then **go back to step 1** (dispatch `lucos-code-reviewer` again). Do NOT re-request lucas42 at this point — lucas42 only goes back in the queue after the code reviewer approves the new commit. The correct sequence is always: fix → code-reviewer → (code-reviewer approves) → re-request lucas42.
 
+**Let the head settle before pinging reviewers.** Batch all fixes for a review round into a single push, and (re-)dispatch a reviewer or specialist only once you're done pushing for that round. Pinging while you still intend to push again moves the PR head mid-review, causing review/commit_id mismatches on GitHub's API (a review's text describing an older diff than the commit it lands on) and forcing reviewers — and the coordinator relaying to them — to re-verify against the new head.
+
 **Important: this also applies when you push changes to an already-approved PR** (e.g. a rework requested by the coordinator). Pushing a new commit to a PR dismisses any prior approval and resets `review_decision` to null. After every push — including reworks — you must go back to step 1 before reporting back to the coordinator. Check that `review_decision` is not null and `mergeable_state` is not `blocked` on the new head commit before declaring the loop complete. Reporting "done" on a PR with `review_decision: null` is a failure to complete the loop.
 
 ### Step 3b: Required-check failures that need a non-code action
