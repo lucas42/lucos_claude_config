@@ -191,3 +191,6 @@ Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at
 
 ## Root-owned files in /srv/backups/local/volume/: use container-root pattern
 `lucos-agent` has no write access. `docker run --rm -v /srv/backups/local/volume:/backup alpine rm -f /backup/<file>` bypasses host ownership. See `backup-volume-root-cleanup.md`.
+
+## Test a suspected systemic bug with a live natural experiment before ticketing a fix
+"Dependabot never bumps X" (4-for-4) turned out to be humans always racing a fixed ~14:44 UTC daily check, not a bug — confirmed by letting the next unraced run happen. See `feedback_natural_experiment_before_fix_ticket.md`.
