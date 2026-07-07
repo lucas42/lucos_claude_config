@@ -4,14 +4,14 @@ Index only — one short line per entry; detail lives in each linked topic file 
 
 ## Architectural review convention (lucas42/lucos#24)
 
-- Reviews = committed Markdown in `docs/reviews/`, `YYYY-MM-DD-review.md`; separate from ADRs; no summary issues; submit via PR. Mandatory "Sensitive findings" section. lucos#25 tracks Security Advisory practice.
+- Reviews = committed Markdown in `docs/reviews/`, `YYYY-MM-DD-review.md`; separate from ADRs; no summary issues; via PR. Mandatory "Sensitive findings" section. lucos#25 tracks Security Advisory practice.
 
 ## Cross-project patterns
 
 - Module-level side effects in shared packages = recurring fragility.
 - Auth origin = env-varying `AITHNE_ORIGIN` (aithne#148); `lucos_authentication` decommissioned 2026-06-29.
 - Always specify sequencing deps for cross-repo infra changes. lucas42 prefers splitting multi-concern issues.
-- **`git fetch` before reviewing EACH repo** (fetch is load-bearing, not checkout); read source from a fresh-origin/main worktree or `git show origin/main:file`, never the shared `~/sandboxes` tree (may be on a stale/other branch). Refuting-grep on a stale tree is worse than none. Fix codified in implement-issue Step 4.
+- **`git fetch` before reviewing EACH repo** (fetch is load-bearing, not checkout); read source from a fresh-origin/main worktree or `git show origin/main:file`, never the shared `~/sandboxes` tree. Refuting-grep on a stale tree is worse than none. Fix in implement-issue Step 4.
 - One-service-per-repo; naming `lucos_{subsystem}_{qualifier}`.
 - claude_config ADR-0001 (instruction compliance: short task files, counts, manifests, 200-line max); ADR-0002 (agent-teams/SendMessage). Issue-manager merged into team-lead (2026-04-02).
 - User-Agent = `SYSTEM` env value for inter-system HTTP (lucos ADR-0001).
@@ -19,39 +19,21 @@ Index only — one short line per entry; detail lives in each linked topic file 
 
 ## Feedback memories
 
-- [Ask version churn before snapshot mirrors](feedback_churn_rate_before_snapshot.md)
 - [Slow-cooker symptoms are a smell](feedback_slow_cooker_symptoms.md)
-- [Check for a working counter-example first](feedback_check_working_counterexample_first.md)
 - [Check the ADR before advising on v3 contract](feedback_check_adr_before_advising.md)
 - [Check repo history before SSH/transport changes](feedback_check_history_before_proposing_ssh.md)
 - [SPARQL OPTIONAL chains cross-product on labels](feedback_sparql_optional_crossproduct.md)
 - [Sequence labels autolink to unrelated issues](feedback_no_sequence_label_issue_refs.md)
 - [Verify a mechanism's properties before designing around them](feedback_verify_ci_mechanism_before_relying_on_it.md)
-- [Reference-impl defects propagate with confidence amplification](feedback_reference_implementation_propagation.md)
-- [Compare channels honestly for instrumentation](feedback_compare_channels_for_instrumentation.md)
 - [Apply frame-review to your own prior reasoning](feedback_apply_frame_review_to_own_reasoning.md)
-- [Don't remove implicit feedback without explicit replacements](reference_implicit_feedback_replacement.md)
-- [Pressure-test decision thresholds for reachability](feedback_decision_threshold_calibration.md)
-- [Don't split asserted/inferred user-facing facts](feedback_dont_split_user_facing_facts.md)
 - [Implementation surface needs code-trace evidence](feedback_implementation_surface_code_trace.md)
-- [Check both sides of a replaced mechanism](feedback_check_both_sides_of_replaced_mechanism.md)
-- [Simplify before elaborate in multi-round threads](feedback_simplify_before_elaborate_in_multi_round.md)
 - [Don't spawn teammates as subagents — use SendMessage](feedback_dont_spawn_teammates_as_subagents.md)
 - [Scope test-scaffolding assertions against existing code](feedback_test_harness_assertions_reachable.md)
-- [Do the mechanical check before publishing](feedback_mechanical_check_before_publishing.md)
-- [Breaking change when callers must change anyway](feedback_breaking_change_when_callers_must_change_anyway.md)
 - [Flag-day plans need a verification gate, not just an order](feedback_flag_day_verification_gate.md)
 - [Verify the premise, not just the quote](feedback_verify_premise_not_just_quotes.md)
-- [Shutdown: send shutdown_response via SendMessage](feedback_shutdown_no_tool_calls.md)
-- [Convention scope = failure mode scope](feedback_convention_scope_failure_mode.md)
 - [File follow-up tickets during design](feedback_file_followups_during_design.md)
-- [Data-driven over code rules for federation priority](feedback_data_driven_over_code_rules.md)
 - [Don't grep-and-conclude on consumer wiring](feedback_grep_and_conclude_anti_pattern.md)
 - [Ready vs startability — unresolved dep = Blocked](feedback_ready_vs_startability.md)
-- [Question the option list](feedback_question_the_option_list.md)
-- [Verify frequency claims against data](feedback_verify_frequency_claims_against_data.md)
-- [Check value when fix complexity grows](feedback_check_value_when_fix_complexity_grows.md)
-- [No vague-aesthetic hedging](feedback_vague_aesthetic_hedging.md)
 - [Verify path before defensive code](feedback_verify_path_before_defensive_code.md)
 - [Don't assume from service name](feedback_dont_assume_from_service_name.md)
 - [Design merge/aggregation for ALL consumers](feedback_design_for_all_consumers.md)
@@ -79,29 +61,21 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md)
 - [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md)
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md)
-- [configy serialises absent optional fields as explicit null](reference_configy_optional_field_nulls.md)
-- [Inter-image build deps: single multi-target Dockerfile](reference_buildx_bake_additional_contexts.md)
 - [Named Docker volumes shadow image contents indefinitely](reference_named_volume_shadows_image.md)
 - [Loganne consumer test — name the async consumer first](reference_loganne_consumer_test.md)
-- [lucos_schedule_tracker_pythonclient scope](reference_schedule_tracker_pythonclient_scope.md)
-- [Indexability by exclusion vs inclusion](reference_indexability_exclusion_vs_inclusion.md)
 - [Media-ecosystem URI namespace (ADR-0005)](reference_media_ecosystem_uri_namespace.md)
 - [Webhook consumer accept-202-enqueue (ADR-0006)](reference_webhook_consumer_accept_202_enqueue.md)
 - [Service-worker-backed UI is a system component](reference_service_worker_ui_as_system_component.md)
-- [Escape-hatch design pattern](reference_escape_hatch_design_pattern.md)
 - [Encryption-at-rest ≠ ransomware defence](reference_encryption_at_rest_vs_ransomware.md)
 - [Quiesce-during-read backup pattern](reference_quiesce_during_read_backup.md)
 - [navbar keepalive vs consumer service workers](reference_navbar_keepalive_sw_interception.md)
 - [Convention catalogue + enforced-vs-guidance boundary](reference_convention_catalogue.md)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md)
-- [Enumerating the lucos_creds store over SSH](reference_creds_store_enumeration.md)
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md)
-- [Dependabot security updates independent of dependabot.yml schedule](reference_dependabot_security_vs_version_feeds.md)
 - [Deployment model has no on-host source of truth](reference_no_onhost_source_of_truth.md)
 - [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md)
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
-- [Sweep-vs-CI race false positives](reference_sweep_vs_ci_race.md)
 - [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md)
 - [creds key value and scope are independent](reference_creds_scope_keyvalue_independent.md)
 - [aithne `next=` must be a full URL, not a path](reference_aithne_next_param_full_url.md)
@@ -119,7 +93,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [C4 estate model](project_c4_estate_model.md) — lucos_repos ADR-0006 draft PR #423; typed-by-source, divergence-as-audit
 - [lucos_worlds](project_lucos_worlds.md) — ADOPT BookStack (2026-07-07), types-as-tags, aithne OIDC; ADR-0001 draft PR lucos_worlds#1; follow-ups #2-#6
 - [Artist modelling](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api
-- [Auto-merge approval policy](project_auto_merge_approval_policy.md) — lucos ADR-0013 Accepted; configy `additionalReviewers` + workflow-enforced, fail-closed
+- [Auto-merge approval policy](project_auto_merge_approval_policy.md) — lucos ADR-0013 Accepted; configy `additionalReviewers`, workflow-enforced, fail-closed
 - [loganne event level](project_loganne_event_level.md) — per-event `level` (#506), named ordinal scale, awaiting taxonomy sign-off
 
 ## Auto-merge & security checks
@@ -135,10 +109,9 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - CI orb: `build-multiplatform` (amd64+arm64), `build-amd64` (amd64-only).
 - `depends_on` does NOT wait for readiness; Postgres/DB consumers need startup retry.
 - ARM-deployed: media_import, media_linuxplayer, private, router, static_media.
-- Volume restore gotcha: `docker run` new volume skips compose labels (backups needs them) — use `docker compose` or apply labels (backups#64).
+- Volume restore gotcha: `docker run` new volume skips compose labels — use `docker compose` or apply labels (backups#64).
 - Bulk-deploy waves (Mar 2026): agent execution speed is a liability without verification gates at the same speed.
 - avalon memory pressure (photos_worker + docker_mirror OOM) — resist greenfield memory-hungry workloads there.
-- Partial-failure behind proxies surfaces as multiple plausible-but-wrong errors (docker_mirror 2026-04-17).
 
 ## Per-project pointers (depth in project-details.md)
 
