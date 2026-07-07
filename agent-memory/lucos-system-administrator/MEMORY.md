@@ -1,196 +1,66 @@
 # lucos-system-administrator Memory
 
-## lucos_creds quoted values: bash source strips `"`, direct file reads preserve `"`
-String values stored as `"value"` with surrounding double-quotes. `os.environ` (after bash source) gives clean value; direct Python file reads include the quotes (length off by 2). See `lucos-creds-quoted-values.md`.
-
-## Docker live-restore skips ALL network init (incl. built-ins) when containers running
-`docker restart` will never recreate bridge/host/none while containers are up. Stop all containers first. See `docker-live-restore-network-init-skip.md`.
-
-## configy null serialisation — use `get(key) or default`, not `get(key, default)`
-configy returns explicit `null` for absent fields — `dict.get(key, default)` passes `None` through. See `configy-null-serialisation.md`.
-
-## aurora NAS — QNAP busybox host, storage-only
-See `aurora-host.md`.
-
-## Verify timeline before stating root cause
-See `feedback_verify_timeline_before_stating.md`.
-
-## Verify the premise of a dispatch before shipping a fix
-False triggering events can make valid fixes ship for wrong reasons. See `feedback_verify_dispatch_premise.md`.
-
-## Estate-wide incident investigation: always sweep ALL repos
-Use `users/lucas42/repos?per_page=100`. A partial sweep missed 3 repos in the 2026-04-21 empty-secrets batch.
-
-## GitHub API timestamps are UTC; VM is BST (UTC+1)
-See `timezone-github-api.md`.
-
-## xwing/salvare: accept_ra=2 applied (2026-04-20)
-Docker forwarding=1 silently disables RA. Fix applied + persisted. See `xwing-ipv6-accept-ra.md`.
-
-## Docker memswap_limit default
-Unset = **2× mem_limit**. Set explicitly when intent is to prevent swap. See `docker-memswap-default.md`.
-
-## Estate rollout merge pacing
-No staggering needed — serial groups + calc-version rewrite resolved the 2026-04-16 rate-limit incident. See `estate-rollout-rate-limiting.md`.
-
-## Estate rollout repo discovery
-Use GitHub API, NOT local `grep -rl ~/sandboxes/`. See `estate-rollout-discovery.md`.
-
-## GitHub App commit attribution (avatar display)
-Email: `{bot_user_id}+{bot_name}@users.noreply.github.com`. Use `git-as-agent` for ALL commit-writing ops (including `--amend`) — never `git config`. Canonical source: `~/sandboxes/lucos_agent/personas.json`.
-
-## Claude Code permissions: correct settings.json format
-Key is `permissions.defaultMode` + `"teammateMode": "tmux"`. See `bypass-permissions-tmux.md`.
-
-## GitHub App permissions: lucos-system-administrator
-`pull_requests: write` (upgraded 2026-03-01). Can post PR thread comments, reviews, and issue comments.
-
-## lucos_media_weightings: known technical debt
-#58 (timeout) and #59 (Waitress) are `agent-approved`. Use Waitress, not FastAPI.
-
-## Design pattern: splitting broad issues
-Post design proposal → let lucos-issue-manager handle the split. Don't split issues yourself.
-
-## lucos_backups architecture
-Single container on avalon handles ALL hosts. See `lucos_backups.md`.
-
-## Script repo structure (confirmed 2026-03-05)
-`lucos_agent` = GitHub API tooling; `~/.claude/scripts/` = self-referential cron; `lucos_agent_coding_sandbox` = VM provisioning. Do not consolidate.
-
-## xwing TLS certificate renewal
-certbot auto-renews at 30 days. **Do NOT raise issues** for certs expiring >30 days. Only raise if cert fails to renew past the 30-day mark.
-
-## New repo standup: run provision-repo-ci-secrets.sh
-Sets LUCOS_CI_PRIVATE_KEY (Python/re.DOTALL extraction), LUCOS_CI_APP_ID, fork-pr-approval policy in one step. grep|cut silently truncates multiline PEM to header only → `failure` on token step. See `new-repo-provisioning-script.md`.
-
-## code-reviewer-auto-merge: PEM key formatting gotcha
-PEM keys must be extracted with Python (re.DOTALL), not grep|cut. Use `provision-repo-ci-secrets.sh`. See `pem-key-formatting.md` and `new-repo-provisioning-script.md`.
-
-## Planned maintenance notifications
-Two channels: (1) GitHub comment pre-reboot; (2) Loganne `POST https://loganne.l42.eu/events` after recovery.
-
-## VM SSH key for git operations
-`~/.ssh/id_ed25519_lucos_agent` (no passphrase). commit-agent-memory.sh sets `GIT_SSH_COMMAND` explicitly for cron.
-
-## Claude Code persona file caching
-Persona files cached at conversation start. Mid-conversation changes need a fresh Claude session.
-
-## lucos_arachne one-shot containers (confirmed 2026-03-06)
-`lucos_arachne_ingestor`, `_triplestore`, `_search` have `restart: no` — always Exited between runs. Normal.
-
-## lucos_arachne ingestor: startup auto-runs ingest.py (30s jitter)
-Deploy itself is the verification trigger — no manual exec needed. Cron is once-daily `15 04 * * *`; startup run is the only timely post-deploy path. See `arachne-startup-autoingest.md`.
-
-## lucos_arachne_triplestore memory limit (updated 2026-04-20)
-2G mem / -Xmx1024m. TDB2 tombstones accumulate — compact with `POST http://localhost:3030/$/compact/ds`. See lucos_arachne#386.
-
-## lucos_docker_health: new service (2026-03-10)
-Go binary monitors Docker healthchecks per-host, pushes to lucos_schedule_tracker. Will supersede manual unhealthy-container check.
-
-## Missing `restart: always` — silent failure pattern
-Containers without `restart: always` stay down after reboot. Check policy before raising outage issue.
-
-## Check for existing issues before raising new ones
-Search open issues first — duplicate risk highest during active incidents. Also check recent 10 issues for different terminology.
-
-## Docker healthcheck localhost→IPv6 false-negative pattern
-`localhost` resolves to `::1` inside Alpine. Use `http://127.0.0.1/_info` in healthcheck probe. See lucos_arachne#87.
-
-## avalon memory pressure history
-Swap: 4.5GB total. Top consumer (2026-04-20): `lucos_photos_worker` at 1.4 GiB. `lucos_photos_redis` capped with `maxmemory` + `allkeys-lru`.
-
-## Nginx upstream DNS resolution pattern
-Variable-based upstream + `resolver 127.0.0.11 valid=30s;` defers DNS to request time. Prevents nginx crash-loop on start.
-
-## npm global install: always use user-writable prefix
-`npm config set prefix ~/.npm-global` → `npm install -g`. Add `~/.npm-global/bin` to PATH. Applied in lima.yaml (commit fb3e335).
-
-## Docker healthcheck tool availability: check final image stage
-Verify probe tool in **final** image stage, not just build stage. See `healthcheck-notes.md`.
-
-## Docker volume restore procedure (CRITICAL — avoids label loss)
-Never use bare `docker run` + alpine tar into new volume — loses compose labels, breaks lucos_backups. Use `docker volume create --label com.docker.compose.*` labels. Full 7-step procedure in MEMORY.md history (2026-03-17 incident).
-
-## lucos_creds CircleCI env vars: manual rotation required
-`KEY_LUCOS_MONITORING` and `LUCOS_DEPLOY_ENV_BASE64` are outside automatic rotation. 2026-05-09 incident: not updating LUCOS_DEPLOY_ENV_BASE64 caused reverted fix. See `lucos-creds-circleci-env-vars.md`.
-
-## Docker daemon restarts: check live-restore first, prefer SIGHUP
-`systemctl restart docker` without `live-restore` kills all containers. Use `systemctl reload docker` (SIGHUP) for hot-reloadable changes. See `docker-daemon-restart-risk.md`.
-
-## GitHub Actions SHA pinning — always verify via API
-Never write SHAs from memory. See `github-actions-sha-pinning.md`.
-
-## Investigations: read source before theorising
-See `feedback_read_before_theorising.md`.
-
-## Triggering GitHub Actions workflow_dispatch directly
-`gh-as-agent repos/lucas42/{repo}/actions/workflows/{id}/dispatches --method POST -f ref=main` — returns 204 on success.
-
-## Volume removal pre-check: verify image content before removing masking volumes
-See `volume-removal-image-verify.md`.
-
-## `Load key … error in libcrypto` is a class; Docker Healthy ≠ end-to-end proof
-CRLF/tilde/BOM all trigger libcrypto error. When fix survives live state but not redeploy, check for snapshot-based deploys (`grep DEPLOY_ENV_BASE64` in CI). `Healthy` status only proves the healthcheck.test — read it before citing as recovery proof. See `incident-2026-05-09-libcrypto.md`.
-
-## Audit-finding issues: never auto-closed by the audit tool
-Coordinator closes them once convention passes. See `feedback_audit_finding_no_autoclose.md`.
-
-## Teammate quote verification rule (implemented lucos_claude_config#79)
-Run `verify-teammate-quote --sender <name> --quote <text>` before quoting any teammate verbatim. See `feedback_verify_teammate_quotes.md`.
-
-## Security tooling workflow changes: confirm lucos-security sign-off first
-Before applying any workflow change that wires in a security tool config (CodeQL config-file, secret-scanning exclusions, etc.), check the developer consulted lucos-security. See `feedback_security_tooling_check.md`.
-
-## hosts.yaml: ipv4_nat ≠ that host's IP
-`ipv4_nat` is the shared NAT gateway address (e.g. xwing's IP). SSH to `ipv4_nat` reaches the NAT host, not the named host. Only `ipv4` (no suffix) is a direct address. Salvare and virgon-express have no direct IPv4 — only IPv6. See `hosts-ipv4-nat.md`.
-
-## Production SSH: use `<host>.s.l42.eu`, never `<host>.l42.eu`, and let SSH config supply the user
-`avalon.l42.eu` is NXDOMAIN. Correct form: `avalon.s.l42.eu`. SSH config sets `User lucos-agent` for `*.s.l42.eu` — never override with `lucas@`. SRE tripped on both mistakes (2026-05-30). See `ssh-hostname-convention.md`.
-
-## DOCKER-USER post-DNAT bypass: containers with container port 80 bypass firewall
-`--dport 80` in FORWARD matches ALL DNAT'd-to-container-port-80 services regardless of host port. 9 exposed on avalon. Fix: `--ctorigdstport` or remove host port bindings. See `docker-dnat-docker-user-bypass.md` and lucas42/lucos_firewall#21.
-
-## Docker fixed-cidr-v6 IPAM persistence — flush network/files/ to pick up changes
-`fixed-cidr-v6` in daemon.json only applies on bridge creation. Flush `/var/lib/docker/network/files/` + restart to change it. See `docker-fixed-cidr-v6-ipam-persistence.md`.
-
-## Linux IPv6 route metric: linkdown at metric 256 beats UP at metric 600
-Lower metric wins even if linkdown. docker0 with public /64 silently swallows all traffic. See `linux-ipv6-route-metric-linkdown.md`.
-
-## DR assessment: bespoke corrections to external data are the irreplaceable part
-"Source data still exists on NAS" doesn't mean the DB is reconstructable — check for bespoke fixes to bad source data and manual annotations built on top. See `feedback_dr_bespoke_correction_data.md`.
-
-## lucos_dns: BIND restart risk + rndc fallback + circular config-sync failure
-Until #104 (validate-before-install guard) ships, avalon BIND restarts are high-risk — zone load fails hard with no fallback. rndc can become unauthenticated (key regenerates on restart); fallback is `docker kill --signal SIGHUP lucos_dns_bind`. Circular config-sync fix (#106): cache-to-disk (NOT `http://lucos_configy:8034` — separate networks). See `incident-2026-06-07-dns-outage.md`.
-
-## Verify cumulative diff before un-drafting a PR or adding `Closes #N`
-On shared/force-pushed branches a commit can edit the wrong location and drop out of `main...HEAD`. Run `git diff origin/main...HEAD -- <file>` to confirm every claimed fix is present before marking ready. See `feedback_verify_cumulative_diff.md`.
-
-## lucos_firewall ADR-0007 rollout state
-All 3 hosts ENFORCED 2026-06-08. lucos_backups#307 (bridge mode) next — unblocked by #19 fix. Docker 29.x chain recovery + open NFS PRs in `project_firewall_rollout.md`.
-
-## Docker 29.x chains: DOCKER-FORWARD, DOCKER-BRIDGE, DOCKER-CT + 3 others needed
-Six chains required for docker network create. Recovery procedure in `docker-29x-chains.md`. Deleted by old --noflush-less firewall code; manually recreated on avalon 2026-06-08.
-
-## Docker compose stale network: compose reuses existing network even if config changed
-Must manually rm + recreate if enable_ipv6/subnet changed. Stopped container has old network ID wired in — must `docker rm` + CI trigger after recreating. See `docker-compose-stale-network.md`.
-
-## Multi-PR issues: drive review loop for ALL PRs before reporting done
-A co-primary cross-repo PR (e.g. configy registration) is not a "drive-by extra" — send it to code-reviewer concurrently with the main PR. See `feedback_multi_pr_review_loop.md`.
-
-## New repo standup: provision-repo-ci-secrets.sh now includes CircleCI follow
-Step 9 added 2026-06-09: `POST /api/v1.1/project/github/lucas42/{repo}/follow` registers the GitHub webhook so ci/circleci:* statuses actually appear. Without it, all required checks stay pending forever.
-
-## xwing SSH from sandbox: use avalon jump host
-Sandbox outgoing IP = xwing's own NAT IP → direct SSH blocked ("Not allowed at this time"). Use `-J avalon.s.l42.eu`. For salvare: `-J xwing.s.l42.eu` (or `-J avalon.s.l42.eu,xwing.s.l42.eu`). See `xwing-ssh-via-avalon.md`.
-
-## lucos_creds SSH exec write format
-`{system}/{environment}/{KEY}={value}` — no command prefix. e.g. `ssh -P 2202 creds.l42.eu "lucos_notes/development/AITHNE_ORIGIN=https://aithne.l42.eu"`. Empty value = delete the credential. "No assignment character found" = missing `=`.
-
-## lucos_contacts: 403 for unknown key ≠ missing scope
-`getUserByKey` miss → 403 (not 401). Key-rotation mismatch looks like a scope error. Fix = consumer redeploy, not a creds grant. See `contacts-403-unknown-key.md`.
-
-## Root-owned files in /srv/backups/local/volume/: use container-root pattern
-`lucos-agent` has no write access. `docker run --rm -v /srv/backups/local/volume:/backup alpine rm -f /backup/<file>` bypasses host ownership. See `backup-volume-root-cleanup.md`.
-
-## Test a suspected systemic bug with a live natural experiment before ticketing a fix
-"Dependabot never bumps X" (4-for-4) turned out to be humans always racing a fixed ~14:44 UTC daily check, not a bug — confirmed by letting the next unraced run happen. See `feedback_natural_experiment_before_fix_ticket.md`.
+- **lucos_creds quoted values**: bash `source` strips the `"` wrapper; direct file reads keep it (length off by 2). `lucos-creds-quoted-values.md`.
+- **Docker live-restore**: skips ALL network init (incl. built-ins) while containers are running — stop all containers first. `docker-live-restore-network-init-skip.md`.
+- **configy null serialisation**: use `get(key) or default`, not `get(key, default)` — configy returns explicit `null`. `configy-null-serialisation.md`.
+- **aurora NAS**: QNAP busybox host, storage-only. `aurora-host.md`.
+- **Verify timeline before stating root cause**. `feedback_verify_timeline_before_stating.md`.
+- **Verify the premise of a dispatch before shipping a fix** — false triggering events can make valid fixes ship for wrong reasons. `feedback_verify_dispatch_premise.md`.
+- **Estate-wide incident sweeps**: always use `users/lucas42/repos?per_page=100`, never a partial sample — missed 3 repos in the 2026-04-21 empty-secrets batch.
+- **GitHub API timestamps are UTC; VM is BST (UTC+1)**. `timezone-github-api.md`.
+- **xwing/salvare**: `accept_ra=2` applied 2026-04-20 — Docker `forwarding=1` silently disables RA. `xwing-ipv6-accept-ra.md`.
+- **Docker `memswap_limit` default**: unset = 2× `mem_limit`; set explicitly to prevent swap. `docker-memswap-default.md`.
+- **Estate rollout merge pacing**: no staggering needed — serial groups + calc-version rewrite resolved the 2026-04-16 rate-limit incident. `estate-rollout-rate-limiting.md`.
+- **Estate rollout repo discovery**: use the GitHub API, never local `grep -rl ~/sandboxes/`. `estate-rollout-discovery.md`.
+- **GitHub App commit attribution**: email is `{bot_user_id}+{bot_name}@users.noreply.github.com`; always use `git-as-agent` (incl. `--amend`), never `git config`. Canonical source: `~/sandboxes/lucos_agent/personas.json`.
+- **Claude Code permissions format**: key is `permissions.defaultMode` + `"teammateMode": "tmux"`. `bypass-permissions-tmux.md`.
+- **GitHub App perms — lucos-system-administrator**: `pull_requests: write` since 2026-03-01 (PR comments/reviews/issue comments).
+- **lucos_media_weightings tech debt**: #58 (timeout) / #59 (Waitress) are `agent-approved` — use Waitress, not FastAPI.
+- **Splitting broad issues**: post a design proposal and let lucos-issue-manager handle the split — don't split issues yourself.
+- **lucos_backups architecture**: single container on avalon handles ALL hosts. `lucos_backups.md`.
+- **Script repo structure** (confirmed 2026-03-05): `lucos_agent` = GitHub API tooling; `~/.claude/scripts/` = self-referential cron; `lucos_agent_coding_sandbox` = VM provisioning. Don't consolidate.
+- **xwing TLS renewal**: certbot auto-renews at 30 days — don't raise issues unless it fails to renew past that mark.
+- **New repo standup**: run `provision-repo-ci-secrets.sh` (sets `LUCOS_CI_PRIVATE_KEY` via Python/`re.DOTALL`, `LUCOS_CI_APP_ID`, fork-pr-approval policy, and CircleCI follow — step 9, added 2026-06-09, registers the webhook so `ci/circleci:*` statuses appear). `grep|cut` truncates multiline PEM. `new-repo-provisioning-script.md`.
+- **PEM key formatting**: always extract with Python `re.DOTALL`, never `grep|cut`. `pem-key-formatting.md`.
+- **Planned maintenance notifications**: (1) GitHub comment pre-reboot, (2) Loganne `POST https://loganne.l42.eu/events` after recovery.
+- **VM SSH key for git ops**: `~/.ssh/id_ed25519_lucos_agent` (no passphrase); `commit-agent-memory.sh` sets `GIT_SSH_COMMAND` for cron.
+- **Claude Code persona file caching**: cached at conversation start — mid-conversation edits need a fresh session.
+- **lucos_arachne one-shot containers** (confirmed 2026-03-06): `_ingestor`/`_triplestore`/`_search` have `restart: no` — always Exited between runs, normal.
+- **lucos_arachne ingestor**: startup auto-runs `ingest.py` (30s jitter) — deploy itself is the verification trigger, no manual exec needed; cron is daily `15 04 * * *`. `arachne-startup-autoingest.md`.
+- **lucos_arachne_triplestore memory** (updated 2026-04-20): 2G mem / `-Xmx1024m`; TDB2 tombstones accumulate — compact via `POST http://localhost:3030/$/compact/ds`. lucos_arachne#386.
+- **lucos_docker_health** (new 2026-03-10): Go binary monitors Docker healthchecks per-host, pushes to lucos_schedule_tracker — will supersede manual unhealthy-container checks.
+- **Missing `restart: always`**: containers without it stay down after reboot — check policy before raising an outage issue.
+- **Check for existing issues before raising new ones**: search open issues first (duplicate risk highest mid-incident); check recent 10 for different terminology too.
+- **Docker healthcheck localhost→IPv6 false-negative**: `localhost` resolves to `::1` in Alpine — use `http://127.0.0.1/_info` in the probe. lucos_arachne#87.
+- **avalon memory pressure history**: swap 4.5GB total; top consumer (2026-04-20) `lucos_photos_worker` at 1.4GiB; `lucos_photos_redis` capped with `maxmemory`+`allkeys-lru`.
+- **Nginx upstream DNS**: variable-based upstream + `resolver 127.0.0.11 valid=30s;` defers DNS to request time, prevents crash-loop on start.
+- **npm global installs**: always use a user-writable prefix (`npm config set prefix ~/.npm-global`, add to PATH). Applied in lima.yaml (fb3e335).
+- **Docker healthcheck tool availability**: verify the probe tool exists in the **final** image stage, not just the build stage. `healthcheck-notes.md`.
+- **Docker volume restore** (CRITICAL — avoids label loss): never bare `docker run` + alpine tar into a new volume — use `docker volume create --label com.docker.compose.*` to preserve compose labels lucos_backups relies on. Full 7-step procedure from the 2026-03-17 incident is in this file's history.
+- **lucos_creds CircleCI env vars**: `KEY_LUCOS_MONITORING` and `LUCOS_DEPLOY_ENV_BASE64` need manual rotation — 2026-05-09 incident: stale `LUCOS_DEPLOY_ENV_BASE64` reverted a fix. `lucos-creds-circleci-env-vars.md`.
+- **Docker daemon restarts**: check `live-restore` first; prefer `systemctl reload docker` (SIGHUP) over `restart` (which kills all containers without live-restore). `docker-daemon-restart-risk.md`.
+- **GitHub Actions SHA pinning**: always verify via API, never write SHAs from memory. `github-actions-sha-pinning.md`.
+- **Investigations**: read source before theorising about a tool/convention's internals. `feedback_read_before_theorising.md`.
+- **Trigger a workflow_dispatch directly**: `gh-as-agent repos/lucas42/{repo}/actions/workflows/{id}/dispatches --method POST -f ref=main` → 204 on success.
+- **Volume removal pre-check**: verify image content before removing volumes that might be masking it. `volume-removal-image-verify.md`.
+- **`Load key … error in libcrypto`**: a class of error (CRLF/tilde/BOM all trigger it); Docker `Healthy` only proves the healthcheck test, not end-to-end. If a fix survives live state but not redeploy, check for snapshot-based deploys (`grep DEPLOY_ENV_BASE64` in CI). `incident-2026-05-09-libcrypto.md`.
+- **Audit-finding issues**: never auto-closed by the audit tool — coordinator closes once the convention passes. `feedback_audit_finding_no_autoclose.md`.
+- **Teammate quote verification**: run `verify-teammate-quote --sender <name> --quote <text>` before quoting anyone verbatim. `feedback_verify_teammate_quotes.md`.
+- **Security tooling workflow changes**: confirm lucos-security sign-off before applying (CodeQL config, secret-scanning exclusions, etc.). `feedback_security_tooling_check.md`.
+- **hosts.yaml `ipv4_nat` ≠ that host's IP**: it's the shared NAT gateway address; only bare `ipv4` is direct. Salvare/virgon-express have no direct IPv4. `hosts-ipv4-nat.md`.
+- **Production SSH**: use `<host>.s.l42.eu` (never `.l42.eu`, which is NXDOMAIN); SSH config supplies `User lucos-agent` — don't override. `ssh-hostname-convention.md`.
+- **DOCKER-USER post-DNAT bypass**: `--dport 80` in FORWARD matches ALL DNAT'd-to-port-80 services regardless of host port (9 exposed on avalon). Fix: `--ctorigdstport` or drop host port bindings. `docker-dnat-docker-user-bypass.md`, lucos_firewall#21.
+- **Docker `fixed-cidr-v6` IPAM persistence**: only applies on bridge creation — flush `/var/lib/docker/network/files/` + restart to change it. `docker-fixed-cidr-v6-ipam-persistence.md`.
+- **Linux IPv6 route metric**: linkdown at metric 256 beats UP at metric 600 — docker0 with a public /64 can silently swallow all traffic. `linux-ipv6-route-metric-linkdown.md`.
+- **DR assessment**: bespoke corrections to external/bad source data are the irreplaceable part — "source data still exists" ≠ reconstructable DB. `feedback_dr_bespoke_correction_data.md`.
+- **lucos_dns BIND restart risk**: high-risk until #104 (validate-before-install guard) ships — zone load fails hard, no fallback; rndc key regenerates on restart (fallback: `docker kill --signal SIGHUP lucos_dns_bild`); config-sync caches to disk, not `http://lucos_configy:8034` (separate networks). `incident-2026-06-07-dns-outage.md`.
+- **Verify cumulative diff before un-drafting a PR or adding `Closes #N`**: on shared/force-pushed branches a commit can drop out of `main...HEAD` — run `git diff origin/main...HEAD -- <file>`. `feedback_verify_cumulative_diff.md`.
+- **lucos_firewall ADR-0007**: all 3 hosts ENFORCED 2026-06-08; lucos_backups#307 (bridge mode) next. `project_firewall_rollout.md`.
+- **Docker 29.x chains**: DOCKER-FORWARD/DOCKER-BRIDGE/DOCKER-CT + 3 others needed for `docker network create` — deleted by old firewall code, manually recreated on avalon 2026-06-08. `docker-29x-chains.md`.
+- **Docker compose stale network**: compose reuses an existing network even if config (enable_ipv6/subnet) changed — must `docker rm` + recreate + CI trigger. `docker-compose-stale-network.md`.
+- **Multi-PR issues**: drive the review loop for ALL PRs before reporting done — a co-primary cross-repo PR isn't a "drive-by extra". `feedback_multi_pr_review_loop.md`.
+- **xwing SSH from sandbox**: direct SSH is blocked (sandbox egress IP = xwing's own NAT IP) — use `-J avalon.s.l42.eu` (salvare: `-J xwing.s.l42.eu` or chain via avalon). `xwing-ssh-via-avalon.md`.
+- **lucos_creds SSH exec write format**: `{system}/{environment}/{KEY}={value}`, no command prefix; empty value deletes the credential; "No assignment character found" = missing `=`.
+- **lucos_contacts 403 for unknown key ≠ missing scope**: `getUserByKey` miss → 403, not 401 — looks like a scope error but is a key-rotation mismatch; fix is a consumer redeploy, not a creds grant. `contacts-403-unknown-key.md`.
+- **Root-owned files in `/srv/backups/local/volume/`**: `lucos-agent` has no write access — use `docker run --rm -v /srv/backups/local/volume:/backup alpine rm -f /backup/<file>` to bypass host ownership. `backup-volume-root-cleanup.md`.
+- **Test a suspected systemic bug with a live natural experiment before ticketing a fix**: "Dependabot never bumps X" (4-for-4) turned out to be humans always racing a fixed daily check, not a bug — confirmed by letting the next unraced run happen. `feedback_natural_experiment_before_fix_ticket.md`.
