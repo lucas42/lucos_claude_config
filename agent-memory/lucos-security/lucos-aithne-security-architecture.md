@@ -99,3 +99,11 @@ Consumer cleanup tickets (removing hardcoded allowlists): lucas42/lucos_backups#
 - #148: dev/prod issuer model for local-dev human auth
 - #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30)
 - #268: Flip contract §5 — principal_class allowlist removal + ADR-0001 §6 clarification
+
+## ADR-0004 — source-controlled OIDC clients, creds-distributed secrets (APPROVED 2026-07-07, PR #286)
+
+Committed `oidc_clients.json` (`//go:embed`, no secrets) reconciled into `oidc_clients` at startup; secrets delivered via `CLIENT_KEYS` env var from a lucos_creds linked credential (**Option B**: creds generates + distributes, aithne stays read-only against creds — no new write-edge, confirmed sound). Reconcile is **upsert-only, never deletes** (creds#333 empty-source lesson). `POST /admin/oidc-clients` removed entirely.
+
+**Checked and confirmed fine:** unsalted hex-SHA256 secret hash is OK because `lucos_creds/server/src/storage.go` generates secrets as 32 random alphanumeric chars via `crypto/rand` (~190 bits) — salting only matters for low-entropy secrets.
+
+**Flagged (approved anyway, not blocking):** `POST`, `GET`, and `DELETE /admin/oidc-clients/{id}` are all one handler on one route (`main.go:1583-1584`, `handleAdminOIDCClients`) — removing "the endpoint" per §5 takes DELETE with it too. Combined with upsert-only-never-delete, **there is no HTTP path left to revoke a compromised/leaked OIDC client secret post-merge** — only `docker exec` + raw SQLite surgery. `BOOTSTRAP_ADMIN_CONTACT_ID` (ADR-0002) restores an admin *principal*, not a deleted *capability*, so it doesn't cover this. ADR-0002's `--bootstrap-invite` subcommand already establishes "host access = break-glass tier" as an accepted pattern for aithne, so this isn't a new trust boundary — but it is a step down in friction/auditability from today's audited API call, and the ADR's Consequences section doesn't name it. Left as an open call for the implementer/lucas42 (keep a narrow DELETE, or document the host-access break-glass explicitly) rather than a blocker.
