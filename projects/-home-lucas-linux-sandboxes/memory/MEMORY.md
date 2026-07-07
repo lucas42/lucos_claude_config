@@ -79,7 +79,7 @@
 - [Empty tool output = unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run or wait before asserting
 - [Don't offer unschedulable /schedule](feedback_no_unschedulable_schedule_offer.md) — remote routines lack prod SSH/gh/local files; gate at offer time
 - [No parallel get-next/dispatch](feedback_no_parallel_getnext_dispatch.md) — run get-next to completion; dispatch exactly the URL it printed
-- [No confabulated quotes in consult relay](feedback_no_confabulated_quote_in_consult_relay.md) — paste verbatim from the just-fetched result, never from memory
+- [No confabulated quotes in consult relay](feedback_confabulated_quote_in_consult_relay.md) — paste verbatim from the just-fetched result, never from memory
 - [SendMessage running teammates, not subagents](feedback_sendmessage_not_subagents.md) — dispatch to existing teammates; don't spawn fresh Agent subagents
 - [No extra host binaries](feedback_no_extra_host_binaries.md) — favour estate-wide tools (scp over rsync); get lucas42's nod before adding a host dependency
 - [Rejected command ≠ no side effects](feedback_rejected_command_side_effects.md) — an interrupted compound Bash may still have created the issue/item; re-fetch state
