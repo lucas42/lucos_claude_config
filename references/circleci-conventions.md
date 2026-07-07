@@ -1,5 +1,7 @@
 # CircleCI Conventions
 
+**Before concluding any lucos repo "has no test/build CI gate," check `.circleci/config.yml`, not just `.github/workflows/`.** CircleCI is this estate's primary build/test/deploy CI; GitHub Actions in most repos is limited to CodeQL and auto-merge automation, so `.github/workflows/` alone will look test-less even when a real, deploy-gating `test` job exists in CircleCI. Check both before asserting a CI coverage gap.
+
 ## Pipeline trigger behaviour
 
 **Every push to any branch triggers a full pipeline.** CircleCI does not support file-path filtering — there is no equivalent of GitHub Actions' `paths:` filter. Any file change, regardless of type (application code, config files, `dependabot.yml`, documentation), will trigger a full build pipeline on push and a full build + deploy pipeline on merge to main.
