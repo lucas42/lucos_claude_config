@@ -95,10 +95,17 @@ lucas42 reversed the premise of #250: consumers MUST NOT hardcode a `principal_c
 
 Consumer cleanup tickets (removing hardcoded allowlists): lucas42/lucos_backups#363, lucas42/lucos_creds#430, lucas42/lucos_photos#456, lucas42/lucos_media_metadata_manager#357.
 
+## ADR-0004 implementation (PR #288, APPROVED 2026-07-07)
+
+Implements #286's design exactly: `oidc_clients.json` (currently `[]`), `reconcileOIDCClients`/`parseClientKeysBySystem` in main.go, `Store.UpsertOIDCClient` (parameterized SQL, no injection risk), admin route cleanly removed (grepped whole repo, no dangling refs). Independently cloned + ran `go build`/`go vet`/`go test` myself (all pass, incl. new tests) rather than trusting the PR's self-reported checklist — worth doing on this repo specifically, see CI gap below. Also confirmed via SSH that `CLIENT_KEYS` is genuinely absent from `lucos_aithne/development`, matching the "safe no-op deploy" claim.
+
+**lucos_aithne CI has no build/test job** — `.github/workflows/` is CodeQL + 2 auto-merge workflows only, no `go test`/`go build` step. CodeQL's Autobuild catches compile failures as a side-effect but never runs the test suite. "CI is green" on an aithne PR does NOT mean tests pass — verify by cloning and running locally (need `scripts/fetch-scopes.sh` first, since `scopes.yaml` is `//go:embed`-ed but gitignored, fetched from the `lucos_auth_scopes` image). Filed lucas42/lucos_aithne#289 to fix. **Until closed, treat any aithne PR's self-reported test-plan checklist as unverified — clone and run it yourself for security-relevant changes.**
+
 ## Known open issues
 - #148: dev/prod issuer model for local-dev human auth
 - #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30)
 - #268: Flip contract §5 — principal_class allowlist removal + ADR-0001 §6 clarification
+- #289: CI doesn't run go build/vet/test, only CodeQL (raised 2026-07-07)
 
 ## ADR-0004 — source-controlled OIDC clients, creds-distributed secrets (APPROVED 2026-07-07, PR #286)
 
