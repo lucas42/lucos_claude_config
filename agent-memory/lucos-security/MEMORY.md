@@ -50,3 +50,4 @@
 - [Issue-body Open Questions lesson](lesson-issue-body-open-questions.md)
 - [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md)
 - [Relationships with teammates](relationships.md)
+- [GitHub malware-bait comments](risk-github-malware-bait-comments.md) — throwaway-account + unsolicited-ZIP signature; `minimizeComment` GraphQL hides (not deletes) via lucos-security's App; attachment CDN URL needs a human GitHub abuse report.
