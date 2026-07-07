@@ -55,6 +55,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Defense-in-depth failure reverts to baseline](feedback_defense_in_depth_reverts_to_baseline.md)
 - [Route-registration order for auth exemption](feedback_route_registration_order_for_auth_exemption.md)
 - [Scope-first, not principal_class; don't accrete ADR complexity](feedback_scope_first_not_principal_class.md)
+- [Verify protocol interop, not just feature support](feedback_verify_protocol_interop_not_feature_support.md)
 
 ## Reference memories
 
