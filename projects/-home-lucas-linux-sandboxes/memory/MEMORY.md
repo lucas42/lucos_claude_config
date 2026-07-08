@@ -92,7 +92,7 @@
 
 ## Active Projects
 
-- [lucos_worlds deploy + login](project_lucos_worlds_state.md) — BookStack worldbuilding, deployed 2026-07-07. ES256 patch (#21/#26/#28, ADR-0002/#27) merged+deployed 2026-07-08: fixes the login-initiation 500 (`/oidc/login` now 302s to aithne). BUT **login still fails end-to-end** — lucas42 gets "An unknown error occurred" at the **callback** (real-aithne ID-token stage; integration test used a mock so missed it); sysadmin diagnosing via container logs. RBAC #17/#19 stay paused until login truly works; #29 (Low) hardening open
+- [lucos_worlds deploy + login](project_lucos_worlds_state.md) — BookStack worldbuilding, deployed 2026-07-07. **Login WORKS 2026-07-08** (verified by lucas42's real login) after fixing three sequential root causes: ES256 signing (patch BookStack, #26/#28, ADR-0002), client-auth method (aithne client_secret_basic, #295/#296/#297), missing email claim (primary-email in lucos_contacts, ADR-0003 + #766/#769; aithne emits it, #299/#300). RBAC #17/#19 now unblocked (resume — re-check dormant PR #19). Low follow-ups: #764 (radio widget), #767 (PersonName constraint), aithne#301 (gate `name`), #29/#30 (alg-binding)
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — detection/resolution process in agent instructions (2026-03-19)
 - [Media API v2→v3 migration](project_v3_migration.md) — COMPLETE 2026-04-08 (lucos-lang deprecation was final milestone)
 - [Auth fail-open/fail-closed](project_auth_failopen_question.md) — RESOLVED 2026-06-30: consumers FAIL CLOSED; residual is the JWKS serve-stale gap (aithne#241/arachne#697/lucos#255)
