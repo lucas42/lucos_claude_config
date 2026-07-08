@@ -90,7 +90,7 @@
 
 ## Active Projects
 
-- [lucos_worlds deploy + login blocker](project_lucos_worlds_state.md) — BookStack worldbuilding deployed 2026-07-07, infra-healthy but **login-blocked** (BookStack needs RS256, aithne signs ES256-only). lucas42 deciding the fix on lucas42/lucos_worlds#21, **2026-07-08 morning**. RBAC #17/#19 paused; stopgap (AUTH_METHOD=standard) available
+- [lucos_worlds deploy + login blocker](project_lucos_worlds_state.md) — BookStack worldbuilding deployed 2026-07-07, was **login-blocked** (BookStack needs RS256, aithne ES256-only). DECIDED 2026-07-08 (#21): patch BookStack for ES256, implementing in #26 (sysadmin) with Dependabot-gating integration tests + security diff review; ADR-0002 commissioned. RBAC #17/#19 unblock once login works; stopgap available
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — detection/resolution process in agent instructions (2026-03-19)
 - [Media API v2→v3 migration](project_v3_migration.md) — COMPLETE 2026-04-08 (lucos-lang deprecation was final milestone)
 - [Auth fail-open/fail-closed](project_auth_failopen_question.md) — RESOLVED 2026-06-30: consumers FAIL CLOSED; residual is the JWKS serve-stale gap (aithne#241/arachne#697/lucos#255)
