@@ -1,0 +1,14 @@
+---
+name: lesson-verify-real-client-behavior
+description: For wire-format/interop fixes, verify against the actual client library's real behaviour (source), not just spec text plus a self-consistent test
+metadata:
+  type: feedback
+---
+
+# Verify against the real client, not just the spec
+
+**Incident:** lucas42/lucos_aithne#296 (2026-07-08). Reviewed and APPROVEd a fix adding `url.QueryUnescape` to aithne's Basic-Auth client-credential parsing, on the grounds that RFC 6749 §2.3.1 says client_id/client_secret should be `application/x-www-form-urlencoded` before base64. Verified the fix was internally consistent (a test that encoded with `url.QueryEscape` and decoded with `url.QueryUnescape` — both ends of the same code, written by the same PR). Architect then checked what BookStack's actual OAuth2 library (`league/oauth2-client`'s `HttpBasicAuthOptionProvider`) sends on the wire — `base64_encode(sprintf('%s:%s', $client_id, $client_secret))`, raw concatenation, no URL-encoding at all, despite the RFC link in its own docblock (a known real-world deviation). So the "RFC-correct" fix was actually a regression against the one real client that mattered, and the self-written test couldn't catch it because it only validated that the PR's own encode/decode functions agreed with each other, not that they matched reality.
+
+**Why this matters:** rule/fact — when reviewing a fix to wire-format parsing, encoding, or protocol handling written against a spec, the spec is not the ground truth for what a specific real-world counterparty actually does. Verify against the counterparty's actual implementation (pull its source, as I already do for crypto verification — see [[lucos-aithne-security-architecture]] PR #28 phpseclib3 review for the same technique applied correctly) whenever that counterparty's source is available (vendored in an image, open source on GitHub, etc.). A test that only checks the fix against itself (encode with function A, decode with function A's inverse) proves internal consistency, not correctness against the outside world — it will pass even if the whole premise is backwards.
+
+**How to apply:** before approving any parsing/encoding change meant to fix real-world interop (auth headers, token formats, webhook payloads, any wire format touching a specific named third-party client/library), find and read that client/library's actual source for the relevant call site — same technique as pulling vendored `phpseclib3`/`league/oauth2-client` out of a Docker image via `docker cp`. Treat "the RFC says X" and "our test proves our code does X" as necessary but not sufficient — the sufficient check is "the actual counterparty does X too."

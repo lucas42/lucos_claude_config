@@ -51,3 +51,4 @@
 - [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md)
 - [Relationships with teammates](relationships.md)
 - [GitHub malware-bait comments](risk-github-malware-bait-comments.md) — throwaway-account + unsolicited-ZIP signature; `minimizeComment` GraphQL hides (not deletes) via lucos-security's App; attachment CDN URL needs a human GitHub abuse report.
+- [Verify against real client behaviour, not just spec](lesson-verify-real-client-behavior.md) — approved a "RFC-correct" URL-decode fix (lucos_aithne#296) that broke against BookStack's actual OAuth2 client, which sends raw (non-encoded) Basic Auth credentials; pull the real counterparty's source before approving wire-format fixes.
