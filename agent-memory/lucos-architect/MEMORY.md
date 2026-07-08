@@ -82,6 +82,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [aithne `next=` must be a full URL, not a path](reference_aithne_next_param_full_url.md)
 - [calc-version semver + dependabot gap](reference_calcversion_semver_dependabot_gap.md)
 - [scratch vs distroless/static + CA bundle](reference_scratch_vs_distroless_ca_bundle.md)
+- [BookStack OIDC is https-only (breaks local-dev worlds login)](reference_bookstack_oidc_https_only.md)
 - [Firewall DOCKER-USER polices inter-container traffic](reference_firewall_dockeruser_scope.md)
 
 ## Project memories
