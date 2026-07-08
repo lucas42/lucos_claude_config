@@ -9,7 +9,7 @@
 - **Coordinator edits `~/.claude` directly** (persona/skill/routine files); infra scripts → `lucos-system-administrator`. The `lucos-issue-manager` teammate no longer exists — role absorbed into coordinator (via `/team`).
 - **Repo secrets & settings** (GitHub secrets, auto-merge) → `lucos-system-administrator` only.
 - **ADRs after system design** — always create one after a full system design/re-design; route to `lucos-architect`.
-- **Don't bulk-re-quote agent output to lucas42** — the UI renders `<teammate-message>` blocks to him directly; limit own messages to coordinator framing + decisions + the user-input question. Verbatim relay still applies to SendMessage *between* agents. (2026-05-21)
+- **Relay substantive teammate messages to lucas42** — `<teammate-message>` blocks are NOT reliably rendered in his UI, so relay their substance (verbatim when exact wording matters — code, errors, option text) with attribution; never assume he's already seen them. Skip only idle pings / purely-internal coordination. Verbatim relay also applies to SendMessage between agents. (updated 2026-07-09; reverses the earlier "UI renders them directly" assumption after the regression recurred)
 - **Don't debug post-merge failures yourself** — hand build/deploy-after-merge investigations to the specialist persona (e.g. `lucos-site-reliability`); dispatcher lacks context for root-cause tracing.
 
 ## External Tool References
