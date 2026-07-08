@@ -88,6 +88,7 @@
 - [Serialize same-repo dispatch](feedback_serialize_same_repo_dispatch.md) — don't run two concurrent PRs on one repo; wait for the first to merge. Parallelise only across repos
 - [No secondary sign-off gate](feedback_no_secondary_signoff_gate.md) — /next IS lucas42's sign-off; don't park implementable irreversible tickets in Awaiting Decision
 - [ADR authorship is architect-only](feedback_adr_authorship_architect_only.md) — when a decision needs both an ADR and implementation, don't put "capture in the ADR" in the impl ticket (implementer writes a duplicate); commission the ADR separately to the architect
+- [Track out-of-band specialist reviews to merge](feedback_track_out_of_band_specialist_reviews.md) — if the coordinator dispatches a security/SRE review out-of-band, it owns re-triggering the code-reviewer's final verdict + confirming the merge; a specialist-APPROVE + code-reviewer-COMMENT is NOT merged (aithne#300 sat 3h16m)
 
 ## Active Projects
 
