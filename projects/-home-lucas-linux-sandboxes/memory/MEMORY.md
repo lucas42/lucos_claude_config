@@ -87,6 +87,7 @@
 - [CHANGES_REQUESTED ≠ hard block](feedback_changes_requested_not_a_hard_block.md) — only blocks if required-review branch protection is set; the reliable block is converting the PR to draft
 - [Serialize same-repo dispatch](feedback_serialize_same_repo_dispatch.md) — don't run two concurrent PRs on one repo; wait for the first to merge. Parallelise only across repos
 - [No secondary sign-off gate](feedback_no_secondary_signoff_gate.md) — /next IS lucas42's sign-off; don't park implementable irreversible tickets in Awaiting Decision
+- [ADR authorship is architect-only](feedback_adr_authorship_architect_only.md) — when a decision needs both an ADR and implementation, don't put "capture in the ADR" in the impl ticket (implementer writes a duplicate); commission the ADR separately to the architect
 
 ## Active Projects
 
