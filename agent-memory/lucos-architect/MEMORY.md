@@ -99,6 +99,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Artist modelling](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api
 - [Auto-merge approval policy](project_auto_merge_approval_policy.md) — lucos ADR-0013 Accepted; configy `additionalReviewers`, workflow-enforced, fail-closed
 - [loganne event level](project_loganne_event_level.md) — per-event `level` (#506), named ordinal scale, awaiting taxonomy sign-off
+- [aithne-client library](project_aithne_client_library.md) — lucos#264 proposal; boundary=library verifies+classifies/app presents; ADR-0001 in new repo; 4 JS follow-ups Blocked on it
 
 ## Auto-merge & security checks
 
