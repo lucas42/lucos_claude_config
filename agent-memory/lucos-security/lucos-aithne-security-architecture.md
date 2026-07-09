@@ -121,7 +121,7 @@ Implements #286's design exactly: `oidc_clients.json` (currently `[]`), `reconci
 - #148: dev/prod issuer model for local-dev human auth
 - #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30) — **CLOSED/rollout complete 2026-07-09**, see section above
 - #268: Flip contract §5 — principal_class allowlist removal + ADR-0001 §6 clarification
-- #306: Incident runbook Scenario B doesn't account for serve-stale consumers exceeding ≤35-min bound (raised 2026-07-09, Low, non-blocking)
+- #306: Incident runbook Scenario B doesn't account for serve-stale consumers exceeding ≤35-min bound (raised 2026-07-09, Low, non-blocking) — fix PR #307 opened by SRE 2026-07-10, **REQUEST_CHANGES by me**: threat model/mitigation design (blanket restart, timing nuance) is sound, but the actual `docker restart` commands are wrong — `lucos_creds` (checked docker-compose.yml: JWKS code is in the separate `lucos_creds_ui` container, plain `lucos_creds` has no aithne env vars) and `lucos_arachne` (checked docker-compose.yml: `/mcp`/`/explore` are two distinct containers `lucos_arachne_mcp`/`lucos_arachne_explore`, not one `lucos_arachne`). Both would silently no-op on the runbook's highest-priority targets. See [[lesson-verify-real-client-behavior]] for the generalised lesson. Re-review once container names are fixed.
 
 ## ADR-0004 — source-controlled OIDC clients, creds-distributed secrets (APPROVED 2026-07-07, PR #286)
 
