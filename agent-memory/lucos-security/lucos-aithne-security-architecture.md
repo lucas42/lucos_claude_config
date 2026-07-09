@@ -105,7 +105,7 @@ lucas42 reversed the premise of #250: consumers MUST NOT hardcode a `principal_c
 
 **Do NOT raise `principal_class` allowlist absence as a finding** in any Wave 3/4 consumer. The contract §5 now explicitly says: `principal_class` is informational, consumers MUST NOT reject on absent/unrecognised class, scope is the sole gate.
 
-Consumer cleanup tickets (removing hardcoded allowlists): lucas42/lucos_backups#363, lucas42/lucos_creds#430, lucas42/lucos_photos#456, lucas42/lucos_media_metadata_manager#357.
+Consumer cleanup tickets (removing hardcoded allowlists): lucas42/lucos_backups#363, lucas42/lucos_creds#430 (**PR #448 APPROVED 2026-07-10** — verified no identity-scoped `sub` check and no scope-tier quirk existed to be quietly protected; pure single-tier `creds:admin`-or-nothing gate, safe removal), lucas42/lucos_photos#456, lucas42/lucos_media_metadata_manager#357.
 
 ## ADR-0004 implementation (PR #288, APPROVED 2026-07-07)
 
