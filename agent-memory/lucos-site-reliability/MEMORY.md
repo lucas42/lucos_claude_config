@@ -93,6 +93,9 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 ## Docker daemon / recovery
 - [Docker live-restore:true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — stop all containers → restart daemon →…
 
+## Estate topology
+- [Repo name ≠ container name; consumer often a separate _ui/_mcp/_explore container](pattern_repo_name_not_container_name.md) — creds_ui not creds; arachne_mcp+_explore; wrong restart = SILENT no-op.
+
 ## Diagnostic methodology / standing rules
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
 - [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs…
