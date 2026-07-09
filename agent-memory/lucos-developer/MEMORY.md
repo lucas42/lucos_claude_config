@@ -70,6 +70,7 @@ Always manually review generated migration files before committing. Autogenerate
 - [Dependabot recreate needs push access](feedback_dependabot_recreate.md) — GitHub Apps can't use `@dependabot recreate`; close the PR, flag to team-lead for lucas42 to post it
 - [Avoid python -c apostrophe escaping](feedback_python_c_apostrophe_escaping.md) — use the Edit tool, not manually-escaped `'"'"'` bash tricks, for multi-line JS edits with apostrophes; shipped in a PR once
 - [Verify dependency source matches pinned version](feedback_verify_dependency_source_matches_pinned_version.md) — check the installed version against the project's actual pin (fresh install/venv), not whatever's on host site-packages, before citing library internals as fact
+- [No comments explaining absence](feedback_no_comments_explaining_absence.md) — lucas42: don't comment why a check/behavior is no longer there; that rationale belongs in the commit message only (mmm PR #366)
 
 ## lucos_eolas
 - [Migrations: always use ./update.sh](feedback_lucos_eolas_migrations.md) — never run makemigrations directly; script handles Docker build, migration gen, makemessages, and locale sync in one step
