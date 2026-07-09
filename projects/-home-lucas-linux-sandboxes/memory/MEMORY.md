@@ -89,6 +89,7 @@
 - [No secondary sign-off gate](feedback_no_secondary_signoff_gate.md) — /next IS lucas42's sign-off; don't park implementable irreversible tickets in Awaiting Decision
 - [ADR authorship is architect-only](feedback_adr_authorship_architect_only.md) — when a decision needs both an ADR and implementation, don't put "capture in the ADR" in the impl ticket (implementer writes a duplicate); commission the ADR separately to the architect
 - [Track out-of-band specialist reviews to merge](feedback_track_out_of_band_specialist_reviews.md) — if the coordinator dispatches a security/SRE review out-of-band, it owns re-triggering the code-reviewer's final verdict + confirming the merge; a specialist-APPROVE + code-reviewer-COMMENT is NOT merged (aithne#300 sat 3h16m)
+- [Blocked items' fresh comments unsurfaced](feedback_blocked_items_fresh_comments.md) — get-issues-for-triage doesn't surface Blocked items with new non-me comments; scan their recent comments during the Step 5 sweep (caught worlds#6's requirement-change comment 2026-07-09)
 
 ## Active Projects
 
