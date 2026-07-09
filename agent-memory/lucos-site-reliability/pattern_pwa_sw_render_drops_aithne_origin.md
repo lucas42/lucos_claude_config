@@ -20,4 +20,6 @@ notes#445: notes = 553 login / **0 remint**; seinn = 160 remint (all 200), stays
 
 **Env footgun to check:** `AITHNE_ORIGIN` empty-string ("") would ALSO render `aithne-origin=""` because `?? fallback` only catches null/undefined. (Wasn't the cause here — notes' env was correct — but check it before blaming the render path.)
 
+**RESOLVED (fix notes#447, verified prod 2026-07-09):** post-deploy router log over 24h — notes remint 0 → **111 (all 200)** at ~13min cadence spanning the full window (now estate #2 reminter behind seinn); notes `/auth/login` bounces 553 → **9** (residual = genuine fresh logins). Diagnostic method above held up exactly. #445 signed off for closure.
+
 Related: [[pattern_container_restart_log_buffer_artifact]], [[reference_aithne_agent_principal_model]].
