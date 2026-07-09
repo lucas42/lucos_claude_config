@@ -55,6 +55,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — usually link 3 (compose), not link 1 (creds).
 
 ## Monitoring
+- [Surfacing a new service: monitoring REBUILD vs root RUNTIME pickup](pattern_surfacing_new_service_monitoring_vs_root.md) — monitoring bakes list at build; root polls /_info at runtime; not "just a rebuild" for both.
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — use `summary` for counts.
 - [Estate circleci alert storm = CircleCI API outage tripping UnknownsGate](pattern_circleci_unknownsgate_estate_storm.md) — check Loganne failingChecks[].debug first…
 - [monitoring self fetch-info flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — global 1s timeout; #186 closed.
