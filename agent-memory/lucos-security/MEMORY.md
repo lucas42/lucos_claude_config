@@ -17,6 +17,7 @@
 - **Never propose semver-major Dependabot ignore rules** — major bumps should flow through; breakage → raise a CI-coverage issue instead (2026-04-18).
 - **Open Questions must hard-gate triage** when a remediation value is unverified — a soft hedge gets approved anyway. Detail: `lesson-issue-body-open-questions.md` (root cause: lucos_repos#177 incident).
 - **Ops check schedule** tracked in `ops-checks.md`.
+- **Dev environments never hold a working prod credential**, even a purpose-scoped one minted just for dev — hand-minting a separate client sidesteps the lucos_creds link-validation mechanism entirely, not just narrows blast radius. Detail: `policy-dev-prod-credential-containment.md`.
 
 ## Accepted Risks / Closed Findings (do not re-raise)
 
