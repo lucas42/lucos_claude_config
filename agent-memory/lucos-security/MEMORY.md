@@ -37,6 +37,7 @@
 - **Unauthenticated state-mutation endpoints** on internal services — `lucos_monitoring` `/suppress/*` (PUT/DELETE/POST) has no auth; network isolation is not a substitute for endpoint auth.
 - **XSS via unescaped external data in manual HTML rendering** — `lucos_monitoring/src/server.erl` interpolates `techDetail`/`debug` unescaped; check any lucos service doing manual string-concat HTML.
 - **lucos_creds `LUCOS_DEPLOY_ENV_BASE64`** silently reverts rotations of its own most-sensitive creds (`KEY_LUCOS_CREDS` etc.) unless the CircleCI snapshot is updated too. Detail: `lucos-creds-scoped-key-permissions.md`.
+- **Clear-text-logging acceptance doesn't transfer between sibling repos** — `lucos_contacts_fb_import#17` was accepted because it's a local, one-off, user-run script; `lucos_contacts_googlesync_import` (issue #218, raised 2026-07-09) logs the same kind of data (phone numbers) but runs as an always-on production cron container — different exposure profile, needs its own accept/tighten decision, don't assume the fb_import precedent covers it.
 
 ## Topic Files (full detail)
 
