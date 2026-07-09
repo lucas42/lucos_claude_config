@@ -131,6 +131,7 @@ Always manually review generated migration files before committing. Autogenerate
 - [Refresh PR description with follow-up commits](feedback_pr_description_freshness.md) — if commit changes shape of work (passthrough vs hardcode, new dep, etc.) update description before re-requesting review
 - [arachne find_entities labels](feedback_arachne_find_entities_labels.md) — returns `rdfs:label` not `skos:prefLabel`; use `get_entity(uri)` for canonical name
 - [Dependabot recreate needs push access](feedback_dependabot_recreate.md) — GitHub Apps can't use `@dependabot recreate`; close the PR, flag to team-lead for lucas42 to post it
+- [Avoid python -c apostrophe escaping](feedback_python_c_apostrophe_escaping.md) — use the Edit tool, not manually-escaped `'"'"'` bash tricks, for multi-line JS edits with apostrophes; shipped in a PR once
 
 ## lucos_eolas
 
