@@ -13,6 +13,8 @@ When creating or updating GitHub issues/PRs/comments via `gh-as-agent ... -X POS
 
 The `@` prefix tells `gh api` to read the value from a file. This is the documented pattern in [[reference-agent-github-identity]] (`references/agent-github-identity.md` line 53).
 
+**Short-flag trap — `-F` not `-f`.** `--field`/`-F` interprets `@file` (reads file contents); `--raw-field`/`-f` sends the value **literally**. So `-f body=@/tmp/x.md` posts the literal string `@/tmp/x.md` as the comment body (not empty — literally the path). Bit me 2026-07-09 on lucos_worlds#6; the post-write body-read caught it and a PATCH with `-F body=@file` fixed it. If you use the short flag, it MUST be capital `-F` for file-backed bodies.
+
 **Don't confuse with `gh issue create` / `gh pr create` syntax.** Those CLI subcommands use `--body-file PATH` directly. `gh api --field body-file=PATH` looks similar but treats `body-file` as a field name with the literal string `PATH` as value — the actual `body` field stays empty, so the issue/PR/comment gets posted with `body: null`.
 
 **Why:** Bit me on 2026-05-24 ops checks when filing `lucas42/lucos_monitoring#252`. The POST returned 201 with `body: null` because `--field body-file=/tmp/sre_missed_recovery_event.md` was interpreted as a field named `body-file` rather than as a way to specify the body. Had to PATCH the issue afterwards via `--input file.json` where the file was `{"body": "..."}`. The `gh-as-agent` wrapper output looked successful — only became obvious when I read the posted issue back.
