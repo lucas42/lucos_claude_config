@@ -38,13 +38,14 @@
 - **XSS via unescaped external data in manual HTML rendering** — `lucos_monitoring/src/server.erl` interpolates `techDetail`/`debug` unescaped; check any lucos service doing manual string-concat HTML.
 - **lucos_creds `LUCOS_DEPLOY_ENV_BASE64`** silently reverts rotations of its own most-sensitive creds (`KEY_LUCOS_CREDS` etc.) unless the CircleCI snapshot is updated too. Detail: `lucos-creds-scoped-key-permissions.md`.
 - **Clear-text-logging acceptance doesn't transfer between sibling repos** — `lucos_contacts_fb_import#17` was accepted because it's a local, one-off, user-run script; `lucos_contacts_googlesync_import` (issue #218, raised 2026-07-09) logs the same kind of data (phone numbers) but runs as an always-on production cron container — different exposure profile, needs its own accept/tighten decision, don't assume the fb_import precedent covers it.
+- **JWKS serve-stale + signing-key compromise (Scenario B) window is unbounded per-consumer** — a consumer that can't reach aithne's JWKS endpoint during an emergency key rotation keeps trusting its stale (compromised-key-containing) snapshot indefinitely, beyond the runbook's ≤35-min figure. Approved anyway (lucos_creds#447, 2026-07-09) since it's estate-wide-contract-mandated and narrow/compound; tracked as a runbook fix on lucos_aithne#306, not a per-consumer finding. Don't re-raise per-consumer — see `lucos-aithne-security-architecture.md`.
 
 ## Topic Files (full detail)
 
 - [Zombie Credentials risk](risk-zombie-credentials-downstream.md) — removing from CLIENT_KEYS doesn't revoke pre-registered downstream keys.
 - [Webhook Fan-out Amplification](risk-webhook-fanout-amplification.md) — ~2× amplification via loganne fan-out; low risk currently.
 - [Loganne Agent Access](reference-loganne-access.md) — bearer via KEY_LUCOS_LOGANNE; filter client-side; event type credentialUpdated.
-- [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design, pre-rollout open issues (reviewed 2026-06-17).
+- [lucos_aithne Security Architecture](lucos-aithne-security-architecture.md) — JWT/JWKS, ~20-min revocation window, machine key design; JWKS serve-stale rollout COMPLETE 2026-07-09 (4/4 consumers), new runbook gap tracked as #306.
 - [Wave 4 CSRF / SameSite=None risk](risk-wave4-csrf-samesite-none.md) — @csrf_exempt + form-data mutations become CSRF-vulnerable when aithne_session (SameSite=None) replaces SameSite=Lax session. Check every Wave 4 PR.
 - [aithne OIDC RP scope gap](aithne-oidc-rp-scope-gap.md) — CLOSED 2026-07-06: id_token/userinfo now carry `scopes` (#277/#280) atop access-token narrowing (#258/#279); generic OIDC RPs can gate on scope.
 - [aithne OIDC url-redirect false positive](lucos-aithne-oidc-url-redirect-fp.md)

@@ -76,6 +76,18 @@ No `Scopes granted: [...]` line. No scope dump in logs.
 
 **Fail-open vs fail-closed: FAIL CLOSED (correct).** All migrated services return 401/403 on auth failure. No fail-open behaviour found. The 5-min JWKS cache provides resilience during brief outages, but serve-stale is not implemented — a JWKS outage at cache-miss time causes a 401 storm (security-correct but more aggressive than the contract intends). See lucos_aithne#241.
 
+## JWKS serve-stale rollout COMPLETE (2026-07-09) — new residual gap on the incident runbook
+
+lucos_aithne#241's serve-stale gap is now closed across all four planned JS consumers: lucas42/lucos_media_seinn#552, lucas42/lucos_loganne#564, lucas42/lucos_notes#455, lucas42/lucos_creds#447 (APPROVED by me). Each wraps `createRemoteJWKSet` with a snapshot-and-fallback helper, triggering only on exact transport-error codes (`ERR_JWKS_TIMEOUT`/`ECONNREFUSED`/`ENOTFOUND`) — deliberately excluding `ERR_JWKS_NO_MATCHING_KEY` (a genuine unknown-kid rejection, not an infra failure; misclassifying it was caught and fixed on the first two sibling PRs).
+
+**Security verdict on the pattern itself: sound, and not a new risk for agent-secret/passkey compromise (Scenarios A/C in the runbook)** — serve-stale never touches the signing key, so those scenarios' existing ≤20-min window (see "Effective revocation window" above) is unaffected by whether the JWKS snapshot is fresh or stale.
+
+**New residual specific to signing-key compromise (Scenario B):** the runbook's ≤35-min bound (30-min VerificationWindow + 5-min consumer cache) implicitly assumes every consumer can complete a fresh JWKS fetch within that window. A serve-stale consumer that specifically can't reach aithne's JWKS endpoint at the moment of an emergency `rotate-signing-key` keeps trusting its last-known-good snapshot (containing the compromised key) for as long as that reachability problem persists — unbounded by 30/35 min. Narrow compound-failure scenario (needs both an active key compromise AND a reachability problem specific to one consumer), but **lucos_creds is the worst possible target for it** — `creds:admin` unlocks every secret in the estate, not just one service.
+
+Filed lucas42/lucos_aithne#306 (Low severity, non-blocking) recommending the runbook's Scenario B add an explicit "confirm/force serve-stale consumers have refreshed since rotation" step, naming lucos_creds as the one to verify first. Left open whether the fix should be a blanket restart-all-consumers step or a per-consumer reachability check — that's a judgement call for whoever picks it up, not decided in the issue.
+
+**For future reviews:** don't re-raise "serve-stale weakens Scenario B" as a fresh finding in sibling consumer PRs (notes/loganne/seinn) — the mechanism is identical across all four and was already weighed here; only the *consequence* differs by what scope the consumer gates. #306 is the right place to track the runbook fix, not a new per-consumer issue.
+
 **Decommission clean:** lucos_authentication is archived + NXDOMAIN. lucos_comhra also archived + NXDOMAIN. All actively-deployed Wave 3/4 services confirmed migrated on GitHub main. Residual: lucos_backups#361 (stale backup config entry, already tracked).
 
 **Issues raised 2026-06-30:**
@@ -107,8 +119,9 @@ Implements #286's design exactly: `oidc_clients.json` (currently `[]`), `reconci
 
 ## Known open issues
 - #148: dev/prod issuer model for local-dev human auth
-- #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30)
+- #241: JWKS serve-stale not implemented in consumers (raised 2026-06-30) — **CLOSED/rollout complete 2026-07-09**, see section above
 - #268: Flip contract §5 — principal_class allowlist removal + ADR-0001 §6 clarification
+- #306: Incident runbook Scenario B doesn't account for serve-stale consumers exceeding ≤35-min bound (raised 2026-07-09, Low, non-blocking)
 
 ## ADR-0004 — source-controlled OIDC clients, creds-distributed secrets (APPROVED 2026-07-07, PR #286)
 
