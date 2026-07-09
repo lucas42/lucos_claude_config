@@ -84,6 +84,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [scratch vs distroless/static + CA bundle](reference_scratch_vs_distroless_ca_bundle.md)
 - [BookStack OIDC is https-only (breaks local-dev worlds login)](reference_bookstack_oidc_https_only.md)
 - [Firewall DOCKER-USER polices inter-container traffic](reference_firewall_dockeruser_scope.md)
+- [/_info fetch mechanics + adopted-app shim pattern](reference_info_fetch_and_shim_pattern.md)
 
 ## Project memories
 
