@@ -1,38 +1,67 @@
 ---
 name: configy-undeployed-system-entry-pattern
-description: How to add a pre-scaffolding repo to lucos_configy without triggering monitoring or CI alerts
+description: Adding a pre-scaffolding repo to lucos_configy as type=system triggers a cascade of NEW failing audit conventions — don't do it
 metadata:
   type: reference
 ---
 
-For a brand-new repo whose eventual configy `type` (system/component/script) is already
-settled by design (unlike a genuinely ambiguous case — see the `lucas_architecture_models`
-precedent where type was unclear and I left it out entirely), it's safe to add it to
-`lucos_configy/config/systems.yaml` immediately as a bare `null` entry (e.g. `lucos_foo:`
-with nothing following, same as the existing `lucos_deploy_orb` and
-`lucos_contacts_googlesync_import` entries) even before any deployment or CI exists.
+**CORRECTED 2026-07-09 — my first pass on this (same day) was wrong. Do not repeat it.**
 
-**Why this is safe, verified from source (2026-07-09, lucas_worlds_atlas / lucos_configy#246):**
+The monitoring-safety half of the original note still holds: a configy `system` entry with
+no `domain`/`http_port`/`hosts` is genuinely invisible to `lucos_monitoring`'s HTTP checks
+(`/systems/http` filters on `http_port.is_some()` — `api/src/systems.rs::http()`), and its
+CircleCI fetcher treats a 404 (no CircleCI project) as a benign no-op, not an alert
+(`fetcher_circleci.erl::checkCIForSlug/1`).
 
-- `in-lucos-configy` audit convention (`lucos_repos/conventions/in-lucos-configy.go`) only
-  checks presence + type classification, not deployment readiness or scaffolding.
-- configy's `/systems/http` endpoint (`api/src/systems.rs::http()`) filters on
-  `http_port.is_some()`. No `http_port` set → excluded from that feed.
-- `lucos_monitoring`'s HTTP/`_info` fetcher (`fetcher_info.erl`) builds its target list from
-  `configy.l42.eu/systems/http` at Docker build time (see monitoring's Dockerfile) and
-  additionally skips any entry with no `domain`. So an entry with no domain/http_port is
-  invisible to HTTP monitoring — no false "unreachable" alerts.
-- `lucos_monitoring`'s CircleCI fetcher (`fetcher_circleci.erl`) reads the FULL `/systems`
-  list (not `/systems/http`), so it does poll CircleCI for every configy-listed repo
-  regardless of http_port/domain. But `checkCIForSlug/1` treats a 404 (no CircleCI project)
-  as an explicit benign no-op (`#{}`, no check emitted) — not an alert. So a repo with no
-  `.circleci/config.yml` yet is still safe to list.
+**But the lucos_repos audit-tool half was wrong.** `in-lucos-configy` is not the only
+convention gated by configy presence. Every `lucos_repos` convention has an `AppliesTo
+[]RepoType` field (`conventions/conventions.go`), and `RepoTypeUnconfigured` (a repo not in
+configy at all) is NOT in the `AppliesTo` list for ~20 System/Component-scoped conventions —
+so they simply don't run yet. The moment a repo is added to `config/systems.yaml` (even a
+bare-null entry with no domain/http_port/hosts), its `Type` flips to `RepoTypeSystem` and
+**all** of those conventions start running against it.
 
-**Two other audit checks are independent of configy and will still fire regardless**:
-`dependabot-configured` (needs `.github/dependabot.yml`) and `fork-pr-contributor-approval`
-(needs a GitHub API PUT). The latter is zero-risk to set immediately via
-`repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval` even on an empty
-repo — no scaffolding dependency. See `new-repo-provisioning-script.md` for the full
-standup script; do NOT run its branch-protection step (step 8) on a pre-scaffolding repo —
-it requires a `ci/circleci: lucos/build` check that can't exist without
-`.circleci/config.yml`, permanently blocking future PRs.
+Most of them gracefully no-op when scaffolding (docker-compose.yml, .circleci/config.yml,
+.github/workflows/*) is absent — `container-naming`, `dockerfile-*`, `env-var-passthrough`,
+`standard-env-vars`, `docker-healthcheck-on-built-services`, `circleci-uses-lucos-orb`,
+`circleci-deploy-serial-group`, `circleci-system-deploy-jobs`, `circleci-jobs-in-required-checks`,
+`reusable-workflow-pinned`, `required-status-checks-coherent`,
+`no-stale-codeql-requirement-on-infra-repos`, `auto-merge-secrets`, `codeql-workflow` (both,
+skip when no CodeQL-supported language is detected) all return `Pass: true` with a "convention
+does not apply" detail when the relevant file/setting is missing.
+
+**Six do NOT have that escape hatch and hard-fail on a bare new repo:**
+`circleci-config-exists`, `branch-protection-enabled`, `allow-auto-merge`,
+`delete-branch-on-merge`, `code-reviewer-auto-merge-workflow`,
+`dependabot-auto-merge-workflow`. Confirmed by reading each `Check` function directly
+(not the dashboard) — GitHub repo settings (`allow_auto_merge`, `delete_branch_on_merge`)
+default `false` on a new repo, and none of `.circleci/config.yml`,
+`.github/workflows/code-reviewer-auto-merge.yml`, `.github/workflows/dependabot-auto-merge.yml`
+exist pre-scaffolding.
+
+**Net effect of adding a README-only repo to configy as `system`: -1 finding
+(`in-lucos-configy` clears) +6 new findings.** That's a net increase, not a reduction — the
+exact opposite of the intended effect, and exactly the "load of audit issues" a "not
+planning to work on this soon" repo owner is trying to avoid.
+
+**Corrected guidance:** for a genuinely pre-scaffolding repo, leave it OUT of configy
+entirely (matches the `lucas_architecture_models` precedent) regardless of whether its
+eventual `type` is already settled by design. Type-ambiguity was never the real
+disqualifier — the `AppliesTo` cascade is. Re-add only once real scaffolding (CircleCI
+config + the two standard `.github/workflows/*` files + branch protection + repo settings)
+exists, at which point those six conventions will pass on arrival instead of firing fresh
+findings.
+
+`dependabot-configured` and `fork-pr-contributor-approval` are NOT configy-gated (no
+`AppliesTo` restriction — they run on every repo type including `Unconfigured`) and will
+keep failing regardless of the configy decision. `fork-pr-contributor-approval` is still
+safe/zero-risk to fix immediately via a direct GitHub API PUT to
+`repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval` — that part of the
+original note was correct. See `new-repo-provisioning-script.md` for the full standup
+script; still do NOT run its branch-protection step (step 8) on a pre-scaffolding repo.
+
+Before recommending *any* configy addition as a fix for a single failing convention, check
+whether the type change activates other conventions via their `AppliesTo` list — grep
+`conventions/*.go` for `AppliesTo.*RepoTypeSystem` (or whatever type is being assigned) and
+read each hit's `Check` function for what it fails on, not just the one convention that
+prompted the question.
