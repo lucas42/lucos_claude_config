@@ -57,6 +57,12 @@ The `Agent` tool is for genuinely new contexts — research subtasks, file looku
 
 If you find yourself reaching for `Agent({subagent_type: "lucos-foo"})`, stop and use `SendMessage({to: "lucos-foo", ...})` instead.
 
+## Don't set a teammate as `owner` on your own tracking tasks
+
+Setting `owner: "lucos-foo"` on a `TaskCreate`/`TaskUpdate` task surfaces to that teammate as a **`task_assignment` notification** — a *second*, weaker channel that competes with the real `SendMessage` dispatch and gets confused with it. The coordinator's tracking tasks (e.g. "Dispatch aithne#301 to lucos-developer") are the coordinator's *own* to-do list; **keep them owned by the coordinator (`team-lead`), never the implementing teammate.** A teammate's only real work-trigger is a `SendMessage` reading `implement issue {url}` — nothing else counts as a dispatch.
+
+Observed failure (2026-07-09): dispatch-tracking tasks with `owner: lucos-developer` reached the developer as `task_assignment`s, which it read as a "duplicate #92 dispatch" and as a "#301 assignment with no `implement issue` trigger" — costing a round of clarifying messages. If you track a multi-dispatch sequence with tasks, own them yourself; dispatch is SendMessage-only.
+
 ## The user cannot see messages between teammates
 
 Your messages to the team-lead (and their messages to you) are not shown to the user. The user only sees what the team-lead writes in plain text. When reporting findings or recommendations to the team-lead, be aware that the team-lead must relay the full content to the user — do not assume the user has any context from your previous messages.
