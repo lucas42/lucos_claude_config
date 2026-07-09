@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-05
-resource_checks: 2026-06-30
-syslog_review: 2026-06-30
-software_updates: 2026-06-30
-sandbox_drift: 2026-06-30
-repos_dashboard: 2026-07-05
+container_status: 2026-07-09
+resource_checks: 2026-07-09
+syslog_review: 2026-07-09
+software_updates: 2026-07-09
+sandbox_drift: 2026-07-09
+repos_dashboard: 2026-07-09
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1456,4 +1456,30 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 - **Fix applied**: added `- ENVIRONMENT` to app service environment array. PR #758 raised, approved by code-reviewer, awaiting lucas42's approval (supervised repo). Existing auto-raised issue lucos_contacts#756 will be closed by closing keyword in PR.
 
 **Issues raised**: None (auto-raised issue #756 already existed; PR #758 closes it).
+
+---
+
+### 2026-07-09 (checks 1–6 due; weekly checks last ran 2026-06-30, 9 days — overdue; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo, known limitation): no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no `-security`-tagged packages on any host — all routine):
+- avalon: Docker CE 29.3→29.6.1, containerd 2.2.1→2.2.5, buildx→0.35.0, compose→5.3.1. Routine tooling bumps.
+- xwing: Docker CE 29.4→29.6.1, containerd, buildx, compose bumps; libc6/libssl3/openssl (from `stable`, NOT `stable-security`); kernel 6.12.47→6.18.34; large batch of `raspi-*`/camera firmware packages. All routine.
+- salvare: Docker CE 29.3→29.6.1, containerd/buildx/compose bumps; libc6/libssl3/openssl (from `oldstable`, NOT `oldstable-security`); kernel 6.12.25→6.12.93; dpkg, raspi-firmware, raspi-utils. All routine.
+- No urgent issue raised — nothing security-tagged.
+
+**Resources**:
+- avalon: disk 35% (599G/1.8T). Memory 3.3Gi available of 7.6Gi. Swap 317Mi/4.5Gi (7%). Load 1.68/2.46/2.97 (124 days uptime) — fine. Journal 107.6M — fine.
+- xwing: disk **31%** (34G/117G) — up slightly from 25% on 2026-06-23 but nowhere near the 80% threshold; backup pruning fix (#318/#324) still holding. Memory 401Mi available of 906Mi (tight, as always on this low-resource host). Swap 181Mi/905Mi (20%). Load 3.93/3.74/3.73 — persistently elevated on this box, consistent with the long-running trend noted since April; not a new concern. Journal 21.2M — fine.
+- salvare: disk **59%** (33G/58G) — up slightly from 55% on 2026-06-23, still well recovered from the March/April 95% incidents. Memory 3.4Gi available of 3.7Gi. No swap in use. Load 0.13 (11 days uptime) — fine. Journal 36.8M — fine.
+- Local VM: disk 60% (58G/96G) — under 80% threshold, no forced cleanup. Memory 4.9Gi available of 7.7Gi. Docker: 29.3GB images (19.21GB/65% reclaimable), 15.15GB build cache (4.5GB reclaimable) — sizeable reclaimable headroom but not yet warranting a prune since disk isn't tight.
+
+**Sandbox drift**: clean — no local unpushed commits (`origin/main..HEAD` empty), no remote commits to pull (`HEAD..origin/main` empty after fetch).
+
+**Repos dashboard**: 61 repos checked. 3 failing conventions, all on `lucas42/lucos_architecture_models` (still pre-scaffolding, per 2026-07-05 assessment — no CI config, no Dockerfile, README-only): `dependabot-configured`, `fork-pr-contributor-approval`, `in-lucos-configy`. All three already auto-tracked by the audit tool. Deliberately not running standard repo standup or guessing the configy type yet — same reasoning as 2026-07-05 (branch protection requiring a CircleCI check that can't exist yet would permanently block PRs). No new action.
+
+**Issues raised**: None. All hosts clean, no security-tagged updates, no drift, no new dashboard failures.
 
