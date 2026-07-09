@@ -17,7 +17,7 @@
 - **Never propose semver-major Dependabot ignore rules** — major bumps should flow through; breakage → raise a CI-coverage issue instead (2026-04-18).
 - **Open Questions must hard-gate triage** when a remediation value is unverified — a soft hedge gets approved anyway. Detail: `lesson-issue-body-open-questions.md` (root cause: lucos_repos#177 incident).
 - **Ops check schedule** tracked in `ops-checks.md`.
-- **Dev environments never hold a working prod credential**, in any form — hand-minted separate client, or a scoped/allowlisted creds link. Verified: creds-link scope is inert for OIDC client secrets (aithne authenticates by secret-hash, not link scope) — a "governed" exception can be worse than an honest bypass since it looks safe on review. Detail: `policy-dev-prod-credential-containment.md`.
+- **Dev environments never hold a working prod credential**, in any form — hand-minted separate client, or a scoped/allowlisted creds link. Verified: creds-link scope is inert for OIDC client secrets (aithne authenticates by secret-hash, not link scope) — a "governed" exception can be worse than an honest bypass since it looks safe on review. Exception: lucos_contacts genuinely enforces link scope per-request, so a narrow compiled-code allowlist WAS approved there (creds#420). Detail: `policy-dev-prod-credential-containment.md`, `policy-creds420-write-exception.md`.
 
 ## Accepted Risks / Closed Findings (do not re-raise)
 
