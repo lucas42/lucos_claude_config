@@ -28,6 +28,7 @@
 - **Unauthenticated MCP endpoint** (lucos_arachne) — fixed PR #292, Bearer auth via `CLIENT_KEYS`; `/_info` still open.
 - **DOMPurify XSS** (lucos_arachne) — fixed PR #52, `dompurify >= 3.3.2` override (GHSA-v2wj-7wpq-c8vv).
 - **`safe_path` py/url-redirection** (lucos_photos) — false positive, mitigation already in place (lucos_photos#96).
+- **`isSafeRedirectPath` js/server-side-unvalidated-url-redirection** (lucos_media_seinn `v3.js` `/login`) — recurring false positive, CodeQL doesn't recognise the `dummy.invalid`-base `new URL()` sanitiser. Dismissed 3x now (seinn#410, then again as alert #10 on PR #561 2026-07-10) — re-fires as a "new" alert whenever the file's AST shifts (e.g. moved into a factory closure), even with byte-identical guard logic. Expect it to fire again on the next `v3.js` refactor; same dismissal justification applies unless the guard itself changes.
 - **eolas SSRF `go/request-forgery`** on `fetchEolasName` — false positive, dismissed (lucos_media_metadata_api PR #284). Detail: `lucos-media-metadata-api-eolas-ssrf-pattern.md`.
 
 ## Open Risk Patterns (watch for recurrence across repos)
