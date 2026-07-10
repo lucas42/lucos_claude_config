@@ -9,7 +9,7 @@ Use this process when you have identified a critical issue that needs a report -
 > 1. Report written following `docs/incidents/TEMPLATE.md`
 > 2. **Draft** PR opened early and kept open — every amendment (verification results, folded-in team responses, late follow-up links) goes on the same branch. Do NOT mark ready or merge mid-incident.
 > 3. Follow-up issues filed and linked in the Follow-up Actions table
-> 4. Team notified **on the draft**, and their responses folded into the report
+> 4. Team notified **on the draft** — the six domain teammates each individually (not satisfied by coordinator review) — and their responses folded into the report
 > 5. Only once the incident is resolved AND the team responses have settled: mark the PR **ready**, drive the code-reviewer review loop to approval (per `pr-review-loop.md`), and **merge**
 >
 > The full checklist with checkbox syntax is at the bottom of this file. It is duplicated here at the top because every previous false-completion of this workflow has been caused by reading down to Step 2 and stopping. The draft-stays-open lifecycle (items 2→5) is the load-bearing change: keeping the PR in draft is precisely what avoids the ship-then-amend churn.
@@ -134,7 +134,9 @@ Put the source/originating issue(s) and the list of outstanding TBDs in the body
 
 ## Step 3: Notify the team on the draft, and fold in their responses
 
-Once the incident is resolved and the draft report is coherent (verification TBDs filled or clearly marked pending), notify every other teammate — pointing them at the **draft** report so they can review it for their domain and surface any follow-ups *before* it's finalised. This is the step that earns the draft-stays-open lifecycle: responses get folded into the same PR rather than chased through separate amendment PRs after merge.
+Once the incident is resolved and the draft report is coherent (verification TBDs filled or clearly marked pending), notify **each of the six domain teammates individually** — architect, developer, security, system-administrator, ux, and code-reviewer — pointing them at the **draft** report so they can review it for their *own domain* and surface any follow-ups *before* it's finalised. This is the step that earns the draft-stays-open lifecycle: responses get folded into the same PR rather than chased through separate amendment PRs after merge.
+
+**"The coordinator/team-lead reviewed it" does NOT satisfy this step.** The coordinator seeing the draft (or supplying a framing correction) is not a domain review — this step is the six named teammates each reviewing for their own domain. Do not tick the checklist item on the strength of coordinator review, a code-reviewer PR approval, or lucas42's formatting feedback alone; those are separate from the six-teammate domain notification. (This is exactly how it slipped on the 2026-07-09 locations incident: the item was ticked because team-lead had reviewed the framing, so the six domain reviews never went out until flagged post-merge.)
 
 **There is no broadcast mechanism in SendMessage.** Setting `to: "broadcast"` puts the message into a phantom inbox no agent reads — it does not multiplex. The only structured message types are `shutdown_request`, `shutdown_response`, and `plan_approval_response`. To reach the whole team, send **individual SendMessage calls**, one per teammate. You can issue all of them in a single response (parallel tool calls).
 
@@ -194,7 +196,7 @@ The incident report is delivered when ALL of the following are true. Reporting b
 - [ ] Report written following `docs/incidents/TEMPLATE.md` (Step 1)
 - [ ] Draft PR opened early and kept open; all amendments on the same branch, not merged mid-incident (Step 2)
 - [ ] Follow-up issues filed and linked in the report's Follow-up Actions table (Step 1, item 3)
-- [ ] Team notified on the draft and their responses folded in (Step 3 — six individual messages, not one "broadcast")
+- [ ] Team notified on the draft and their responses folded in (Step 3 — six individual domain-teammate messages, not one "broadcast" and **not** satisfied by coordinator/team-lead review)
 - [ ] PR marked ready, reviewed, and merged once the incident is resolved and responses have settled (Step 4)
 
 ### Mandatory completion-report format
