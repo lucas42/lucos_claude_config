@@ -10,9 +10,11 @@ The audit tool creates audit-finding issues when a convention fails and — per 
 
 **Closing an audit-finding issue does NOT make the problem go away.** If the underlying convention still fails, the next audit sweep will create a brand-new issue for the same finding. The only way to permanently resolve an audit-finding issue is to make the convention pass — either by fixing the repo or by updating the convention's `Check` function.
 
-## Closing audit-finding issues — the tool does it automatically
+## Closing audit-finding issues — close promptly once the fix is verified
 
-You do **not** need to manually close an audit-finding issue when its convention starts passing: the audit tool auto-closes it itself within one sweep (≤6h), per ADR-0004. Manually closing early is an optional board-cleanliness convenience, **harmless only when the convention already passes** on the [dashboard](https://repos.l42.eu) — verify it shows `pass` first if you do. Never manually close a **still-failing** finding: the next sweep just re-raises a new one (see the re-raise rule above).
+When a finding has been fixed and you've **verified the convention now passes** (via `/api/rerun` for a non-Type-gated convention, or the [dashboard](https://repos.l42.eu)), **close the issue straight away** and set its board item to Done — don't leave a completed finding open waiting for the audit tool's own sweep. The tool does auto-close passing findings within one sweep (≤6h, per ADR-0004), but that is the **backstop, not the plan**: lucas42 does not want completed issues sitting open for hours (2026-07-10).
+
+**Only ever close a finding you've verified passes.** Never manually close a **still-failing** finding — the next sweep just re-raises a new one (see the re-raise rule above). If you can't confirm it passes, leave it open.
 
 ## When NOT to close an audit-finding issue
 
