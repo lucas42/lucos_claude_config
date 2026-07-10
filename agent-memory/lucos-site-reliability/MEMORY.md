@@ -127,6 +127,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Sandbox branch hygiene: reset --hard origin/main before branching](feedback_sandbox_branch_hygiene.md).
 - [No destructive remediation without a recovery path](feedback_no_destructive_without_recovery_path.md) — compose files live only on CI runners…
 - [Treat empty tool output as unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run/wait before asserting.
+- [Use Monitor (not bg-bash) to wait on prod conditions](feedback_monitor_over_bg_bash_for_waits.md) — bg-bash loops reaped ~2min; cover both terminal outcomes; secs=-1 means RUNNING.
 
 ## Standing rules — incident reports / proposals
 - [Read the originating PR/issue body in full when writing causation](feedback_read_pr_body_for_causation.md) — don't reflex-frame triggers as "routine".
