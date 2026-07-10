@@ -3,17 +3,33 @@
 #   - LUCOS_CI_APP_ID and LUCOS_CI_PRIVATE_KEY repository secrets
 #   - fork-pr-contributor-approval policy (first_time_contributors_new_to_github)
 #
-# Usage: provision-repo-ci-secrets.sh <repo-name>
+# Usage: provision-repo-ci-secrets.sh <repo-name> [required-status-check ...]
 # Example: provision-repo-ci-secrets.sh lucos_dns_secondary
+# Example (Component repo with no lucos/build job — e.g. release-npm/release-pip only):
+#   provision-repo-ci-secrets.sh lucos_aithne_jsclient "Analyze (javascript)"
 #
 # Requires:
 #   - ~/sandboxes/lucos_agent/.env with LUCOS_CI_APP_ID and LUCOS_CI_PEM
 #   - ~/sandboxes/lucos_agent/gh-as-agent (lucos-system-administrator app)
 #   - python3 with PyNaCl (pip3 install PyNaCl)
+#
+# Step 8 (branch protection) defaults to requiring "ci/circleci: lucos/build",
+# which is WRONG for any repo whose .circleci/config.yml has no lucos/build job
+# (Component-type library repos publish via lucos/release-npm or lucos/release-pip
+# instead, which don't run on PRs). Pass one or more required-check context names
+# as extra args to override the default — e.g. the CodeQL check name for a
+# release-only Component repo. Confirmed via lucos_pubsub precedent (2026-07-10):
+# a Component repo with only a release job has no PR-triggered CircleCI check at
+# all, so its required checks are CodeQL-only.
 
 set -euo pipefail
 
-REPO="${1:?Usage: $0 <repo-name>}"
+REPO="${1:?Usage: $0 <repo-name> [required-status-check ...]}"
+shift
+REQUIRED_CHECKS=("$@")
+if [ "${#REQUIRED_CHECKS[@]}" -eq 0 ]; then
+    REQUIRED_CHECKS=("ci/circleci: lucos/build")
+fi
 LUCOS_AGENT_ENV="$HOME/sandboxes/lucos_agent/.env"
 GH_AS_AGENT="$HOME/sandboxes/lucos_agent/gh-as-agent"
 
@@ -172,16 +188,17 @@ echo "LUCOS_CI_PRIVATE_KEY set in Dependabot secrets."
 echo "delete_branch_on_merge and allow_auto_merge enabled."
 
 # --- Step 8: Branch protection on main ---
-# Requires PRs pass CI (ci/circleci: lucos/build) before merge.
+# Requires the check(s) in REQUIRED_CHECKS to pass before merge (default:
+# ci/circleci: lucos/build; override via extra CLI args for Component repos —
+# see usage note above).
 # No approval requirement and no strict mode — both would block Dependabot auto-merge.
-# IMPORTANT: The exact required check name depends on the repo's CircleCI config.
-# This sets the standard single-build check; add test/CodeQL checks manually if needed.
 BP_BODY=$(mktemp /tmp/branch-protection-XXXXXX.json)
-cat > "$BP_BODY" <<'BPEOF'
+CONTEXTS_JSON=$(python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "${REQUIRED_CHECKS[@]}")
+cat > "$BP_BODY" <<BPEOF
 {
   "required_status_checks": {
     "strict": false,
-    "contexts": ["ci/circleci: lucos/build"]
+    "contexts": ${CONTEXTS_JSON}
   },
   "enforce_admins": null,
   "required_pull_request_reviews": null,
@@ -193,8 +210,8 @@ BPEOF
     --method PUT \
     --input "$BP_BODY" > /dev/null
 rm "$BP_BODY"
-echo "Branch protection enabled on main (required: ci/circleci: lucos/build)."
-echo "NOTE: if the repo has test jobs or CodeQL, add them manually via the GitHub UI or API."
+echo "Branch protection enabled on main (required: ${REQUIRED_CHECKS[*]})."
+echo "NOTE: if the repo has additional test jobs or CodeQL checks not passed above, add them manually via the GitHub UI or API."
 
 # --- Step 9: Follow project in CircleCI (sets up push/PR webhook in GitHub) ---
 # New repos must be "followed" via CircleCI v1.1 API to register the GitHub webhook
@@ -245,7 +262,7 @@ echo "  - LUCOS_CI_PRIVATE_KEY (full PEM, Python-extracted) — Actions + Depend
 echo "  - LUCOS_CI_APP_ID — Actions + Dependabot secrets"
 echo "  - fork-pr-contributor-approval = first_time_contributors_new_to_github"
 echo "  - delete_branch_on_merge = true, allow_auto_merge = true"
-echo "  - Branch protection on main (required: ci/circleci: lucos/build, strict=false)"
+echo "  - Branch protection on main (required: ${REQUIRED_CHECKS[*]}, strict=false)"
 echo "  - CircleCI follow (GitHub webhook registered — ci/circleci:* statuses will appear)"
 echo "  - Initial pipeline triggered on main (future pushes auto-build via webhook)"
 echo ""

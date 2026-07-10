@@ -15,7 +15,7 @@ Covers in one shot:
 5. **Initial pipeline trigger on main** — follow registers webhook for future pushes only; existing commits on the repo are NOT retroactively built. Script now explicitly triggers main so the first build runs immediately. If PR branches were pushed before provisioning, trigger each manually: `curl -X POST -H 'Circle-Token: $TOKEN' https://circleci.com/api/v2/project/github/lucas42/{repo}/pipeline -d '{"branch":"<branch>"}'`
 
 Script also now sets (as of lucos_worlds standup, 2026-07-07):
-6. Branch protection on `main` requiring `ci/circleci: lucos/build` (no approval/strict-mode requirement — those would block Dependabot auto-merge). Add test/CodeQL check names manually if the repo has them.
+6. Branch protection on `main` requiring `ci/circleci: lucos/build` (no approval/strict-mode requirement — those would block Dependabot auto-merge). Add test/CodeQL check names manually if the repo has them. **As of 2026-07-10 the script takes optional extra CLI args to override this default** — pass the correct required-check name(s) for repos with no `lucos/build` job (Component/library repos using `release-npm`/`release-pip`, e.g. `provision-repo-ci-secrets.sh lucos_aithne_jsclient "Analyze (javascript)"`). See [[component-repo-bootstrap-lucos-aithne-jsclient]].
 7. `delete_branch_on_merge = true` **and** `allow_auto_merge = true` — both are plain repo-settings PATCHes the agent App already has permission for; there's no reason either was ever "still manual."
 
 **What the script does NOT cover (still manual, genuinely — needs a human-held secret):**
