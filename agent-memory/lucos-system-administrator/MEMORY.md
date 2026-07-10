@@ -44,7 +44,7 @@
 - **Trigger a workflow_dispatch directly**: `gh-as-agent repos/lucas42/{repo}/actions/workflows/{id}/dispatches --method POST -f ref=main` → 204 on success.
 - **Volume removal pre-check**: verify image content before removing volumes that might be masking it. `volume-removal-image-verify.md`.
 - **`Load key … error in libcrypto`**: a class of error (CRLF/tilde/BOM all trigger it); Docker `Healthy` only proves the healthcheck test, not end-to-end. If a fix survives live state but not redeploy, check for snapshot-based deploys (`grep DEPLOY_ENV_BASE64` in CI). `incident-2026-05-09-libcrypto.md`.
-- **Audit-finding issues**: never auto-closed by the audit tool — coordinator closes once the convention passes. `feedback_audit_finding_no_autoclose.md`.
+- **Audit-finding issues DO auto-close** (ADR-0004, corrected 2026-07-10) — report verified pass/fail only, don't editorialize on closing mechanism; `in-lucos-configy`-style Type-gated checks need a full `/api/sweep` not `/api/rerun` to verify. `feedback_audit_finding_no_autoclose.md`.
 - **Teammate quote verification**: run `verify-teammate-quote --sender <name> --quote <text>` before quoting anyone verbatim. `feedback_verify_teammate_quotes.md`.
 - **Security tooling workflow changes**: confirm lucos-security sign-off before applying (CodeQL config, secret-scanning exclusions, etc.). `feedback_security_tooling_check.md`.
 - **hosts.yaml `ipv4_nat` ≠ that host's IP**: it's the shared NAT gateway address; only bare `ipv4` is direct. Salvare/virgon-express have no direct IPv4. `hosts-ipv4-nat.md`.
