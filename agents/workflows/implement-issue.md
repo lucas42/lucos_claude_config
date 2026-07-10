@@ -97,9 +97,12 @@ For breaking changes, use the `BREAKING CHANGE:` footer or a `!` after the type 
 
 Use `~/sandboxes/lucos_agent/create-pr` — **never** call `gh-as-agent ... pulls` directly and **never** use `gh pr create`. The `create-pr` script creates the PR and automatically requests lucas42 as a reviewer if the repo is supervised. Combining both steps in one script means the reviewer request cannot be forgotten.
 
+**⚠️ Production dependencies ⚠️ marker (lucas42/lucos#266).** If your change needs a **manual production change** to work — a new credential, config value, service/sidecar, or linked credential that must be set in prod *before or alongside* the deploy — put a section headed **exactly** `⚠️ Production dependencies ⚠️` at the **very top** of the PR body, naming what must be set and by whom (lucas42-only creds especially). **Omit the section entirely when there are none** — no empty boilerplate. Because merge auto-deploys, this marker is what lets the approver confirm the creds are present *before* approving; a change that ships ahead of its creds crash-loops in prod (the 2026-07-09 lucos_locations incident). Keep the body concise so the marker, when present, is impossible to miss. (`create-pr`'s `--body-file` bypasses the GitHub PR template, so this convention — not the template — is what applies to agent-authored PRs.)
+
 ```bash
 BODY_FILE=$(mktemp)
 cat > "$BODY_FILE" <<'ENDBODY'
+<!-- If this change needs a manual prod change, add a "⚠️ Production dependencies ⚠️" section HERE at the very top; omit if none. -->
 Closes #N
 
 Brief description of what changed and why. Link to relevant issues, ADRs, or
