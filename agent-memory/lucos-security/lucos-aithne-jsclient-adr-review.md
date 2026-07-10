@@ -111,4 +111,43 @@ rather than asserting against mocks that just confirm the code called the right 
 name. This caught nothing wrong here, but is the check that would have caught it if the
 implementation had drifted from the approved design.
 
+## lucos-code-reviewer's PR #6 findings + `_setVerifier` risk question (2026-07-10)
+
+lucos-code-reviewer reviewed the same PR in parallel and found two legitimate small bugs
+(`sanitiseError()` dropped `error.cause?.code`, so `Classification.error.code` came back
+`undefined` for the wrapped-`TypeError` shape even though `outcome` correctly read
+`unavailable`; and no regression test for the `jwksUrl` ≠ `origin` invariant). Both fixed
+by lucos-developer in commit `cc2933f` before I'd even finished writing my response —
+verified the diff directly: `sanitiseError` now falls back to `error.cause?.code`
+symmetrically with `isJWKSInfraError`'s own check, and the two new tests are genuine
+(the negative case signs a real token with `setIssuer()` on the `jwksUrl` origin and
+confirms it's rejected — not tautological). **Lesson: PR heads move fast when multiple
+reviewers are active in parallel — my first APPROVE (`ae8ff03`) went stale within the
+same review pass; always re-check `pulls/N.head.sha` before/after posting and re-approve
+on the current head if it moved.** Re-approved at `cc2933f`:
+https://github.com/lucas42/lucos_aithne_jsclient/pull/6#pullrequestreview-4669885546
+
+**`_setVerifier` runtime-setter question — my verdict: not a materially new risk, worth
+hardening, not worth blocking.** lucos-code-reviewer asked whether centralising the
+`_setVerifier`/`_verifyFn` test seam (already present, unchanged, in all four legacy
+consumer modules) into one shared library — now imported identically by four production
+services — changes the risk calculus enough to want construction-time-only injection
+(no public runtime setter) instead. My reasoning: anyone with enough in-process access to
+grab a live client instance and call `_setVerifier` already has equivalent power to
+monkey-patch `jose`'s own exported `jwtVerify` directly, or monkey-patch this library's
+own `createAithneClient` export — both strictly more general bypasses available to the
+same attacker tier regardless of whether `_setVerifier` exists, so it doesn't unlock a
+materially new capability for a sophisticated supply-chain attacker. The more realistic
+risk is an **accidental** one: a test-utils/global-setup module leaking into a production
+import path and silently disabling auth via a stray `_setVerifier` call — a genuine
+footgun class, and construction-time-only injection would close it for free at near-zero
+cost. Recommended it as a cheap hardening (same "fix cheap while it's one place" logic as
+the ADR's other two fixes) but explicitly left it as a should-fix/fast-follow, not a
+blocker — posted as a COMMENT-type review, verdict (APPROVE) unchanged:
+https://github.com/lucas42/lucos_aithne_jsclient/pull/6#pullrequestreview-4669881568
+
+**If `_setVerifier` hardening lands in a later PR, verify it actually removes the public
+runtime setter** (not just adds a config-time alternative alongside it, which would leave
+the footgun in place) before treating this as closed.
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
