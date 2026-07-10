@@ -150,6 +150,23 @@ https://github.com/lucas42/lucos_aithne_jsclient/pull/6#pullrequestreview-466988
 runtime setter** (not just adds a config-time alternative alongside it, which would leave
 the footgun in place) before treating this as closed.
 
+### CLOSED — `_setVerifier` hardening landed and verified (PR #12, lucos_aithne_jsclient#7, 2026-07-10)
+
+Confirmed it's a genuine removal, not an alongside addition: `_verifyFn` is now a `const`
+closure capture (`config._verifyFn ?? default`), and the returned client object no longer
+has a `_setVerifier` key at all — read the object literal directly, not just the PR
+description. Went further than the code-level check: grepped all 4 known consumers
+(creds/notes/seinn/loganne) for `_setVerifier` usage and confirmed every call site is a
+test-only wrapper or test file (loganne's `__tests__/websocket.js` calls it directly in
+`beforeEach`/`afterEach`, still test-only) — nothing calls it on a live request path, so
+the failure mode on a future un-updated consumer adoption is a loud test-suite `TypeError`,
+not a silently-disabled auth check. Two non-blocking notes left on the PR: no dedicated
+regression test proves `_setVerifier` is absent (object-literal diff is sufficient proof
+today), and each consumer will need a companion PR to update their own wrapper when
+adopting — same explicit-PR-per-consumer pattern as the `appOrigin` rollout.
+
+Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/12#pullrequestreview-4671099712
+
 ## First consumer migration reviewed: lucos_creds PR #451, APPROVED (2026-07-10)
 
 lucos-code-reviewer pulled me in (lucos_creds is on their mandatory always-security-review
