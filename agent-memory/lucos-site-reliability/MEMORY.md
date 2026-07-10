@@ -77,6 +77,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch…
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — not a bug.
 - [lucos_locations stops recording silently; /_info only checks TLS](pattern_locations_silent_data_gap.md) — monitor OUTCOME not each cause. #91.
+- [locations /map 500 while /_info green = oauth2_proxy sidecar crash-loop on missing prod creds](pattern_locations_oauth2proxy_sidecar_crashloop.md) — device /owntracks/pub 401 = split intact; fix is lucas42-only.
 - [media_import all_files red = weekly full scan hard-killed by redeploys](pattern_media_import_fullscan_killed_by_redeploy.md) — cron grandchild SIGKILLed. #173.
 - [seinn playback-error thrash ≠ cache-eviction thrash](pattern_seinn_playback_thrash_distinct_from_cache_thrash.md) — decodeAudioData/fetch fails; #482 fixed #483.
 - [linuxplayer phantom ?action=error DELETEs, RESOLVED #123](pattern_linuxplayer_phantom_error_deletes.md) — re-open if recurs.
