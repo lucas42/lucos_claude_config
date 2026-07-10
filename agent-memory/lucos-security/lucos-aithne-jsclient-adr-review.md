@@ -70,9 +70,45 @@ the original draft had no injection path for it. Confirmed real and necessary.
 
 Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/1#pullrequestreview-4667726078
 
-**For future reviews of the v1 implementation PR(s):** confirm the actual code matches
-what's now specified in the ADR (kid-stripping regex, loginUrl validation, hasScope
-export, environment config plumbing) — the ADR is now the source of truth to check
-implementation against, not a fresh design review.
+## v1 implementation reviewed and APPROVED (PR #6, ae8ff03, 2026-07-10)
+
+Read the actual code (`index.js`, `index.test.js`, `.circleci/config.yml`,
+`package.json`), not just the PR description. All three ADR items confirmed correctly
+implemented AND tested against real behaviour, not mocked assertions:
+
+- **ES256 pin** is a hardcoded literal in `classify()`, not consumer-configurable. The
+  RS256-rejection test signs a real token and routes it through actual `jose.jwtVerify`
+  (via the `_setVerifier` seam), not a stub that just checks the option was passed —
+  genuine defence-in-depth test, not tautological.
+- **`isJWKSInfraError`** dual-shape check (`error.code` / `error.cause?.code`) has a
+  dedicated test for the exact native-`fetch`-wrapped `TypeError('fetch failed', {cause})`
+  shape.
+- **`kid` sanitisation** strips control chars from the *whole* error message (broader/
+  safer than surgically targeting just the kid substring) — test embeds `\n`/`\x1b`/`\x7f`
+  in a fake kid, confirms stripped while surrounding text survives.
+- **`loginUrl()` guard** (`isTrustedReturnUrl`): parses with `new URL()` (defeats
+  userinfo/backslash/scheme tricks), checks `.origin` against an anchored `*.l42.eu`
+  suffix regex. Hand-traced bypass attempts (substring-not-suffix e.g.
+  `l42.eu.evil.com`, malformed input) — all correctly rejected, fails safe to a bare
+  login URL, never redirects to an untrusted destination.
+- **`verifyToken()`** confirmed to funnel through the same `classify()` as
+  `verifySession()` — single shared code path, not just matching signatures.
+- **Bonus, implementer's own catch (not mine):** CircleCI `release-npm` now `requires:
+  [test]` — the scaffold had published to npm on every `main` push with no test gate.
+
+**One non-blocking observation logged on the PR, not a finding:** `isTrustedReturnUrl`'s
+exact-match branch compares `returnUrl` against *aithne's own* configured `origin`, not
+the calling consumer's origin (which the library never receives) — inert in practice
+(fully subsumed by the `*.l42.eu` suffix regex), but the naming could mislead a future
+maintainer into thinking it does more than it does. Not asking for a change.
+
+Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/6#pullrequestreview-4669851042
+
+**Pattern for future reviews of this library/its consumers:** when a design doc gets
+implemented, re-derive the security properties from the actual code paths (trace what
+calls what) and check tests exercise real behaviour (real crypto, real error shapes)
+rather than asserting against mocks that just confirm the code called the right function
+name. This caught nothing wrong here, but is the check that would have caught it if the
+implementation had drifted from the approved design.
 
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
