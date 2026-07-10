@@ -39,3 +39,5 @@ POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts&convention=auto-
 At least one of `?repo` or `?convention` is required. Results are updated in the database and reflected on the dashboard immediately.
 
 **Important distinction:** `/api/rerun` updates convention results in the database but does **not** satisfy the `last-audit-completed` monitoring check — only a full sweep (`/api/sweep`) does that. If monitoring is alerting on a failed sweep, use `/api/sweep`, not `/api/rerun`.
+
+**`/api/rerun` cannot confirm Type-gated conventions — use `/api/sweep` for those.** `/api/rerun` refreshes a repo's live `hosts`/`unsupervisedAgentCode` but **reuses the last full sweep's DB-cached `RepoType`** rather than refetching it from `lucos_configy`. So any convention gated on the repo's configy type — notably `in-lucos-configy` — will keep reporting its stale pre-fix result under `/api/rerun` even after the repo is correctly registered. Only a full `/api/sweep` recomputes `Type`. When verifying a fix to a Type-dependent audit finding, trigger `/api/sweep` (and cross-check `configy.l42.eu/components`), not `/api/rerun`.
