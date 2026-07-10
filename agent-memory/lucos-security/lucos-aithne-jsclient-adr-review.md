@@ -225,4 +225,23 @@ process.env.APP_ORIGIN` actually lands, not just the version bump.
 
 Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/10#pullrequestreview-4670959347
 
+### Rollout complete — all 4 consumers (2026-07-10)
+
+- **lucos_creds PR #453** — always-review repo, my sign-off required. Traced the full
+  chain of custody rather than trusting the PR body: `v1.1.1` tag → merge commit `d84c2aed`
+  → parent `114d0027` (exactly the PR #10 commit approved above, confirmed via the
+  `compare` API, not assumed). Also confirmed `appOrigin` resolves to `https://creds.l42.eu`
+  in prod, which was already inside the `*.l42.eu` suffix rule pre-change — so it's a
+  redundant trust entry in prod, not a new one; the fix is genuinely dev-only as claimed.
+  APPROVED: https://github.com/lucas42/lucos_creds/pull/453#pullrequestreview-4671043690
+- **lucos_notes #464, lucos_media_seinn #559, lucos_loganne #568** — none on the
+  always-review list, code-reviewer approved all three solo (no security sign-off
+  requested or needed). For loganne specifically, code-reviewer confirmed the Bearer/
+  `CLIENT_KEYS` machine-auth path is untouched by the `appOrigin` config addition — I have
+  not independently verified that claim myself, noting per hedge convention.
+
+All 4 planned migrations from lucas42/lucos#264 are now approved; last three awaiting
+lucas42's merge (creds already merged, supervised repo). No outstanding security action
+on this thread.
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
