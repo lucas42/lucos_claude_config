@@ -91,6 +91,7 @@
 - [Track out-of-band specialist reviews to merge](feedback_track_out_of_band_specialist_reviews.md) — if the coordinator dispatches a security/SRE review out-of-band, it owns re-triggering the code-reviewer's final verdict + confirming the merge; a specialist-APPROVE + code-reviewer-COMMENT is NOT merged (aithne#300 sat 3h16m)
 - [Blocked items' fresh comments unsurfaced](feedback_blocked_items_fresh_comments.md) — get-issues-for-triage doesn't surface Blocked items with new non-me comments; scan their recent comments during the Step 5 sweep (caught worlds#6's requirement-change comment 2026-07-09)
 - [Verify review is on current head](feedback_verify_review_on_current_head.md) — before calling a PR merge-ready, check the code-reviewer's APPROVE commit_id == current head; post-approval commits (esp. from lucas42's change-requests) leave it stale, and on a supervised repo his approval merges instantly (caught on locations#97 2026-07-09)
+- [Report follow-ups filed, not deferred](feedback_report_followups_filed_not_deferred.md) — incident/audit follow-ups needing lucas42's decision are still filed as full-info issues routed Awaiting Decision; never leave unfiled "deferred to lucas42" table lines or ask him to decide off a one-line summary (lucos#265, 2026-07-10)
 
 ## Active Projects
 
