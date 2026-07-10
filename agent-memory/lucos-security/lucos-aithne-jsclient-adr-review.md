@@ -280,20 +280,29 @@ full auth bypass).
 **Filed lucas42/lucos#268** proposing the same fix one layer up: a `createAuthMiddleware
 (config)` factory per consumer instead of a mutable module-level singleton, so test and
 production instances never share state. Flagged as Open Questions (not asserted Ready):
-sequencing against the 3 remaining migrations (lucos_notes#465, lucos_media_seinn#560,
-lucos_loganne#569 — all about to copy-paste the same shape as #455), and the exact factory
-shape per consumer's `index.js` wiring. Both are sequencing/design calls for
-lucas42/architect. Approved lucos_creds#455 as-is (correct, minimal, urgent unblock — the
-next Dependabot bump would otherwise red this service's CI per lucos_creds#454) — the issue
-is about the pattern, not that PR.
+sequencing against the 3 remaining migrations, and the exact factory shape per consumer's
+`index.js` wiring. Both are sequencing/design calls for lucas42/architect. Approved
+lucos_creds#455 as-is (correct, minimal, urgent unblock — the next Dependabot bump would
+otherwise red this service's CI per lucos_creds#454) — the issue is about the pattern, not
+that PR.
 
 APPROVED: https://github.com/lucas42/lucos_creds/pull/455#pullrequestreview-4671168804
 Follow-up: https://github.com/lucas42/lucos/issues/268
 
-**Process note:** cited the follow-up issue number in the PR review *before* actually
-creating it (guessed #267, real number was #268) — had to correct the review body in place
-via `PUT .../reviews/{id}`. File the issue first, then reference the real number in
-reviews/comments; don't pre-guess sequential IDs, even when the guess seems safe.
+**Two identifier mistakes caught in this thread, both worth carrying forward as one habit:
+verify what a cited number actually IS (issue vs. PR, exists vs. guessed) before publishing
+it, not after.**
+1. Cited the follow-up issue number in the PR #455 review *before* creating it (guessed
+   #267, real number was #268) — corrected via `PUT .../reviews/{id}`. File first, cite
+   after; don't pre-guess sequential IDs.
+2. The issue body originally cited `lucos_notes#465` / `lucos_media_seinn#560` /
+   `lucos_loganne#569` as if they were the anticipated migration PRs. code-reviewer checked
+   before relaying and found all three are open **tracking issues** (same shape as
+   lucos_creds#454, which #455 implemented) — no migration PR exists for any of them yet.
+   Corrected the issue body via PATCH. Lesson: a GitHub number is only as trustworthy as the
+   fetch that confirmed what it points to — `is_pr` via `.pull_request != null` on the
+   issues endpoint is the cheap check, and I should have run it before writing the number
+   into a public issue rather than assuming "the migration ticket" meant "the migration PR."
 
 **Watch when the 3 remaining migrations land:** check whether lucas42/lucos#268 got
 resolved (or explicitly deferred) before notes/seinn/loganne copy the same
