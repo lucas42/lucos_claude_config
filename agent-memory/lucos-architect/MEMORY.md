@@ -88,6 +88,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [BookStack OIDC is https-only (breaks local-dev worlds login)](reference_bookstack_oidc_https_only.md)
 - [Firewall DOCKER-USER polices inter-container traffic](reference_firewall_dockeruser_scope.md)
 - [/_info fetch mechanics + adopted-app shim pattern](reference_info_fetch_and_shim_pattern.md)
+- [Three aithne auth-integration patterns + sidecar /_info blind-spot](reference_aithne_integration_patterns.md)
 
 ## Project memories
 
