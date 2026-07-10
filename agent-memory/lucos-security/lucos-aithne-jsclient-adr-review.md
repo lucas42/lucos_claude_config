@@ -310,4 +310,42 @@ reconstruct-a-singleton shape as #455 — if it wasn't, that's 3 more instances 
 accepted-but-flagged risk, worth noting in each review rather than re-litigating from
 scratch.
 
+## RESOLVED — lucos#268 closed, all 4 consumers get the factory (2026-07-10)
+
+Fast turnaround. lucas42/architect assessed my `createAuthMiddleware` proposal on the
+issue: sound direction, but my sketched shape (`{ middleware }` only) was **insufficient
+for 3 of 4 consumers** — notes/seinn/loganne each also export `verifySessionToken(cookie)`
+for their websocket handshake handlers, a second function closing over the same `aithne`
+that a middleware-only factory would've missed. lucas42's decision: adopt the factory
+across **all 4**, including creds — **do not merge #455** (reconstruct-singleton shim,
+wrong shape), re-scope creds onto the factory too. #455 closed unmerged as superseded;
+#268 closed as the design record, implementation tracked via the 4 original migration
+issues (creds#454, notes#465, seinn#560, loganne#569).
+
+**lucos_creds PR #456** (the actual factory implementation, supersedes #455) — reviewed
+independently, not rubber-stamped on the "mirrors notes#466" framing:
+- `createAuthMiddleware(config)` in the PR-head `auth.js` has zero module-level mutable
+  state and no exported setter — confirmed by reading the full file, not just the diff.
+- `{ middleware }`-only confirmed correct for *this* consumer specifically (grepped the
+  repo for `verifySessionToken`/`websocket`, zero hits) — not a corner cut, matches actual
+  usage.
+- `index.js` composition root constructs exactly once with real env vars — read directly.
+- Test file adds `makeAuth(_verifyFn = sentinelVerifier)` — a **real improvement** over
+  the pre-migration baseline, not just parity: the sentinel throws if a test forgets to
+  stub a verifier, closing a "silently hits the real JWKS endpoint" gap that existed even
+  in the original (pre-#7) code.
+- Chain of custody: package-lock resolves `lucos_aithne_jsclient@1.1.3`, traced the tag to
+  PR #14's merge commit (parent = the v1.1.2 tag) — no unreviewed library change snuck in
+  between `_setVerifier`'s removal and this consumer PR.
+- Confirmed #455 is genuinely closed unmerged (`merged: false`), matches the #268 record.
+
+APPROVED: https://github.com/lucas42/lucos_creds/pull/456#pullrequestreview-4671767969
+
+**Pattern for the estate generally:** when a design question gets escalated (mine to
+architect via #268), don't assume my own sketch was the final shape — re-read the actual
+decision thread before reviewing the PR that claims to implement it. The real shape here
+(differentiated by consumer, not uniform) was better than what I proposed, because
+architect actually diffed all 4 `auth.js` modules before answering rather than reasoning
+from the one consumer (creds) I'd looked at.
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
