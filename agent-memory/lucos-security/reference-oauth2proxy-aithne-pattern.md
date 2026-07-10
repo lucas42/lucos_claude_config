@@ -73,3 +73,27 @@ is a case-sensitive exact-prefix match; a case-normalisation bypass is theoretic
 possible if `otrecorder`'s own routing turns out case-insensitive (not checked). Fold this
 into whatever follow-up handles the read/write scope split rather than treating as a
 separate finding — the author already flagged the gap transparently.
+
+## Confirmed fail-closed in production: the 2026-07-09 crash-loop incident (lucos#265)
+
+First real-world test of this design under failure, not just design review. PR #97 auto-
+deployed ahead of its lucas42-only prod creds (`KEY_LUCOS_AITHNE`, `OAUTH2_PROXY_COOKIE_SECRET`)
+→ oauth2-proxy crash-looped on `invalid configuration` (never bound its listener) → every
+gated path 500'd for ~51 min. Verified fail-closed **architecturally**, not just from the
+one observed 500: re-read the shipped `nginx.tmpl` and confirmed every gated location has
+only `error_page 401 =403 /oauth2/sign_in;` — no `error_page 500 = ...` or any directive
+that maps an `auth_request` failure to an allow outcome. nginx's `auth_request` module
+returns 500 for any non-2xx/401/403 subrequest response by default, so a dead sidecar
+structurally cannot fail open in this config. Device/MQTT split (independent
+`auth_basic`/htpasswd on `/owntracks/pub`) held throughout, confirmed by the 401-not-500
+distinction. Full review: [[lucos-aithne-jsclient-adr-review]] sibling note not applicable
+here — this is the standalone incident-report review, posted via SendMessage to
+lucos-site-reliability 2026-07-10, no PR review URL (report already merged as
+lucas42/lucos#265). Follow-ups tracked on lucas42/lucos#266 (deploy sequencing/guard) and
+lucas42/lucos_locations#99 (UX decision on the 403 sign-in page).
+
+**Reusable check for the next sidecar-fronted service:** don't just accept "we observed a
+500" as proof of fail-closed — pull the actual nginx/proxy config and confirm there's no
+`error_page`/fallback directive that could turn an auth-check failure into an allow. A
+crash-looping auth sidecar is exactly the scenario where a permissive misconfig would only
+surface under failure, not in normal testing.
