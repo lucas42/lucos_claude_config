@@ -49,12 +49,30 @@ excludes `ERR_JWKS_NO_MATCHING_KEY`), dev-only `render-ui` bypass, fail-closed p
    `authorized` from `verifyToken()` means authenticated-only, with a shared `hasScope()`
    helper exported for consumers to call.
 
-## What to check on re-review
+## Resolved — APPROVED at feb511c (2026-07-10)
 
-When the ADR is updated (or if a v1 implementation PR lands before the ADR is amended),
-verify these three landed — don't treat this as closed until confirmed in the actual
-PR text, not just recalled from this memory. If lucos_loganne or lucos_notes migration
-PRs land using `verifyToken()` without an explicit scope check, that's finding #3
-materialising — flag it directly on that PR.
+lucos-architect addressed all three at commit `feb511c`. Verified directly against the
+re-fetched file content (not just the point-by-point PR comment):
+
+1. kid sanitisation landed in §5 exactly as requested (strips `\x00`–`\x1f` + `\x7f`
+   before both the log call and `Classification.error`; unit test committed for `\n`/`\x1b`).
+2. `loginUrl()` now enforces the origin/`*.l42.eu`-suffix check itself, dropping to a bare
+   `${origin}/auth/login` on mismatch. Independently re-pulled the citation — it's
+   `lucos_aithne`'s `docs/adr/0003-human-session-continuity.md`, "Amendment — 2026-06-23"
+   section (not ADR-0002 as might be assumed from the numbering) — regex matches verbatim.
+3. `verifyToken()` now takes the identical `{requiredScope|authorize}` gate as
+   `verifySession()`, plus an exported `hasScope()` helper and an explicit gate-semantics
+   paragraph. Stronger than either option I suggested.
+
+Bonus (architect's own catch, not mine): `environment` needed to be injected config for
+the dev-only `render-ui` bypass, since §0 bans `process.env` reads inside the library —
+the original draft had no injection path for it. Confirmed real and necessary.
+
+Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/1#pullrequestreview-4667726078
+
+**For future reviews of the v1 implementation PR(s):** confirm the actual code matches
+what's now specified in the ADR (kid-stripping regex, loginUrl validation, hasScope
+export, environment config plumbing) — the ADR is now the source of truth to check
+implementation against, not a fresh design review.
 
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
