@@ -182,4 +182,47 @@ fix in the consumer's own `middleware()`, not a library change.
 
 Posted APPROVE: https://github.com/lucas42/lucos_creds/pull/451#pullrequestreview-4670146151
 
+## `appOrigin` fix for the dead same-origin check (PR #10, lucos_aithne_jsclient#8, 2026-07-10)
+
+My own "non-blocking observation" from the PR #6 review (above) turned out to be a real
+functional bug, not just a naming nit: `isTrustedReturnUrl`'s exact-match branch compared
+`returnUrl` against **aithne's own** `origin`, which a consumer's return URL practically
+never equals — dead code in production, and in dev it meant a `localhost:<port>` consumer
+never got `next=` embedded, so dev login never redirected back to the app
+(lucas42/lucos_aithne_jsclient#8).
+
+Fix: new opt-in `appOrigin` config field — the consumer's own origin, explicitly injected
+by the consumer from its own `process.env.APP_ORIGIN` (never read from `process.env` by
+the library itself, per ADR-0001 §0) — trusted in `isTrustedReturnUrl` alongside the
+existing `*.l42.eu` suffix rule. Verified end-to-end by reading the full `index.js` at the
+PR head:
+
+- `appOrigin` is used in exactly one place; `issuer` and all JWT-verification paths derive
+  solely from `origin`, untouched — this doesn't weaken token validation, only the
+  return-URL allowlist.
+- Comparison is exact `url.origin === appOrigin` equality (atomic scheme://host:port), no
+  prefix/substring bypass.
+- Opt-in is proven by a real negative-path test (no `appOrigin` configured → localhost
+  returnUrl still dropped), not just asserted in prose.
+- `appOrigin` is consumer-supplied at construction time, never attacker-influenced — the
+  attacker only controls `returnUrl`, the thing being checked.
+- Bounded blast radius even on operator misconfig: `loginUrl()` always redirects to
+  aithne's own real login page; `appOrigin`/suffix rule only gate the `next=` param, and
+  aithne's `/auth/remint` independently re-validates the same return URL server-side too
+  (ADR-0003 Amendment 2026-06-23) — defence-in-depth, not the sole gate.
+
+**Non-blocking residual noted on the PR, not asked to be fixed:** unlike the `*.l42.eu`
+suffix regex (hard-requires `https://`), the `appOrigin` exact-match doesn't enforce a
+scheme — an operator who misconfigures `appOrigin` as `http://` in production would have
+that trusted as a plaintext return target. Low realistic risk (operator-controlled, and
+`APP_ORIGIN` is a TLS-terminated public origin by estate convention) — suggested an
+optional README caveat, didn't block on it. Worth checking if picked up in a fast-follow.
+
+Scope note: this PR is library-only — the four existing consumers (creds/notes/seinn/
+loganne) don't pass `appOrigin` yet and will each need a follow-up PR + version bump before
+dev login is actually fixed for them. Watch for those migration PRs to confirm `appOrigin:
+process.env.APP_ORIGIN` actually lands, not just the version bump.
+
+Posted APPROVE: https://github.com/lucas42/lucos_aithne_jsclient/pull/10#pullrequestreview-4670959347
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
