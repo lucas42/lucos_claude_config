@@ -121,7 +121,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — grep store/handler or hedge.
 - [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — use `--silent`+$? for existence.
 - [Verify body-file content before create-pr / gh body-file calls](feedback_verify_body_file_before_pr.md) — unique tempfile names; Write may fail…
-- [`gh api` file-backed body needs `@` prefix](feedback_gh_api_body_at_prefix.md) — else empty body silently.
+- [`gh api` POST/PATCH body: default to heredoc-var or `--input JSON`](feedback_gh_api_body_at_prefix.md) — avoid `body=@FILE` (-f posts literal `@path`); `body-file=` → null.
 - [Use canonical persona name for SendMessage, not envelope teammate_id](feedback_teammate_id_vs_name.md).
 - [Don't file GitHub artifacts on behalf of another agent](feedback_dont_file_on_behalf_of_other_agents.md) — unblock them instead.
 - [Sandbox branch hygiene: reset --hard origin/main before branching](feedback_sandbox_branch_hygiene.md).
