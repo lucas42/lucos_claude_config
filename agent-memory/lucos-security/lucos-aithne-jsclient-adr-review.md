@@ -150,4 +150,36 @@ https://github.com/lucas42/lucos_aithne_jsclient/pull/6#pullrequestreview-466988
 runtime setter** (not just adds a config-time alternative alongside it, which would leave
 the footgun in place) before treating this as closed.
 
+## First consumer migration reviewed: lucos_creds PR #451, APPROVED (2026-07-10)
+
+lucos-code-reviewer pulled me in (lucos_creds is on their mandatory always-security-review
+list). Verified npm-pinned `1.1.0` (package-lock integrity hash) resolves to `346b03b`
+(tag `v1.1.0`), whose last commit is `cc2933f` — exactly the commit already approved above.
+Confirmed no unreviewed change had landed on the library between my approval and this
+consumer adopting it — worth re-checking this each time a *new* consumer PR pins a
+version, in case the library's `main` moved in between.
+
+Confirmed the `loginUrl()` open-redirect fix is real for a consumer (not just in the
+library's own tests): old `auth.js` fed `${req.protocol}://${req.headers.host}${req.originalUrl}`
+straight into the redirect with zero validation (CWE-601 if `Host`/`X-Forwarded-Host` was
+ever attacker-reachable — didn't confirm exploitability in lucos_creds' actual prod proxy
+config, but the fix is unconditional either way). Also confirmed the `unavailable`→redirect
+collapse isn't a new behaviour change in this consumer — the pre-adoption code already fell
+through to the same redirect for JWKS infra failures, so "no local unavailable page" was
+already this repo's status quo, just now delegated. Cross-checked lucas42/lucos#260's
+reassessment thread directly (not the PR body's paraphrase) — his actual words: "I agree
+with 'Abandon per-consumer local pages'".
+
+**New non-blocking pattern to watch across the other 3 planned migrations (lucos_notes,
+lucos_media_seinn, lucos_loganne — lucas42/lucos#264):** `middleware()` in this consumer
+collapsed `console.warn('JWKS infrastructure error...')` vs `console.error('JWT
+verification failed...')` into a single `console.error` for both `unavailable` and generic
+`unauthenticated`-with-error. Not a vulnerability, but an alerting-signal regression — ops
+loses the ability to distinguish "aithne is down" from "routine bad token" in logs. Check
+each consumer migration PR preserves (or deliberately drops, with a stated reason) that
+log-level distinction — `classification.error.code` is available for it, it's a one-line
+fix in the consumer's own `middleware()`, not a library change.
+
+Posted APPROVE: https://github.com/lucas42/lucos_creds/pull/451#pullrequestreview-4670146151
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
