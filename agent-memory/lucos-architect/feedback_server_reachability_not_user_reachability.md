@@ -1,0 +1,12 @@
+---
+name: server-reachability-not-user-reachability
+description: A server-side reachability signal is not a valid proxy for user/browser-side reachability — don't render user-facing availability claims off it
+metadata:
+  type: feedback
+---
+
+Never let a consumer render a **user-facing availability claim** ("sign-in unavailable", "service down, try later") off a signal derived from the **server's** ability to reach a dependency. "Can my container reach aithne's JWKS endpoint" is a different claim from "can this user's browser reach aithne to log in" — and no amount of careful implementation closes that gap; it's what the signal *means*.
+
+**Why:** lucas42 objected (2026-07-10) to the per-consumer local "sign-in unavailable" page pattern (lucos#260 audit; contacts#773/eolas#334). Three failure modes the server can't see: (1) user-side network failure is invisible to the server; (2) a static JWKS fetch succeeding ≠ an interactive login round-trip working; (3) the cached reachability flag lags reality. The **false positive** is the killer — telling a user "unavailable" when they'd have signed in fine *manufactures an outage for that user*, strictly worse than the raw error it replaces. The redirect-to-login path is *self-correcting*: the browser's own hit on the dependency is the **authoritative** reachability test; a server-side proxy destroys that. Proven fragile by the contacts#773 "garbage-kid" bug: a token-controlled `kid` header flipped a module-level shared `_unreachable=True`, showing every visitor "unavailable" while aithne was healthy — caught in review, but across 11 impls in 4+ languages the odds one ships broken approach certainty.
+
+**How to apply:** when a design renders a user-facing "X is down" page off a server-side health/reachability check, push back. The graceful outage message belongs at the **dependency's own front door** (single location, hit by the browser's authoritative test, no false positives) — pending confirmation that front survives the app crash-looping. Distinguish sharply: a **verification classification** / **logging** signal (infra-error vs invalid-token, drives WARNING logs + serve-stale) is legitimate and stays; a **machine/API** consumer returning 503 on infra-unavailable is fine (no browser, no proxy problem). The objection is only about *browser-facing consumers rendering a page*. See [[project_aithne_client_library]], [[reference_docker_healthy_not_reachability]].
