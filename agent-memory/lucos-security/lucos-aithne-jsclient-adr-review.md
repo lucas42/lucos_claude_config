@@ -261,4 +261,44 @@ All 4 planned migrations from lucas42/lucos#264 are now approved; last three awa
 lucas42's merge (creds already merged, supervised repo). No outstanding security action
 on this thread.
 
+## The consumer-level `_setVerifier` migration re-opens the same footgun one layer up (2026-07-10)
+
+lucos_creds PR #455 migrated `ui/src/auth.js` off the library's now-removed `_setVerifier`
+(v1.1.2, the PR #12 fix above) by changing the module-level `aithne` binding from `const`
+to `let` and having its own `_setVerifier(fn)` reconstruct the client
+(`aithne = createAithneClient({...AITHNE_CONFIG, _verifyFn: fn})`) instead of mutating a
+field. code-reviewer asked directly whether this reintroduces the risk #7 closed, one layer
+up. **My verdict: yes, but it's not a regression** — diffed against the pre-#455 auth.js
+(already read during #453): the unconditional, no-env-gate `_setVerifier` export already
+existed at the consumer layer before this PR, already reachable from the same module as
+production `middleware()`. The library-level fix (#7/#12) only closed the door at the
+library; every consumer independently re-opened an equivalent door at their own layer to
+keep their test API working — pre-existing, not new, low-likelihood (requires an in-process
+bundling/import mistake, not externally reachable) but high-impact if triggered (silent
+full auth bypass).
+
+**Filed lucas42/lucos#268** proposing the same fix one layer up: a `createAuthMiddleware
+(config)` factory per consumer instead of a mutable module-level singleton, so test and
+production instances never share state. Flagged as Open Questions (not asserted Ready):
+sequencing against the 3 remaining migrations (lucos_notes#465, lucos_media_seinn#560,
+lucos_loganne#569 — all about to copy-paste the same shape as #455), and the exact factory
+shape per consumer's `index.js` wiring. Both are sequencing/design calls for
+lucas42/architect. Approved lucos_creds#455 as-is (correct, minimal, urgent unblock — the
+next Dependabot bump would otherwise red this service's CI per lucos_creds#454) — the issue
+is about the pattern, not that PR.
+
+APPROVED: https://github.com/lucas42/lucos_creds/pull/455#pullrequestreview-4671168804
+Follow-up: https://github.com/lucas42/lucos/issues/268
+
+**Process note:** cited the follow-up issue number in the PR review *before* actually
+creating it (guessed #267, real number was #268) — had to correct the review body in place
+via `PUT .../reviews/{id}`. File the issue first, then reference the real number in
+reviews/comments; don't pre-guess sequential IDs, even when the guess seems safe.
+
+**Watch when the 3 remaining migrations land:** check whether lucas42/lucos#268 got
+resolved (or explicitly deferred) before notes/seinn/loganne copy the same
+reconstruct-a-singleton shape as #455 — if it wasn't, that's 3 more instances of the same
+accepted-but-flagged risk, worth noting in each review rather than re-litigating from
+scratch.
+
 Related: [[lucos-aithne-security-architecture]] for the broader aithne security model.
