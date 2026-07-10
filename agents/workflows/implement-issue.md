@@ -99,6 +99,8 @@ Use `~/sandboxes/lucos_agent/create-pr` — **never** call `gh-as-agent ... pull
 
 **⚠️ Production dependencies ⚠️ marker (lucas42/lucos#266).** If your change needs a **manual production change** to work — a new credential, config value, service/sidecar, or linked credential that must be set in prod *before or alongside* the deploy — put a section headed **exactly** `⚠️ Production dependencies ⚠️` at the **very top** of the PR body, naming what must be set and by whom (lucas42-only creds especially). **Omit the section entirely when there are none** — no empty boilerplate. Because merge auto-deploys, this marker is what lets the approver confirm the creds are present *before* approving; a change that ships ahead of its creds crash-loops in prod (the 2026-07-09 lucos_locations incident). Keep the body concise so the marker, when present, is impossible to miss. (`create-pr`'s `--body-file` bypasses the GitHub PR template, so this convention — not the template — is what applies to agent-authored PRs.)
 
+**Concise code comments.** Keep in-code comments to one line (two at most, and only for something genuinely non-obvious). Decision rationale — why an approach was chosen, what was ruled out, background context — belongs in the **commit message**, not in code comments or the PR body: it's all in source control, so the commit history is where that narrative lives. Same principle as the concise-PR-body point above.
+
 ```bash
 BODY_FILE=$(mktemp)
 cat > "$BODY_FILE" <<'ENDBODY'
