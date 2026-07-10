@@ -57,6 +57,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Scope-first, not principal_class; don't accrete ADR complexity](feedback_scope_first_not_principal_class.md)
 - [Verify protocol interop, not just feature support](feedback_verify_protocol_interop_not_feature_support.md)
 - [Prefer self-healing finding over silent suppression](feedback_prefer_self_healing_finding_over_silent_suppression.md)
+- [Flag human-approval staleness at push time](feedback_flag_human_approval_staleness_at_push_time.md)
 
 ## Reference memories
 

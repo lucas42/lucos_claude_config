@@ -1,0 +1,12 @@
+---
+name: flag-human-approval-staleness-at-push-time
+description: When review edits land after a human's PR approval on a no-branch-protection repo, flag the approval as stale immediately at push time — not later at the merge-ready checkpoint
+metadata:
+  type: feedback
+---
+
+When driving an ADR/design PR loop, if you push review-driven edits **after** a human (lucas42) has already approved the PR, and the repo has **no dismiss-stale-reviews branch protection** (most fresh/un-configy'd repos), his APPROVE silently goes stale — GitHub keeps showing it, but pointing at the pre-edit commit. Flag that staleness the **moment you push past his approval**, not later when you'd normally "call it merge-ready".
+
+**Why:** the merge can fire on the *bots'* re-approval before you reach your own merge-ready checkpoint — especially when a merge go-ahead is already standing with the sysadmin. If you only surface the staleness after the bots approve, your "hold for re-confirm" message crosses with the merge. (2026-07-10, lucos_aithne_jsclient PR #1: I pushed security-driven edits (new `hasScope`/`environment`/enforced `loginUrl` contract surface) after lucas42's approval on the original commit, flagged the staleness only after both bots re-approved, and the sysadmin merged at the new head before my hold landed. No harm — docs-only, coordinator recovered by holding v1 extraction until a post-hoc confirm — but the re-confirm-before-merge I wanted didn't happen on the merge itself.)
+
+**How to apply:** the instant you push edits onto a human-approved PR on a repo without dismiss-stale protection, message the coordinator: "my edits mean lucas42's approval now points at the old commit — he'll need to re-confirm the current head before merge." Do it at push time, in the same turn as pinging the reviewer for re-review. Complements [[feedback_changes_requested_not_a_hard_block]] (draft is the only structural lock) and the persona's "sign-off → mark ready → request review" ordering rule. Recovery when it merges early anyway: if docs-only and nothing consumes the contract yet, gate the *implementation* step on a post-hoc human confirm instead — the sign-off-precedes-implementation intent survives even if sign-off-precedes-merge didn't.
