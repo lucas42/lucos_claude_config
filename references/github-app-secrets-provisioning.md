@@ -20,6 +20,22 @@ How to set GitHub App private keys (PEM secrets) on lucas42 repositories, and ho
 
 **Do not** store a truncated or space-flattened PEM as a repository secret — a truncated key causes `failure` on the token generation step (non-empty but invalid); space-flattened causes `InvalidCharacterError`.
 
+## The same corruption class also hits lucos_creds-stored App PEMs
+
+The "space-flattened PEM" failure mode isn't unique to repo secrets — it can also land in a `GITHUB_APP_PEM` stored directly in lucos_creds (e.g. a service's own dev/prod credentials for authenticating as a GitHub App, distinct from the CI Dependabot secrets above). Confirmed on `lucos_repos/development/GITHUB_APP_PEM` (lucas42/lucos_repos#456, 2026-07-11): every newline had been replaced with a single space before storage, leaving a syntactically PEM-shaped but unparseable value. Symptom at the consuming service was a **live GitHub API 401** (`GitHub API returned 401 fetching installations`) rather than a local parse error — a malformed/garbage JWT still gets sent and GitHub rejects it with 401, which reads identically to "wrong/rotated key." Don't assume 401 means the key is stale; check formatting first.
+
+**Diagnose:** fetch the `.env` via `scp -P 2202 "creds.l42.eu:<system>/<environment>/.env" .` (read-only; write access needs SSH exec — see below), extract the quoted `GITHUB_APP_PEM` value with the same `re.DOTALL` pattern as above, and check for real newlines (`pem.count('\n')`) vs. spaces at regular ~64-char intervals. Regularly-spaced single spaces (not scattered) is the signature of flattening — the base64 body itself is usually intact.
+
+**Reconstruct, don't regenerate:** if the corruption is pure newline-flattening, the key material is still valid — do not ask the App owner to regenerate a private key. Split out the header/footer (`-----BEGIN ...-----` / `-----END ...-----`, which themselves contain legitimate internal spaces between words — don't blindly replace *every* space) and restore newlines only in the base64 body. Verify with `openssl rsa -in <file> -check -noout`.
+
+**Verify the fix is actually correct — don't stop at "openssl parses it."** A syntactically valid PEM can still be a stale/wrong key. Mint a real JWT (`PyJWT` + the app's numeric ID as `iss`) and call `GET https://api.github.com/app` (confirms App ID + key match) and `GET https://api.github.com/app/installations` (confirms the exact call path the failing service makes at startup) — a live 200 is the only real proof. Both `cryptography` and `PyJWT` were already available in the sandbox's system Python, no install needed.
+
+**Writing the fix back to lucos_creds:** SSH exec write (`ssh -p 2202 creds.l42.eu "<system>/<environment>/<KEY>=<value>"`) preserves real embedded newlines correctly when the value is passed as a single shell argument containing literal `\n` bytes (e.g. built via bash `$'...'` or read from a file with `$(cat file)`) — confirmed by a round-trip test against a scratch key before touching the real credential. No special escaping needed; don't hand-flatten the PEM to fit it "on one line" — that's what caused this in the first place.
+
+**Clean up key material afterwards** — `shred -u` any temp files holding the extracted PEM once verification is done; this is a live App's private key, not a disposable scratch value.
+
+**Scope limit:** agents can only read/write the `development` environment. If the same corruption is suspected in `production`, it must be checked and fixed by lucas42 directly — flag it, don't assume prod inherited the same bug just because dev had it (they may have been set through different processes).
+
 ## Post-provisioning verification: Dependabot secrets
 
 **After provisioning any Dependabot secrets (`LUCOS_CI_APP_ID`, `LUCOS_CI_PRIVATE_KEY`, etc.), verify that the values are non-empty — not just that the names are present.** The GitHub secrets API never exposes secret values. The `lucos_repos` convention check only verifies name presence. A secret set with an empty value (e.g. due to an unset env var during provisioning) will pass both checks while silently causing every Dependabot auto-merge to fall back to `GITHUB_TOKEN`. Happened 2026-04-21 (lucos_creds, lucos_agent).
