@@ -1,6 +1,7 @@
 # lucos-system-administrator Memory
 
 - **lucos_creds quoted values**: bash `source` strips the `"` wrapper; direct file reads keep it (length off by 2). `lucos-creds-quoted-values.md`.
+- **lucos_repos#456**: dev `GITHUB_APP_PEM` newline-flattened in lucos_creds (not stale) — reconstruct+verify-live, don't regenerate. `lucos-repos-456-pem-flattening.md`.
 - **Docker live-restore**: skips ALL network init (incl. built-ins) while containers are running — stop all containers first. `docker-live-restore-network-init-skip.md`.
 - **configy null serialisation**: use `get(key) or default`, not `get(key, default)` — configy returns explicit `null`. `configy-null-serialisation.md`.
 - **aurora NAS**: QNAP busybox host, storage-only. `aurora-host.md`.
