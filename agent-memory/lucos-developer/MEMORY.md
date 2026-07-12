@@ -96,6 +96,10 @@ Always manually review generated migration files before committing. Autogenerate
 ## Shell Scripts over SSH
 Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH on remote hosts. Caught in lucos_backups#269.
 
+## lucos_worlds (BookStack)
+- [Patch mechanism, test harness pattern, local dev auth/routes](lucos_worlds.md) — whole-file COPY patches, standalone-PHPUnit-against-real-image test harness, curl-driven content creation for verification
+- [Page::getExcerpt() first-line fix](lucos_worlds_page_excerpt_fix.md) — lucas42/lucos_worlds#52/#53, reusable pattern for future Page-only overrides
+
 ## lucos_media_seinn
 - [forEach(async ...) is implicit parallelism](seinn_async_foreach_parallelism.md) — shared state mutations need serialisation; chain onto existing `evictionLock` rather than adding a second mutex
 - `src/server/auth.js` has the aithne JWKS serve-stale wrapper (`createServeStaleJWKS` / `isJWKSInfraError`, lucos_media_seinn#543).
