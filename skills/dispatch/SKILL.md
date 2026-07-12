@@ -80,6 +80,8 @@ If a PR exists that references the issue and is still **open**, the work has lik
 
 If no open PR exists for the issue, continue.
 
+**An empty result here means "no PR found *this read*", not "no PR exists" — re-run the query once before trusting it.** The `/timeline` endpoint is eventually-consistent and intermittently returns an incomplete timeline that omits a cross-reference which has existed for hours, so a single empty read can hide a PR that `Closes #{number}`. If the re-run is still empty, continue; if it now shows a PR, handle it per the cases above. (Lesson 2026-07-12: a stale-empty timeline read on lucos_creds#384 hid its open ADR PR #457, causing a redundant dispatch to the author.)
+
 ## Step 4: Check for estate-wide convention changes
 
 If the issue is on the `lucos_repos` repository and involves **creating or modifying a convention** (i.e. the work will change which repos pass or fail an audit convention), this requires the estate-rollout workflow instead of a normal implementation dispatch. Convention changes need to be verified against all repos via the dry-run diff before merging, and affected repos may need migrating.
