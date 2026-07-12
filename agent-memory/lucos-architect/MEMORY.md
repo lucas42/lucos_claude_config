@@ -104,6 +104,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Auto-merge approval policy](project_auto_merge_approval_policy.md) — lucos ADR-0013 Accepted; configy `additionalReviewers`, workflow-enforced, fail-closed
 - [loganne event level](project_loganne_event_level.md) — per-event `level` (#506), named ordinal scale, awaiting taxonomy sign-off
 - [aithne-client library](project_aithne_client_library.md) — lucos#264 proposal; boundary=library verifies+classifies/app presents; ADR-0001 in new repo; 4 JS follow-ups Blocked on it
+- [creds capability axis](project_creds_capability_axis.md) — creds ADR-0004 (PR #457); env×capability; metadata-vs-secret tier; SSH-only; default-allow; 4 deferred follow-ups on agreement
 
 ## Auto-merge & security checks
 
