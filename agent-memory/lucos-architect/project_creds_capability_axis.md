@@ -5,18 +5,20 @@ metadata:
   type: project
 ---
 
-**lucos_creds ADR-0004** (PR lucas42/lucos_creds#457, issue #384). Adds an orthogonal **capability** axis composing with the existing per-key **environment** restriction: *environment × capability*. Three capabilities: `creds:metadata:read`, `creds:secret:read`, `creds:write`.
+**lucos_creds ADR-0004** (PR lucas42/lucos_creds#457, issue #384). **Deny-by-default, scope-based grant model** for creds' own access. Redesigned 2026-07-12 with lucas42 (head `18bc63d`) from an earlier two-axes default-allow draft.
 
 **Why:** the scope-vocab migration (auth_scopes#6) and the C4 trust-edge (lucos_repos#426) need "see the shape of production without reading its secrets"; the single-axis model made production all-or-nothing incl. secrets. lucas42 ruled out a full-prod agent key, so #426 is blocked on this.
 
-**Key design facts (verified against origin/main code 2026-07-12):**
-- `lucos_creds` is **SSH-only** (`main.go` starts only `startSftpServer`; no HTTP). `creds:admin` in scopes.yaml names a *future* aithne admin console — not built yet, different plane.
-- The metadata/secret boundary **already exists latently**: `ls` and `ls system/env` blank `credential.Value` in `server.go`; only `ls system/env/key` (3-part) and the SFTP `.env` read (`controller.go`) return decrypted values. So the tier is mostly *gating existing commands*.
-- One genuine projection change: server-side `CLIENT_KEYS` value is blanked wholesale (hides the client→scope graph); must strip *only* the key value, preserve `client:env`+`scope`. Client-side `KEY_<SERVER>` already keeps `Scope` as a separate field, so the graph is readable per-client today.
-- Attaches as a 2nd authorized_keys option (`restrict-capability=`) mirroring `restrict-environment` (ADR-0002 extended that to a comma-set). No schema change.
-- **Default-allow** (absence = all capabilities), NOT default-deny — every system fetches its own `.env` via SFTP secret-read, so fail-closed would break prod deploys. Narrowing (agent keys, repos C4 key) is explicit.
-- Vocabulary membership (creds:* in scopes.yaml) recommended but enforced via key-option plane, NOT `knownScopes` (different planes) — left as explicit decision for security + lucas42.
+**Final design (post-lucas42):**
+- **One `authorized_keys` option `allow-scopes`** carrying scope-primary grants `scope@envset` (`;` sep grants, `,` sep envs, `@` scope-to-env). Replaces/removes `restrict-environment` (env now lives per-grant). Single option ⇒ the Extensions merge-vs-replace footgun dissolves.
+- **Deny-by-default** both dimensions. Absence = no access, fails loudly. Footgun inverts to fail-closed. Migrated via ONE atomic PR annotating the 5 keys (flag-day: annotate→verify→flip; can't split or `.env` fetches break). Only 5 keys total (`lucas`,`docker-deploy`,`lucos_creds_ui`,`lucos_creds_configy_sync` unrestricted + `lucos-agent-coding-sandbox` dev,test) → tractable.
+- **Scopes:** `creds:metadata:read`/`creds:secret:read`/`creds:write` (independent, flat) + `creds:admin` = a FIXED full-access scope encompassing exactly those three (NOT a wildcard; new scopes never auto-absorbed). Added to shared `scopes.yaml`.
+- **Env wildcard `@*`; NO scope wildcard** (small finite set; each new scope grant is a deliberate "who needs this?").
+- **Scopes = ordinary shared-vocabulary scopes** (Point D); only the *proof mechanism* differs per plane (JWT vs authorized_keys grant vs stored link scope) — not different "types". Dropped the documentary-vs-enforced hedging.
+- **UI:** keeps its single `creds:admin` check UNCHANGED; UI key granted `creds:admin@*`; server recognises `creds:admin` as full access → same token both planes, consistent by construction, NO UI code change, no coarse bypass. (Resolves the reviewers' UI-surface concern without decomposing creds:admin.)
+- **Boundary already latent**: `ls`/`ls sys/env` blank `credential.Value`; only 3-part `ls` + SFTP `.env` return values. One projection change: server-side `CLIENT_KEYS` must be built from `LinkedCredential` rows (never string-parse/decrypt) to expose client→scope graph w/o key value.
+- **Honest asymmetry:** `@env` is an SSH-grant refinement, NOT in JWTs (env-agnostic) → humans via UI are all-environments; env-scoping is a machine-key least-privilege tool.
 
-**How to apply:** creds is **supervised** → normal PR, lucas42 auto-requested. Drove code-reviewer + lucos-security review loop. On agreement, raise 4 deferred follow-ups (capability impl in creds; agent-key narrow; repos C4 metadata key → unblocks #426; scopes.yaml addition if §4 accepted) and send URLs to team-lead. #361 (tests key) + #375 (link-scope vocab) already CLOSED; aithne#12 CLOSED.
+**How to apply:** creds is **supervised** → normal PR, lucas42 auto-requested. On agreement, raise **3** deferred issues (1: impl grant model + atomic 5-key migration; 2: add 3 scopes to auth_scopes scopes.yaml; 3: mint repos C4 `creds:metadata:read` key → unblocks #426) and send URLs to team-lead. #361/#375 CLOSED; aithne#12 CLOSED.
 
 Related: [[feedback_file_followups_during_design]], [[reference_auth_scopes_vocabulary]], [[reference_creds_scope_keyvalue_independent]], [[project_machine_principal_sessions]]
