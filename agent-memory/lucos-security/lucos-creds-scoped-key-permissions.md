@@ -1,6 +1,6 @@
 ---
 name: lucos-creds-scoped-key-permissions
-description: lucos_creds CLIENT_KEYS scope design (lucos_creds#87) — fail-closed scopes, server-side-only enforcement, deploy-then-set-scopes sequencing
+description: lucos_creds CLIENT_KEYS scope design (lucos_creds#87) — fail-closed scopes, server-side-only enforcement, deploy-then-set-scopes sequencing; also the lucos_creds_ui architecture (flat creds:admin scope, no metadata/secret split)
 metadata:
   type: project
 ---
