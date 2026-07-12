@@ -43,3 +43,30 @@ callout that rotating any credential present in `LUCOS_DEPLOY_ENV_BASE64` withou
 updating the CircleCI env var silently undoes the rotation on next deploy.
 Architectural auto-sync deferred (cost). lucos_creds#306 adds startup validation of SSH
 key material.
+
+# Architecture: lucos_creds has an HTTP-facing human UI, not just the SSH server
+
+`lucos_creds` repo has a `ui/` directory (`ui/src/index.js`, an Express app) — a real,
+deployed, human-facing admin console, distinct from the SSH/SFTP server that's the
+primary access surface for other systems. Easy to forget/omit when reasoning about
+"the whole attack surface" (an ADR draft did exactly this, lucos_creds#457, corrected
+2026-07-12 — see [[lesson-verify-real-client-behavior]] pattern: always grep for a
+`ui/` dir before accepting an "SSH-only, no HTTP surface" claim about this repo).
+
+- Gated by **one flat aithne scope**: `ui/src/auth.js` `REQUIRED_SCOPE = 'creds:admin'`
+  — no metadata-vs-secret split, no read-vs-write split. Anyone holding `creds:admin`
+  gets full view+edit of every credential in every system/environment through the UI.
+- The UI backend talks to the SSH server as its own dedicated identity, `lucos_creds_ui`
+  (`ui/ssh-config`), keyed by `UI_PRIVATE_SSH_KEY` — necessarily unrestricted-capability
+  (needs to decrypt values and write) regardless of which human is behind it.
+- **Implication for any future creds capability-axis work** (e.g. lucos_creds#457's
+  ADR-0004 environment×capability SSH-key axis): narrowing SSH keys does nothing for
+  this path. The actual gate for humans stays the single flat `creds:admin` scope
+  until/unless the UI itself is split into finer-grained scopes (its own separate
+  piece of work — new aithne scopes + UI code changes). Don't let a machine-key-only
+  capability axis be described as "reducing risk on the primary admin surface" — it
+  isn't, unless the UI's own authz is addressed too.
+- `creds:admin` in `scopes.yaml` is documented as covering *both* meanings (an "admin
+  console" comment) — i.e. the one existing scope token already does double duty for
+  what may eventually be two different admin postures (metadata-browse vs secret-edit).
+  Worth flagging if a future scope-vocabulary cleanup pass touches `creds:admin`.
