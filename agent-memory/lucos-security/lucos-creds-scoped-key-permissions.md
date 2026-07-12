@@ -53,20 +53,67 @@ primary access surface for other systems. Easy to forget/omit when reasoning abo
 2026-07-12 — see [[lesson-verify-real-client-behavior]] pattern: always grep for a
 `ui/` dir before accepting an "SSH-only, no HTTP surface" claim about this repo).
 
-- Gated by **one flat aithne scope**: `ui/src/auth.js` `REQUIRED_SCOPE = 'creds:admin'`
-  — no metadata-vs-secret split, no read-vs-write split. Anyone holding `creds:admin`
-  gets full view+edit of every credential in every system/environment through the UI.
+- Gated by **one aithne scope**: `ui/src/auth.js` `REQUIRED_SCOPE = 'creds:admin'` — no
+  metadata-vs-secret split, no read-vs-write split. Anyone holding `creds:admin` gets
+  full view+edit of every credential in every system/environment through the UI.
 - The UI backend talks to the SSH server as its own dedicated identity, `lucos_creds_ui`
-  (`ui/ssh-config`), keyed by `UI_PRIVATE_SSH_KEY` — necessarily unrestricted-capability
-  (needs to decrypt values and write) regardless of which human is behind it.
-- **Implication for any future creds capability-axis work** (e.g. lucos_creds#457's
-  ADR-0004 environment×capability SSH-key axis): narrowing SSH keys does nothing for
-  this path. The actual gate for humans stays the single flat `creds:admin` scope
-  until/unless the UI itself is split into finer-grained scopes (its own separate
-  piece of work — new aithne scopes + UI code changes). Don't let a machine-key-only
-  capability axis be described as "reducing risk on the primary admin surface" — it
-  isn't, unless the UI's own authz is addressed too.
+  (`ui/ssh-config`), keyed by `UI_PRIVATE_SSH_KEY`.
 - `creds:admin` in `scopes.yaml` is documented as covering *both* meanings (an "admin
-  console" comment) — i.e. the one existing scope token already does double duty for
-  what may eventually be two different admin postures (metadata-browse vs secret-edit).
-  Worth flagging if a future scope-vocabulary cleanup pass touches `creds:admin`.
+  console" comment) — i.e. the one scope token does double duty for what could be two
+  different admin postures (metadata-browse vs secret-edit). Not a problem after
+  ADR-0004 (below) — flag only if a future scope-vocabulary cleanup pass touches it.
+
+# ADR-0004: deny-by-default `allow-scopes` access control (lucos_creds#457, Accepted 2026-07-12)
+
+Replaces the single `restrict-environment` allow-by-default axis with **deny-by-default,
+scope-based grants**. Went through two full redesign rounds during review — durable
+shape and the lessons from getting there:
+
+**Final model:**
+- One `authorized_keys` option, `allow-scopes`, e.g.
+  `allow-scopes="creds:metadata:read@*; creds:secret:read@development; creds:write@development"`.
+  Grants are `<scope>@<environment-set>`, `;`-separated; `@*` is the environment wildcard.
+  Replaces the two-axis (`restrict-environment` + a would-be second option) design from
+  round 1 — a single option sidesteps a real bug I found in that design: `parseAuthorizedKeys`
+  builds `permissions.Extensions` as a full map *replacement* per matched option, not a merge,
+  so two options on one key would have let whichever parsed last silently clobber the other's
+  restriction (fails **open**, since both axes default-allow). One option, one extension key,
+  makes that bug structurally impossible rather than something to test around.
+- **Deny-by-default**: absence of a grant is denial, full stop. A new key with no
+  `allow-scopes` gets nothing (fails loudly), reversing the old `restrict-environment`
+  default-allow footgun.
+- Three granular scopes (`creds:metadata:read`, `creds:secret:read`, `creds:write`, added to
+  the shared `lucos_auth_scopes` vocabulary) plus **`creds:admin` as a fixed, named
+  full-access grant — not a wildcard**. `creds:admin` satisfies every scope check today
+  (metadata+secret+write) but does **not** auto-absorb any scope added to creds in future;
+  each new scope is a deliberate include/exclude decision.
+- **UI-consistency resolution (§6):** the UI keeps its single `creds:admin` aithne check
+  unchanged; consistency with the SSH-key axis comes from granting the UI's own
+  `UI_PRIVATE_SSH_KEY` exactly `creds:admin@*` — same token, both planes. This is *not*
+  scope decomposition of the UI (that was rejected as unneeded complexity) — it's making
+  the one check on each plane agree. One accepted asymmetry: environment-scoping is a
+  machine-key tool only, since aithne JWTs have no environment concept, so a human via the
+  UI is not environment-scoped even though an agent SSH key can be.
+- **Migration is flag-day, one repo, five keys** (`lucas`, `docker-deploy`, `lucos_creds_ui`,
+  `lucos_creds_configy_sync`, `lucos-agent-coding-sandbox` — the whole committed
+  `authorized_keys` file, checked directly against `main`). All five must get explicit
+  grants in the *same* PR that flips enforcement on, or every `.env` deploy-time fetch
+  breaks instantly.
+
+**Migration-table corrections I caught by reading the actual client code (worth the
+habit — don't trust a table marked "(confirm)" without doing the confirming):**
+- `lucos_creds_configy_sync` (`configy_sync/sync.py`) calls the 3-part `ls` (secret:read)
+  before every write and touches both `development` and `production` — an early draft
+  proposed write-only, which would have broken its first sync run on flag day.
+
+**Open/tracked finding — [lucas42/lucos_creds#458](https://github.com/lucas42/lucos_creds/issues/458):**
+`lucos_creds_ui` and `lucos_creds_configy_sync` register **byte-identical SSH public keys**
+in the committed `authorized_keys` (confirmed directly, not inferred). Inert under the old
+allow-by-default model (both were unrestricted anyway) but becomes a real hole the moment
+ADR-0004's differentiated grants land — whoever holds either private key can just claim the
+other's username and get its (possibly more privileged) grant. lucos-code-reviewer found
+this independently and filed #458 (correctly routed as a public issue, not an advisory —
+not currently exploitable since both identities have equivalent access today). ADR-0004
+§5 and its deferred-work item now cite #458 as a **hard precondition**: a distinct keypair
+must be minted for one of the two principals before the deny-by-default flip ships.
+**Watch for this landing** — don't let the flag-day migration merge before #458 is closed.
