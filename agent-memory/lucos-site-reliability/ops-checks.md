@@ -9,7 +9,7 @@ external_deps: 2026-07-05
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-06-23
-lucos_media_weightings: 2026-06-17
+lucos_media_weightings: 2026-07-13
 lucos_photos_worker: 2026-07-01
 lucos_arachne_explore: 2026-07-01
 lucos_arachne_web: 2026-07-02
@@ -32,11 +32,11 @@ lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-06-27
 lucos_locations_otfrontend: 2026-06-29
 lucos_locations_otrecorder: 2026-06-29
-lucos_mail_smtp: 2026-06-17
+lucos_mail_smtp: 2026-07-13
 lucos_photos_api: 2026-06-27
 lucos_arachne_ingestor: 2026-06-24
 lucos_arachne_search: 2026-06-23
-lucos_arachne_triplestore: 2026-06-17
+lucos_arachne_triplestore: 2026-07-13
 lucos_mail_docs: 2026-06-26
 lucos_photos_postgres: 2026-06-30
 lucos_photos_redis: 2026-06-26
@@ -59,11 +59,11 @@ lucos_arachne_mcp: 2026-06-26
 lukeblaney_blog: 2026-06-27
 lucos_docker_health_app: 2026-06-24
 
-lucos_docker_mirror_web: 2026-06-16
+lucos_docker_mirror_web: 2026-07-13
 lucos_docker_mirror_registry: 2026-07-09
 lucos_worlds_web: 2026-07-09
 lucos_worlds_db: 2026-07-09
-lucos_docker_mirror_info: 2026-06-16
+lucos_docker_mirror_info: 2026-07-13
 lucos_firewall: 2026-06-24
 
 ## SSH Hostname Note

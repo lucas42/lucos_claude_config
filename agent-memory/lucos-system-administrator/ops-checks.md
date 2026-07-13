@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-09
+container_status: 2026-07-13
 resource_checks: 2026-07-09
 syslog_review: 2026-07-09
 software_updates: 2026-07-09
 sandbox_drift: 2026-07-09
-repos_dashboard: 2026-07-09
+repos_dashboard: 2026-07-13
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1482,4 +1482,19 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 61 repos checked. 3 failing conventions, all on `lucas42/lucos_architecture_models` (still pre-scaffolding, per 2026-07-05 assessment — no CI config, no Dockerfile, README-only): `dependabot-configured`, `fork-pr-contributor-approval`, `in-lucos-configy`. All three already auto-tracked by the audit tool. Deliberately not running standard repo standup or guessing the configy type yet — same reasoning as 2026-07-05 (branch protection requiring a CircleCI check that can't exist yet would permanently block PRs). No new action.
 
 **Issues raised**: None. All hosts clean, no security-tagged updates, no drift, no new dashboard failures.
+
+### 2026-07-13 (checks 1 + 6 due; weekly checks last ran 2026-07-09, 4 days — not due until 2026-07-16; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: 5 failing conventions across 3 repos. Fixed the 4 that were safe standalone changes; left 1 open deliberately:
+- `lucos_architecture_models` `dependabot-configured` — added `.github/dependabot.yml` (github-actions ecosystem only; repo has no Dockerfile/manifests). **Fixed, verified pass, issue #1 closed.** Note: `in-lucos-configy` (flagged as a concern on 2026-07-09) is no longer failing for this repo — resolved separately since then.
+- `lucos_architecture_models` `fork-pr-contributor-approval` — was `first_time_contributors`, set to `first_time_contributors_new_to_github` via the Actions permissions API. **Fixed, verified pass, issue #2 closed.**
+- `lucos_worlds` `circleci-jobs-in-required-checks` — added missing `ci/circleci: test-info-endpoint` and `ci/circleci: test-page-excerpt` to required status checks (branch-protection-related; reran all conventions for the repo afterward per the coupling guidance — all still pass). **Fixed, verified pass, issue #50 closed.**
+- `lucos_worlds_atlas` `dependabot-configured` — added `.github/dependabot.yml` (github-actions ecosystem only). **Fixed, verified pass, issue #2 closed.**
+- `lucos_worlds_atlas` `in-lucos-configy` — **deliberately NOT fixed.** This repo is pre-scaffolding (created 2026-07-09, size 0, README-only, no branch protection at all — confirmed 404 on the protection API). Registering it in configy now would cascade into ~20 `AppliesTo`-gated conventions, several of which would hard-fail with no scaffolding in place — net worse than the single open finding. Same pattern as the `lucos_architecture_models` deferral noted 2026-07-05/07-09. Commented on issue #3 explaining the reasoning; left open.
+
+**Persona file correction**: found `agents/lucos-system-administrator.md`'s audit-finding closing guidance ("don't manually close them yourself") directly contradicted the canonical `references/audit-finding-handling.md` (updated 2026-07-10: close promptly once verified, don't wait for the ≤6h auto-close sweep). Fixed the persona text in place to match the reference rather than leaving both versions live; committed via `commit-claude-main`.
+
+**Issues raised**: None new. 4 audit-finding issues closed with verification evidence (architecture_models#1, #2; worlds#50; worlds_atlas#2). 1 left open with explanation (worlds_atlas#3).
 
