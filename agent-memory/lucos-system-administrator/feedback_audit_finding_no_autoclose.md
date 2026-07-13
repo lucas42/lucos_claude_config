@@ -1,32 +1,37 @@
 ---
 name: feedback_audit_finding_no_autoclose
-description: SUPERSEDED 2026-07-10 — audit-finding issues DO auto-close now, per ADR-0004.
+description: SUPERSEDED AGAIN 2026-07-13 — close verified-passing audit-findings myself promptly; don't wait for the tool's auto-close.
 metadata:
   type: feedback
 ---
 
-**Correction (2026-07-10):** this memory previously said the audit tool never auto-closes
-`audit-finding` issues. That was true when written (2026-05-24) but is now superseded by
-`lucos_repos` ADR-0004 (auto-close on pass) — confirmed directly when
-`lucas42/lucos_aithne_jsclient#2/#3/#4` all auto-closed with `state_reason: "completed"`
-within minutes of their conventions starting to pass, no manual close needed.
-`~/.claude/references/audit-finding-handling.md` already documents ADR-0004 correctly; the
-persona file's "Working on Issues — Sysadmin Extensions" section had drifted stale and was
-fixed the same day (lucos_claude_config@2cba423).
+**History of this memory (kept so the reversals don't repeat):**
+- Written 2026-05-24: audit tool never auto-closes `audit-finding` issues. True at the time.
+- Corrected 2026-07-10: `lucos_repos` ADR-0004 added auto-close on pass — confirmed via
+  `lucas42/lucos_aithne_jsclient#2/#3/#4` auto-closing within minutes. That correction then
+  over-rotated into "so don't manually close them, and don't editorialize about the mechanism"
+  — which got written into both this memory and the persona file's "Working on Issues —
+  Sysadmin Extensions" section.
+- **Corrected again 2026-07-13:** that "don't manually close" reading was itself wrong.
+  `~/.claude/references/audit-finding-handling.md` (also updated 2026-07-10, but the update
+  hadn't fully propagated into the persona file until today) is explicit: auto-close is a
+  **backstop, not the plan** — lucas42 does not want completed findings sitting open for
+  hours. Found this as a live contradiction between the persona file and its own linked
+  reference during the 2026-07-13 ops-checks run; fixed the persona text in place
+  (lucos_claude_config@280f30c) rather than leaving both versions live.
 
-**Current behaviour:** the audit tool auto-closes an `audit-finding` issue itself on the next
-sweep (≤6h, first pass, no consecutive-pass threshold) once its convention passes. Don't
-manually close it — but also don't need to ask the coordinator to close it either.
+**Current behaviour (as of 2026-07-13) — this is the one to trust:** once you've verified a
+convention now passes (`/api/rerun` for non-Type-gated conventions, full `/api/sweep` for
+Type-gated ones), **close the audit-finding issue yourself immediately** with a comment citing
+the verification evidence, and set its board item to Done. Don't wait for the tool's own ≤6h
+sweep. Only exceptions: still failing (leave open), false positive with a fix tracked
+elsewhere (Blocked + reference, don't close), or convention doesn't apply (fix the `Check`
+function, don't close the issue). Full lifecycle in
+`~/.claude/references/audit-finding-handling.md` — treat that file, not this one, as the
+source of truth on the *mechanism*; this memory just tracks that the mechanism has flipped
+twice so I don't reintroduce either wrong reading.
 
-**How to apply now:** when reporting a resolved audit-finding, state the verified fact only —
-"convention now passes — closure-ready" or "convention not yet passing — still in progress".
-Don't editorialize about *who or what* closes it either way; both over-claiming auto-close
-(the 2026-05-24 mistake) and under-claiming it (this memory's original text) are wrong in
-different directions — the tool's actual behavior is documented in
-`~/.claude/references/audit-finding-handling.md`, so defer to that rather than restating a
-mechanism from memory.
-
-**Verification gotcha:** confirming "pass" for a `Type`-gated convention (e.g.
+**Verification gotcha (still true):** confirming "pass" for a `Type`-gated convention (e.g.
 `in-lucos-configy`) requires a full `POST /api/sweep` — `/api/rerun` reuses the last sweep's
 cached `RepoContext.Type` and will keep reporting stale fails after a `lucos_configy`
 registration change. See [[configy-undeployed-system-entry-pattern]]. Filed as
