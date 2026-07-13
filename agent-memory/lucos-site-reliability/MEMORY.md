@@ -90,6 +90,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — flaky scp assertion; re-run from failed. #358.
 - [lucos_repos deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min; POST /api/sweep manual.
 - [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — don't close/reopen/empty-commit during outage.
+- [PR blocked with CircleCI checks that NEVER fired = CircleCI 400'd push webhook](pattern_circleci_400_webhook_drops_pr.md) — GitHub no-retry-4xx; diagnose via hooks/{id}/deliveries; fix=POST pipeline. lucos_repos#466.
 
 ## Docker daemon / recovery
 - [Docker live-restore:true skips network init when containers running](pattern_docker_live_restore_skips_network_init.md) — stop all containers → restart daemon →…
