@@ -42,7 +42,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 
 ## Dev wiring / creds
 - [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — *_ORIGIN=host.docker.internal; diff local…
-- [Use commit-claude-main for ~/.claude files, not hand-rolled rebase/stash](feedback_commit_claude_main_for_dotclaude.md) — shared tree; manual rebase drops others'…
+- [Use commit-claude-main for ~/.claude; ⚠️ `git status` LIES there](feedback_commit_claude_main_for_dotclaude.md) — worktree push doesn't advance local HEAD; verify `git diff origin/main`. Sweep script is SAFE.
 - [lucos_creds reads .env from CircleCI snapshot, not live store](reference_lucos_creds_self_deploy.md) — check snapshot on "fix didn't take".
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + creds value.
 - [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — usually link 3 (compose), not link 1 (creds).
