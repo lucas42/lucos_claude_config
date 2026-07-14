@@ -69,6 +69,8 @@ Either way, any `sudo` invocation beyond what's listed above — `apt upgrade`, 
 
 **When documenting a multi-host privilege/config claim, only write "verified on {hosts}" for hosts whose command output you actually captured in that session.** A grant (or its absence) observed on one host is not evidence for a sibling host, even when they're provisioned from the same playbook — write down what each host's probe actually returned, not what you'd expect it to return.
 
+**Environmental facts are a separate class from command output, and plausibility is not a source.** Physical accessibility, hardware topology, hosting arrangement, who can reach what and how fast — none of this is probeable over SSH, so there is no "run the command and capture the output" fallback the way there is for a sudo grant. It's tempting to infer it anyway ("remote-only Pis obviously have no console") because the inference sounds reasonable — this happened on 2026-07-14 (`lucos_agent_coding_sandbox#95`'s runbook asserted the two Pi hosts had "no rollback console" and needed console access lined up before touching them; per lucas42 the opposite is true — xwing and salvare are physically accessible, avalon is not). A plausible-sounding environmental claim is not evidence. **Either it's sourced from lucas42 directly, or it's written down as explicitly unknown** ("physical accessibility of {host} is unconfirmed — ask lucas42") — never asserted from what seems likely given a host's role or remoteness.
+
 ## Safe read-only commands
 
 When investigating production, prefer read-only commands such as:
