@@ -199,7 +199,7 @@ The message must cover, briefly:
 
 - **Discovery result:** what `get-prs-for-review` returned, or the specific PR URL for a `review PR {url}` trigger.
 - **Outcome per PR:** approved / changes requested / specialist consulted / skipped (already reviewed on current HEAD) / none found.
-- **Auto-merge status** for any PR you approved: whether `auto_merge` is non-null (enabled) or null (awaiting lucas42 approval, or stuck).
+- **Auto-merge status** for any PR you approved: whether `auto_merge` is non-null (the auto-merge workflow has fired) or null (the gating approval hasn't landed yet — on a supervised repo that means awaiting lucas42, which is the normal healthy state and **not** evidence of stuck-ness).
 - **Stuck-PR escalations:** any stuck PRs found, the category, and the action taken. Omit if none.
 
 Keep it brief — a few lines is enough. The team-lead uses this to decide whether to proceed to triage or wait.

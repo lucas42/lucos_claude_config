@@ -20,7 +20,11 @@ SRE responsibility covers **infrastructure-level** stuck PRs — not code-level 
 
 ## The auto-merge trap
 
-**Don't infer "needs manual merge" from `auto_merge: null` or a skipped `reusable/auto-merge` check.** Almost every repo has `.github/workflows/code-reviewer-auto-merge.yml`, which auto-merges once `lucos-code-reviewer` (or another approver) approves. That workflow is independent of the PR-level `auto_merge` field (which only reflects GitHub-native auto-merge — it is `null` even when workflow-driven auto-merge is in place) and of the `reusable/auto-merge` check that gets `skipped` on supervised repos (that is the *Dependabot* path, not the code-reviewer path). Verify by checking for `code-reviewer-auto-merge.yml` in the repo before claiming manual merge is needed:
+**Don't infer "needs manual merge" or "stuck" from `auto_merge: null` or a skipped `reusable/auto-merge` check.** Almost every repo has `.github/workflows/code-reviewer-auto-merge.yml`, which merges via **`gh pr merge --auto`** — so it *is* GitHub-native auto-merge, and the PR-level `auto_merge` field goes non-null exactly when that workflow fires, i.e. once the gating approval lands (`lucos-code-reviewer` on unsupervised repos, `lucas42` on supervised ones).
+
+So `auto_merge: null` means **"the gating approval hasn't landed yet"** — not "auto-merge is off", and not "someone must merge this by hand". It is a real signal: never tell anyone to ignore it. **Only treat null as evidence of stuck-ness when the gating approval is already present AND the workflow ran and failed** — check that precondition before matching the symptom. On a supervised repo, "approved by the bot, `auto_merge: null`, awaiting lucas42" is the correct healthy reading, not a stuck PR.
+
+The `reusable/auto-merge` check that gets `skipped` on supervised repos is the *Dependabot* path, not the code-reviewer path — its skip says nothing about this PR. Verify by checking for `code-reviewer-auto-merge.yml` in the repo before claiming manual merge is needed:
 
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
