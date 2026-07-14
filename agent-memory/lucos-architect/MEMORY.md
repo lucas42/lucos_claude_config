@@ -46,7 +46,8 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Check special cases before extending a pipeline](feedback_check_special_cases_before_extending_pipeline.md)
 - [Qualify cross-repo ADR references](feedback_qualify_cross_repo_adr_refs.md)
 - [Commit your own agent-memory for attribution](feedback_commit_own_memory_for_attribution.md)
-- [Parse reference data, never hand-build it](feedback_parse_reference_data_never_handbuild.md)
+- [Parse reference data, never hand-build it](feedback_parse_reference_data_never_handbuild.md) — incl. test fixtures blind to input-selection bugs
+- [Reused mechanism inherits blast radius, not safeguards](feedback_reused_mechanism_inherits_safeguards.md)
 - [Test prescribed values against the rule](feedback_test_prescribed_values_against_rule.md)
 - [Check originating decision before forking](feedback_check_originating_decision_before_forking.md)
 - [Shared-lib break = testing gap, not version caps](feedback_check_protocol_contract_before_accepting_break.md)
@@ -75,6 +76,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Quiesce-during-read backup pattern](reference_quiesce_during_read_backup.md)
 - [navbar keepalive vs consumer service workers](reference_navbar_keepalive_sw_interception.md)
 - [Convention catalogue + enforced-vs-guidance boundary](reference_convention_catalogue.md)
+- [Purity seam enables dry-run — not a flag](reference_purity_seam_enables_dry_run.md)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md)
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md)
