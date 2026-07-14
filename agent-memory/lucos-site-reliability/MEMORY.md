@@ -55,10 +55,8 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE fails](reference_schedule_tracker_detection_semantics.md) — intermittent stays GREEN by design.
 - [⚠️ schedule_tracker_db loss PERMANENTLY forgets stopped jobs](pattern_schedule_tracker_db_loss_forgets_stopped_jobs.md) — no registry; broken jobs never re-POST → board green. NEVER wipe; runbook actively misadvises.
 - [Media cross-probe flap in rollout burst = LEGIT 401 during key-rotation convergence](pattern_deploy_window_boundary_crossprobe_flap.md) — alerts CORRECT, don't suppress.
-- [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — worthless on lagging schedule_tracker checks.
-- [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress…
-- [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md) — ignores pre-existing failures.
-- [red-means-down: no ack/known-issue board state](feedback_red_means_down_no_ack_state.md) — fix the problem, board self-clears.
+- [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — worthless on lagging schedule_tracker checks; has [TWO read sites, trace both](pattern_dependson_two_read_sites.md).
+- [red-means-down: no ack/known-issue board state](feedback_red_means_down_no_ack_state.md) — fix the problem, board self-clears; [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md).
 - [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or…
 - [Checks AND thresholds live in /_info, not lucos_monitoring](feedback_failthreshold_lives_in_info.md) — monitoring is aggregation only.
@@ -138,4 +136,4 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 
 ## Loganne (actionable — webhook errors never "self-heal")
 - [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer KEY_LUCOS_LOGANNE; /events filters…
-- [webhook-error-rate never clears itself — retry via API](feedback_rescan_before_webhook_cleanup.md) — sample errorMessage distribution first (transient-looking 504s often mask permanent), and snapshot per-failure diagnostic fields before retrying, since retry overwrites the failure-side record ([[feedback_sample_webhook_errors_first]], [[feedback_snapshot_before_retry]]).
+- [webhook-error-rate never clears itself — retry via API](feedback_rescan_before_webhook_cleanup.md) — but first [sample the errorMessage distribution](feedback_sample_webhook_errors_first.md) (transient-looking 504s mask permanent) and [snapshot per-failure diagnostic fields](feedback_snapshot_before_retry.md) (retry overwrites the failure-side record).
