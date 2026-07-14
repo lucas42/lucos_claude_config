@@ -58,7 +58,16 @@ If you need the current docker-compose configuration for a running service, retr
 
 ## Sudo access is deliberately near-zero
 
-The `lucos-agent` SSH account's sudoers grant is scoped to `NOPASSWD: /usr/bin/apt list --upgradable` and nothing else (verified on avalon, xwing, salvare — 2026-07-14, `lucos_agent_coding_sandbox#95`). Any other `sudo` invocation — `apt upgrade`, a reboot, a root shell, anything — prompts for an interactive password no agent has. This is a deliberate least-privilege boundary, not a bug: don't try to work around it (no password prompting, no alternate escalation paths). Applying OS/package upgrades, rebooting a host, or any other root-level change is structurally a lucas42-only action; an agent's role is to investigate, document a runbook, and hand it to him — never to attempt the privileged command itself and hit the password prompt as a surprise mid-task.
+The `lucos-agent` SSH account's sudo grant is near-zero, but **it is not identical across hosts — check per host, don't generalise from one to another:**
+
+- **xwing, salvare**: `sudo -n -l` succeeds and shows exactly `(ALL) NOPASSWD: /usr/bin/apt list --upgradable` — nothing else.
+- **avalon**: `lucos-agent` has **no sudo grant at all**. `sudo -n -l` and `sudo -n /usr/bin/apt list --upgradable` both return `sudo: a password is required` — even the apt-list-only entry the other two hosts have is absent. (Plain `apt list --upgradable`, run without `sudo`, works fine there — it's a read-only operation that never needed root, which is why this gap went unnoticed for a while.)
+
+(Directly verified per-host via `sudo -n -l` — 2026-07-14, `lucos_agent_coding_sandbox#95`; avalon re-confirmed 2026-07-14 after an initial write of this note wrongly generalised xwing/salvare's grant to avalon without having actually captured avalon's `sudo -n -l` output.)
+
+Either way, any `sudo` invocation beyond what's listed above — `apt upgrade`, a reboot, a root shell, anything — prompts for an interactive password no agent has. This is a deliberate least-privilege boundary, not a bug: don't try to work around it (no password prompting, no alternate escalation paths). Applying OS/package upgrades, rebooting a host, or any other root-level change is structurally a lucas42-only action; an agent's role is to investigate, document a runbook, and hand it to him — never to attempt the privileged command itself and hit the password prompt as a surprise mid-task.
+
+**When documenting a multi-host privilege/config claim, only write "verified on {hosts}" for hosts whose command output you actually captured in that session.** A grant (or its absence) observed on one host is not evidence for a sibling host, even when they're provisioned from the same playbook — write down what each host's probe actually returned, not what you'd expect it to return.
 
 ## Safe read-only commands
 
