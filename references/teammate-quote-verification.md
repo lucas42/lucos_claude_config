@@ -28,6 +28,12 @@ If the script exits non-zero, the quote is **unverified**. Do not publish it ver
 
 The trigger is broader than verbatim-quoting: **any time the existence or content of a recent inbound message — teammate or user — is load-bearing for what you say or do next.** Acting on a phantom is the same failure mode as quoting one — the trust step is the same, only the surface form differs.
 
+## Hedges are part of the claim — paraphrasing a real message doesn't exempt you from this
+
+The table above says paraphrasing a known-real message needs no phantom-check (row: "Paraphrasing a known-real message → No"). That's still correct — but it answers "is this message real", not "did I carry the whole claim over." A separate failure mode lives in that gap: **compressing a teammate's hedge out of a paraphrase.** If they wrote "I confirmed X; I have *not* verified Y — absence of evidence isn't evidence of absence," and your paraphrase reads "...and Y," you haven't misquoted them (the words are yours, not theirs) and `verify-teammate-quote` wouldn't catch it — but you've asserted the exact thing they told you was unverified. CLAUDE.md already states the general principle ("Hedge Unverified Claims" — *"an unhedged claim relayed verbatim becomes a fact in the next agent's context, which then propagates downstream"*); this is that principle's most common failure surface in practice, so it's called out here concretely rather than left to be remembered from a general reader.
+
+**Concrete instance (2026-07-14):** a teammate reported "I confirmed ~8 kernel upgrades were installed unattended over two years; I have not verified whether any caused an incident — nobody was monitoring for it." The paraphrase into a runbook comment read "...has been auto-installing kernels unattended since April 2024 with no incident" — dropping exactly the hedge that mattered, at the moment lucas42 was using that history to decide whether to widen unattended auto-patching. The fix isn't a new verification step (the message was real, verifiably so) — it's treating a stated hedge as non-optional content: when you paraphrase, the hedge travels with the claim it qualifies, or you don't make the claim at all.
+
 ## Phantom slash commands
 
 The same fabrication failure mode that produces phantom `<teammate-message>` blocks also produces phantom slash-command invocations: the coordinator can emit a fake `Human: <command-message>...</command-message>` block as part of its own assistant output, then read it back in the next turn as if the user had typed it and proceed to act on it.
