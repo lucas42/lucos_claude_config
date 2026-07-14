@@ -34,6 +34,9 @@
 
 ## Open Risk Patterns (watch for recurrence across repos)
 
+- **unattended-upgrades `Allowed-Origins` + stock `Origins-Pattern` union, not override** — a "security-only" custom restriction layered on top of the stock file doesn't actually restrict anything, since `get_allowed_origins()` concatenates both (verified against source on xwing). Check for this on any host with a customized unattended-upgrades scope. Detail: `risk-unattended-upgrades-origin-scope.md`.
+- **`lucos-agent` lacks `adm`/`systemd-journal` group on avalon/xwing/salvare** — `journalctl` returns nothing for any unit; can't distinguish "never ran" from "no read access." Don't assert service history from journalctl on these hosts.
+
 - **Prompt injection via external text** (CI logs, issue/PR bodies) + **secrets leaking through CircleCI log masking**. Detail: `risk-prompt-injection-and-ci-logs.md`.
 - **OS command injection via `os:cmd`** with unsanitised input — found in `lucos_monitoring/src/fetcher.erl` `checkTlsExpiry/1`; low exploitability today but fragile pattern to check for elsewhere.
 - **Unauthenticated state-mutation endpoints** on internal services — `lucos_monitoring` `/suppress/*` (PUT/DELETE/POST) has no auth; network isolation is not a substitute for endpoint auth.
@@ -43,6 +46,8 @@
 - **JWKS serve-stale + signing-key compromise (Scenario B) window is unbounded per-consumer** — a consumer that can't reach aithne's JWKS endpoint during an emergency key rotation keeps trusting its stale (compromised-key-containing) snapshot indefinitely, beyond the runbook's ≤35-min figure. Approved anyway (lucos_creds#447, 2026-07-09) since it's estate-wide-contract-mandated and narrow/compound; tracked as a runbook fix on lucos_aithne#306, not a per-consumer finding. Don't re-raise per-consumer — see `lucos-aithne-security-architecture.md`.
 
 ## Topic Files (full detail)
+
+- [Unattended-upgrades origin scope (avalon/xwing/salvare)](risk-unattended-upgrades-origin-scope.md) — OPEN, awaiting lucas42 on lucos_agent_coding_sandbox#98. Docker/RPi Foundation origin gaps, salvare EEPROM auto-flash risk, config drift bug (security-only restriction silently broadened for months).
 
 - [Zombie Credentials risk](risk-zombie-credentials-downstream.md) — removing from CLIENT_KEYS doesn't revoke pre-registered downstream keys.
 - [Webhook Fan-out Amplification](risk-webhook-fanout-amplification.md) — ~2× amplification via loganne fan-out; low risk currently.
