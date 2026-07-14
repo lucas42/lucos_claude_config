@@ -32,7 +32,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Flag-day plans need a verification gate, not just an order](feedback_flag_day_verification_gate.md)
 - [Verify the premise, not just the quote](feedback_verify_premise_not_just_quotes.md)
 - [File follow-up tickets during design](feedback_file_followups_during_design.md)
-- [Don't grep-and-conclude on consumer wiring](feedback_grep_and_conclude_anti_pattern.md)
+- [Don't conclude absence without searching for it](feedback_grep_and_conclude_anti_pattern.md)
 - [Ready vs startability — unresolved dep = Blocked](feedback_ready_vs_startability.md)
 - [Verify path before defensive code](feedback_verify_path_before_defensive_code.md)
 - [Don't assume from service name](feedback_dont_assume_from_service_name.md)
