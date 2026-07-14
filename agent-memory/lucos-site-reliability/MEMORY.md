@@ -31,6 +31,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 ## Backups
 - [Backups localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 dual-stack publish mismatch](pattern_backups_sshadd_gates_server_start.md) — test 127.0.0.1 AND localhost AND [::1].
 - [DB-specific backups walked back → engine-agnostic quiesce](project_backups_db_consistency_walkback.md) — docker pause owner around read; all hosts…
+- [recreate_effort vs skip_backup: INDEPENDENT, never infer](reference_recreate_effort_vs_skip_backup_semantics.md) — lucas42's semantics + 3-reason test; effort drives a live runbook restore decision.
 - [aurora access + rsync facts](reference_aurora_access_and_rsync.md) — no direct SSH; route via container…
 - [home-host backups red = ISP dropped upstream IPv6 transit](pattern_salvare_ipv6_prefix_withdrawal.md) — self-resolves; don't force IPv4.
 - [backup-without-original red forever on decommissioned system's retained backups](pattern_backups_without_original_on_decommission.md) — benign; fix=configy-absence signal (#359).
@@ -140,6 +141,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Don't overclaim attributions in incident reports](feedback_no_attribution_overclaim.md) — restrict to what people actually said.
 - [Confirm with team-lead before shipping a report when verification is externally gated](feedback_parallel_drafting_verification_scope.md) — parallel-drafting rule is for…
 - [Active recurrence justifies priority above default-P3](feedback_priority_active_recurrence.md).
+- [Ask "what problem?" of the QUESTION, not just the solution](feedback_ask_what_problem_before_accepting_scope.md) — incl. scope handed to me; "too narrow" isn't evidence; a real finding doesn't justify a bad question.
 - [Test follow-ups must be deterministic AND actionable](feedback_test_proposals_must_be_actionable.md) — no alarm clocks for third-party bugs.
 - [Loganne is for cross-estate events, not fine-grained instrumentation](feedback_loganne_scope.md) — enumerate alternatives.
 - [Enumerate existing surfaces before proposing new persistence](feedback_enumerate_existing_mechanisms.md) — inverse of loganne_scope.
