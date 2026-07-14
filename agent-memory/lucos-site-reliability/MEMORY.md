@@ -57,7 +57,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 ## Monitoring
 - [Surfacing a new service: monitoring REBUILD vs root RUNTIME pickup](pattern_surfacing_new_service_monitoring_vs_root.md) — monitoring bakes list at build; root polls /_info at runtime; not "just a rebuild" for both.
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — use `summary` for counts.
-- [Estate circleci alert storm = CircleCI API outage tripping UnknownsGate](pattern_circleci_unknownsgate_estate_storm.md) — check Loganne failingChecks[].debug first…
+- [Estate circleci alert storm = CircleCI API outage tripping UnknownsGate](pattern_circleci_unknownsgate_estate_storm.md) — #279 DONE (threshold=5, vindicated); a rerun fakes a recovery; check debug first…
 - [monitoring self fetch-info flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — global 1s timeout; #186 closed.
 - [fetch-info requires http_port; non-HTTP boxes via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — /systems/http filters; use full /systems…
 - [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE fails](reference_schedule_tracker_detection_semantics.md) — intermittent stays GREEN by design.
@@ -85,6 +85,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 ## CI / build / deploy
 - [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
 - [Auto-merged base-image bump breaks at deploy/runtime not build](pattern_baseimage_bump_runtime_break.md) — durable fix = CI test job booting the…
+- [exit 127 after a successful pip install = `ubuntu-2204:current` rolled BACKWARDS](pattern_rolling_machine_image_tag_moves_backwards.md) — read `Spin up environment` for the image; fix w/ venv not a pin; verify on the BAD image.
 - [deploy-avalon exit 18 "pull access denied for *_test" = orb pull profile-blind](pattern_deploy_orb_pull_profile_blind.md) — FIXED orb 0.0.185; fresh pipeline to pick…
 - [lucos_repos audit mass 403s = GitHub secondary rate-limit, not lost access](pattern_repos_audit_dryrun_secondary_ratelimit.md) — non-incident.
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — flaky scp assertion; re-run from failed. #358.
