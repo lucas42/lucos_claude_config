@@ -1,11 +1,17 @@
 ---
 name: agent-sudo-scope
-description: lucos-agent's sudoers grant is apt-list-only on all production hosts — OS/package upgrades always need lucas42
+description: lucos-agent's sudo grant differs per host (apt-list-only on xwing/salvare, none at all on avalon) — OS/package upgrades always need lucas42
 metadata:
   type: project
 ---
 
-`lucos-agent`'s sudoers entry on avalon, xwing, and salvare is `NOPASSWD: /usr/bin/apt list --upgradable` only (confirmed via `sudo -n -l`, 2026-07-14, lucos_agent_coding_sandbox#95). Every other `sudo` command — `apt upgrade`, a reboot, anything — prompts for an interactive password no agent has.
+`lucos-agent`'s sudo grant is near-zero everywhere but **not identical across hosts** — verified per host via `sudo -n -l`, 2026-07-14, lucos_agent_coding_sandbox#95:
+- **xwing, salvare**: `NOPASSWD: /usr/bin/apt list --upgradable` only.
+- **avalon**: no sudo grant at all — `sudo -n -l` returns "a password is required" there too, same as every other invocation. (Plain `apt list --upgradable` works without sudo on avalon since it never needed root; that's why this gap wasn't obvious.)
+
+Either way, every other `sudo` command — `apt upgrade`, a reboot, anything — prompts for an interactive password no agent has.
+
+**Correction (2026-07-14, same day, caught by team-lead re-probing):** an earlier version of this note and of `references/ssh-production.md` wrongly generalised xwing/salvare's specific grant to avalon as "verified on all three" without having actually captured avalon's `sudo -n -l` output separately — it had only been tested with `sudo -n true`, a different (blanket) check. Both docs are now corrected to state each host's actually-observed result. Lesson: a "verified on {hosts}" claim must be backed by captured output *per host*, not inferred from a sibling on the same estate-wide playbook — see the added guidance in `references/ssh-production.md`.
 
 **Why:** deliberate least-privilege boundary. Auto-applying kernel/Docker-engine upgrades unattended on remote-only Pis with no agent-reachable console would be a real blast-radius risk.
 
