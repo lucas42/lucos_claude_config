@@ -118,6 +118,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Flag follow-up disposition to coordinator, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — don't toggle issue state on crossed messages.
 - [PR state checks must include `merged` field first](feedback_pr_check_merged_field_first.md) — merged PR shows UNKNOWN like an open one…
 - [Check a trap's PRECONDITION before firing it at a teammate](feedback_check_trap_precondition_before_firing.md) — `auto_merge: null` on a supervised repo = "not yet approved" (real signal), NOT stuck; verify the mechanism before asserting it.
+- [Ticket body is the spec — rewrite it when a design is walked back](feedback_ticket_body_is_the_spec.md) — /dispatch sends URL alone; comment ≠ spec; close superseded PRs same time.
 - [Verify issue state before citing a #N](feedback_refetch_state_before_writing_final_artifact.md) — strongest in final-artifact follow-up tables.
 - [Verify closed-issue disposition (body+closing comment) before citing as preference evidence](feedback_verify_closed_issue_disposition.md).
 - [Check recent fixes before filing flap-investigation issues](feedback_check_recent_fixes_before_filing.md) — pre-fix alerts persist in lookback for days.
