@@ -47,26 +47,33 @@ If the script returns an empty array, report that there is nothing needing triag
 
 ### Reactions are answers — check them every pass
 
-lucas42 frequently approves a proposal by reacting `+1` to the comment that contains it, rather than typing a confirmation. Comments alone are not enough — **reactions must be checked explicitly on every pass**, both for issues you are re-processing in Step 3 and for any Owner = lucas42 issue you are about to list in the Step 6 summary.
+lucas42 frequently approves a proposal by reacting `+1` to it rather than typing a confirmation. Comments alone are not enough — **reactions must be checked explicitly on every pass**, both for issues you are re-processing in Step 3 and for any Owner = lucas42 issue you are about to list in the Step 6 summary.
+
+**The proposal is often the issue BODY, not a comment — so check the issue's own reactions FIRST.** When an agent files a ticket whose body *is* the design (a spike's follow-up, a written-up recommendation), the body is what lucas42 reacts to, because that's where the proposal is. There is **no comment to carry the `+1`**, so a comments-only check returns "no reactions" and reports an already-approved ticket back to him as still-pending. The issue's reactions live on a **different endpoint** (`/issues/{n}/reactions`) from its comments' reactions (`/issues/comments/{id}/reactions`) — fetching one tells you *nothing* about the other.
 
 For every issue with Status = Awaiting Decision AND Owner = lucas42 on the project board:
 
-1. Fetch reactions on each comment that asked a question of lucas42, proposed an option, or laid out a design (typically the architect's, SRE's, or your own comments — *not* lucas42's own comments).
+1. **Fetch the ISSUE-level reactions.** Never skip this because the body "isn't a comment" — if the body is a proposal, this is the *most likely* place the approval is.
+   ```bash
+   ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
+     "repos/lucas42/{repo}/issues/{number}/reactions" --jq '.[] | "\(.content) by \(.user.login) @ \(.created_at)"'
+   ```
+2. Fetch reactions on each comment that asked a question of lucas42, proposed an option, or laid out a design (typically the architect's, SRE's, or your own comments — *not* lucas42's own comments).
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
      "repos/lucas42/{repo}/issues/{number}/comments" --jq '.[] | {id, login: .user.login, created: .created_at, plus_one: .reactions["+1"], total: .reactions.total_count}'
    ```
-2. If any such comment has a non-zero `+1` count, fetch the reaction's authors:
+3. If any such comment has a non-zero `+1` count, fetch the reaction's authors:
    ```bash
    ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
      "repos/lucas42/{repo}/issues/comments/{comment_id}/reactions" --jq '.[] | "\(.content) by \(.user.login)"'
    ```
-3. **A `+1` from `lucas42` on a comment that posed a question or proposed a design is an approval** — treat it as if lucas42 had typed "yes, agreed" beneath that comment. Re-process the issue accordingly: bake the proposed shape into the body, set Status = Ready + Owner = appropriate implementation persona on the project board, and post a comment acknowledging the reaction was the answer.
+4. **A `+1` from `lucas42` on the issue body, or on a comment that posed a question or proposed a design, is an approval** — treat it as if lucas42 had typed "yes, agreed" against that proposal. Re-process the issue accordingly: bake the proposed shape into the body, set Status = Ready + Owner = appropriate implementation persona on the project board, and post a comment acknowledging the reaction was the answer.
 
    **Superseded-proposal caveat.** A `+1` from `lucas42` only counts as approval of the *current open question*. If a later comment from the same author has refined or replaced the proposal the `+1` was on, the `+1` has lapsed. Concretely: compare the reaction timestamp against the timestamp of the most recent agent comment in the thread. If the `+1` predates a later proposal that materially changed the recommendation, treat the historical `+1` as not-current and look for a fresh reaction on the new comment instead. The discovery script will still surface the issue (criterion 2b — any historical reaction triggers the surface), but the procedure here should not transition the board status based on a `+1` that's been overtaken by a different recommendation. Leave the issue with Status = Awaiting Decision waiting for a fresh `+1` on the new proposal. (Lesson from 2026-05-12 on `lucos_eolas#19`: the March +1 was on a "eolas wins" URI strategy that the architect later replaced with "first-seen wins" — treating the historical +1 as approval of the new strategy would have been wrong.)
-4. **Do not list the issue in the Step 6 summary if a `+1` from lucas42 has resolved it** — the round-trip ("you already approved this, why am I asking again?") wastes lucas42's time and is the exact pattern this rule exists to prevent.
+5. **Do not list the issue in the Step 6 summary if a `+1` from lucas42 has resolved it** — the round-trip ("you already approved this, why am I asking again?") wastes lucas42's time and is the exact pattern this rule exists to prevent.
 
-The rule exists because reactions don't appear in the comment text feed — it is structurally easy to miss them by reading comments only. Skipping the reaction check is what produces the "Open question for you, @lucas42" comment posted *after* lucas42 has already reacted +1 to the design two minutes earlier. Don't do that.
+The rule exists because reactions don't appear in the comment text feed — it is structurally easy to miss them by reading text only. Skipping the reaction check is what produces the "Open question for you, @lucas42" comment posted *after* lucas42 has already reacted +1 to the design. (Lesson from 2026-07-14 on `lucos_photos#469`: lucas42 `+1`'d the **issue body** — which was the developer's design write-up — at 08:58Z; the pass checked only comment reactions, found none, raised the ticket to High, and reported it back to him as "the decision gating the whole migration" an hour after he had made it. He had to ask "wasn't my reaction sufficient?". A body-carrying-the-proposal is the normal shape for an agent-filed follow-up ticket, not an edge case.)
 
 ## Step 4: Board Verification — Every "Needs Analysis" Item Was Reviewed This Pass
 
