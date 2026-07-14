@@ -17,7 +17,24 @@ metadata:
 4. App reports to schedule_tracker → monitoring's synthesised `audit` check refreshes
 5. Recovery fires → 09:39:09 `monitoringRecovery`
 
-End-to-end deploy → recovery is **~17–18 minutes**, not 6 hours. This is the time-to-clear an `audit` alert via a deploy, regardless of the next scheduled sweep slot (01:00, 07:00, 13:00, 19:00 UTC).
+End-to-end deploy → recovery is **~17–18 minutes**, not 6 hours. This is the time-to-clear an `audit` alert via a deploy, regardless of when the next scheduled sweep would have fallen.
+
+**CORRECTION 2026-07-14 — there are NO fixed clock slots.** This file previously claimed scheduled sweeps run at "01:00, 07:00, 13:00, 19:00 UTC". That is **wrong**. `Start()` is:
+
+```go
+go func() {
+    s.TriggerSweep()                              // immediate, on container start
+    ticker := time.NewTicker(s.sweepInterval)     // sweepInterval: 6 * time.Hour
+    defer ticker.Stop()
+    for range ticker.C { s.TriggerSweep() }
+}()
+```
+
+A plain `time.NewTicker` **anchored to container start** — so the sweep phase drifts with every deploy/restart, and there are no wall-clock slots to predict from. Verified 2026-07-14 (`src/audit.go:150,164-173`) while pinning lucos_repos#465. Never quote fixed slot times; derive from `StartedAt` + `seconds_since_last_sweep` instead.
+
+**Consequence that matters for design work:** the sweep cadence is irregular and *shortest on deploy-heavy days* (each deploy restarts the container → immediate sweep → ticker reset). So any "N consecutive sweeps" tolerance has no stable wall-clock meaning (~12h quiet vs ~20 min across two deploys) — and is at its shortest exactly when GitHub-quota transients are most likely. This killed the count-based soft-fail I'd sketched for #465. Prefer time-based or cause-classified tolerances over count-based ones for this job.
+
+`TriggerSweep()` guards with `if s.sweepInProgress { return false }`, so a long-running sweep just makes the ticker skip that tick — a sweep that sleeps (e.g. waiting out a rate limit) is safe.
 
 ## Why I got this wrong on 2026-05-28
 

@@ -89,7 +89,8 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [deploy-avalon exit 18 "pull access denied for *_test" = orb pull profile-blind](pattern_deploy_orb_pull_profile_blind.md) — FIXED orb 0.0.185; fresh pipeline to pick…
 - [lucos_repos audit mass 403s = GitHub secondary rate-limit, not lost access](pattern_repos_audit_dryrun_secondary_ratelimit.md) — non-incident.
 - [lucos_creds `test` job flake gates deploy](pattern_creds_envrestrict_flaky_test.md) — flaky scp assertion; re-run from failed. #358.
-- [lucos_repos deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min; POST /api/sweep manual.
+- [lucos_repos deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min; NO clock slots (ticker anchored to container start); POST /api/sweep manual.
+- [repos audit reds because we discard GitHub's Retry-After above a 5m ceiling](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md) — #462 already fixed it for the dry-run path; #465 = same treatment for the sweep.
 - [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — don't close/reopen/empty-commit during outage.
 - [PR blocked with CircleCI checks that NEVER fired = CircleCI 400'd push webhook](pattern_circleci_400_webhook_drops_pr.md) — GitHub no-retry-4xx; diagnose via hooks/{id}/deliveries; fix=POST pipeline. lucos_repos#466.
 
