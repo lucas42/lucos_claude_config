@@ -61,6 +61,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [monitoring self fetch-info flap → ACCEPT, don't build](pattern_monitoring_self_fetchinfo_flap_accept.md) — global 1s timeout; #186 closed.
 - [fetch-info requires http_port; non-HTTP boxes via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — /systems/http filters; use full /systems…
 - [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE fails](reference_schedule_tracker_detection_semantics.md) — intermittent stays GREEN by design.
+- [⚠️ schedule_tracker_db loss PERMANENTLY forgets stopped jobs](pattern_schedule_tracker_db_loss_forgets_stopped_jobs.md) — no registry; broken jobs never re-POST → board goes green. Never wipe; `automatic` marking is wrong.
 - [Media cross-probe flap in rollout burst = LEGIT 401 during key-rotation convergence](pattern_deploy_window_boundary_crossprobe_flap.md) — alerts CORRECT, don't suppress.
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — worthless on lagging schedule_tracker checks.
 - [dependsOn has TWO read sites — trace both](pattern_dependson_two_read_sites.md) — suppress…
