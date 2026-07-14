@@ -16,6 +16,7 @@
 - [SW health pattern](project_sw_health_pattern.md) — SW-backed UIs (seinn) can degrade silently; pattern for surfacing SW health + guided recovery in UIs
 - [CSP data: URI img-src](project_csp_data_uri_img_src.md) — CSS background-image data: URIs need `img-src data:` explicitly; style-src alone isn't enough
 - [lucos_photos person-flag pattern](project_lucos_photos_person_flag_pattern.md) — standing judgements on `Person` are a plain nullable column + PUT/DELETE pair (`is_background`, `flagged_at`), not a table; #473 tracks the half-built profile-picture override
+- [lucos_photos profile-picture surface](project_lucos_photos_profile_picture_surface.md) — rare per-item actions go on the detail page, not smeared across a grid; undo goes next to the visible problem, not the original action (photos#473)
 
 ## Reference
 
