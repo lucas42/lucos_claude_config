@@ -6,6 +6,7 @@
 - **configy null serialisation**: use `get(key) or default`, not `get(key, default)` — configy returns explicit `null`. `configy-null-serialisation.md`.
 - **aurora NAS**: QNAP busybox host, storage-only. `aurora-host.md`.
 - **Verify timeline before stating root cause**. `feedback_verify_timeline_before_stating.md`.
+- **Three-in-one-session pattern**: generalising verified output to an unverified host, inferring unprobeable environmental facts from plausibility, dropping a teammate's hedge while paraphrasing — same root failure (asserting past the evidence), three surfaces. `feedback_verify_before_propagating.md`.
 - **Verify the premise of a dispatch before shipping a fix** — false triggering events can make valid fixes ship for wrong reasons. `feedback_verify_dispatch_premise.md`.
 - **Estate-wide incident sweeps**: always use `users/lucas42/repos?per_page=100`, never a partial sample — missed 3 repos in the 2026-04-21 empty-secrets batch.
 - **GitHub API timestamps are UTC; VM is BST (UTC+1)**. `timezone-github-api.md`.
