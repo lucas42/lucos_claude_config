@@ -1,11 +1,23 @@
 ---
 name: risk-unattended-upgrades-origin-scope
-description: Production hosts (avalon/xwing/salvare) unattended-upgrades origin gaps and a live config drift bug — open decision pending lucas42, tracked on lucos_agent_coding_sandbox#98
+description: Production hosts (avalon/xwing/salvare) unattended-upgrades origin gaps — open decision pending lucas42, tracked on lucos_agent_coding_sandbox#98
 metadata:
   type: project
 ---
 
-## Status (as of 2026-07-14): open, awaiting lucas42's decision on lucos_agent_coding_sandbox#98
+## Status (as of 2026-07-14, updated after lucas42's first round of answers): open, awaiting remaining decisions on lucos_agent_coding_sandbox#98
+
+**lucas42 has answered two of the original open questions — update priors accordingly:**
+- **xwing and salvare ARE physically accessible; avalon is NOT.** This inverts the original risk-model assumption (conservatism was aimed at the "unreachable" Pi hosts, but they're the reachable ones — avalon, the unreachable one, isn't Pi hardware and takes no RPi-Foundation packages at all). Downgrades (doesn't eliminate) the kernel/firmware carve-out case generally, and specifically for salvare's EEPROM: worst case is now "on-site recovery job," not "host gone forever."
+- **Security-only restriction will NOT be restored — the drift stays, deliberately, by choice.** "No need for security-only if it's been working well without." The follow-up issue both agents proposed for this is dead — do not file it.
+- **Corroborating finding (team-lead, verified from `/var/log/apt/history.log`, world-readable, no privilege needed): avalon has auto-installed Debian kernels via unattended-upgrade since ~April 2024, 8+ upgrades, zero physical recovery path, no incidents reported.** Weak-but-real evidence that unattended kernel-class updates from a reputable vendor via mature tooling tend to work — but it's a Debian-kernel base rate, not RPi Foundation's, and "no incidents reported" isn't "confirmed no incidents."
+- **Journal-visibility gap is resolved without any privilege grant**: `/var/log/apt/history.log` is world-readable on all 3 hosts and confirms `unattended-upgrades` is actively running and succeeding on all three (most recent runs 2026-07-12). The `adm`/`systemd-journal` limitation still stands for diagnosing *why* a silent systemd-level failure happened, but not for confirming the service runs at all. Follow-up filed narrowly as lucos_agent_coding_sandbox#99 for that residual gap.
+
+**My answer on the EEPROM question specifically** (posted https://github.com/lucas42/lucos_agent_coding_sandbox/issues/98#issuecomment-4968772516): recommend keeping `rpi-eeprom` blacklisted even though salvare is accessible — not because it's unrecoverable (it isn't), but because EEPROM flash failure is a firmware-level failure needing the Pi Foundation's out-of-band recovery process (harder than a kernel rollback, which is fixable by pulling the SD card), the flash timing is unpredictable (lands at *whatever* reboot happens next), and the security-update urgency is lower than libc6/openssl. Framed as a proportionality call, not a hard line, given accessibility is confirmed — residual risk if lucas42 chooses to auto-apply anyway: occasional site visit with proper Pi recovery kit, at an unplanned time.
+
+**Still open**: the full tiering decision (decision 3 — Docker origin, RPi Foundation userspace vs. kernel/firmware/bootloader carve-out) hasn't been finalized; I've offered to revisit the carve-out list in light of the accessibility answer rather than let it stand unexamined.
+
+## Original investigation (2026-07-14, before lucas42's answers)
 
 Investigation triggered by a secondary finding on lucos_agent_coding_sandbox#95 (pending OS/package backlog on avalon/xwing/salvare). lucas42 asked for lucos-security specifically. Full assessment posted: https://github.com/lucas42/lucos_agent_coding_sandbox/issues/98#issuecomment-4968445239
 
