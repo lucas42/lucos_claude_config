@@ -56,6 +56,10 @@ cd /home/lucas/sites/lucos_time     # will not have docker-compose.yml after dep
 
 If you need the current docker-compose configuration for a running service, retrieve it from the GitHub repo, not from the production host filesystem.
 
+## Sudo access is deliberately near-zero
+
+The `lucos-agent` SSH account's sudoers grant is scoped to `NOPASSWD: /usr/bin/apt list --upgradable` and nothing else (verified on avalon, xwing, salvare — 2026-07-14, `lucos_agent_coding_sandbox#95`). Any other `sudo` invocation — `apt upgrade`, a reboot, a root shell, anything — prompts for an interactive password no agent has. This is a deliberate least-privilege boundary, not a bug: don't try to work around it (no password prompting, no alternate escalation paths). Applying OS/package upgrades, rebooting a host, or any other root-level change is structurally a lucas42-only action; an agent's role is to investigate, document a runbook, and hand it to him — never to attempt the privileged command itself and hit the password prompt as a surprise mid-task.
+
 ## Safe read-only commands
 
 When investigating production, prefer read-only commands such as:

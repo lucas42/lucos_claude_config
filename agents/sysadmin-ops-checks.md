@@ -86,6 +86,8 @@ Distinguish:
 
 Do not run `apt upgrade` yourself — that's a change with downtime risk and needs to go through the normal process.
 
+**No agent can execute this — it's a hard privilege boundary, not just a "shouldn't".** Verified across all three production hosts (2026-07-14, lucos_agent_coding_sandbox#95): `lucos-agent`'s sudoers grant is `NOPASSWD: /usr/bin/apt list --upgradable` only — every other sudo invocation (`apt upgrade`, `apt-get`, a reboot, anything) prompts for a password the agent doesn't have. Applying the update always requires lucas42 to run it by hand (or an explicit decision from him to widen the grant — weigh that against blast radius, especially kernel upgrades on remote-only Pis with no agent-reachable console). So when raising the issue, don't just enumerate packages — do the reconnaissance a human executor would want (routine vs. security classification, root cause of why `unattended-upgrades` didn't already cover it — check `Unattended-Upgrade::Origins-Pattern` in `/etc/apt/apt.conf.d/50unattended-upgrades`; Docker's own apt repo and Raspberry Pi Foundation's `archive.raspberrypi.com` repo are both outside the default `origin=Debian` pattern, which is why Docker-stack and RPi kernel/libc6 packages accumulate on all three hosts even though Debian-origin packages are auto-patched) and propose a concrete host-by-host runbook. Flag it for the dispatcher as blocked-on-human-execution, not as agent-`Ready` work.
+
 ---
 
 ### Check 4: Resource Checks
