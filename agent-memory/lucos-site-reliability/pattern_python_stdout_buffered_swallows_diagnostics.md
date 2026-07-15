@@ -25,4 +25,18 @@ docker exec <c> sh -c 'python3 -c "import time; print(\"EARLY\"); time.sleep(3);
 
 **Fix:** `ENV PYTHONUNBUFFERED=1` in the Dockerfile (preferred — survives someone changing how the script is invoked) or `python3 -u`. One line, no runtime cost, no maintenance tax.
 
-**Generalise:** any lucos Python service started without `-u`/`PYTHONUNBUFFERED` has the same silent-swallow. Worth a grep when a Python service "isn't logging what the code says it logs". Same family as arachne#735 (a probe that discards its own measurement) — [[feedback-diagnose-through-to-root-cause]]: when the next step is "read the log that should exist", first prove the log *can* exist.
+**⛔ ESTATE SURVEY ALREADY DONE 2026-07-15 — DO NOT RE-RUN IT. Blast radius is exactly ONE service (locations_otfrontend = #103). There is no estate-wide problem and no ticket.** Surveyed all 7 long-lived-Python containers deployed on avalon (ground truth via `docker exec ps` + `docker inspect` env, not stale checkouts):
+
+| service | mechanism | impact |
+|---|---|---|
+| arachne_ingestor, media_weightings | `python -u server.py` | ✅ none |
+| eolas_app, contacts_app | `PYTHONUNBUFFERED=1` (gunicorn) | ✅ none |
+| **locations_otfrontend** | none | ⚠️ **real swallowed diagnostic = #103** |
+| lucos_backups | none — but its ONE print (`src/server.py:311`) passes `flush=True`, and it's a startup banner not a diagnostic | ✅ none |
+| docker_mirror_info | none — but `info/app.py` has **zero** `print(` calls | ✅ none |
+
+(aithne / docker_health_app / root_app / oauth2_proxy are Go/scratch — no `sh`, not Python. A `docker exec ... ps` on them returns an OCI error whose text can pollute a grep — filter it.)
+
+**Do NOT propose a lucos_repos convention check for this.** There is no single correct rule to encode: `-u`, `PYTHONUNBUFFERED=1`, and call-site `flush=True` are all valid and all in live use. A checker would have to accept ≥3 mechanisms or permanently false-positive on backups + docker_mirror_info, which have zero impact. Failure-mode impact (nil beyond #103) vs build+maintain cost (per-repo config + forever false-positive triage) ⇒ **accept the risk**. Asked and answered — see [[feedback-ask-what-problem-before-accepting-scope]]; this was a near-repeat of the lucos_backups#345 estate-audit-for-a-non-problem.
+
+**Still generally true:** when a Python service "isn't logging what the code says it logs", check buffering before hunting a missing log statement. Same family as arachne#735 (a probe that discards its own measurement) — [[feedback-diagnose-through-to-root-cause]]: when the next step is "read the log that should exist", first prove the log *can* exist.
