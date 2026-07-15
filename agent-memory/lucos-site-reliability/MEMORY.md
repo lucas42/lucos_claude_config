@@ -53,7 +53,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Estate circleci alert storm = CircleCI API outage tripping UnknownsGate](pattern_circleci_unknownsgate_estate_storm.md) — #279 DONE (threshold=5); a rerun fakes a recovery.
 - [fetch-info requires http_port; non-HTTP boxes via schedule_tracker](pattern_monitoring_coverage_http_vs_scheduled.md) — /systems/http filters; use full /systems…
 - [schedule-tracker detection semantics (ADR-0004): red needs 2 CONSECUTIVE fails](reference_schedule_tracker_detection_semantics.md) — intermittent stays GREEN by design.
-- [⚠️ schedule_tracker_db loss PERMANENTLY forgets stopped jobs](pattern_schedule_tracker_db_loss_forgets_stopped_jobs.md) — no registry; broken jobs never re-POST → board green. NEVER wipe; runbook actively misadvises.
+- [⚠️ schedule_tracker_db loss PERMANENTLY forgets stopped jobs](pattern_schedule_tracker_db_loss_forgets_stopped_jobs.md) — no registry; broken jobs never re-POST → board green. NEVER wipe; restore if you can. ⛔ `automatic` STAYS (my change was rejected).
 - [Media cross-probe flap in rollout burst = LEGIT 401 during key-rotation convergence](pattern_deploy_window_boundary_crossprobe_flap.md) — alerts CORRECT, don't suppress.
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — worthless on lagging schedule_tracker checks; has [TWO read sites, trace both](pattern_dependson_two_read_sites.md).
 - [red-means-down: no ack/known-issue board state](feedback_red_means_down_no_ack_state.md) — fix the problem, board self-clears; [`/suppress` is a 10-min deploy window, NOT a known-issue annotation](pattern_monitoring_suppress_is_deploy_window_only.md).

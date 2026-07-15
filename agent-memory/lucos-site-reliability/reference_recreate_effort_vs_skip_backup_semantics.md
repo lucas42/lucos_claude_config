@@ -30,4 +30,6 @@ lucas42's definitions (lucos_backups#345, 2026-07-14), verbatim:
 | Holds | transient queue | **the authoritative state itself** |
 | Truth elsewhere? | ✅ Postgres (backed up + quiesced) | ❌ nowhere — no registry |
 | Reconcile? | ✅ `worker/app/main.py` `sweep_pending_photos()`, 60s, re-enqueues `pending`/`processing` from Postgres | ❌ none |
-| Verdict | `automatic` ✅ + `skip_backup: true` | **`automatic` ✗ → `considerable`**, keep backup ([[pattern_schedule_tracker_db_loss_forgets_stopped_jobs]]) |
+| Verdict | `automatic` ✅ + `skip_backup: true` (approved 2026-07-15) | `automatic` ✅ **stays** + keep backup — my `considerable` proposal was **REJECTED**, don't re-raise ([[pattern_schedule_tracker_db_loss_forgets_stopped_jobs]]) |
+
+**The contrast still holds and is still the point** — both are describable as "regenerable job state" yet differ in every structural respect, which is *why* no inference rule can separate them. But note the trap I fell into: I read "repopulation misses the stopped jobs" as proving the field's value wrong. It doesn't. The field only speaks to the **no-backups-left** case, where letting them repopulate genuinely is what we'd do. **Check which case a field is defined for before calling its value wrong.**
