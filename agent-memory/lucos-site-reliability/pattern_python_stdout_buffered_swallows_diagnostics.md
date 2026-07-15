@@ -25,7 +25,20 @@ docker exec <c> sh -c 'python3 -c "import time; print(\"EARLY\"); time.sleep(3);
 
 **Fix:** `ENV PYTHONUNBUFFERED=1` in the Dockerfile (preferred — survives someone changing how the script is invoked) or `python3 -u`. One line, no runtime cost, no maintenance tax.
 
-**⛔ ESTATE SURVEY ALREADY DONE 2026-07-15 — DO NOT RE-RUN IT. Blast radius is exactly ONE service (locations_otfrontend = #103). There is no estate-wide problem and no ticket.** Surveyed all 7 long-lived-Python containers deployed on avalon (ground truth via `docker exec ps` + `docker inspect` env, not stale checkouts):
+**⛔ ESTATE SURVEY ALREADY DONE 2026-07-15, ALL HOSTS — DO NOT RE-RUN IT. Blast radius is exactly ONE service (locations_otfrontend = #103). No estate-wide problem, no ticket.**
+
+**Host coverage (state only what was actually probed — ssh-production.md rule):**
+- **avalon, xwing, salvare** — live-probed 2026-07-15, output captured. These are the only container-running hosts.
+- **xwing** (9 containers): only `lucos_media_import` has Python — it's a **cron container** (pid1 `startup.sh`, pid21 `/usr/sbin/cron`, pid22 `cat`), so python **exits every run and flushes at exit**. `PYTHONUNBUFFERED` unset yet diagnostics verifiably arriving (`Starting new_files scan` every ~60s). **No impact.** Other 8: python=none (docker_health_app is Go/scratch).
+- **salvare** (3 containers): zero Python (linuxplayer, firewall = python=none; docker_health_app Go/scratch).
+- **virgon-express**: `active: false` in hosts.yaml (physically disconnected) — not probed, correctly.
+- **aurora**: `is_storage_only: true`, `serves_http: false`, and runs **no Docker** (ADR-0001 + verified 2026-06-09) ⇒ cannot host a containerised Python service. Not live-probed this session; resting on those two documented sources, not a fresh sweep.
+
+**⚑ A `ps | grep python` sweep MISSES cron containers** — no python process is running between invocations, so the container looks Python-free. `lucos_media_import` didn't appear in the avalon-style sweep at all; it only surfaced via `command -v python`. Use `command -v python` to enumerate, `ps` to classify. (This is also why the first xwing pass wrongly returned "zero Python".)
+
+**Key structural fact: scheduled/cron Python is IMMUNE to this bug.** Exit ⇒ flush. Only a never-exiting process (`serve_forever()`, gunicorn) can swallow indefinitely. So the affected set is "long-lived Python servers", not "Python".
+
+avalon's 7 long-lived-Python containers (ground truth via `docker exec ps` + `docker inspect` env, not stale checkouts):
 
 | service | mechanism | impact |
 |---|---|---|
@@ -37,6 +50,6 @@ docker exec <c> sh -c 'python3 -c "import time; print(\"EARLY\"); time.sleep(3);
 
 (aithne / docker_health_app / root_app / oauth2_proxy are Go/scratch — no `sh`, not Python. A `docker exec ... ps` on them returns an OCI error whose text can pollute a grep — filter it.)
 
-**Do NOT propose a lucos_repos convention check for this.** There is no single correct rule to encode: `-u`, `PYTHONUNBUFFERED=1`, and call-site `flush=True` are all valid and all in live use. A checker would have to accept ≥3 mechanisms or permanently false-positive on backups + docker_mirror_info, which have zero impact. Failure-mode impact (nil beyond #103) vs build+maintain cost (per-repo config + forever false-positive triage) ⇒ **accept the risk**. Asked and answered — see [[feedback-ask-what-problem-before-accepting-scope]]; this was a near-repeat of the lucos_backups#345 estate-audit-for-a-non-problem.
+**Do NOT propose a lucos_repos convention check for this.** There is no single correct rule to encode: `-u`, `PYTHONUNBUFFERED=1`, call-site `flush=True`, **and "it's a cron container that flushes at exit"** are all valid and all in live use. A checker would have to encode ≥4 mechanisms or permanently false-positive on backups, docker_mirror_info **and media_import** — all zero-impact. Failure-mode impact (nil beyond #103) vs build+maintain cost (per-repo config + forever false-positive triage) ⇒ **accept the risk**. Asked and answered — see [[feedback-ask-what-problem-before-accepting-scope]]; this was a near-repeat of the lucos_backups#345 estate-audit-for-a-non-problem.
 
 **Still generally true:** when a Python service "isn't logging what the code says it logs", check buffering before hunting a missing log statement. Same family as arachne#735 (a probe that discards its own measurement) — [[feedback-diagnose-through-to-root-cause]]: when the next step is "read the log that should exist", first prove the log *can* exist.
