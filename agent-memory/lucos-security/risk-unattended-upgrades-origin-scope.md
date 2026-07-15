@@ -27,7 +27,19 @@ I ran that argument through the rest of the carve-out list rather than defend th
 
 **Lesson for future tiering/carve-out recommendations**: when a "the human reviews it before applying" argument is used to justify a manual/deferred path, check whether that review actually happens in practice for this operator/context, not just whether it's theoretically possible. If it doesn't, the manual path is only buying delay and batching (a real cost), not safety — and the argument generalises to every package where the same is true, not just the one under discussion. Don't concede narrowly on the one item raised and leave the rest of a carve-out list standing on the same now-refuted premise.
 
-**Still open**: only the correlated-blast-radius staggering suggestion and lucas42's final sign-off remain.
+**Update 2026-07-15 (same day): team-lead caught one overstatement and sharpened one risk — both checked, not just accepted.**
+
+1. **Correction**: my "Automatic-Reboot applies uniformly regardless of tiering" line was wrong. It's a real checkpoint for `linux-image-*`/`raspi-firmware` (reboot-trigger risk identical whether the package arrived manually or unattended), but **not a checkpoint at all for `rpi-eeprom`** — `Automatic-Reboot` only governs whether unattended-upgrades itself schedules a reboot; `rpi-eeprom-update.service` runs on **every** boot regardless of cause, so the flash fires at whatever reboot happens next either way.
+
+2. **`rpi-eeprom-update` has real power-loss protection on its default (SD-boot) mechanism — verified against the installed tool, not assumed.** Checked `/etc/default/rpi-eeprom-update` (only sets `FIRMWARE_RELEASE_STATUS`, no `RPI_EEPROM_USE_FLASHROM` override) plus the man page and script source on salvare directly. Two distinct update paths exist:
+   - `RPI_EEPROM_USE_FLASHROM=1` (immediate SPI write) — NOT what's configured — carries the genuine "don't disconnect power" bricking risk, recoverable only via Raspberry Pi Imager's bootloader-restore feature.
+   - **Default path (what salvare actually uses)**: stages `recovery.bin` + update image + SHA256 hash to the **boot partition** (ordinary filesystem write, safe to interrupt). Only at the *next* reboot does the Pi's ROM run `recovery.bin`, which does the actual flash and **only renames itself to `recovery.000` on success**. Tool's own comment: *"For SD boot (most common) this provides a rollback in the event of power loss."* An interrupted flash simply retries on the next boot from the same verified staged image rather than bricking.
+   - Hedge: this is documentation/source-comment evidence, not an empirical power-loss test. Still meaningfully stronger than "presumably rare."
+   - Also confirmed: xwing has no EEPROM at all (its own `rpi-eeprom-update` dry-run says so), so a "two-Pi correlated EEPROM corruption" scenario was never physically possible regardless of co-location/shared power.
+
+**General lesson reinforced**: when a teammate flags something as explicitly unverified rather than asserting it, that's usually cheap to actually check (read the installed tool's source/man page) rather than answer from general/training knowledge — the concrete answer is almost always better than a hedge, and it was available here with one SSH session.
+
+**Still open**: only lucas42's final sign-off remains. The correlated-apt-timing staggering suggestion stands on its own (unrelated to EEPROM); the EEPROM-specific power-loss follow-up has been dropped given the verified mechanism above.
 
 ## Original investigation (2026-07-14, before lucas42's answers)
 
