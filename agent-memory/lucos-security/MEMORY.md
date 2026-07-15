@@ -47,6 +47,8 @@
 
 ## Topic Files (full detail)
 
+- [Grep verification blind spots](lesson-grep-verification-blind-spots.md) — zero-result grep ≠ proof of absence (multi-line wrapped comments won't match); truncated `head -N` output ≠ full count. Applies to my own source-verification greps, not just the teammate who taught it me.
+
 - [Unattended-upgrades origin scope (avalon/xwing/salvare)](risk-unattended-upgrades-origin-scope.md) — OPEN, awaiting lucas42 on lucos_agent_coding_sandbox#98. Docker/RPi Foundation origin gaps, salvare EEPROM auto-flash risk, config drift bug (security-only restriction silently broadened for months).
 
 - [Zombie Credentials risk](risk-zombie-credentials-downstream.md) — removing from CLIENT_KEYS doesn't revoke pre-registered downstream keys.
