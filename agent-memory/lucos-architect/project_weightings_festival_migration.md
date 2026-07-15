@@ -40,7 +40,11 @@ max-vs-product · Hallowe'en window widening · out-of-season penalty for all fe
 
 **Follow-up tickets NOT yet raised** — deliberately, since the decisions change their shape. Committed on the issue to raising them all once he answers, and sending URLs to the coordinator. Don't let this lapse: see [[feedback_file_followups_during_design]].
 
-## Unverified drive-bys flagged (hedged) on the issue
+## Drive-bys
 
-- `development` `MEDIA_API` points at prod `media-api.l42.eu` while the dev key 401s — did **not** verify why (stale key? prod `CLIENT_KEYS` legitimately excludes it?). If real, Phases 3/4 have nowhere to be tested.
-- `getWeighting`'s `isEurovision` param is unreachable dead code.
+- **VERIFIED + raised as `lucos_media_weightings#267`** (2026-07-15): dev `MEDIA_API` = prod `media-api.l42.eu`, but the dev key is linked to the **development** media-api → 401 on every call. **Dev weightings can reach no media API at all.** Fix = point `MEDIA_API` at `http://localhost:3002`. **The wrong fix** (re-linking dev→prod) would give a dev system `media-metadata:write` on the production library, and this service PUTs weightings every run. Matters for #266: Phases 3/4 have nowhere to be tested until fixed. Detail in [[creds-client-keys-environment-model]].
+- `getWeighting`'s `isEurovision` param is unreachable dead code. **Deliberately NOT ticketed** — Phase 4 deletes those branches. Raise only if lucas42 *rejects* the migration, at which point it becomes a design question (the `eurovision` collection currently does nothing: wire it up or delete it?), not a cleanup.
+
+## ADR home (settled 2026-07-15)
+
+Goes in **`lucos/docs/adr/`** (~0014), not a member repo — it spans four existing systems. Precedent: `lucos` ADR-0005 + ADR-0009 are both media-ecosystem-only cross-system contracts living in `lucos`, each with `Discussion:` → a member repo ticket. Set `Discussion:` to lucas42/lucos_media_weightings#266. Persona rule tightened to resolve the multi-existing-system case.
