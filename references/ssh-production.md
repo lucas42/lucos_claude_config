@@ -67,7 +67,17 @@ The `lucos-agent` SSH account's sudo grant is near-zero, but **it is not identic
 
 Either way, any `sudo` invocation beyond what's listed above — `apt upgrade`, a reboot, a root shell, anything — prompts for an interactive password no agent has. This is a deliberate least-privilege boundary, not a bug: don't try to work around it (no password prompting, no alternate escalation paths). Applying OS/package upgrades, rebooting a host, or any other root-level change is structurally a lucas42-only action; an agent's role is to investigate, document a runbook, and hand it to him — never to attempt the privileged command itself and hit the password prompt as a surprise mid-task.
 
-**When documenting a multi-host privilege/config claim, only write "verified on {hosts}" for hosts whose command output you actually captured in that session.** A grant (or its absence) observed on one host is not evidence for a sibling host, even when they're provisioned from the same playbook — write down what each host's probe actually returned, not what you'd expect it to return.
+## Claims about hosts: only claim what you actually probed
+
+(This rule is general — it governs any multi-host claim, not just the sudo grants above.)
+
+**When documenting a multi-host claim — a privilege grant, a config value, or the result of a survey/sweep — only write "verified on {hosts}" for hosts whose command output you actually captured in that session.** An observation (or its absence) on one host is not evidence for a sibling host, even when they're provisioned from the same playbook: write down what each host's probe actually returned, not what you'd expect it to return.
+
+**Enumerate hosts from `lucos_configy/config/hosts.yaml` before claiming any total**, so a host cannot be silently omitted — and name each host you did *not* probe, with the reason (`active: false`, no Docker, no direct SSH), rather than letting it vanish into an "estate-wide" summary. A sweep run on one host is evidence for that host alone.
+
+Both directions have bitten us:
+- **Over-generalising from siblings** — 2026-07-14: the sudo note above was first written generalising xwing/salvare's grant to avalon without capturing avalon's own output (see the verification note in that section).
+- **Reporting a single-host sweep as an estate conclusion** — 2026-07-15: an SRE survey for Python services ran on avalon alone and was reported as "the estate-wide problem doesn't exist". The follow-up xwing sweep then surfaced a container the avalon pass had missed entirely — the conclusion happened to survive, but the claim had outrun its evidence.
 
 **Environmental facts are a separate class from command output, and plausibility is not a source.** Physical accessibility, hardware topology, hosting arrangement, who can reach what and how fast — none of this is probeable over SSH, so there is no "run the command and capture the output" fallback the way there is for a sudo grant. It's tempting to infer it anyway ("remote-only Pis obviously have no console") because the inference sounds reasonable — this happened on 2026-07-14 (`lucos_agent_coding_sandbox#95`'s runbook asserted the two Pi hosts had "no rollback console" and needed console access lined up before touching them; per lucas42 the opposite is true — xwing and salvare are physically accessible, avalon is not). A plausible-sounding environmental claim is not evidence. **Either it's sourced from lucas42 directly, or it's written down as explicitly unknown** ("physical accessibility of {host} is unconfirmed — ask lucas42") — never asserted from what seems likely given a host's role or remoteness.
 

@@ -20,11 +20,18 @@ source ~/sandboxes/lucos_agent/.env && \
 
 ## Before declaring a root cause — or clearing a component as innocent
 
-Two checks at the moment you're about to assert causation (or innocence). Both failures look identical from the inside: a plausible, internally-consistent story standing in for a verified cause.
+Three checks at the moment you're about to assert causation (or innocence). All three failures look identical from the inside: a plausible, internally-consistent story standing in for a verified cause.
 
 1. **Reproduce against the EXACT thing reported — not a synonym.** If the symptom is "can't connect to `localhost:8027`", test `localhost:8027`, *not* `127.0.0.1:8027`. On a dual-stack host `localhost`, `127.0.0.1`, and `::1` are **different endpoints** with different reachability — `localhost` resolves to `::1` first, and an IPv6 publish can be accepted-then-**reset** (which blocks IPv4 fallback) while `127.0.0.1` works fine. Test all three separately before declaring the network — or any component — innocent. The address you must exercise is the one the user *can't* reach, not the one you assume is equivalent.
 
 2. **A repro under environment-specific conditions is a candidate, not a confirmed cause.** Before presenting a reproduced failure as the *user's* root cause, confirm the **observed signatures match theirs** — same error string, same container state (e.g. did they actually see `Restarting`?), same surfaces. If your sandbox has triggers the user's machine doesn't (a stale local `.env`, qemu arch emulation, different DNS resolution), a failure you reproduce under them is your environment's, not necessarily theirs.
+
+3. **A negative result is not evidence of absence until you've proven the probe can return a positive.** A silently-broken probe is indistinguishable from a clean result: empty output, no matches, a fast "FAIL". Before clearing a component — or a host, or an estate — on "I looked and found nothing", establish your probe *would* have found the thing if it were there: run it against a known-positive case first. Three tells, all of which bit me on 2026-07-15 in a single day:
+   - **The tool isn't in the image.** `docker exec <c> wget …` → 5/5 "FAIL" in 1-4ms; cause was `wget: not found`. **A failure far too fast to be a real network call is a broken probe, not an outage.** Check `command -v` before trusting the verdict.
+   - **The probe isn't the app's call.** `docker exec <c> php -r 'file_get_contents(…)'` → "FAIL"; dropping the `@`-suppression revealed `401 Unauthorized` — the probe lacked the auth header the app sets via stream context. **Reproduce the app's exact authenticated call, and surface the error string before concluding.**
+   - **The thing isn't running at the moment you look.** `ps | grep python` on a cron container returns "zero Python" — the process only exists during invocations. **Enumerate with `command -v`, classify with `ps`.**
+
+   Never discard the error: `2>/dev/null` and `@`-suppression are precisely how a broken probe passes for a clean one. **And when a hand-rolled probe contradicts a green dashboard, suspect the probe first** — the dashboard has been running longer than your one-liner.
 
 ## Investigating missing env vars in a container
 
