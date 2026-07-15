@@ -66,7 +66,8 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError, skips success tick.
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch…
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — not a bug.
-- [lucos_locations stops recording silently; /_info only checks TLS](pattern_locations_silent_data_gap.md) — monitor OUTCOME not each cause. #91.
+- [locations silent data-gap — ✅ SOLVED by #91 freshness check (30h, fail-closed)](pattern_locations_silent_data_gap.md) — proven 07-15; alert playbook + don't blame the 300ms timeout (p50 5.4ms).
+- [Python stdout block-buffered → print() diagnostics NEVER reach docker logs](pattern_python_stdout_buffered_swallows_diagnostics.md) — no -u/PYTHONUNBUFFERED; stderr fine, stdout vanishes. locations#103.
 - [locations /map 500 while /_info green = oauth2_proxy sidecar crash-loop on missing prod creds](pattern_locations_oauth2proxy_sidecar_crashloop.md) — fix is lucas42-only.
 
 ## CI / build / deploy
