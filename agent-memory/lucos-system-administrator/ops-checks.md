@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-14
+container_status: 2026-07-15
 resource_checks: 2026-07-09
 syslog_review: 2026-07-09
 software_updates: 2026-07-09
 sandbox_drift: 2026-07-09
-repos_dashboard: 2026-07-14
+repos_dashboard: 2026-07-15
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1504,5 +1504,13 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
 
 **Repos dashboard**: 63 repos checked (up from 61 on 2026-07-09). 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy`. Re-verified this is still the deliberate deferral from 2026-07-13 — repo confirmed still pre-scaffolding (size 2, created 2026-07-09, contents just `.github/` + `README.md`, no Dockerfile/CI/code). Registering it in configy now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them — leaving open per the standing rationale (same pattern as lucos_architecture_models 2026-07-05/07-09). No new action.
+
+**Issues raised**: None. All hosts clean, no new dashboard failures.
+
+### 2026-07-15 (checks 1 + 6 due; weekly checks last ran 2026-07-09, 6 days — not due until 2026-07-16; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: 63 repos checked. 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified still the deliberate deferral (repo still size 2, created 2026-07-09, pushed 2026-07-13, pre-scaffolding). No new action.
 
 **Issues raised**: None. All hosts clean, no new dashboard failures.
