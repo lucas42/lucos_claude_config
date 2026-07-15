@@ -13,3 +13,5 @@ Follow-up to [[pi-hosts-unattended-upgrades]]. #98 (all four decisions settled 2
 **Why this file exists**: both issues required reading `/usr/bin/unattended-upgrade`'s source and cross-host `apt-cache policy` output to get the config syntax right before filing — don't re-derive this from scratch if picked up later; the `o=`/`a=`/`n=` table is in #100's body.
 
 **How to apply**: when `/next` surfaces either issue, the design decisions are NOT open — #98 settled them. Only implementation-organisation choices (single script vs. host-conditional logic, which file) are left to the implementer.
+
+**Board state (2026-07-15, per team-lead)**: #98 closed as the design record, both follow-ups linked from it. #100 = Ready/mine/**High** (inherited from #98 — it's the security-patching gap closure, since `libc6`/`openssl` on the Pi hosts are RPi-Foundation-built; positioned below lucos_photos#427 only). #101 = Ready/mine/Medium, independent of #100. Team-lead fixed a stray cross-reference in #101's body (it pointed at #98 where it meant #100 — the tiering issue, not the design record) — already corrected on the ticket, no action needed from me.
