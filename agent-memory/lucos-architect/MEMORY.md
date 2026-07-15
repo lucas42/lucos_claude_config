@@ -92,6 +92,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Firewall DOCKER-USER polices inter-container traffic](reference_firewall_dockeruser_scope.md)
 - [/_info fetch mechanics + adopted-app shim pattern](reference_info_fetch_and_shim_pattern.md)
 - [Three aithne auth-integration patterns + sidecar /_info blind-spot](reference_aithne_integration_patterns.md)
+- [/current-items currency = Festival-only; collections absent from RDF](reference_current_items_currency_model.md)
 
 ## Project memories
 
@@ -107,6 +108,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [loganne event level](project_loganne_event_level.md) — per-event `level` (#506), named ordinal scale, awaiting taxonomy sign-off
 - [aithne-client library](project_aithne_client_library.md) — lucos#264 proposal; boundary=library verifies+classifies/app presents; ADR-0001 in new repo; 4 JS follow-ups Blocked on it
 - [creds capability axis](project_creds_capability_axis.md) — creds ADR-0004 (PR #457); env×capability; metadata-vs-secret tier; SSH-only; default-allow; 4 deferred follow-ups on agreement
+- [Weightings festival migration](project_weightings_festival_migration.md) — weightings#266 plan posted, Awaiting Decision; out-of-season penalty is the blocker; 5 Qs open; follow-ups owed
 
 ## Auto-merge & security checks
 
