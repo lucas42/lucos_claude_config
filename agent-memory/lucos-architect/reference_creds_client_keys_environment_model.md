@@ -27,12 +27,16 @@ emitting `clientsystem:clientenvironment=value|scope1,scope2` joined by `;`.
 
 ## Diagnosing a rejected inter-system key
 
-**401 vs 403 is decisive — check it before theorising.** In `lucos_media_metadata_api/api/authentication.go` (the pattern to expect estate-wide):
+**The 401/403 split is SERVICE-SPECIFIC — read the service's own auth code before using it.** It is *not* an estate-wide convention, and treating it as one produces a confidently wrong diagnosis.
+
+`lucos_media_metadata_api/api/authentication.go` (Go):
 
 - **401 "Authentication Failed"** → key value not in that instance's `CLIENT_KEYS` map at all. Wrong environment, or genuinely unregistered.
 - **403 "Insufficient Scope"** → key IS registered; the *scope* doesn't cover the method/path.
 
-Never reason past this distinction — it collapses "stale key / wrong env / bad scope" into one cheap observation.
+`lucos_eolas/app/lucos_eolas/lucosauth/decorators.py` (Django) — **collapses both cases into 403**: `getUserByKey` returning `None` hits `else: return HttpResponse(status=403)`, the same code as an under-scoped key. Pinned by `test_key_scheme_invalid_key_returns_403`. Here **401 means only "no `Authorization` header at all"**, and unknown-vs-under-scoped is indistinguishable from outside.
+
+So a 403 proves "registered but under-scoped" *only* on services that separate the two. When they don't, fall back to the hash-compare below, which answers the registration question directly and works regardless of status code. (2026-07-18: a 403 from prod eolas was read as a scope problem via the Go rule; it was actually an unregistered key — same root cause as `lucos_media_weightings#267`, different status code.)
 
 ## Diagnosing without exposing secrets
 
@@ -42,4 +46,6 @@ Agents can read **any** system's `development` `.env` via `scp -P 2202 creds.l42
 
 When a dev client 401s against a prod server, the tempting "fix" is to re-link it to `serverenvironment=production`. **Check the scope first.** Scopes travel with the link, so re-pointing a `…:write` link at production silently grants a development system write access to production data. Usually the *credential* is right and the client's `*_ORIGIN`/`*_ENDPOINT` env var is what's wrong. Worked example: `lucos_media_weightings#267` (2026-07-15) — dev `MEDIA_API` pointed at prod `media-api.l42.eu` while the key was dev-linked with `media-metadata:read,media-metadata:write`; the service PUTs weightings every run, so the wrong fix would have let local dev runs rewrite the production music library.
 
-**Smell test for env drift:** compare a system's env vars against each other. In weightings/development, `APP_ORIGIN` and `MEDIA_METADATA_MANAGER_ORIGIN` were both `localhost`; `MEDIA_API` alone pointed at production. The outlier is the bug. A server's own dev `APP_ORIGIN` tells you what clients should point at (`lucos_media_metadata_api/development` → `http://localhost:3002`).
+**Smell test for env drift — outlier-hunting, and its limit.** Compare a system's env vars against each other. In weightings/development, `APP_ORIGIN` and `MEDIA_METADATA_MANAGER_ORIGIN` were both `localhost`; `MEDIA_API` alone pointed at production. The outlier is the bug. A server's own dev `APP_ORIGIN` tells you what clients should point at (`lucos_media_metadata_api/development` → `http://localhost:3002`).
+
+**This only works where localhost is the norm — check that premise first.** In `lucos_time/development` (2026-07-18) *all three* external origins point at production (`EOLAS_URL`, `LUCOS_CONTACTS_ORIGIN`, `MEDIAURL`) and only `APP_ORIGIN` is localhost. There is no outlier, so the test yields nothing and "it's drift" is unsupported — it could equally be a deliberate read-from-prod dev setup. When prod-pointing is the norm, say you can't tell from config alone rather than importing the drift conclusion from another system.
