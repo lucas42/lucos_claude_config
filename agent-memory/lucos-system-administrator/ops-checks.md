@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-15
-resource_checks: 2026-07-09
-syslog_review: 2026-07-09
-software_updates: 2026-07-09
-sandbox_drift: 2026-07-09
-repos_dashboard: 2026-07-15
+container_status: 2026-07-18
+resource_checks: 2026-07-18
+syslog_review: 2026-07-18
+software_updates: 2026-07-18
+sandbox_drift: 2026-07-18
+repos_dashboard: 2026-07-18
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1514,3 +1514,27 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 63 repos checked. 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified still the deliberate deferral (repo still size 2, created 2026-07-09, pushed 2026-07-13, pre-scaffolding). No new action.
 
 **Issues raised**: None. All hosts clean, no new dashboard failures.
+
+### 2026-07-18 (checks 1–6 due; weekly checks last ran 2026-07-09, 9 days — overdue; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo, known limitation): sudo failures from 2026-07-14 (lucos-agent tried `du -sh` on several docker volume paths — locations_mosquitto, media_metadata_api_exports, photos_redis, repos_data, router_generatedconfig, schedule_tracker_db — expected from prior agent ops work, no sudo grant). No hardware errors, no OOM kills in past 7 days.
+
+**Software updates** (no `-security`-tagged packages on any host — all routine):
+- avalon: containerd 2.2.1→2.2.6, docker-ce/cli/buildx/compose bumps (29.3.0→29.6.2 etc). Routine tooling.
+- xwing: docker tooling bumps, cloud-init, firmware-* (atheros/brcm80211/libertas/mediatek/realtek), libc6/libssl3/openssl (from `stable`, NOT `stable-security`), kernel 6.12.47→6.18.34, large batch of raspi-*/camera firmware packages. All routine.
+- salvare: docker tooling bumps, dpkg/dpkg-dev, libc6/libssl3/openssl (from `oldstable`, NOT `oldstable-security`), kernel 6.12.25→6.12.93, raspi-firmware/raspi-utils, rpi-eeprom. All routine.
+- No urgent issue raised — nothing security-tagged.
+
+**Resources**:
+- avalon: disk 37% (630G/1.8T) — up slightly from 35% (599G) on 2026-07-09, unremarkable. Memory 2.6Gi available of 7.6Gi. Swap 386Mi/4.5Gi (9%). Load 4.08/3.20/3.39 (133 days uptime) — fine. Journal 107.4M — fine.
+- xwing: disk 33% (37G/117G) — up slightly from 31% (34G) on 2026-07-09, backup pruning fix still holding well below the 80% threshold. Memory 462Mi available of 906Mi (tight, as always on this box). Swap 145Mi/905Mi (16%). Load 1.50/1.01/0.91 — notably *lower* than the persistent ~3.7 elevated load seen since April; worth noting but not a concern. Journal 21.2M — fine.
+- salvare: disk 60% (33G/58G) — essentially flat vs 59% on 2026-07-09. Memory 3.3Gi available of 3.7Gi. No swap in use. Load 0.08 (20 days uptime) — fine. Journal 40.8M — fine.
+- Local VM: disk 61% (58G/96G) — under 80% threshold, no forced cleanup. Memory 4.9Gi available of 7.7Gi. Docker: 27.69GB images (11.46GB/41% reclaimable), 12.12GB build cache. Headroom exists but not warranted yet.
+
+**Sandbox drift**: 2 remote commits were behind (PR #97 — dependabot bump of `reusable-dependabot-auto-merge.yml`). `.github/workflows/` change only — no live VM action needed. **Pulled to sync local checkout** (fast-forwarded 7560c63→7185c20). Clean now.
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
+
+**Issues raised**: None. All hosts clean, no security-tagged updates, no new dashboard failures beyond the known deferral.
