@@ -45,6 +45,8 @@
 - **Clear-text-logging acceptance doesn't transfer between sibling repos** — `lucos_contacts_fb_import#17` was accepted because it's a local, one-off, user-run script; `lucos_contacts_googlesync_import` (issue #218, raised 2026-07-09) logs the same kind of data (phone numbers) but runs as an always-on production cron container — different exposure profile, needs its own accept/tighten decision, don't assume the fb_import precedent covers it.
 - **JWKS serve-stale + signing-key compromise (Scenario B) window is unbounded per-consumer** — a consumer that can't reach aithne's JWKS endpoint during an emergency key rotation keeps trusting its stale (compromised-key-containing) snapshot indefinitely, beyond the runbook's ≤35-min figure. Approved anyway (lucos_creds#447, 2026-07-09) since it's estate-wide-contract-mandated and narrow/compound; tracked as a runbook fix on lucos_aithne#306, not a per-consumer finding. Don't re-raise per-consumer — see `lucos-aithne-security-architecture.md`.
 
+- [lucos-agent docker-group root-equivalent access (avalon/xwing/salvare)](risk-lucos-agent-docker-group-root-equivalent.md) — OPEN, lucos_agent_coding_sandbox#102 (2026-07-18). Dominant fact for any lucos-agent prod privilege question; see also #99.
+
 ## Topic Files (full detail)
 
 - [Grep verification blind spots](lesson-grep-verification-blind-spots.md) — zero-result grep ≠ proof of absence (multi-line wrapped comments won't match); truncated `head -N` output ≠ full count. Applies to my own source-verification greps, not just the teammate who taught it me.
