@@ -13,7 +13,7 @@ lucos_media_weightings: 2026-07-13
 lucos_photos_worker: 2026-07-01
 lucos_arachne_explore: 2026-07-01
 lucos_arachne_web: 2026-07-02
-lucos_backups: 2026-06-26
+lucos_backups: 2026-07-18
 lucos_repos_app: 2026-07-02
 lucos_dns_bind: 2026-06-30
 lucos_loganne: 2026-06-29
@@ -38,9 +38,9 @@ lucos_photos_api: 2026-06-27
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
-lucos_mail_docs: 2026-06-26
+lucos_mail_docs: 2026-07-18
 lucos_photos_postgres: 2026-06-30
-lucos_photos_redis: 2026-06-26
+lucos_photos_redis: 2026-07-18
 lucos_scenes: 2026-06-30
 lukeblaney_co_uk: 2026-06-30
 lucos_media_manager: 2026-07-14
@@ -58,14 +58,14 @@ lucos_time: 2026-06-30
 lucos_aithne: 2026-07-01
 lucos_arachne_mcp: 2026-06-26
 lukeblaney_blog: 2026-06-27
-lucos_docker_health_app: 2026-06-24
+lucos_docker_health_app: 2026-07-18
 
 lucos_docker_mirror_web: 2026-07-13
 lucos_docker_mirror_registry: 2026-07-09
 lucos_worlds_web: 2026-07-09
 lucos_worlds_db: 2026-07-09
 lucos_docker_mirror_info: 2026-07-13
-lucos_firewall: 2026-06-24
+lucos_firewall: 2026-07-18
 
 ## SSH Hostname Note
 
@@ -101,3 +101,6 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-07-15 ops run: Monitoring **55/55 healthy** (0 failing/0 unknown). Container count 57 on avalon. **Deploy/restart burst this morning ~07:20-07:31 (29 containers "hours ago")** ⇒ Check-4 lookback effectively truncated to ~6h for most containers (pattern_container_restart_log_buffer_artifact — a `--since 06-24` that returns few lines is NOT 3 weeks of clean logs). Check 2 (Loganne 40h, 5 events): 3× lukeblaney_co_uk 07-14 09:23/09:24/09:32 = already triaged in 07-14 run (my own in-flight rerun artifact + real recovery post-PR#68). 2× **lucos_locations `location-freshness` 07-15 19:01:59→20:49:22 (1h47m) = FIRST REAL FIRING OF #91, working exactly as designed.** Genuine ~31h42m CLIENT-side gap: phone `cheetah` last fix 07-14 13:01:25Z, cleanly `closed its connection` 13:05:35Z (clean close ⇒ NOT the duplicate-session flap of 06-29), no reconnect until 07-15 20:48:20Z, first fix 20:48:24Z → recovery 58s later. Server exonerated: mosquitto/otrecorder/otfrontend all StartedAt 07-10, restarts=0, zero errors. Alert fired at 108034s = 34s after crossing the 108000s (30h) threshold. Caught in 30h what previously went unnoticed 3.5d (06-29) / weeks (#5). **NO incident report** — our service never failed, gap originates outside our control boundary, nothing server-side could prevent/recover it, and the recurrence-prevention (#91) is already shipped and is what caught it. Check 3 (30d): 3 outages >30min — locations 07-15 (this), repos 07-10 (#465, triaged 07-13), lukeblaney_co_uk 07-14 (CI-only, site never down, triaged 07-14) ⇒ **0 incident reports needed**. Check 4 (5 oldest): arachne_search (restarted 07-15 07:30 — AGAIN erasing #735 evidence, 2nd day running; only benign Typesense raft `Peer refresh failed: Doing another configuration change` 9s post-start), mma_exporter (124 lines, 0 errors), arachne_ingestor (1 BrokenPipeError on a `/_info` poll from monitoring 192.168.208.5 = benign client-disconnect), media_metadata_manager (1 transient `metadata-api probe failed ... latency: 1231ms` 13:31:32, no alert fired, check absorbed it, benign), notes (6 lines clean). Monthly 5/6/7 NOT due (last 2026-07-05, 10d).
 - 2026-07-15 **⚠️ MY OWN PROBE METHODOLOGY BIT ME TWICE on lucos_media_metadata_manager** — nearly fabricated a media-api outage from a broken probe. (1) `docker exec ... wget https://…` → 5/5 "FAIL" in 1-4ms: **`wget: not found`** in that image (also no `time` builtin — it's a minimal PHP/Apache sh). A sub-5ms "failure" is too fast to be a real network call — treat implausibly-fast failures as a broken probe, not an outage. (2) `docker exec ... php -r 'file_get_contents(...)'` → FAIL 50ms; surfacing the suppressed warning (drop the `@`) gave **`HTTP/1.1 401 Unauthorized`** — the CLI probe doesn't carry the auth header the app's real probe sets via stream context. **Rule: reproduce the app's EXACT authenticated call, and always surface the error string before concluding.** Monitoring said 55/55 + all 8 media systems healthy throughout — trust that over a hand-rolled probe.
 - 2026-07-14 **lucos_locations oauth2_proxy crash-loop RESOLVED** (was pattern_locations_oauth2proxy_sidecar_crashloop, 07-10 ~51min incident): container `restarts=0 oom=false`, up since 07-10 00:33, ZERO error lines in 7d. Live-probed the human path (which /_info CANNOT see by design): `/map/`→**302** (auto-redirect, i.e. **#99/#100 "split" SHIPPED** — memory said "CHANGING", now confirmed live), `/oauth2/start`→302 to aithne with correct `client_id=lucos_locations` + `scope=openid email profile locations:read` + redirect_uri, device `/owntracks/pub`→**401** (basic-auth intact), `/_info`→200. Full stack healthy. NB oauth2_proxy has `health=none` (no healthcheck) — the known /_info blind spot persists structurally, but no evidence of impact.
+- 2026-07-18 ops run: Monitoring **55/55 healthy** (0 failing/0 unknown). Check 2 Loganne (4d, 307 events): **153 alerts, 152 of them `circleci` = ONE estate-wide CircleCI API outage 07-16 22:35→07-17 00:07 (~1h30m), ~50 systems.** Verified upstream-only, NOT ours: monitoring container logged **1369 `CircleCI API request failed: timeout` lines** in the window, debug strings then became `502 Bad Gateway from pipeline endpoint`; token fine (api/v2/me→200 now); and **zero** outbound failures in the same window across repos_app/root_app/dns_sync/arachne_ingestor/contacts_googlesync_import ⇒ no shared avalon network fault (coincidence hypothesis killed with evidence, not assumed). NO FILE: `fetcher_circleci.erl` maps non-200/404 → `make_third_party_probe_check` → `ok: unknown` → UnknownsGate; alerts only fired after 5 consecutive unknowns, i.e. the gate worked and we genuinely had no CI signal for 90min. Same class as 07-02 storm (pattern_circleci_unknownsgate_estate_storm). lucos_monitoring has **zero** open issues (verified with a positive control after an empty search — arachne#735 returned fine). Check 3 (30d): every >30min entry is that one storm, plus locations 07-15 (triaged 07-15) + lukeblaney_co_uk 07-14 (triaged 07-14) ⇒ **0 incident reports needed**. The `:_circleci` UNRECOVERED lines remain the known humanReadable-parsing artifact (55/55 green proves it).
+- 2026-07-18 Check 4 (5 oldest: docker_health_app, firewall, backups, mail_docs, photos_redis — 0 overdue @60d/@30d, oldest 24d): firewall/mail_docs/photos_redis **0 error lines**; docker_health_app 7 lines = known-benign heartbeat blips + 2 `connection refused` to schedule-tracker during its restarts. **lucos_backups = REAL FINDING → filed lucas42/lucos_backups#374 (suggest P3).** Every hour at **:07** the single-threaded `HTTPServer` (src/server.py:310 — NOT ThreadingHTTPServer) is blocked ~20s by the `7 * * * *` cron POST to `/refresh-tracking` (src/backups.cron:3), which enumerates GitHub repos over the network. Evidence: root_app logged **96 `context deadline exceeded` on backups.l42.eu in 7d, 100% at minute :07** (backups = 192 of root's timeout lines estate-wide; next-worst host = 2 each); backups' own **257 BrokenPipeError traceback lines, also 100% at :07** — SAME root cause (queued clients give up, server writes to closed socket), not a separate nit; access log 07-18 shows a 21s gap (09:06:53→09:07:14) in a 10s healthcheck cadence with the backlog draining the instant the POST returns. Escalation path: block length is bounded by **GitHub's** responsiveness — on 07-16 23:07 (during the CircleCI/GitHub degradation) refresh-tracking took a `503` from api.github.com and POST returned 500. Monitoring has NOT alerted on backups fetch-info in 30d (60s poll rarely lands in the window) so impact today = hourly root-dashboard fetch failure + ~46 tracebacks/day; fix is one line. Caveat noted in issue: check BackupsHandler for shared mutable state before threading.
+- 2026-07-18: Monthly 5/6/7 NOT due (last 2026-07-05, 13d).
