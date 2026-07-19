@@ -11,6 +11,8 @@ When a recovery mechanism is gated behind a threshold, always ask: **does the fa
 
 **The diagnostic move that found it:** correlating the guard's trigger timestamps against the incident window, rather than reading either in isolation. Both the breaker and the sweep were individually sensible; only the overlap revealed the anti-correlation. Worth doing routinely when a guard and an incident coexist.
 
+**Why the evidence existed at all:** the skip warning logged the depth, the limit, and the timestamp — enough to reconstruct the whole incident timeline from four lines that had sat unread for months. Carry this into any review of a change that removes or quiets a "noisy" log line: you cannot know in advance which unread line becomes the evidence. Argue for keeping the *why* and the values, not just the fact that something happened.
+
 **Topology is load-bearing here** — verify concurrency before claiming it: `SCARD rq:workers:<queue>`, container replica count, and whether the worker forks one horse at a time. Single-worker sequential execution is what *guarantees* the backup; with N workers the property weakens.
 
 **Generalisation worth carrying:** absolute-threshold guards can't distinguish "busy and draining" from "runaway and growing". Prefer triggering on the pathology's actual signature (e.g. per-item retry counts — the flood is the *same items* looping) over a global proxy like total depth. A parameter-free trigger is a real advantage, not an aesthetic one, when the absolute number can't be measured in advance.
