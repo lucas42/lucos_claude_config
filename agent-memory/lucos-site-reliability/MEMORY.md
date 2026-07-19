@@ -63,6 +63,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [/_info = availability/config, NOT content-rendering correctness](pattern_info_endpoint_boundary.md) — content integrity → CI assertion/synthetic…
 
 ## Scheduled-job / service-specific failures
+- [Hung Python process: py-spy/gdb ABSENT on prod + no CAP_SYS_PTRACE](pattern_hung_python_process_no_pyspy_use_faulthandler.md) — use pre-armed faulthandler+SIGUSR1 → stderr. photos#481.
 - [RQ `with_scheduler=False` + `Retry(interval)` = jobs silently lost forever](pattern_rq_scheduler_disabled_silently_drops_retries.md) — status reads "scheduled", no alert; check `ZCARD rq:scheduled:*`. photos#475. A sweep on one job type masks the queue-wide defect.
 - [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError, skips success tick.
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch…
