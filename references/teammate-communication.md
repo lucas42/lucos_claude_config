@@ -73,6 +73,16 @@ When you receive a `<teammate-message teammate_id="...">` message, the `teammate
 
 If unsure, the canonical names are the filenames in `~/.claude/agents/lucos-*.md` (minus the extension). The coordinator's canonical name is `team-lead`.
 
+## A persona name is not a session — more than one session can share it
+
+Two or more sessions can run concurrently under the same persona, sharing one name, one `SendMessage` address, and one `[bot]` git identity. Nothing in the envelope distinguishes them. This cuts both ways, and both halves have already bitten.
+
+**Receiving / attributing.** A `verify-teammate-quote` VERIFIED result proves *the persona* said it — **not** that the session you are addressing said it. The tool searches across all of that persona's sessions, so it will happily verify a quote from session A while you are replying to session B, and return VERIFIED. That is the strongest possible false confidence, because the quote is genuine and the attribution is still wrong. It prints the session id (`→ session <id>… line N`) — read it, and treat a match from a different session as **unverified for attribution purposes**. Git authorship disambiguates nothing either: every session commits as the same `<persona>[bot]`, so a commit proves a run happened, not *which* session ran it. Prefer attributing to the **artifact** (ticket, PR, commit) over the sender whenever a persona may be running more than once, and never build a nudge, a correction, or a thank-you on cross-session attribution.
+
+**Receiving / replying.** Do not assume a message addressed to your persona was meant for *your* session. If the incoming context doesn't match work you actually did, **say so immediately** — do not reconstruct a plausible history to fit it. The details in a misrouted message are specific enough to feel like something you might have forgotten, which is exactly what makes reconstruction tempting; and a reconstructed account propagates a fiction into the sender's context and onward to lucas42. Naming the mismatch costs one sentence. The reply shape that works: "this looks routed to the wrong session — I did X, not Y", followed by whatever you *do* actually own.
+
+(Origin, 2026-07-19: two `lucos-site-reliability` sessions ran concurrently — one doing ops checks, one investigating lucos_photos#475. The coordinator matched a quote against the ops-check session's transcript and used it to reassure the *investigation* session that its message had landed, crediting it with a manifest and a judgement call it never made. The investigation session disowned the credit rather than reconstructing, which is what contained it.)
+
 ## Take the first action before going idle
 
 When given multi-step work via SendMessage, take the first action before going idle. Processing an inbox message and then idling without acting on it creates a stalled-progress gap that the team-lead can only resolve by sending a redundant nudge — a real, observable failure mode in this team's workflow.
