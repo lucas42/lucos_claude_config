@@ -17,7 +17,7 @@
 - [CSP data: URI img-src](project_csp_data_uri_img_src.md) — CSS background-image data: URIs need `img-src data:` explicitly; style-src alone isn't enough
 - [lucos_photos person-flag pattern](project_lucos_photos_person_flag_pattern.md) — standing judgements on `Person` are a plain nullable column + PUT/DELETE pair (`is_background`, `flagged_at`), not a table; #473 tracks the half-built profile-picture override
 - [lucos_photos profile-picture surface](project_lucos_photos_profile_picture_surface.md) — rare per-item actions go on the detail page, not smeared across a grid; undo goes next to the visible problem, not the original action (photos#473)
-- [lucos_photos profile-picture states](project_lucos_photos_profile_picture_states.md) — none/pending/broken collapse to 2 UI states for async-generated images; pending needs an explicit API field, not derivable from existing null (photos#476)
+- [lucos_photos profile-picture states](project_lucos_photos_profile_picture_states.md) — none/broken states collapse visually; a "pending" 3rd state needs a genuinely new signal — verify worker write-order before assuming otherwise, don't guess (photos#476)
 
 ## Reference
 
