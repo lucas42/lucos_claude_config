@@ -69,6 +69,15 @@ A required check present in `/check-runs` with `conclusion: success` but absent 
 - Auto-merge state is dropped on close, but re-set automatically on the next approval review event. This side effect is normally invisible.
 - Existing reviews are preserved across close+reopen.
 
+**9. Draft PR parked on a stated pending decision — but the decision has actually landed elsewhere.** A draft PR's body often names a specific venue for an open question ("see issue X unless you say otherwise"). That pointer is written once and can go stale: routing frequently moves *after* the PR body was written, and it can move precisely because the originally-named venue turns out to be one lucas42 never sees (e.g. a Blocked audit-finding, excluded from his triage queue). Checking only the venue the PR body names and finding it "still open" produces a confident but wrong "legitimately parked" verdict — the exact failure mode this audit exists to catch, failing silently and in the dangerous direction (a PR that should be flagged reads as fine).
+
+   Before accepting "parked, not stuck" for any draft whose stated reason is an open question or pending decision:
+   - Check the **linked issue** — the one the PR refs/closes, not only the venue named in the PR body — for comments made after the PR/pointer was created.
+   - Also check that issue's **reactions**, not just comment text: `repos/lucas42/{repo}/issues/{n}/reactions --jq '.[] | {user: .user.login, content}'`. A `+1` from lucas42 on an issue body or comment is an approval and never appears in the comment-text feed — text-only checks will miss it.
+   - Also check that issue's **project-board Status** (see `references/triage-reference-data.md` for the standard GraphQL query pattern). A transition off "Awaiting Decision" is itself evidence the decision landed, even with no textual comment.
+
+   If any of these three show the decision has been made, the PR is **stuck** (the decision exists; the PR just hasn't caught up), not legitimately parked — flag it and route per the table below, even though the PR's own named pointer still reads "open." Confirmed instance: lucos_repos#468 named lucos_loganne#571, which was genuinely still open — but the question had been re-routed to lucas42/lucos_repos#467, where lucas42 had already answered it days earlier.
+
 ---
 
 ## Stuck PR Escalation Routing
@@ -84,6 +93,7 @@ Before escalating, **always try self-service fixes first**. Asking a human to in
 | **`mergeable_state: dirty`** (genuine merge conflict) | Leave it — Dependabot rebases on its own schedule. Only escalate if still dirty after 72+ hours with no activity | Team lead (for `@dependabot rebase` if you need to force sooner) — **note: `@dependabot rebase` cannot be posted by GitHub Apps; requires lucas42** |
 | **Rollup-mismatch** (criterion 8: BLOCKED + APPROVED + check in `/check-runs` but absent from rollup) | Ask `lucos-system-administrator` to close + immediately reopen the PR (back-to-back, no delay — branch deletion race). Provide repo name, PR number, and a note about the branch-deletion risk. | `lucos-site-reliability` — if close+reopen doesn't clear the blockage |
 | **`mergeable_state: blocked` with no obvious cause** | `lucos-site-reliability` | SendMessage — likely branch protection issue |
+| **Decision already landed elsewhere** (criterion 9: draft's named pointer still open, but linked issue's comments/reactions/Status show the decision was made) | SendMessage the PR author (usually `lucos-developer`/`lucos-architect`/`lucos-ux`) with the repo, PR number, and where the decision actually landed (issue + comment/reaction), so they can push the follow-up commit and mark ready | Team lead — if the author doesn't act within 24h, or the decision's location is itself ambiguous |
 | **Auto-merge not triggering** (criterion 7) | Ask `lucos-system-administrator` to re-run the auto-merge workflow | `lucos-site-reliability` — if re-run succeeds but auto-merge still not set |
 | **Archived repo** | Close directly | Post a comment explaining why, then close |
 
@@ -97,4 +107,4 @@ Before escalating, **always try self-service fixes first**. Asking a human to in
 2. On your next PR review pass (or if the teammate messages you back), re-check the PR's state to confirm it has progressed.
 3. If the PR is still stuck after the teammate's action, re-escalate with the new information.
 
-This also applies to `@dependabot` commands: if someone posts `@dependabot recreate`, check Dependabot's response. A permissions error means the command failed silently.
+**`@dependabot` commands cannot be posted by GitHub Apps** — Dependabot responds "Sorry, only users with push access can use that command." This applies to both `@dependabot recreate` and `@dependabot rebase`. When a recreate or rebase is warranted, **close the PR directly** — Dependabot will open a fresh PR. Closing is equivalent to recreate and works without push-user access. (Confirmed: lucos_arachne #685, 2026-06-26.)
