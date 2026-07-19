@@ -61,6 +61,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Flag human-approval staleness at push time](feedback_flag_human_approval_staleness_at_push_time.md)
 - [Server reachability ≠ user/browser reachability](feedback_server_reachability_not_user_reachability.md)
 - [Draft-PR gating is for cross-system contracts, not low-stakes docs](feedback_draft_pr_scope_excludes_low_stakes_docs.md)
+- [New write-time validation can make existing rows unwritable](feedback_new_validation_makes_existing_rows_unwritable.md) — check rotation/update paths, not just creation
 
 ## Reference memories
 
