@@ -71,7 +71,15 @@ Check whether a pull request already exists that would close this issue:
 ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/issues/{number}/timeline --jq '[.[] | select(.event == "cross-referenced" and .source.issue.pull_request != null) | {pr_number: .source.issue.number, pr_title: .source.issue.title, pr_state: .source.issue.state, pr_url: .source.issue.html_url}]'
 ```
 
-If a PR exists that references the issue and is still **open**, the work has likely already been done -- the PR just hasn't been merged yet. In that case:
+**First, fetch the PR itself and check `draft`** — `{pr_state: "open"}` in the timeline does not distinguish a finished PR from a parked draft:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager repos/lucas42/{repo}/pulls/{pr_number} --jq '{draft, mergeable_state, head_sha: .head.sha}'
+```
+
+**If `draft` is `true`, the work is NOT done and the "stop, it'll auto-merge" branch below does not apply** — a draft PR cannot auto-merge, and the usual reason it is parked is that the implementer correctly declined to decide an open question and is waiting for an answer (a decision from lucas42, a dependency, a verification). If that question has since been answered, the outstanding follow-up commit is exactly what needs dispatching. So: read the PR body and the issue comments to identify what the draft is waiting on; if it is now resolved, **continue to Step 4 and dispatch normally** (the implementer already has the branch). If it is still genuinely waiting, report what it is waiting on and stop. Never report a draft PR to the user as "awaiting auto-merge". (Lesson 2026-07-19: lucos_repos#467's draft #468 was held pending a render-vs-suppress decision; lucas42 answered "render", and a literal reading of the rule below would have stranded the ticket permanently.)
+
+If a PR exists that references the issue, is still **open**, and is **not** a draft, the work has likely already been done -- the PR just hasn't been merged yet. In that case:
 
 1. **Determine the repository name** from the issue URL.
 2. **Check whether the repository has unsupervised agent code enabled** by running `~/sandboxes/lucos_agent/check-unsupervised <repo-name>`.
