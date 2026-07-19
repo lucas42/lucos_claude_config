@@ -21,7 +21,7 @@ For each unfamiliar closure: read the final comments. Skip issues you've already
 
 Closed issues should not remain on the project board. The built-in workflow moves them to the Done column on close, but they must then be deleted entirely. **This sweep is board-driven, not author-driven** — query the board for items with `Status = Done` (`optionId == "878c350f"`) across **all pages** and delete every one with `deleteProjectV2Item`. The previous (author-scoped) cleanup missed closures by other bots and let backlog accumulate to ~100 items.
 
-Do this in a loop that re-fetches page 1 each round, since deletes shift items forward. A single shell loop running until page 1 contains no Done items is the simplest correct pattern. Keep going until the sweep reports zero Done items found.
+**Paginate with `pageInfo { hasNextPage endCursor }` — do NOT use a loop that only re-fetches page 1.** The page-1 pattern previously documented here silently stops working once the board exceeds 100 items: a Done item at position 150 never appears on page 1, so it is never deleted and the sweep reports "0 Done items — complete" while leaving them in place. Collect Done item IDs across every page first, then delete them, then re-run the full paginated scan until a complete pass finds zero. As a completion check, also assert that no item whose `content.state == "CLOSED"` remains on the board in any status — a closed issue sitting in Ready/Blocked is the same bug wearing a different hat, and the Done-status filter alone won't catch it. (Board was 92 items on 2026-07-19 — eight short of the threshold where the old pattern would have started failing silently.)
 
 ## Step 3: Discover and Triage Issues
 
