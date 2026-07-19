@@ -16,6 +16,12 @@ Production changes routinely surface alerts that look like they were caused by t
 
 3. **Wait 2 minutes** for monitoring to pick up the new state. Don't skip the wait — most checks are not real-time.
 
+   A foreground `sleep` is blocked by the harness, so wait one of these two ways instead:
+   - **Monitor** with an until-loop that exits on the condition you actually want (preferred — it ends as soon as the state converges): `Monitor({command: 'until curl -sf https://monitoring.l42.eu/api/status | grep -q "<expected>"; do sleep 10; done', ...})`.
+   - **Bash with `run_in_background: true`** for a plain timed wait when there's no crisp condition to poll: `sleep 120 && echo waited`.
+
+   Do not chain shorter foreground sleeps to work around the block, and do not skip step 3 because the wait is awkward to express.
+
 4. **After:** fetch monitoring again and compare against your baseline.
 
 5. **If new alerts appeared:** investigate immediately. Your change may have caused a regression (e.g. a health check referencing a removed service, or a downstream consumer that didn't reconnect cleanly). Fix it before moving on. Don't declare the change complete until the alert picture matches the baseline or has been explained.
