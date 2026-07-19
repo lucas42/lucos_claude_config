@@ -86,6 +86,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [named volume shadows image contents at mount path](pattern_named_volume_shadows_image.md) — first-init-only semantics; mtime gap ≠ staleness (hash it).
 
 ## Diagnostic methodology
+- [A guard keyed on a symptom the incident produces is absent during incidents](pattern_guard_keyed_on_symptom_absent_during_incident.md) — correlate guard-trigger timestamps vs incident window; photos#478/#479. Verify worker concurrency first.
 - [Container restart clears docker logs → false "onset"](pattern_container_restart_log_buffer_artifact.md) — check StartedAt + full status distribution…
 - [Sandbox checkouts months-stale + undeployed repos](pattern_stale_sandbox_checkouts.md) — verify vs `git show origin/main:<path>`…
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
