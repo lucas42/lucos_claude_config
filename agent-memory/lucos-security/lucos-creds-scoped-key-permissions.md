@@ -5,6 +5,28 @@ metadata:
   type: project
 ---
 
+# Structural fact: no agent SSH key can ever read production values
+
+Every agent (any persona) authenticates to `lucos_creds` as the same shared
+`lucos-agent-coding-sandbox` key (`~/.ssh/id_ed25519_lucos_agent`, `Host creds.l42.eu` in
+`~/.ssh/config`), `restrict-environment="development,test"`. Verified live 2026-07-19:
+`ssh -p 2202 creds.l42.eu "ls lucos_creds/production"` → *"Access to `production` environment
+is not permitted for this key"*. **This means any claim resting on "production data looks like
+X" cannot be independently verified by lucos-security, lucos-code-reviewer, lucos-architect, or
+any other persona — all agents share this identical wall.** When a PR/ADR's load-bearing
+evidence is dev-only by necessity (e.g. lucos_creds#472's "no origin-less system is a link
+target" claim), say so plainly rather than implying a second agent's review adds reach it
+doesn't have — only lucas42 can close a production-only verification gap.
+
+**Plaintext-origin estate scan (2026-07-19, development only):** pulled every readable
+system's `development/.env` (48 of 50 listed systems — 2 malformed store entries skipped,
+`set lucos_notes`/`write lucos_notes`, tracked as ADR-0005 deferred cleanup) and grepped for
+`http://` pointing at a non-local, non-internal host. Found exactly **one** — the already-known,
+already-filed `TIME_API="http://am.l42.eu"` (lucas42/lucos_media_weightings#268, Ready/Low).
+No other instance across the reachable estate. Production is not covered (see above) — this
+result is development-only and shouldn't be read as an estate-wide clearance. Re-run rather
+than trust this as a standing fact if asked again after significant time has passed (drift).
+
 # Design: lucos_creds scoped key permissions (lucos_creds#87, approved 2026-03-13)
 
 `CLIENT_KEYS` format extended with `|` delimiter for optional scopes:
