@@ -106,14 +106,38 @@ habit — don't trust a table marked "(confirm)" without doing the confirming):*
   before every write and touches both `development` and `production` — an early draft
   proposed write-only, which would have broken its first sync run on flag day.
 
-**Open/tracked finding — [lucas42/lucos_creds#458](https://github.com/lucas42/lucos_creds/issues/458):**
-`lucos_creds_ui` and `lucos_creds_configy_sync` register **byte-identical SSH public keys**
+**Finding [lucas42/lucos_creds#458](https://github.com/lucas42/lucos_creds/issues/458) — CLOSED via PR #471 (2026-07-19):**
+`lucos_creds_ui` and `lucos_creds_configy_sync` registered **byte-identical SSH public keys**
 in the committed `authorized_keys` (confirmed directly, not inferred). Inert under the old
-allow-by-default model (both were unrestricted anyway) but becomes a real hole the moment
-ADR-0004's differentiated grants land — whoever holds either private key can just claim the
-other's username and get its (possibly more privileged) grant. lucos-code-reviewer found
-this independently and filed #458 (correctly routed as a public issue, not an advisory —
-not currently exploitable since both identities have equivalent access today). ADR-0004
-§5 and its deferred-work item now cite #458 as a **hard precondition**: a distinct keypair
-must be minted for one of the two principals before the deny-by-default flip ships.
-**Watch for this landing** — don't let the flag-day migration merge before #458 is closed.
+allow-by-default model (both were unrestricted anyway) but would have become a real hole the
+moment ADR-0004's differentiated grants land — whoever holds either private key can just claim
+the other's username and get its (possibly more privileged) grant. lucos-code-reviewer found
+this independently and filed #458. PR #471 minted a fresh, distinct ed25519 keypair for
+`configy_sync` only, leaving `ui` untouched. I independently re-derived both pubkeys from the
+dev creds store private keys (`ssh-keygen -y`) and confirmed the diff matches, confirmed no
+key material leaked into the commit, and confirmed nothing else in the lucas42 org
+(GitHub code search) pins the old shared key value. ADR-0004 §5 cited this as a hard
+precondition for the deny-by-default flip — now satisfied.
+
+**Why `configy_sync` (not `ui`) was the right one to re-key:** `docker-compose.yml` confirms
+`lucos_creds`, `lucos_creds_ui`, and `lucos_creds_configy_sync` are three independently
+deployed containers. `ui` is the human-facing admin console (aithne `creds:admin` scope,
+full read+write of every credential) — high blast radius, interactively used. `configy_sync`
+is a bounded, non-interactive cron container. Rotating the lower-blast-radius automated
+identity rather than the admin console humans actually depend on is the safer choice whenever
+a similar "which of two identities to re-key" question comes up on this repo.
+
+**`configy_sync`'s prod-rotation convergence window is low-severity, verified from source —
+not the same shape as the aithne KEK-derivation race:** `configy_sync/sync.py` runs on a cron
+(hourly, `53 * * * *`), not any other service's live request path; each SSH call just
+logs+raises on auth failure and the next hourly run tries fresh (cron doesn't track prior
+exit codes); writes are idempotent/read-before-write so a missed run can't corrupt state,
+only delay it; nothing else in the estate consumes its output live (see [[creds-configy-sync]]
+— written values are only read by other systems at *their own* deploy time); `startup.sh`
+re-derives the private key from the env var fresh on every container boot, so the very next
+`lucos_creds_configy_sync` redeploy (not an estate-wide one) converges it. Contrast with the
+aithne KEK race, which gated live JWT verification across ~20 interdependent consumers and
+cascaded into a 46-min outage. **Pattern for future lucos_creds key-rotation PRs:** don't
+accept a "self-heals" claim on faith — trace whether the credential gates a live request
+path (aithne-KEK-shaped, high severity) or a bounded idempotent batch job with no live
+consumer (configy_sync-shaped, low severity) before judging the convergence-window risk.
