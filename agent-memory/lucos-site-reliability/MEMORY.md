@@ -124,6 +124,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Sandbox branch hygiene: reset --hard origin/main before branching](feedback_sandbox_branch_hygiene.md).
 - [No destructive remediation without a recovery path](feedback_no_destructive_without_recovery_path.md) — compose files live only on CI runners…
 - [Use Monitor (not bg-bash) to wait on prod conditions](feedback_monitor_over_bg_bash_for_waits.md) — bg-bash loops reaped ~2min; secs=-1 means RUNNING.
+- [Crash-loop recovery Monitor: bucket states, exclude restart counter](pattern_crashloop_recovery_monitor_design.md) — fast loop self-DOSes the watch (auto-stop loses it) if counter is in change-key or transient running|starting is tracked; require 3 consecutive `up` polls.
 
 ## Standing rules — incident reports / proposals
 - [Ask "what problem?" of the QUESTION, not just the solution](feedback_ask_what_problem_before_accepting_scope.md) — incl. scope handed to me; "too narrow" isn't evidence; a real finding doesn't justify a bad question.
