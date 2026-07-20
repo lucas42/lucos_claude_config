@@ -59,6 +59,7 @@ Always manually review generated migration files before committing. Autogenerate
 - [Slug vs display name in eolas migrations](feedback_migration_slug_vs_name.md) — DB stores slugs (`"domestic-abuse"`), eolas stores display names (`"Domestic Abuse"`); always embed a `slugToName` table; caught in PR #268
 
 ## PR Process
+- [lucas42 prefers minimal code footprint](feedback_lucas42_minimal_code_footprint.md) — smallest direct implementation over defensive scoping; 1-2 line code comments, rationale goes in commit/ticket. Shape first drafts this way (lucos_creds#477, 2026-07-20)
 - [Fresh review request after new commits](feedback_pr_new_commits.md) — pushing to an open PR requires a fresh SendMessage review request, not just a heads-up
 - [Partial issue Closes keyword](feedback_partial_issue_closes.md) — use "Part of #N" / "Refs #N" when PR only fixes one of several root causes; save `Closes` for full resolution
 - [Reporting PR completion: unsupervised vs non-unsupervised repos](feedback_pr_completion_reporting.md) — use different language depending on repo type
