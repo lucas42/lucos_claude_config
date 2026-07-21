@@ -30,7 +30,16 @@ The "space-flattened PEM" failure mode isn't unique to repo secrets — it can a
 
 **Verify the fix is actually correct — don't stop at "openssl parses it."** A syntactically valid PEM can still be a stale/wrong key. Mint a real JWT (`PyJWT` + the app's numeric ID as `iss`) and call `GET https://api.github.com/app` (confirms App ID + key match) and `GET https://api.github.com/app/installations` (confirms the exact call path the failing service makes at startup) — a live 200 is the only real proof. Both `cryptography` and `PyJWT` were already available in the sandbox's system Python, no install needed.
 
-**Writing the fix back to lucos_creds:** SSH exec write (`ssh -p 2202 creds.l42.eu "<system>/<environment>/<KEY>=<value>"`) preserves real embedded newlines correctly when the value is passed as a single shell argument containing literal `\n` bytes (e.g. built via bash `$'...'` or read from a file with `$(cat file)`) — confirmed by a round-trip test against a scratch key before touching the real credential. No special escaping needed; don't hand-flatten the PEM to fit it "on one line" — that's what caused this in the first place.
+**Writing the fix back to lucos_creds:** SSH exec write (`ssh -p 2202 creds.l42.eu "<system>/<environment>/<KEY>=<value>"`) preserves real embedded newlines correctly when the value is passed as a single shell argument containing literal `\n` bytes. No special escaping needed; don't hand-flatten the PEM to fit it "on one line" — that's what caused this in the first place.
+
+**CORRECTED (2026-07-22, lucos_creds#474): do NOT build that argument via bash `$(cat file)` or any other command substitution.** Command substitution unconditionally strips *trailing* newlines from its output — internal newlines survive, but a key's final `\n` (e.g. right after `-----END OPENSSH PRIVATE KEY-----`) silently vanishes. The stored value then looks intact (right length, right header/footer, `openssl ... -check` on an RSA PEM may not even notice) but `ssh-keygen -l -f` reports "not a key file" on an OpenSSH-format key, and a real SSH client refuses to load it locally (`Load key: error in libcrypto`) before ever reaching the server — masquerading as a "wrong/revoked key" auth failure. This is exactly how the `lucos_creds_configy_sync` key got corrupted after #471. **Byte-safe alternative:** read the file in binary mode and pass it to `subprocess.run([...])` (list form, no shell) as a literal argv element, e.g.:
+```python
+with open(path, 'rb') as f:
+    key_bytes = f.read()
+cmd = f"{system}/{environment}/{KEY}=".encode() + key_bytes
+subprocess.run(["ssh", "-p", "2202", "creds.l42.eu", cmd.decode()], check=True)
+```
+Then always re-fetch and confirm `ssh-keygen -l -f` returns a real fingerprint (or `openssl rsa -check` for RSA PEMs) — don't just diff string content, since a length-1 discrepancy is easy to miss by eye.
 
 **Clean up key material afterwards** — `shred -u` any temp files holding the extracted PEM once verification is done; this is a live App's private key, not a disposable scratch value.
 
