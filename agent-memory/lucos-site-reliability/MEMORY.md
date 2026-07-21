@@ -44,7 +44,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Dev cross-service wiring + stale-.env 403 trap](pattern_dev_cross_service_wiring.md) — *_ORIGIN=host.docker.internal; diff local…
 - [Use commit-claude-main for ~/.claude; ⚠️ `git status` LIES there](feedback_commit_claude_main_for_dotclaude.md) — worktree push doesn't advance local HEAD; verify `git diff origin/main`. Sweep script is SAFE.
 - [lucos_creds reads .env from CircleCI snapshot, not live store](reference_lucos_creds_self_deploy.md) — check snapshot on "fix didn't take".
-- [Multi-line secret truncated at first line (1 CR, 0 LF, ends at header)](pattern_multiline_secret_truncated_at_first_line.md) — CRLF eaten by line-based .env parser; only surfaces on container recreation. creds#474.
+- [Corrupted multi-line secrets in containers](pattern_multiline_secret_truncated_at_first_line.md) — CRLF trunc-at-line-1; ⚠️docker-inspect shows only FIRST line (measure inside container); validate w/ ssh-keygen (full-length≠valid); false-green over dead cron. creds#474.
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + creds value.
 - [Walk the env-var chain before concluding which link is the gap](feedback_walk_env_chain_before_concluding.md) — usually link 3 (compose), not link 1 (creds).
 
