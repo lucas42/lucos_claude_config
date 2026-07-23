@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-19
+container_status: 2026-07-23
 resource_checks: 2026-07-18
 syslog_review: 2026-07-18
 software_updates: 2026-07-18
 sandbox_drift: 2026-07-18
-repos_dashboard: 2026-07-19
+repos_dashboard: 2026-07-23
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1544,5 +1544,13 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
 
 **Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
+
+**Issues raised**: None. All hosts clean, no new dashboard failures beyond the known deferral.
+
+### 2026-07-23 (checks 1 + 6 due; weekly checks last ran 2026-07-18, 5 days — not due until 2026-07-25; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
 
 **Issues raised**: None. All hosts clean, no new dashboard failures beyond the known deferral.
