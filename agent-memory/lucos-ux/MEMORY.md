@@ -10,6 +10,7 @@
 - [Always use create-pr for any PR](feedback_use_create_pr_always.md) — use `create-pr` (not raw `gh-as-agent ... pulls`) for all PRs, including ad-hoc proactive fixes; it handles supervised-repo lucas42 reviewer request automatically
 - [Contrast ratio verification](feedback_contrast_ratio_verification.md) — never assert a specific contrast ratio in a PR test plan from hand calculation; verify with WebAIM first (hand calc gave 3.05:1 for #c49000, correct is 2.86:1 — caused CHANGES_REQUESTED)
 - [Pull architect back in on schema scope changes](feedback_pull_architect_on_schema_scope_changes.md) — a scope change that looks like a small UI subtraction can undercut the architect's original data-model justification; re-consult, don't shrink the schema myself (photos#471)
+- [Verify accessible-name computation in a real browser](feedback_verify_accname_in_browser.md) — a new aria-label on a child can silently override a parent link's `title` fallback; test with Playwright's ariaSnapshot before/after, don't trust a static per-element reading (photos#476)
 
 ## Project
 
