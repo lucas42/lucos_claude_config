@@ -14,182 +14,43 @@
 - [tom-select `updateOption` keying — first arg must match `valueField`](review_tomselect_updateoption_keying.md) — silent no-op if key doesn't match; confirmed bug in lucos_search_component PR #190 (contact-mode pre-selected-item hydration)
 - [Robustness gaps must block — "unlikely in practice" is not a valid downgrade](feedback_robustness_gaps_block.md) — exception-path resource leaks, partial cleanup on error, missing guards: request changes even if the fix is one line and the failure scenario is improbable (lucos_backups #292/#293)
 - [Aithne auth integration checklist](review_aithne_migration_prs.md) — three-branch pattern, algorithm pinning, kid sanitisation, open-redirect in next=, JWKS failure logging, AITHNE_ORIGIN env var, inline ENVIRONMENT read; real bugs from lucos_arachne #637–#675 (migration complete 2026-06-29; applies to new integrations too)
+- Two more frontend JS event-handling gotchas: [async mutex asymmetry between sibling functions](review_js_async_mutex.md) (seinn cache-thrash, 2026-05-19/20), [delegated-click `preventDefault()` reverts a checkbox's native toggle if called before the target check](review_js_delegated_click_preventdefault.md) — breaks both mouse and keyboard Space-to-toggle; verify empirically with Playwright/Chromium, not just spec-reading (lucos_photos PR #487)
 
 ## Cross-Repo Review Rules
 
-### Docker Healthchecks — `localhost` vs `127.0.0.1`
-- **Always flag `localhost` in healthcheck URLs as a blocking issue.** On Alpine-based containers, `localhost` can resolve to `::1` (IPv6) rather than `127.0.0.1` (IPv4). If the service binds only IPv4, the healthcheck will fail silently.
-- The correct pattern is `http://127.0.0.1:<port>/_info`.
-- This was confirmed as a real failure mode via lucos_arachne#91. A missed instance in lucos_contacts PR #533 required a follow-up issue (#534).
-
-### Docker Healthchecks — tool availability in Debian-based images
-- **`golang:N` images do NOT include `nc` or `wget` by default**, despite being Debian-based. Unlike `node:N` (which bundles `buildpack-deps` with many tools), `golang:N` is a minimal Debian image. Any tool needed for healthchecks must be explicitly installed.
-- `node:N` (non-slim, non-alpine) DOES include `wget` and `nc` via `buildpack-deps`.
-- `nginx:N` (Debian) images include `curl` but NOT `wget`. Use `curl --fail -s -o /dev/null <url>` for healthchecks. Confirmed: approved `wget` in lucos_router#22; required fix in #24.
-- `openjdk:N-jdk-slim` images do NOT include `wget` or `curl` by default — must be explicitly installed. Confirmed as a production outage in lucos_arachne#277: Fuseki 6.0.0 dropped `wget` from the base image, healthcheck failed, web/ingestor/mcp stuck in Created state. Fix: install `curl` and use `curl --fail -s -o /dev/null <url>` (lucos_arachne#278).
-- `debian:*` minimal base images do NOT include `wget`, `nc`, or `curl` by default.
-- Confirmed: lucos_creds#88 approved `nc` healthcheck without verifying it was installed; required fix in #89.
-
-### Docker Healthchecks — verify the correct port
-- **For services that do NOT use `$PORT` (e.g. internal app containers), always verify the actual bind port from `startup.sh` or the CMD before approving.** Do not assume the port from the Dockerfile's `EXPOSE` or `FROM` image name.
-- Example: lucos_eolas `app` uses gunicorn binding on `:80` (confirmed in `app/startup.sh`), not port 8000. Approved the wrong port (8000) in lucos_eolas#80; required a follow-up fix in lucos_eolas#84.
+- [Docker healthcheck pitfalls](review_docker_healthchecks.md) — `localhost` vs `127.0.0.1` on Alpine, missing `wget`/`nc`/`curl` in minimal base images, verify actual bind port from `startup.sh` not `EXPOSE`
 
 ## Review Patterns — Common Mistakes to Avoid
 
-### `head_sha` on check-runs — read the field directly, never alias from `.pull_requests[0].head.sha`
-- **Use `.head_sha` directly from the check-run object.** `.pull_requests[0].head.sha` is null with no PR cross-reference, making a real failure look orphaned. Correct jq: `.check_runs[] | {id, name, status, conclusion, head_sha}`.
-- Confirmed failure: lucos_media_seinn PR #460 — aliasing returned null; dismissed a real CodeQL XSS finding, posted false APPROVE.
+- [`head_sha` on check-runs](review_headsha_checkruns.md) — read the field directly, never alias from `.pull_requests[0].head.sha` (null with no PR cross-ref); false APPROVE on seinn PR #460
+- [CodeQL false-positive suppression](review_codeql_suppression.md) — use the config-file exclusion or Security-UI dismissal, not inline `// codeql[]` comments (silently inert without action config)
+- [Verify absence before requesting changes](review_verify_absence_before_requesting.md) — read the raw file/full JS source, not just the diff (can be stale); shadow-DOM fixes often live in JS handlers, not CSS
+- [Post review immediately, check CI after](review_post_then_check_ci.md) — waiting for CI first risks a race against a developer's mid-CI push (lucos_configy PR #64)
+- [Read the full function for error-handling reviews](review_read_full_function_error_handling.md) — an existing guard outside the diff's context window can already cover the case (lucos_media_metadata_manager PR #191)
+- [Be assertive — REQUEST_CHANGES for concrete fixable issues](feedback_be_assertive_request_changes.md) — don't bury them as approval notes (lucos_monitoring PR #93)
+- [Verify a quoted review via the GitHub API](review_verify_quoted_review_via_api.md) — never trust a coordinator's paraphrase from context recall alone
+- [`try/except` refactors can silently drop variable assignments](review_try_except_refactor_variable_drop.md) — verify every original-`try`-block assignment survives (lucos_backups PR #62/#63)
 
-### CodeQL false-positive suppression — use config file, not inline comments
-- **Prefer `.github/codeql/codeql-config.yml` exclusion or GitHub Security UI dismissal** over `// codeql[]` inline comments — inline suppression requires specific action configuration and silently does nothing otherwise (4 attempts on seinn PR #460 confirmed). Fallback: refactor to remove the taint path.
+## Language/Platform Pitfalls
 
-### Verify absence of a specific thing in the raw file before requesting changes
-- **When planning to REQUEST_CHANGES because something specific is missing (e.g. a type guard, a null check), verify its absence by reading the raw file — not just the diff.** The GitHub PR files API can serve stale diff data that omits lines present in the actual commit.
-- Confirmed failure: lucos_notes PR #355 — diff omitted `typeof path !== 'string'` guard already in the file. Pattern: `curl -s "https://raw.githubusercontent.com/lucas42/{repo}/{sha}/{file}" | grep -A N "function"` to verify.
-- **Shadow DOM components: check JS event handlers, not just CSS.** [[feedback-js-component-css-inspection]] — `mainStyle` CSS absence ≠ fix absent; the fix may be in a `dropdown_open`/lifecycle handler. Grep the full JS source before filing.
+- [Erlang: `lists:join/2` returns an iolist, not a flat string](review_erlang_pitfalls.md) — use `string:join/2` for `++`/comparison contexts; also `.app.src` `applications:` ordering vs lazy `httpc`/`ssl`/`inets` starts ([[review-erlang-otp-startup]])
+- [Android: MediaStore `NOT IN (?, ?)` silently returns an empty cursor](review_android_mediastore_pitfalls.md) — filter in Kotlin inside the cursor loop instead (lucos_photos_android regression)
 
-### Post code review immediately, then follow up if CI fails
-- **Post review (APPROVE or REQUEST_CHANGES) immediately based on code quality; handle CI separately.** Waiting first creates a race — developer may push while CI runs, making your diff stale.
-- After posting, wait for CI. If it fails, post a follow-up REQUEST_CHANGES. Confirmed failure: lucos_configy PR #64 — developer pushed a new version while CI was running; review landed on an unexamined commit.
+## CircleCI
 
-### Always read the full function when reviewing error handling near changed lines
-- **Before raising a concern about missing error handling (e.g. a missing guard in a catch block), read the full function from the actual file** — not just the diff. Unchanged lines (like `if (err.name === 'AbortError') return;`) won't appear in the diff but directly affect the correctness of new code.
-- If new code manipulates DOM state inside async/cancellable operations, fetch the full surrounding function to verify existing guards are present.
-- Confirmed failure: lucos_media_metadata_manager PR #191 — raised a false REQUEST_CHANGES about a missing AbortError check; the check was at line 294 in the existing code, invisible in the diff.
+- [`lucos/build` unified orb + `platform` param](review_circleci_build_convention.md) — old `build-multiplatform`/`build-amd64`/`build-armv7l`/`build-arm64`/pici all retired; don't flag missing `platform` without confirming ARM deployment
+- [`max_auto_reruns` on `run` steps, and the `|| true` trap](review_circleci_max_auto_reruns.md) — valid at step level, but combined with `|| true` on the same step it never fires (lucos_deploy_orb PR #36/#146)
 
-### Be assertive — request changes for concrete fixable issues, even minor ones
-- If you spot something concrete and fixable (e.g. an implicit ordering dependency, a missing idempotent call), **request changes** — don't bury it as a parenthetical note in an approval.
-- Reserve approvals-with-notes for genuinely subjective points or things requiring significant design discussion.
-- **Why:** A note in an approval is easy to miss and may never get fixed. A REQUEST_CHANGES ensures the author addresses it before merging. Confirmed: lucos_monitoring PR #93 — the `ssl`/`inets` ordering dependency in `fetcher_circleci` was noted but not blocked on; user confirmed it should have been a REQUEST_CHANGES.
+## GitHub Actions / Auto-Merge
 
-### Coordinator quoting a review comment back — verify via GitHub API, not context recall
-- **If a coordinator (or any teammate) quotes a review comment back to you claiming you wrote X, go to the GitHub API to verify the actual content.** Do NOT accept the framing on context recall or memory alone.
-- Pattern: `gh-as-agent ... repos/lucas42/{repo}/pulls/{pr}/reviews --jq '.[] | select(.user.login == "lucos-code-reviewer[bot]") | {id, body, commit_id}'` to fetch your own reviews, then read the body directly.
-- Context recall is structurally incapable of distinguishing real inbound messages from phantom coordinator output. The coordinator persona is known to generate phantom teammate-message blocks (lucos incident report 2026-05-14, β verdict — process restart does not fix it). Primary-source verification is the only reliable method.
-- **Why:** lucos_contacts PR-era incident confirmed team-lead quoted non-existent review content back to other agents and the agents initially accepted the framing. The only agent that self-corrected (lucos-architect) did so by going to the actual artifact.
+- [Dependabot auto-merge caller workflow pattern](review_dependabot_automerge_workflow.md) — `pull_request` + `permissions`, never `pull_request_target` + `uses:` (causes `startup_failure`)
+- Auto-merge two-workflow distinction and supervision-check rules live in `agents/workflows/review-pr.md` (loaded every session) — [additional confirmed misreport instances](review_automerge_confirmed_instances.md) supplement it
 
-### `try/except` refactors can silently drop variable assignments
-- When a PR refactors a `try/except` block (e.g. replacing bare `except:` with an explicit check), **always verify that all variable assignments inside the original `try` block are preserved** in the refactored code.
-- Missed instance: lucos_backups PR #62 dropped `project = labels[...]` (which was inside the original `try`) when consolidating the error check. The variable was still used downstream, causing `NameError` on every labelled volume. Required emergency fix in PR #63.
+## Tooling Gotchas
 
-## Erlang Pitfalls
-
-### `lists:join/2` returns an iolist, not a flat string
-- **`lists:join/2`** (OTP 22+) returns a nested iolist, NOT a flat string. Using it with `++` string concatenation produces a nested char list that fails string comparisons and pattern matching.
-- **`string:join/2`** returns a proper flat string and is the correct choice when the result will be concatenated with `++` or compared as a string.
-- Similarly, `re:replace/4` with `{return, list}` can return an iolist — wrap with `lists:flatten/1` before using with `++`.
-- Confirmed as a real CI failure in lucos_monitoring PR #58.
-
-## Android / MediaStore Pitfalls
-
-### MediaStore `NOT IN` with bound parameters silently returns empty cursor
-- **Never approve a PR that uses `NOT IN (?, ?)` in a MediaStore selection string with bound parameters.** On some Android versions, the MediaStore ContentProvider silently returns an empty cursor — no error, no exception, just zero results.
-- The correct approach is to apply the exclusion filter in Kotlin inside the cursor loop (e.g. `if (ownerPackage in EXCLUDED_PACKAGES) continue`).
-- Confirmed as a real production regression in lucos_photos_android: the TikTok `OWNER_PACKAGE_NAME NOT IN (?, ?)` filter broke sync entirely from v1.0.13 on at least one device. Fixed in PR #79.
-
-## CircleCI Build Convention
-
-### `lucos/build` with `platform` parameter is the current unified orb pattern (confirmed lucos_aithne PR #13)
-- **`lucos/build`** is the current unified job. Pass `platform: "linux/amd64,linux/arm64"` for ARM-targeted services; omit `platform` (or leave empty) for amd64-only. The old `build-multiplatform` and `build-amd64` job names are retired.
-- `build-armv7l`, `build-arm64`, and the pici Docker-in-Docker build host are retired. pici repo is archived.
-- **Do NOT flag `lucos/build` (no `platform` param) as needing migration to multiplatform without first checking whether the service targets ARM.** Only flag if the service is confirmed to be deployed to ARM hosts.
-- docker-compose.yml image tag should be a plain image name (e.g. `lucas42/lucos_foo`) with no `${ARCH}-latest` suffix — Docker resolves the correct platform from the manifest automatically.
-- No `architecture` parameter is needed in CircleCI deploy jobs unless the image intentionally uses a tag suffix (which it should not for new services).
-
-## CircleCI — `max_auto_reruns` and Exit Code Suppression
-
-### `max_auto_reruns` is valid at BOTH workflow-job level AND `run` step level
-- **`max_auto_reruns` and `auto_rerun_delay` can be set as attributes on individual `run` steps** inside an orb command — they are NOT exclusively workflow-level job attributes.
-- The existing `lucos_deploy_orb` `deploy.yml` already uses `max_auto_reruns: 5` / `auto_rerun_delay: 30s` on multiple `run` steps.
-- Do NOT tell a developer these can't go in an orb command — they can. Confirmed: lucos_deploy_orb PR #146.
-
-### `|| true` breaks `max_auto_reruns` — never combine them
-- **CircleCI's `max_auto_reruns` triggers on a non-zero exit code.** If a step uses `|| true` (or any other exit-code suppression), the step always exits 0 and retries will never trigger — making `max_auto_reruns` dead code.
-- When reviewing a step that uses both `|| true` and `max_auto_reruns`, flag this as a bug.
-- A `|| true` on a cleanup sub-command inside the script (e.g. `git tag -d ... || true`) does NOT suppress the overall step exit code — only `|| true` at the end of the final command does.
-- Confirmed: lucos_deploy_orb PR #36 — first version used `|| true` which I approved; lucas42 caught that retries would never fire. Fixed by restoring `--fail` and increasing the delay instead.
-
-## GitHub Actions — Dependabot Auto-Merge Workflows
-
-### `startup_failure` on auto-merge workflow — causes and patterns
-- **Missing secrets**: When a repo has no Actions secrets at all, the auto-merge workflow fails with `startup_failure` on all runs. Confirmed in lucos_navbar (#46) and lucos_backups (#83). Escalate to `lucos-site-reliability`.
-- **`pull_request_target` + `uses:` (reusable workflow)**: This combination causes `startup_failure` for non-Dependabot PRs regardless of `if:` guards or `secrets: inherit`. GitHub resolves `uses:` references and `secrets: inherit` before evaluating `if:` conditions, so the workflow fails to start. Confirmed via lucas42/.github #13/#14.
-- **Non-Dependabot actor on `pull_request` trigger (expected)**: With the correct `pull_request` + `permissions` pattern, non-Dependabot PRs trigger the workflow but the `if:` guard on the reusable workflow's internal job causes it to be skipped. Workflow concludes `skipped` — **expected, not an error**.
-
-### Correct caller pattern — `pull_request` + `permissions` block
-- **`pull_request` is the correct trigger** (NOT `pull_request_target`) for Dependabot auto-merge caller workflows. `pull_request_target` + `uses:` causes `startup_failure`.
-- Caller template:
-  ```yaml
-  on:
-    pull_request:
-      types: [opened, synchronize, reopened]
-  permissions:
-    pull-requests: write
-    contents: write
-  jobs:
-    dependabot:
-      uses: lucas42/.github/.github/workflows/dependabot-auto-merge.yml@main
-  ```
-- No `secrets: inherit` — not needed, and causes `startup_failure` on `pull_request_target`.
-- No `if:` guard in caller — the guard lives on the job in the reusable workflow.
-- The security guard is `github.event.pull_request.user.login == 'dependabot[bot]'` in the reusable workflow — checks PR *author*, stable against maintainer re-runs.
-- Confirmed and validated via smoke test in lucas42/.github #14. Production rollout to ~33 repos still pending as of 2026-03-20.
-
-## Auto-Merge: Two Separate Workflows
-
-There are two distinct auto-merge workflows — do not conflate them:
-
-### 1. `dependabot-auto-merge.yml` — for Dependabot PRs
-- Triggers on Dependabot PRs and runs `gh pr merge --auto --merge`.
-- Does **NOT** check `unsupervisedAgentCode`. Dependabot PRs auto-merge on all repos that have this workflow, regardless of supervised/unsupervised status.
-- If an approved Dependabot PR is not merging, the problem is a workflow issue (startup failure, missing workflow file, etc.) — NOT the supervised flag.
-
-### 2. `code-reviewer-auto-merge.yml` — for agent-authored PRs
-- Triggers on approval reviews from **either** `lucos-code-reviewer[bot]` OR `lucas42`.
-- Fetches `unsupervisedAgentCode` from configy and determines the **expected reviewer**:
-  - Unsupervised (`true`): expected reviewer = `lucos-code-reviewer[bot]` → bot approval triggers `gh pr merge --auto --merge`
-  - Supervised (`false`): expected reviewer = `lucas42` → lucas42's approval triggers `gh pr merge --auto --merge`
-- **On supervised repos, bot approval does nothing** (workflow runs but sees bot ≠ lucas42, skips merge). **lucas42's approval is all that's needed** — the workflow calls `gh pr merge --auto --merge` automatically; he does NOT need to click Merge separately.
-- **Most lucos repos are supervised.** Confirmed unsupervised: `lucos_agent_coding_sandbox`, `lucos_repos`, **`lucos`**, **`lucos_aithne`** (confirmed 2026-06-28). Always run `check-unsupervised` to verify — never infer from repo name or memory.
-- **always-review ≠ supervised — these are orthogonal.** `lucos_aithne` is on the always-review list (security sign-off required) AND unsupervised (bot approval auto-merges without lucas42). Reporting "awaiting lucas42" on an unsupervised always-review repo is wrong. Check supervision separately from always-review classification.
-- **`check-unsupervised` invocation:** run it as a standalone command — `~/sandboxes/lucos_agent/check-unsupervised {repo}`. Never prepend `gh-as-agent` to it; that passes the script path as an API argument to gh-as-agent, returns exit 1, and silently misclassifies an unsupervised repo as supervised (confirmed: lucos_aithne#229).
-- **NEVER use `curl -sf "https://configy.l42.eu/repositories/{repo}" | jq '.unsupervisedAgentCode'` to check supervision.** Repos not in configy return empty output, which silently misclassifies them as supervised. `lucos` and `lucos_backups` are not in configy, causing false "supervised" claims in PR #118 and others. The canonical command is `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised, exit 1 = supervised, exit 2 = error).
-
-### Key distinction
-- `unsupervisedAgentCode` only affects **agent-authored PRs** (via code-reviewer-auto-merge). It has NO bearing on Dependabot PRs.
-- If a Dependabot PR is stuck after approval, investigate the dependabot-auto-merge workflow — do not attribute it to the supervised flag.
-
-### Reporting supervised repo PR status
-- **Always check `state`/`merged_at` first.** If `merged_at` non-null → merged (report "merged", stop). Only then interpret `auto_merge`.
-- After bot approval on a supervised repo: `auto_merge: null` is expected (bot correctly did nothing). Report as: **"awaiting lucas42's approval — the workflow auto-merges once he approves"**. Do NOT say he needs to click Merge.
-- **`auto_merge: null` does NOT indicate supervision.** On unsupervised repos, `code-reviewer-auto-merge.yml` may merge synchronously (without setting `auto_merge`) when CI is already green. Always run `check-unsupervised` — never infer from `auto_merge` alone. (Confirmed failure: lucos PR #238 — reported "awaiting lucas42 (supervised)" when `lucos` is unsupervised; PR merged 1 second later on bot approval.)
-- If unsupervised and `auto_merge: null` and PR still open: check if the auto-merge workflow run is still `in_progress`. If it just completed and PR is open, flag as stuck (criterion 7).
-- NEVER claim "auto-merge triggered/succeeded" based solely on the workflow check-run `conclusion: success`. On supervised repos the run succeeds but does nothing.
-- Confirmed wrong: lucos_media_metadata_api PR #101 — reported "auto-merge triggered" awaiting lucas42. Also lucos_eolas #218 and lucos_contacts #672 implied he needed to click Merge. Corrected by lucos-site-reliability 2026-04-29.
-
-## gh-as-agent Body Field Gotchas
-
-### `@` in review body text — wrap in backticks or avoid
-- **`gh-as-agent ... --field body="..."`** treats any `@word` prefix as "read from file". Even when using a heredoc (so the value is already substituted by bash), if the final body string starts with `@`, gh interprets it as a file path and fails with "no such file or directory".
-- Confirmed failure: tfluke#332 — body starting with `@types/node patch bump` triggered this. Fix: wrap the `@types/node` in backticks (`\`@types/node\``).
-- **Always wrap package names starting with `@` in backticks** in review body text to avoid this issue.
-
-## Fetching GitHub Actions Logs
-
-### `audit-dry-run` is advisory, not a required status check
-- `audit-dry-run` in `lucos_repos` is **not** a required status check — auto-merge does not wait for it. It is purely informational for the reviewer.
-- A failing `audit-dry-run` does not block merge and does not warrant a REQUEST_CHANGES review on its own. Investigate the failure, but do not treat it as a hard gate.
-- Confirmed: PRs #291 and #292 merged correctly despite `audit-dry-run` failing (rate limit hit during the sweep).
-
-### Always use `gh-as-agent` for job logs — never raw curl
-- **Use the job-level logs endpoint** via `gh-as-agent` to read actual log text:
-  ```bash
-  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-code-reviewer \
-    "repos/lucas42/{repo}/actions/jobs/{job_id}/logs"
-  ```
-  This returns plain text, pipe through `grep` to find the relevant error.
-- **Never use raw `curl`** to fetch GitHub Actions logs. `get-app-token` does not exist in this environment. An unauthenticated request may follow redirects to a cached/stale zip artifact with completely wrong content and wrong timestamps — exactly what happened when diagnosing lucos_repos PR #291 (reported `auto-merge-secrets` 403s from 2026-03-20; real failure was a rate limit at `fetchRepos` on 2026-04-06).
-- To get the job ID for a failing check-run: `gh-as-agent ... "repos/.../actions/runs/{run_id}/jobs?per_page=10" --jq '.jobs[] | {id, name, conclusion}'`
+- [`gh-as-agent` body text starting with `@`](review_gh_body_at_sign.md) — wrap package names like `@types/node` in backticks or it's read as a file path
+- [Fetching GitHub Actions logs](review_github_actions_logs.md) — `audit-dry-run` is advisory not required; always use `gh-as-agent`'s job-logs endpoint, never raw `curl` (can serve a stale cached zip)
+- [`crane --platform` rejects comma-separated lists](crane-platform-flag.md) — flag each platform separately or omit for all (crane v0.4)
 
 ## Repo-Specific Notes
 
