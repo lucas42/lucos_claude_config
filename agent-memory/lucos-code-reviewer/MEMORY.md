@@ -40,6 +40,7 @@
 
 - [`lucos/build` unified orb + `platform` param](review_circleci_build_convention.md) — old `build-multiplatform`/`build-amd64`/`build-armv7l`/`build-arm64`/pici all retired; don't flag missing `platform` without confirming ARM deployment
 - [`max_auto_reruns` on `run` steps, and the `|| true` trap](review_circleci_max_auto_reruns.md) — valid at step level, but combined with `|| true` on the same step it never fires (lucos_deploy_orb PR #36/#146)
+- [Required CircleCI checks never trigger — two root causes](review_circleci_missing_required_checks.md) — 400-rejected push webhook ([[lucos_repos#466]] runbook) vs. push delivery absent entirely (no delivery to redeliver); distinguish via hook delivery log before assuming #466 applies (lucos_media_metadata_manager#380, 2026-07-27)
 
 ## GitHub Actions / Auto-Merge
 
