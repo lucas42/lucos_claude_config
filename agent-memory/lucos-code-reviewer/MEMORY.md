@@ -40,7 +40,7 @@
 
 - [`lucos/build` unified orb + `platform` param](review_circleci_build_convention.md) — old `build-multiplatform`/`build-amd64`/`build-armv7l`/`build-arm64`/pici all retired; don't flag missing `platform` without confirming ARM deployment
 - [`max_auto_reruns` on `run` steps, and the `|| true` trap](review_circleci_max_auto_reruns.md) — valid at step level, but combined with `|| true` on the same step it never fires (lucos_deploy_orb PR #36/#146)
-- [Required CircleCI checks never trigger — two root causes](review_circleci_missing_required_checks.md) — recovery (`POST pipeline` + verify `vcs.revision`+deploy branch-filter) is identical either way, don't wait on diagnosis; try self-serve the trigger before handing to SRE (lucos_media_metadata_manager#380, 2026-07-27)
+- [Required CircleCI checks never trigger — two root causes](review_circleci_missing_required_checks.md) — recovery (`POST pipeline` + verify `vcs.revision`+deploy branch-filter) is identical either way, don't wait on diagnosis; self-serve the trigger, same token as SRE, confirmed working — don't hand off (lucos_media_metadata_manager#380, 2026-07-27)
 
 ## GitHub Actions / Auto-Merge
 
