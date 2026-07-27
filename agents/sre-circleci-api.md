@@ -20,6 +20,16 @@ The token is a user-scoped personal access token (prefix `CCIPAT_`) owned by `lu
 
 **Env var name is `CIRCLECI_API_TOKEN`** — not `KEY_CIRCLECI`. A common mistake is to `grep KEY_CIRCLECI` in the env file, which returns nothing and leaves the token empty, causing every API call to fail with `Permission denied`. Always load with `TOKEN=$(grep '^CIRCLECI_API_TOKEN=' ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)` and sanity-check with `curl -s -H "Circle-Token: $TOKEN" https://circleci.com/api/v2/me` which should return a JSON object with `login: lucas42`.
 
+**Error shapes on `POST .../pipeline`** (measured 2026-07-27, so you can tell an auth problem from an input problem without guessing):
+
+| Response | Meaning |
+|---|---|
+| `401 "Invalid token provided."` | Token missing/empty/wrong — almost always the wrong-env-var-name bug above |
+| `400 {"message": "Branch not found"}` | Token authenticated fine; the *branch* is the problem |
+| `201` + pipeline object | Triggered |
+
+A `POST` naming a **nonexistent branch is side-effect-free** — it returns `400` and creates no pipeline (verified: zero pipelines for the bogus branch afterwards). That makes it a safe way to check whether a token authenticates at all, without firing a real build. **Caveat: a `400` does not prove *write* scope** — branch validation may run before scope checking, so a read-only token could also return `400`. Treat `400` as "passes the cheap pre-check", and only a real trigger as proof.
+
 ## Using the CircleCI v2 API
 
 Set the token as a header on all requests:
