@@ -103,6 +103,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [credential rotation must distribute the public material](pattern_rotation_must_distribute.md) — latent gap until first real rotation; ping…
 - [The `url` field of an event is an identifier, not an API path](pattern_url_field_is_not_an_api_path.md) — extract ID, use own path conventions.
 - [Treat empty tool output as unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run/wait before asserting.
+- [A DB `ERROR:` line is not an app failure](pattern_db_error_line_is_not_app_failure.md) — Postgres logs handled constraint violations; find the `except IntegrityError` first.
 - [Healthcheck depth varies: `Healthy` ≠ end-to-end working](feedback_healthcheck_depth_varies.md) — read the healthcheck.test line.
 - [When a fix to live state doesn't take, ask whether deploy reads live state or a snapshot](feedback_snapshot_indirection.md).
 
