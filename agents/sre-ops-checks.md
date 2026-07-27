@@ -65,8 +65,10 @@ A monitoring check that has been failing for days without investigation or escal
 Fetch recent Loganne events and look for flappy or persistent monitoring alerts that warrant investigation.
 
 ```bash
-source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/lucos_agent/.env | cut -d'"' -f2) && curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?limit=50"
+source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/lucos_agent/.env | cut -d'"' -f2) && curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?since=$(date -u -d '7 days ago' +%F)"
 ```
+
+**`since=YYYY-MM-DD` is the only query parameter Loganne's `/events` honours.** `limit`, `offset`, `page`, `before`, `from`, `start`, `days` and `system` are all silently ignored — they return the same fixed ~470-event (~7-day) page regardless of value, which looks like a complete answer. `type=` works. Always print the actual min/max `date` of what you fetched and confirm it spans your intended lookback before drawing conclusions; never infer the window from the parameter you asked for.
 
 Filter the results to events where `source == "lucos_monitoring"`. Look back over the last 24 hours (or since the last ops check run).
 
@@ -116,9 +118,11 @@ Verify that every significant resolved incident has a corresponding incident rep
 
 Fetch monitoring events over the past 30 days and pair `monitoringAlert` → `monitoringRecovery` per affected system. Outages lasting longer than 30 minutes are the threshold for "worth a closer look" — adjust if you're seeing too many or too few candidates. Shorter alert/recovery cycles are almost always deploy-window blips or single-poll glitches and don't need post-mortems.
 
+Use `since=` (see Check 2 — it is the only parameter `/events` honours; `limit` is ignored and silently caps you at ~7 days, not 30). Loganne additionally caps the response at ~2278 events, so the real window is **event-bounded, not date-bounded** — asking for `since=2026-05-01` still returns only as far back as the cap allows. The script prints the fetched range; if it doesn't reach 30 days back, say so rather than reporting a 30-day result.
+
 ```bash
 source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/lucos_agent/.env | cut -d'"' -f2)
-curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?limit=2000" | python3 -c "
+curl -s -H "Authorization: Bearer $KEY" "https://loganne.l42.eu/events?since=$(date -u -d '30 days ago' +%F)" | python3 -c "
 import json, sys
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -126,6 +130,11 @@ from collections import defaultdict
 data = json.load(sys.stdin)
 events = data.get('events', data) if isinstance(data, dict) else data
 if isinstance(events, dict): events = events.get('events', [])
+
+# Always state the window actually fetched — the API caps the response, so a
+# 30-day request can silently return far less. Scope your findings to this range.
+_ds = [e.get('date') for e in events if e.get('date')]
+print(f'Fetched {len(events)} events, range {min(_ds)} -> {max(_ds)}')
 
 cutoff = datetime.now(timezone.utc) - timedelta(days=30)
 threshold = timedelta(minutes=30)
