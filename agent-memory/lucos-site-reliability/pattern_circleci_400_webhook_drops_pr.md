@@ -7,7 +7,13 @@ metadata:
 
 **Symptom:** an approved PR sits `mergeable_state: blocked` with **no `ci/circleci:` statuses at all** on the head SHA and **zero pipelines** for its branch (`GET /api/v2/project/gh/lucas42/<repo>/pipeline?branch=<branch>` returns empty). Not a red check — a *missing* one.
 
-**Root cause:** GitHub delivered the push webhook to CircleCI (`circleci.com/hooks/github`) but **CircleCI rejected it with HTTP `400 Invalid HTTP Response`**. GitHub treats 4xx as "delivered, don't retry" (only 5xx/timeouts retry), so the trigger is lost permanently. It's **intermittent CircleCI-side flakiness during Dependabot batch bursts** — in one 2026-07-13 burst, 2 of ~13 push deliveries per repo 400'd; 4 repos hit it at once (arachne#729, configy#252, media_import#177, notes#468). NOT branch-name, NOT ecosystem, NOT [skip ci], NOT a CircleCI outage — other PRs (even identical branch names, e.g. loganne) got 200 in the same window.
+**⚠️ TWO DISTINCT MECHANISMS produce this identical symptom. Check which one before reciting a cause — they differ in evidence and in whether redelivery is even possible.**
+
+**Mechanism A — CircleCI 400s the push (2026-07-13, 4 repos).** GitHub delivered the push webhook to CircleCI (`circleci.com/hooks/github`) but **CircleCI rejected it with HTTP `400 Invalid HTTP Response`**. GitHub treats 4xx as "delivered, don't retry" (only 5xx/timeouts retry), so the trigger is lost permanently. Intermittent CircleCI-side flakiness during Dependabot batch bursts — 2 of ~13 push deliveries per repo 400'd; 4 repos hit at once (arachne#729, configy#252, media_import#177, notes#468). NOT branch-name, NOT ecosystem, NOT [skip ci], NOT a CircleCI outage. **Delivery log shows a push delivery with status_code 400.** Redelivery is possible.
+
+**Mechanism B — the push webhook is never delivered at all (2026-07-27, lucos_media_metadata_manager#380).** The delivery log contains `create` (200) and `pull_request` events (200) for the branch, and **no `push` delivery whatsoever** — not a 400, an absence. So there is nothing to redeliver; `POST pipeline` is the only fix. Hook itself was healthy (active, subscribed to `push`, `last_response` 200, created 2021). I could not distinguish "GitHub never generated the push event" from "generated but never logged/delivered" — from our side the observable is simply that no push delivery exists.
+
+**The positive control that separates A from B** (run it — an absent delivery is meaningless without proof the log would have shown one): pick another repo hit by the *same* Dependabot burst and inspect its push delivery payloads. On 2026-07-27 `lucos_notes` had `ref=refs/heads/dependabot/…` with **`created=true`, `sender=dependabot[bot]`, 200** — proving a Dependabot branch creation normally *does* fire a logged `push` webhook. Without that control, "no push in the log" could just mean branch creations never fire push.
 
 **Diagnose (the smoking gun is the webhook delivery log):**
 ```
