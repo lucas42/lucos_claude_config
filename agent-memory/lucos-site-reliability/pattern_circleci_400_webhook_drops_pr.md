@@ -30,4 +30,6 @@ gh-as-agent ... "repos/lucas42/<repo>/hooks/<hid>/deliveries/<did>" --jq '{ref:.
 
 **Recurrence counter (keep updating — the revisit trigger depends on it):** batch 1 = 2026-07-13 (Mechanism A, 4 repos); batch 2 = 2026-07-27 (Mechanism B, media_metadata_manager#380). **2 of ~3.** Do not propose Option B below the threshold — impact is unchanged and low: internal dependency-update hygiene, no user impact, no data at risk, ~2-min recovery.
 
+⚠️ **The counter may now UNDER-report.** As of 2026-07-27 `lucos-code-reviewer` self-serves the recovery (`agents/code-reviewer-stuck-pr-guide.md`, the zero-pipelines row) using the *same* shared `CIRCLECI_API_TOKEN` — they escalate to me only if the `POST` 401/403s, so a clean self-serve is invisible to me. I asked them to log each use on #466. **Before asserting a count, check #466's comments** rather than trusting this line; and if you're deciding whether the "~3+ batches" trigger has fired, treat this number as a floor, not a total. General lesson: when you remove a handoff, check what the handoff was *also* doing — this one was carrying the occurrence count that an accept-risk decision depends on.
+
 Related class: silent-drop where green `/_info` / green other-checks hides a *missing* check.
