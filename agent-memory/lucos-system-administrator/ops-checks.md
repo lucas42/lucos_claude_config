@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-23
-resource_checks: 2026-07-18
-syslog_review: 2026-07-18
-software_updates: 2026-07-18
-sandbox_drift: 2026-07-18
-repos_dashboard: 2026-07-23
+container_status: 2026-07-27
+resource_checks: 2026-07-27
+syslog_review: 2026-07-27
+software_updates: 2026-07-27
+sandbox_drift: 2026-07-27
+repos_dashboard: 2026-07-27
 docker_image_staleness: 2026-06-30
 backup_verification: 2026-06-30
 certificate_expiry: 2026-06-30
@@ -1554,3 +1554,27 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
 
 **Issues raised**: None. All hosts clean, no new dashboard failures beyond the known deferral.
+
+### 2026-07-27 (checks 1–6 due; weekly checks last ran 2026-07-18, 9 days — overdue; monthly checks last ran 2026-06-30 — not due until 2026-07-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo, known limitation): no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no `-security`-tagged packages on any host — all routine):
+- avalon: containerd 2.2.1→2.2.6, docker-ce/cli/buildx/compose bumps (29.3.0→29.6.2 etc). Routine tooling, same backlog as 2026-07-18/09.
+- xwing: docker tooling bumps, cloud-init, firmware-* (atheros/brcm80211/libertas/mediatek/realtek), libc6/libssl3/openssl (from `stable`, NOT `stable-security`), kernel 6.12.47→6.18.34, large batch of raspi-*/camera firmware/rpi-connect packages. All routine.
+- salvare: docker tooling bumps, dpkg/dpkg-dev, libc6/libssl3/openssl (from `oldstable`, NOT `oldstable-security`), kernel 6.12.25→6.12.93, raspi-firmware/raspi-utils, rpi-eeprom. All routine.
+- No urgent issue raised — nothing security-tagged. Same accumulating backlog as previous runs (unattended-upgrades doesn't cover Docker's own repo or Raspberry Pi Foundation's repo by design — tracked context in lucos_agent_coding_sandbox#95/#100/#101, not re-litigated here).
+
+**Resources**:
+- avalon: disk 39% (674G/1.8T) — up slightly from 37% (630G) on 2026-07-18, unremarkable. Memory 3.1Gi available of 7.6Gi. Swap 511Mi/4.5Gi (11%). Load 7.07/4.26/3.44 (143 days uptime) — somewhat elevated vs 4.08 on 2026-07-18 but a single high 1-min sample against a much lower 5/15-min trend; not treating as a new concern, will recheck next run. Journal 114.6M — fine.
+- xwing: disk 36% (40G/117G) — up slightly from 33% (37G) on 2026-07-18, backup pruning fix still holding well below 80%. Memory 431Mi available of 906Mi (tight, as always on this box). Swap 163Mi/905Mi (18%). Load 2.12/1.33/1.25 — normal range. Journal 8M — fine.
+- salvare: disk 61% (34G/58G) — essentially flat vs 60% on 2026-07-18. Memory 3.3Gi available of 3.7Gi. No swap in use. Load 0.01 (29 days uptime) — fine. Journal 40.9M — fine.
+- Local VM: disk 57% (55G/96G) — under 80% threshold, no forced cleanup. Memory 4.7Gi available of 7.7Gi. Docker: 23.72GB images (6.88GB/29% reclaimable), 202.5MB build cache, 1.423GB local volumes (1.163GB/81% reclaimable). Headroom exists but not warranted yet.
+
+**Sandbox drift**: clean — no local unpushed commits (`origin/main..HEAD` empty), no remote commits to pull (`HEAD..origin/main` empty after fetch).
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
+
+**Issues raised**: None. All hosts clean, no security-tagged updates, no drift, no new dashboard failures beyond the known deferral.
