@@ -26,4 +26,8 @@ gh-as-agent ... "repos/lucas42/<repo>/hooks/<hid>/deliveries/<did>" --jq '{ref:.
 
 **Fix (SRE domain, ~2 min):** re-trigger a pipeline — `POST /api/v2/project/gh/lucas42/<repo>/pipeline` body `{"branch":"<branch>"}` (CIRCLECI_API_TOKEN). It runs against the PR head SHA, reports the required `ci/circleci:` statuses, and releases any queued auto-merge → PR merges itself. (Alt: redeliver the failed GitHub webhook delivery — replays the exact push.) Verify pipeline `vcs.revision` == PR head before trusting it.
 
-**Tracking:** lucas42/lucos_repos#466 (P3) — diagnosis + runbook + durable-fix options (recommended disposition: accept + rely on existing `stale-dependabot-prs` audit detection; build auto-retrigger only if it recurs frequently). Existing `stale-dependabot-prs` check flags these after 48h. Related class: silent-drop where a green `/_info` / green other-checks hides a *missing* check.
+**Runbook record:** lucas42/lucos_repos#466 — **CLOSED 2026-07-14, deliberately, as the durable runbook artifact** (not tracking open work; don't cite it as "tracking"). lucas42 chose **Option A: accept + runbook, no durable fix**. Option B (auto-retrigger in lucos_repos) explicitly NOT built. Detection = existing `stale-dependabot-prs` audit check (≤48h). **Revisit trigger: ~3+ Dependabot batches** → then Option B becomes worth its maintenance tax; reopen or file fresh.
+
+**Recurrence counter (keep updating — the revisit trigger depends on it):** batch 1 = 2026-07-13 (Mechanism A, 4 repos); batch 2 = 2026-07-27 (Mechanism B, media_metadata_manager#380). **2 of ~3.** Do not propose Option B below the threshold — impact is unchanged and low: internal dependency-update hygiene, no user impact, no data at risk, ~2-min recovery.
+
+Related class: silent-drop where green `/_info` / green other-checks hides a *missing* check.
