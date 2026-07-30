@@ -52,7 +52,7 @@
 - **Teammate quote verification**: run `verify-teammate-quote --sender <name> --quote <text>` before quoting anyone verbatim. `feedback_verify_teammate_quotes.md`.
 - **Security tooling workflow changes**: confirm lucos-security sign-off before applying (CodeQL config, secret-scanning exclusions, etc.). `feedback_security_tooling_check.md`.
 - **hosts.yaml `ipv4_nat` ≠ that host's IP**: it's the shared NAT gateway address; only bare `ipv4` is direct. Salvare/virgon-express have no direct IPv4. `hosts-ipv4-nat.md`.
-- **Production SSH**: use `<host>.s.l42.eu` (never `.l42.eu`, which is NXDOMAIN); SSH config supplies `User lucos-agent` — don't override. `ssh-hostname-convention.md`.
+- **Production SSH**: use `<host>.s.l42.eu` — never `.l42.eu` (NXDOMAIN) nor bare shortname (resolves but auths as wrong user/key, looks like a host-side access break). `ssh-hostname-convention.md`.
 - **DOCKER-USER post-DNAT bypass**: `--dport 80` in FORWARD matches ALL DNAT'd-to-port-80 services regardless of host port (9 exposed on avalon). Fix: `--ctorigdstport` or drop host port bindings. `docker-dnat-docker-user-bypass.md`, lucos_firewall#21.
 - **Docker `fixed-cidr-v6` IPAM persistence**: only applies on bridge creation — flush `/var/lib/docker/network/files/` + restart to change it. `docker-fixed-cidr-v6-ipam-persistence.md`.
 - **Linux IPv6 route metric**: linkdown at metric 256 beats UP at metric 600 — docker0 with a public /64 can silently swallow all traffic. `linux-ipv6-route-metric-linkdown.md`.
