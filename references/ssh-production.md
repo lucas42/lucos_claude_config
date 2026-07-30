@@ -8,7 +8,7 @@ The authoritative list of hosts is in `lucos_configy/config/hosts.yaml` (at `~/s
 
 ## Host naming
 
-Hosts have a short name (e.g. `avalon`) and a full domain (`avalon.s.l42.eu`). These are interchangeable — the user may use either form and they refer to the same host. The full domain always follows the pattern `<shortname>.s.l42.eu`.
+Hosts have a short name (e.g. `avalon`) and a full domain (`avalon.s.l42.eu`). The full domain always follows the pattern `<shortname>.s.l42.eu`. **These are NOT interchangeable for SSH connections** — see the warning below.
 
 ## Checking whether a host is active
 
@@ -19,13 +19,15 @@ Before attempting to contact a host, check the `active` field in `hosts.yaml`:
 
 ## Connecting via SSH
 
-SSH config is already set up in this environment. Simply use:
+SSH config is already set up in this environment, but it only matches the **full domain form**. Always use:
 
 ```bash
 ssh <shortname>.s.l42.eu
 ```
 
 No need to specify `-i` (the key is configured automatically) or `-l` (the user is configured automatically).
+
+**Never use the bare short name (`ssh avalon`) — it will authenticate as the wrong identity, not just fail to resolve.** `~/.ssh/config` only has a `Host *.s.l42.eu` stanza (supplying `User lucos-agent` and the `id_ed25519_lucos_agent` key); a bare short name doesn't match that pattern, so ssh silently falls through to its defaults — the local shell user (`lucas`) and the default key list (`id_rsa`, `id_ecdsa`, `id_ed25519`, etc, none of which are provisioned on the host). Because `avalon` (no domain) *also happens to resolve* via DNS search-domain/host aliasing to the same IP as `avalon.s.l42.eu`, the connection reaches the right box and fails at auth — producing a convincing-looking `lucas@avalon: Permission denied (publickey)`, not a DNS/connection error. That symptom is this exact misconfiguration, not a broken key or missing `authorized_keys` entry — don't go looking for an access problem on the host side; just retry with the `.s.l42.eu` suffix. (Confirmed 2026-07-30 via `ssh -G avalon` vs `ssh -G avalon.s.l42.eu`, lucos-architect hit this on avalon.)
 
 ## Before making changes on production
 
