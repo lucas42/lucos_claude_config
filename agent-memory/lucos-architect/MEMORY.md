@@ -65,6 +65,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 
 ## Reference memories
 
+- [Wrapper image tag ≠ upstream app version](reference_wrapper_tag_not_upstream_version.md) — adopted apps: check the app's own version file
 - [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md)
 - [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md)
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md)

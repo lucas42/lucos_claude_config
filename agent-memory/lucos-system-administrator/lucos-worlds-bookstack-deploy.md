@@ -1,9 +1,17 @@
 ---
 name: lucos-worlds-bookstack-deploy
-description: Lessons from the lucos_worlds (BookStack) deploy and its ES256 OIDC patch — DB password/volume-init gotcha, APP_KEY formatting, the BookStack/aithne RSA-vs-ES256 fix (phpseclib3 mechanics, wrapper≠not-a-fork), CircleCI setup_remote_docker/bind-mount incompatibility, and required-status-check ordering
+description: Lessons from the lucos_worlds (BookStack) deploy and its ES256 OIDC patch — DB password/volume-init gotcha, APP_KEY formatting, the BookStack/aithne RSA-vs-ES256 fix (phpseclib3 mechanics, wrapper≠not-a-fork), CircleCI setup_remote_docker/bind-mount incompatibility, required-status-check ordering, and wrapper-tag-vs-upstream-version conflation
 metadata:
   type: project
 ---
+
+## Our wrapper image tag ≠ the wrapped upstream app's version
+
+For any repo that wraps a third-party app (lucos_worlds wraps BookStack; more of these are expected as we adopt more third-party tools), **the image tag we deploy (`lucas42/lucos_worlds_web:1.2.4`) reflects our own wrapper repo's semver — bumped on any commit to the wrapper, via a `VERSION` build arg (lucas42/lucos_worlds#25) — and says nothing about which version of the upstream app is baked in.** BookStack's own version is date-based (`v26.05.2`) and only changes when the Dockerfile's `FROM`/base-image pin changes; a wrapper rebuild for an unrelated commit (docs, CI config, an unrelated patch) bumps `1.2.x` without touching BookStack at all.
+
+**Caught 2026-07-30** (lucos-architect, reviewing my own claim): I reported "the deployed BookStack image tag is 1.2.4" after a `docker ps` on avalon — conflating the two numbers. They happened to be consistent this time (BookStack really was on the Dockerfile-pinned `v26.05.2`) but that was coincidence, not verification.
+
+**Rule:** whenever the claim is specifically about the upstream app's version (not "which of our builds is running"), check the upstream app's own source of truth — its version file, API, or settings page — never our tag. Verified pattern for BookStack: `docker exec lucos_worlds_web cat /app/www/version`. This is the actual gate for lucas42/lucos_worlds#55 (a BookStack security upgrade) — `docker ps` showing a bumped `lucos_worlds_web` tag is not evidence the fix is live; only `cat /app/www/version` returning the patched version is.
 
 ## MariaDB/MySQL: password changes after first init don't take effect
 
