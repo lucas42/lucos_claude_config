@@ -62,6 +62,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Server reachability ≠ user/browser reachability](feedback_server_reachability_not_user_reachability.md)
 - [Draft-PR gating is for cross-system contracts, not low-stakes docs](feedback_draft_pr_scope_excludes_low_stakes_docs.md)
 - [New write-time validation can make existing rows unwritable](feedback_new_validation_makes_existing_rows_unwritable.md) — check rotation/update paths, not just creation
+- [Ask usage context before ranking options](feedback_ask_usage_context_before_ranking_options.md) — device/role/when-they-learn, not an imagined user
 
 ## Reference memories
 
