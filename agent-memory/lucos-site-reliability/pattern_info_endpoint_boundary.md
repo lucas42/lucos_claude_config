@@ -1,6 +1,6 @@
 ---
 name: /_info endpoint boundary — availability/configuration only
-description: When proposing monitoring checks, /_info is for availability/configuration only — content-rendering correctness belongs elsewhere
+description: /_info = availability/config, NOT content correctness. ⚠️2026-07-31 REOPENED as an estate spec question (lucos#273) after a /_info-green 6.5h total outage — check status before citing the boundary as settled
 type: project
 ---
 
