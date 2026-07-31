@@ -199,6 +199,8 @@ Paths are relative to `~/.claude/` (absolute paths under `~/.claude/` also work)
 
 **Do NOT** fall back to the old `git checkout main && git pull --ff-only` + commit + push flow, and do **NOT** route a `~/.claude` change through a branch + PR -- that needlessly drags in the developer/reviewer and only ever existed because direct push used to break on a dirty shared tree, which `commit-claude-main` now fixes. Use `commit-claude-main` for every `~/.claude` commit.
 
+**The file edit carries the rule; the commit message carries the story.** Never add a "(Lesson from YYYY-MM-DD: …)" / "(Confirmed YYYY-MM-DD: …)" / "(Observed …)" parenthetical recounting the incident that prompted a rule into a persona, skill, or reference file. The edit contains rule + why + how-to-apply and nothing more; the motivating incident goes in the `commit-claude-main` message, where git preserves it permanently. Inline anecdotes are bloat that pushes every rule below them deeper into the file, and long files cause agents to skip the rules buried in them — so an anecdote justifying one rule degrades all the others. Existing inline lessons (the coordinator persona has many) are legacy: don't proactively clean them, but remove them opportunistically when editing nearby content. **The tell is writing a parenthetical that begins with a date** — if you catch yourself doing it, cut it and move it to the commit message.
+
 Delegate to `lucos-system-administrator` for infrastructure and environment changes -- `CLAUDE.md` itself, ops check files, environment config.
 
 ### VM environment changes
