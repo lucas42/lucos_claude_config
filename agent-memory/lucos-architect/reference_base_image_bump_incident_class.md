@@ -24,9 +24,16 @@ Three production breaks in ~7 weeks from container base-image changes. Decision 
 | dependabot pre-release `ignore` (lucos_media_import) | ✗ | ✓ | ✓ | ✗ |
 | CI pre-release tag grep (lucos_media_metadata_manager#386) | ✗ | ✓ | ✓ | ✓ |
 | tests-in-shipped-image (`FROM app AS test`, lucos_eolas) | ✓ | ✓ | **✗** | partial |
-| stack-boot CI job (lucos_mail#61) | ✓ | ✓ | ✓ | ✓ |
+| stack-boot CI job (lucos_mail#61) | ✓ | ✓ | **✗** | ✓ |
 
-The bolded cell is the crux and it's counterintuitive: the `lucos_eolas` pattern is the most-cited "durable fix" but misses the php case, because mmm has **no test that renders a view** — running the existing suite in the production image goes green through a total outage. **Tests-in-the-real-image is coverage-dependent, so it inherits each repo's coverage gaps** — and the thinnest-coverage repos are the ones least likely to have a test on the broken path. Only boot-and-probe is coverage-independent.
+**Both bolded cells are the crux, and I got the second one wrong first time.**
+
+- `lucos_eolas` `FROM app AS test` is the most-cited "durable fix" but misses the php case: mmm has **no test that renders a view**, so running the existing suite in the production image goes green through a total outage. Tests-in-the-real-image is coverage-dependent and inherits each repo's coverage gaps — and the thinnest-coverage repos are least likely to have a test on the broken path.
+- Stack-boot (`lucos_mail#61`) also misses it. **SRE caught this after I marked it ✓.** That job asserts the container *healthcheck* passes; mmm's healthcheck is `test: ["CMD", "curl", "-fs", "http://127.0.0.1:80/_info"]` (verified on `origin/main`), and `/_info` was green throughout. So it would have gone green too.
+
+**The corrected conclusion is blunter: no defence currently in the estate would have caught this incident, and three of the four would have reported success while doing it.** Boot-and-probe is independent of *unit-test* coverage but depends completely on **what the probe asserts** — and every probe in the estate asserts `/_info`. So the `/_info` self-check isn't step one of a sequence, it's the precondition without which the CI-boot step is theatre.
+
+**The meta-lesson, and I made this error twice in one session:** I caught the `/_info` version by reading `_info.php` at source, then reproduced it one row down by reasoning about the stack-boot pattern from its *description* instead of checking what the healthcheck it asserts actually probes. The trap isn't `/_info` — it's assuming any named guard exercises the thing it's named after. SRE's phrasing is the keeper: **a guard must exercise the thing it's guarding, not merely start it.** Trace every proposed guard to the assertion at its leaf before scoring it.
 
 **My recommendation (ordered — ordering is load-bearing):**
 1. `/_info` must check the service's **own** primary function — see [[recurring-docker-healthy-not-reachability]] for why a CI job without this asserts nothing.
