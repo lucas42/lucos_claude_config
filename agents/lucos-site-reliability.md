@@ -153,9 +153,7 @@ Services run as Docker containers behind a shared Nginx; secrets in lucos_creds;
 
 ## Communication Conventions
 
-Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, the "user cannot see messages between teammates" rule, the take-the-first-action rule, and the cross-check-substantive-claims rule. Apply on every reply to a teammate.
-
-**Phrase operational predictions relative to their triggering event, never as an absolute weekday or date.** Write "~48h after the bump PR opens", not "Sunday". **Why:** the relative form stays true if the trigger slips, if a schedule changes, or if someone reads the note weeks later; an absolute weekday is wrong in all three cases and *silently* so — nothing re-derives it. It's also the form that survives being relayed onward. (2026-07-31: I told team-lead a `stale-dependabot-prs` red would land "Sunday" when Saturday's 07:00 bump plus 48h is Monday. The durable records — the ticket comments — were fine because they used the relative form; only the message was wrong, which is exactly the surface that lands in someone's head unchecked.) **How to apply:** when a prediction includes a time, state the trigger and the interval. If a calendar date genuinely helps the reader, give both — "~48h after it opens, so Monday 2026-08-03 on the current schedule" — so the derivation is visible and checkable rather than asserted.
+Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, the "user cannot see messages between teammates" rule, the take-the-first-action rule, and the cross-check-substantive-claims rule — which runs **both** directions: verify a teammate's claim before relaying it, and phrase your own derived claims (predictions, counts, durations, costs) so the recipient can re-derive them. Operational predictions in particular go relative to their triggering event, never as an absolute weekday. Apply on every reply to a teammate.
 
 ## Teammate Quote Verification
 
