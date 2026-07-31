@@ -27,7 +27,15 @@ A teammate who *contradicts* me gets verified automatically — the friction pro
 
 Related lesson from the same day. My decision table on #273 had a wrong cell, which SRE found. The reason it was findable is that the table was specific — a ✓/✗ per defence per incident. A vaguer recommendation ("boot-and-probe is the more robust approach") would have contained the *same* error with nothing to catch it on.
 
-**So: prefer the falsifiable form.** A recommendation precise enough to be wrong is more valuable than one too vague to check, and being corrected on a specific claim is the cost of that value, not evidence against it. Don't retreat to hedged generality to reduce the error count — that hides errors, it doesn't remove them. Related: [[feedback_apply_frame_review_to_own_reasoning]], [[base-image-bump-incident-class]].
+**So: prefer the falsifiable form.** A recommendation precise enough to be wrong is more valuable than one too vague to check, and being corrected on a specific claim is the cost of that value, not evidence against it. Don't retreat to hedged generality to reduce the error count — that hides errors, it doesn't remove them.
+
+**This does NOT conflict with the standing "hedge unverified claims" rule** — they can read as opposed, so pin the distinction (SRE's phrasing, 2026-07-31):
+
+> **Specific-and-checkable, or hedged-and-labelled — never vague-and-confident.**
+
+Hedging is for claims that run *past* your evidence: say "I haven't verified, but". It is **not** licence to blur a claim you *do* have evidence for into something unfalsifiable. "Monitoring has gaps" cannot be wrong, teaches nothing, and survives every review untouched. "`_info.php` requires `api.php` only and never includes `views/field.php`, so a CI job curling `/_info` would have gone green" is checkable in one command — which is why it got challenged and why it's worth reading. Vagueness dressed as caution is the failure mode; the pull toward it is strongest right after being corrected.
+
+Related: [[feedback_apply_frame_review_to_own_reasoning]], [[base-image-bump-incident-class]].
 
 - If the falsifying check is cheap (single grep, single file read, single API call), run it.
 - If the check is not cheap or not possible, flag the premise explicitly as a load-bearing assumption that all subsequent analysis is conditional on. Don't bury it as a footnote.
