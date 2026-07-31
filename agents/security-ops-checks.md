@@ -37,9 +37,10 @@ The script returns all open dependabot alerts with information about any associa
 
 **If there IS an associated PR but it is stalled:**
 
-A PR is stalled if either:
+A PR is stalled if any of:
 - It has no recent activity (not opened or commented on in the last 5 minutes, and no checks "in progress"), OR
-- It has been open for 2+ days with a failing required check and no new commits pushed since the failure (a PR that keeps failing CI is stalled even if Dependabot has recently re-run checks on it)
+- It has been open for 2+ days with a failing required check and no new commits pushed since the failure (a PR that keeps failing CI is stalled even if Dependabot has recently re-run checks on it), OR
+- It has been open for 2+ days with all required checks green and no `requested_reviewers` on a supervised repo (`check-unsupervised` exits 1) — this means the `create-pr` reviewer-request step was skipped or bypassed, so the PR is sitting fully mergeable but invisible in lucas42's review queue. Fix inline: `POST /repos/lucas42/{repo}/pulls/{number}/requested_reviewers` with `reviewers[]=lucas42`, then verify it stuck. This applies to any open PR you encounter during ops checks, not just ones you personally opened — check `requested_reviewers` whenever a PR is green + approved-by-bot but still open on a supervised repo.
 
 When a PR is stalled:
 1. Check the PR's check runs to identify which check is failing and why. Read the check run output.
