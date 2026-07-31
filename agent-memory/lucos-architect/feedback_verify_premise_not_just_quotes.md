@@ -11,6 +11,24 @@ When a teammate's framing rests on a structural domain claim ("structurally impo
 
 **How to apply:** Whenever a teammate's reasoning depends on a structural claim of the form "X is impossible / X always behaves like Y", before extrapolating, ask: "what's the one-line bash/grep command that would falsify this?"
 
+## The trigger this rule was missing: agreement
+
+The rule above says *what* to do; it never said *when* it's most likely to go unapplied. It's **agreement**.
+
+> **Agreement is the condition under which nobody checks.**
+
+A teammate who *contradicts* me gets verified automatically — the friction prompts it. A teammate who *confirms* my analysis gets waved through, and if we each assume the other tested the shared premise, a decision reaches lucas42 resting on nothing. Adversarial claims are self-policing; concordant ones are not.
+
+**How to apply:** when a teammate's message makes you think "good, that matches what I found" — that is the cue to run the check, not to skip it. Especially after a long stretch of agreeing with the same person on the same thread.
+
+**Why:** 2026-07-31, lucas42/lucos#273 with `lucos-site-reliability`. We agreed all afternoon. Two shared premises (Dependabot supersession behaviour, the zero-open-PR baseline) were each nearly taken on trust because the other person had said them approvingly. Both got independently re-verified only because we each deliberately chose to; one — supersession-while-red — turned out to be *unverifiable*, and would have silently propped up a recommendation.
+
+## Corollary: publish artifacts precise enough to be checkable
+
+Related lesson from the same day. My decision table on #273 had a wrong cell, which SRE found. The reason it was findable is that the table was specific — a ✓/✗ per defence per incident. A vaguer recommendation ("boot-and-probe is the more robust approach") would have contained the *same* error with nothing to catch it on.
+
+**So: prefer the falsifiable form.** A recommendation precise enough to be wrong is more valuable than one too vague to check, and being corrected on a specific claim is the cost of that value, not evidence against it. Don't retreat to hedged generality to reduce the error count — that hides errors, it doesn't remove them. Related: [[feedback_apply_frame_review_to_own_reasoning]], [[base-image-bump-incident-class]].
+
 - If the falsifying check is cheap (single grep, single file read, single API call), run it.
 - If the check is not cheap or not possible, flag the premise explicitly as a load-bearing assumption that all subsequent analysis is conditional on. Don't bury it as a footnote.
 - This is the same provenance-verification discipline as the recipient-side rule for accusations ("verify the quote against primary source") — extended one layer up to the *premise* of someone else's reasoning, not just the quotes inside it.
