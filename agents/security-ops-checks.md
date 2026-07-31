@@ -20,6 +20,8 @@ If you find an existing issue that covers the same root cause, comment on that i
 
 **One issue per alert — never bundle**: File exactly one GitHub issue per security alert. Never combine multiple unrelated alerts into a single issue. Each alert has its own root cause, its own fix, and its own remediation timeline. The only exception is Check 4 (GitHub Actions audit), which files one issue per repo listing all findings within that repo.
 
+**Any PR opened during ops checks must use `create-pr`** (e.g. the "implement a workaround yourself" path in Check 1, or a trivial-fix push in the stalled-PR path) — never `gh-as-agent ... pulls` directly, never `gh pr create`. This is the same rule as `agents/workflows/implement-issue.md` Step 6, and it exists for exactly the same reason: `create-pr` is what automatically requests `lucas42` as reviewer on supervised repos, so skipping it is how a PR silently misses his review queue (see lucas42/tfluke#488, caught 2026-07-31). After `create-pr` returns, run its supervised-repo verification (confirm `lucas42` in `requested_reviewers`) before moving on.
+
 ---
 
 ## Every Run (2 checks)
