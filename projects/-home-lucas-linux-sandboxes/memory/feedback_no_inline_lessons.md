@@ -3,6 +3,7 @@ name: No "Lesson from {date}" parentheticals in instruction files
 description: Keep persona/skill files lean — narrative lessons that prompted a rule belong in the commit message, not inline in the instruction text
 type: feedback
 originSessionId: 4b60f3f5-2d3f-4520-8c50-3dc971ae0b9f
+modified: 2026-07-31T14:48:08.341Z
 ---
 When adding or strengthening a rule in a persona, skill, or other standing-instruction file, do **not** include a "(Lesson from YYYY-MM-DD: I did X and Y broke...)" parenthetical inside the file. Put the narrative explanation in the commit message instead. The instruction itself should be the rule plus a why/how-to-apply if needed — nothing more.
 
@@ -13,3 +14,5 @@ When adding or strengthening a rule in a persona, skill, or other standing-instr
 - The commit message body contains the specific incident/example that motivated the change.
 
 Existing inline lessons (in the coordinator persona and elsewhere) shouldn't be proactively cleaned up — only avoid adding new ones, and remove them opportunistically when editing nearby content.
+
+**This rule is now enforced in the instructions, not just here** — it lives in the coordinator persona's "Version-controlled `~/.claude` changes" section, at the moment of action. It was memory-only until 2026-07-31, which is why it stopped firing: four rules were committed that day each carrying a dated parenthetical, and lucas42 had to point it out. Treat the persona as canonical; this memory is a pointer.
