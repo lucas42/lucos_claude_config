@@ -62,7 +62,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or…
 - [Checks AND thresholds live in /_info, not lucos_monitoring](feedback_failthreshold_lives_in_info.md) — monitoring is aggregation only.
-- [/_info = availability/config, NOT content-rendering correctness](pattern_info_endpoint_boundary.md) — content integrity → CI assertion/synthetic…
+- [/_info = availability/config, NOT content correctness](pattern_info_endpoint_boundary.md) — ⚠️REOPENED as spec question (lucos#273); ⚠️the "boot image + curl /_info" CI guard goes GREEN through a total outage — parity ≠ coverage.
 
 ## Scheduled-job / service-specific failures
 - [Hung Python process: py-spy/gdb ABSENT on prod + no CAP_SYS_PTRACE](pattern_hung_python_process_no_pyspy_use_faulthandler.md) — use pre-armed faulthandler+SIGUSR1 → stderr. photos#481.
