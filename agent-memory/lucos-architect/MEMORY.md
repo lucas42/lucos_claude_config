@@ -51,6 +51,8 @@ Index only — one short line per entry; detail lives in each linked topic file 
 
 ## Reference memories
 
+- [Cross-project patterns + architectural-review convention (lucos#24)](reference_cross_project_patterns.md) — incl. `git fetch` before reviewing EACH repo
+- [Estate infra + auto-merge/security-check notes](reference_estate_infra_notes.md) — deploy orb, ARM hosts, CodeQL race, avalon capacity
 - [Wrapper image tag ≠ upstream app version](reference_wrapper_tag_not_upstream_version.md) — adopted apps: check the app's own version file
 - [`network_only` in /_info is NOT access control](reference_info_endpoint_network_only.md)
 - [External access to a LAN host: 3 patterns](reference_external_access_to_lan_host.md)
