@@ -76,7 +76,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 
 ## CI / build / deploy
 - [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
-- [Auto-merged base-image bump breaks at deploy/runtime not build](pattern_baseimage_bump_runtime_break.md) — durable fix = CI test job booting the…
+- [Auto-merged base-image bump breaks at runtime not build](pattern_baseimage_bump_runtime_break.md) — ⚠️3 instances; can deploy HEALTHY+green while 500ing. Compare `php -m` vs prev image. Estate inventory + lucos#273.
 - [exit 127 after a successful pip install = `ubuntu-2204:current` rolled BACKWARDS](pattern_rolling_machine_image_tag_moves_backwards.md) — fix w/ venv not a pin; verify on the BAD image.
 - [lucos_repos deploy auto-triggers a fresh audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min; NO clock slots; POST /api/sweep manual.
 - [repos audit reds because we discard GitHub's Retry-After above a 5m ceiling](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md) — #462 fixed dry-run path; #465 = sweep.
