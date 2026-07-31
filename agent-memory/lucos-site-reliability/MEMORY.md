@@ -70,7 +70,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError, skips success tick.
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch…
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — not a bug.
-- [locations silent data-gap — ✅ SOLVED by #91 freshness check (30h, fail-closed)](pattern_locations_silent_data_gap.md) — proven 07-15; alert playbook + don't blame the 300ms timeout (p50 5.4ms).
+- [⚠️ locations `location-freshness` is UNTRUSTWORTHY — 2 of 3 alerts FALSE (#105)](pattern_locations_silent_data_gap.md) — verify vs `.rec` `created_at` before believing it; `tst`≠ingestion.
 - [Python stdout block-buffered → print() diagnostics NEVER reach docker logs](pattern_python_stdout_buffered_swallows_diagnostics.md) — no -u/PYTHONUNBUFFERED; stderr fine, stdout vanishes. locations#103.
 - [locations /map 500 while /_info green = oauth2_proxy sidecar crash-loop on missing prod creds](pattern_locations_oauth2proxy_sidecar_crashloop.md) — fix is lucas42-only.
 
@@ -97,6 +97,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs…
 - [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before…
 - [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead, not a cause.
+- [A check's debug string is a CLAIM — verify vs the underlying store](feedback_verify_check_claim_against_underlying_store.md) — repetition ≠ corroboration; scrutinise "not our fault" hardest.
 - [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
 - [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before…
 - [Check file reachability from entry point before "deployed code misbehaves"](feedback_check_reachability_first.md) — bundlers drop unreachable code.
