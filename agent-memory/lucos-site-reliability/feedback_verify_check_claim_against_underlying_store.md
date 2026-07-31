@@ -1,6 +1,6 @@
 ---
 name: feedback-verify-check-claim-against-underlying-store
-description: A monitoring check's debug string is a claim, not evidence — verify it against the underlying data store before building any narrative on it, especially before a 2nd/3rd/4th occurrence hardens into a "pattern"
+description: Verifiability, both directions — a check's debug string is a claim not evidence (verify against the underlying store); scrutinise hardest what you agree with; read the artefact not its description; and write in the falsifiable form so others can catch you
 metadata:
   type: feedback
 ---
@@ -21,4 +21,10 @@ I never checked because the check *was the thing I had just helped specify* (#91
 - **Read the artefact, never its description.** The generalisation of the whole 2026-07-31 mbstring incident: every substantive correction that day came from opening the thing rather than trusting its name — `_info.php`'s actual includes rather than "the health endpoint", the container healthcheck's actual `test` line rather than "the stack-boot job", Dependabot's actual reply rather than "closing the PR". A guard, check, or ticket named for doing X is not evidence that it does X. See [[pattern_info_endpoint_boundary]] for the `/_info` smoke-test trap this produced.
 - **When you correct a narrative you authored, say so explicitly in the artifact** — I put a "Correction to prior reports" section in lucos_locations#105 naming the five reports that were wrong, because those reports outlive the conversation and someone will read them.
 
-Related: [[feedback_verify_root_cause_by_reproduction]], [[feedback_correlation_is_not_confirmed]], [[pattern_locations_silent_data_gap]], [[feedback_treat_empty_tool_output_as_unknown]].
+**The other direction — write so you can be caught. Prefer the falsifiable form, and treat being corrected as its price rather than evidence against it.** lucos-architect's corollary, 2026-07-31: their decision table was corrected partly *because* it was specific enough to contain a checkable wrong cell — a vaguer recommendation would have carried the same error with nothing to catch it on. The failure mode to avoid isn't being wrong in public; it's **retreating into hedged generality to keep the error count down, which hides errors instead of removing them.** The temptation is strongest right after a day of corrections, which is exactly when precision is most valuable.
+
+This does NOT conflict with CLAUDE.md's "hedge unverified claims". Hedging is for claims that run past your evidence — say "I haven't verified, but". It is not licence to blur a claim you *do* have evidence for into something unfalsifiable. Concretely: a report saying "monitoring has gaps" cannot be wrong and teaches nothing; "`_info.php` requires `api.php` only and never includes `views/field.php`, so a CI job curling `/_info` would have gone green" can be checked in one command — and if it's wrong, someone will say so, which is the point. **Specific-and-checkable, or hedged-and-labelled — never vague-and-confident.**
+
+Severity note (mine, same thread): distinguish a wrong *argument* from a wrong *recommendation*. A bad cell in a comparison table misleads whoever reads that thread; a bad remedy in a merged incident report misleads every future reader of the durable artifact, including everyone who never sees the discussion. Weight review attention accordingly — scrutinise the advice hardest.
+
+Related: [[feedback_verify_root_cause_by_reproduction]], [[feedback_correlation_is_not_confirmed]], [[pattern_locations_silent_data_gap]], [[feedback_treat_empty_tool_output_as_unknown]], [[pattern_info_endpoint_boundary]].

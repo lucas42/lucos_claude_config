@@ -1,6 +1,6 @@
 # SRE Agent Memory
 
-Index only — detail in the linked file. Verify ticket state before citing.
+Index only — detail in linked file. Verify ticket state before citing.
 
 ## Consolidated topic files (read first — bulk knowledge)
 - [Per-repo known issues + host facts + hostname→repo](topic_per_repo_known_issues.md) — all repos' quirks/open tickets; xwing…
@@ -97,7 +97,7 @@ Index only — detail in the linked file. Verify ticket state before citing.
 - [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs…
 - [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before…
 - [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead.
-- [A check's debug string is a CLAIM — verify it](feedback_verify_check_claim_against_underlying_store.md) — scrutinise "not our fault" hardest.
+- [Verify claims; write falsifiably](feedback_verify_check_claim_against_underlying_store.md) — read the artefact, not its name; scrutinise agreement.
 - [flat-or-shrink targets DUPLICATE rules, not wrong ones](feedback_consolidation_rule_scope.md) — a misleading rule may GROW.
 - [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
 - [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before…
