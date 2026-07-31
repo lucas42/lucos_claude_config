@@ -47,6 +47,7 @@
 
 - [lucos-agent docker-group root-equivalent access (avalon/xwing/salvare)](risk-lucos-agent-docker-group-root-equivalent.md) — OPEN, lucos_agent_coding_sandbox#102 (2026-07-18), Priority=Medium (severity assessment unchanged). Dominant fact for any lucos-agent prod privilege question; see also #99.
 - [Priority field ≠ severity](feedback-priority-field-vs-severity.md) — a Priority-field override isn't pushback on my severity unless the severity text itself gets diluted or the item goes somewhere that reads as ignored.
+- [Stalled PR missing reviewer request](risk-stalled-pr-missing-reviewer-request.md) — green+approved supervised-repo PR can sit forever if `requested_reviewers` is empty; check this, not just CI status. Caught on tfluke#488 (2026-07-31), ops-checks Check 1 updated to detect it.
 
 ## Topic Files (full detail)
 
