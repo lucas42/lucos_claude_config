@@ -1,6 +1,6 @@
 ---
 name: Incident report review completeness checks
-description: Incident report review heuristics — incomplete actions tables, stale cumulative records, and detector signal-class mismatches all warrant REQUEST_CHANGES
+description: Incident report review heuristics — incomplete actions tables, stale cumulative records, detector signal-class mismatches, and unverified linked follow-up issues all warrant REQUEST_CHANGES
 type: feedback
 ---
 
@@ -30,6 +30,17 @@ When a section is titled "Daily recurrence pattern (updated)" / "(continued)" / 
 When reviewing incident reports that quote the Docker daemon's live-restore warning, **`"will not take affect"` is correct** — it is Docker's own typo in `moby/moby daemon/daemon_unix.go:839`. Do NOT flag it as a report error. If there is no `[sic]`, suggest adding one with the source citation so future responders don't second-guess the spelling.
 
 The message: `"there are running containers, updated network configuration will not take affect"` (note: "affect" not "effect"). Confirmed via GitHub code search on `moby/moby` — zero matches for "take effect", one match for "take affect" at `daemon_unix.go:839`. Surfaced during review of lucos PR #200 (2026-05-28 xwing incident TBD-fill).
+
+## Rule 5 — Linked follow-up issues must be read directly, not trusted from the PR body's account of them
+
+When an incident report's PR body or Follow-up Actions table claims something was "added to #N" or that a linked follow-up issue reflects a correction folded into the report, **fetch #N's actual current body and check** — don't take the claim at face value even from a careful, otherwise-accurate author.
+
+Two independent failure modes to check for, both confirmed in the same PR (lucas42/lucos#274, 2026-07-31 media-metadata mbstring incident):
+
+- **Stale pre-correction framing surviving in the linked issue.** A correction applied to the incident report itself (e.g. "the bare error page didn't actually delay the report") doesn't automatically propagate to a follow-up issue that was filed citing the old framing. `incident-reporting.md`'s "propagate factual corrections through every narrative section" names the report's own sections, but a linked follow-up issue is a narrative surface too — grep/read it for the same stale wording.
+- **A claimed addition that isn't actually there.** The PR body asserted a specialist's (security's) acceptance criterion "has been added to #389"; the issue's actual Acceptance Criteria list didn't contain it. This is indistinguishable from a true claim unless you fetch the issue and read the list yourself.
+
+**How to apply:** For every follow-up issue linked in the Follow-up Actions table, fetch its current body via the API and check it against (a) the report's own corrected narrative and (b) any specific "X was added to this issue" claims in the PR body. Takes one API call per issue; catches drift that a diff-only review of the incident-report file itself cannot see, since the issue lives in a different repo.
 
 ## Rule 3 — "We already have a detector for this" claims need signal-class verification
 

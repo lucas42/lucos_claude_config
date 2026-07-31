@@ -3,7 +3,7 @@
 ## Review Behaviour
 
 - [Three-stage env-var wiring](review_envvar_wiring.md) — new `os:getenv`/`os.environ`/`process.env` reads need matching compose `environment:` entry AND lucos_creds value; `_ENDPOINT` path-append is a convention violation; flag until lucos_repos#387 lands
-- [Incident report completeness checks](feedback_incident_report_followups.md) — missing action items, "(updated)" cumulative tables missing prior rows, and detector signal-class mismatches all warrant REQUEST_CHANGES
+- [Incident report completeness checks](feedback_incident_report_followups.md) — missing action items, "(updated)" cumulative tables missing prior rows, detector signal-class mismatches, and unread linked follow-up issues all warrant REQUEST_CHANGES
 - [Loganne webhook subscriber hostnames](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467)
 - [Stale Dependabot regression PRs](feedback_dependabot_stale_regression.md) — `@dependabot recreate` is deterministic; net regression vs main = close it, not recreate
 - [SSH key handling and deploy snapshot heuristics](review_ssh_deploy_patterns.md) — `Load key … error in libcrypto` = corruption class; deploy snapshot vs live state check
