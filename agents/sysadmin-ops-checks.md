@@ -277,7 +277,7 @@ A check is due if there is no entry or if elapsed time meets or exceeds the freq
 
 ## Completion Manifest
 
-After completing your ops checks run, output a table like this:
+After completing your ops checks run, **send the manifest to `team-lead` via `SendMessage`** — plain-text output is only visible to the user, not to the dispatcher, and team-lead gates triage on receiving this report (see `references/teammate-communication.md` § "Use SendMessage, not plain text"). Build the table, then send it — don't stop after composing it in your response text. Table format:
 
 | Check | Frequency | Status | Notes |
 |---|---|---|---|
