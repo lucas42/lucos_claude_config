@@ -215,9 +215,12 @@ For each that does need a report, follow [`references/incident-reporting.md`](..
 SSH into production hosts and review logs for a rotating selection of containers. Track in `ops-checks.md` when each container was last reviewed so you cover them all over time.
 
 **Before selecting containers:**
-1. List all running containers on the production host
+1. List all running containers on the production host **with their `StartedAt`**, and pick on both axes — `last_reviewed` *and* how much log history actually survives:
+   ```bash
+   ssh avalon.s.l42.eu "docker ps --format '{{.Names}}' | while read c; do printf '%s %s\n' \$(docker inspect -f '{{.State.StartedAt}}' \$c) \$c; done | sort"
+   ```
 2. Compare against tracking data in `ops-checks.md`
-3. Prioritise containers with the oldest `last_reviewed` date
+3. Prioritise containers with the oldest `last_reviewed` date **whose `StartedAt` predates that date**. A container restarted since its last review has no logs covering the gap — `docker logs` starts at `StartedAt`, so reviewing it yields a clean-looking result that proves nothing ([[pattern_container_restart_log_buffer_artifact]]). Deploy bursts routinely restart most of the estate at once; on those days, deliberately skip the oldest containers in favour of ones that still have history, and say in your output which you deferred and why. Do not silently record a deferred container as reviewed.
 4. Any container not reviewed in 60+ days: flag explicitly in your output as **overdue**
 5. Any container not reviewed in 30+ days: prioritise in this run's selection
 6. New containers (not yet in tracking data): review on their first or second rotation
@@ -228,6 +231,12 @@ Lookback window: review logs since the last time you reviewed that container (ch
 
 ```bash
 ssh avalon "docker logs --since <last-reviewed-timestamp> <container_name> 2>&1 | tail -200"
+```
+
+**After an estate-wide deploy or client-library rollout, add a whole-estate error sweep** — it costs one command, and it is the cheapest way to catch a bad rollout while the buffers are still warm. This is complementary to the rotation, not a substitute for it:
+
+```bash
+ssh avalon.s.l42.eu "docker ps --format '{{.Names}}' | while read c; do n=\$(docker logs --since <burst-start> \$c 2>&1 | grep -icE 'traceback|Error:|ERROR |exception|fatal|panic|TypeError|ImportError|ModuleNotFound'); [ \"\$n\" -gt 0 ] && echo \"\$n \$c\"; done | sort -rn"
 ```
 
 Focus on:
