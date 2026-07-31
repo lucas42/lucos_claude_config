@@ -111,7 +111,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [When a fix to live state doesn't take, ask whether deploy reads live state or a snapshot](feedback_snapshot_indirection.md).
 
 ## Standing rules — process / GitHub / PRs
-- [Ticket body is the spec — rewrite it when a design is walked back](feedback_ticket_body_is_the_spec.md) — /dispatch sends URL alone; comment ≠ spec; close superseded PRs same time.
+- [Ticket body is the spec — rewrite on design change AND when adding a criterion](feedback_ticket_body_is_the_spec.md) — /dispatch sends URL alone; comment ≠ spec; re-fetch body before claiming it "has" something; close superseded PRs same time.
 - [Verify GitHub state before citing it](feedback_refetch_state_before_writing_final_artifact.md) — issue state before citing a #N; strongest in final-artifact follow-up tables.
 - [Verify closed-issue disposition (body+closing comment) before citing as preference evidence](feedback_verify_closed_issue_disposition.md).
 - [Check recent fixes before filing flap-investigation issues](feedback_check_recent_fixes_before_filing.md) — pre-fix alerts persist in lookback for days.
