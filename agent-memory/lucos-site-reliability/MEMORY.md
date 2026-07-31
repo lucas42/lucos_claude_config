@@ -98,6 +98,7 @@ Index only — one line per entry, detail in the linked file. Verify ticket stat
 - [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before…
 - [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead, not a cause.
 - [A check's debug string is a CLAIM — verify vs the underlying store](feedback_verify_check_claim_against_underlying_store.md) — repetition ≠ corroboration; scrutinise "not our fault" hardest.
+- [flat-or-shrink targets DUPLICATE rules, not wrong ones](feedback_consolidation_rule_scope.md) — correcting a misleading rule may grow; keep disposition guidance; report the miss, don't pad.
 - [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
 - [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before…
 - [Check file reachability from entry point before "deployed code misbehaves"](feedback_check_reachability_first.md) — bundlers drop unreachable code.
