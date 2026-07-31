@@ -5,15 +5,15 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-07-27
+container_status: 2026-07-31
 resource_checks: 2026-07-27
 syslog_review: 2026-07-27
 software_updates: 2026-07-27
 sandbox_drift: 2026-07-27
-repos_dashboard: 2026-07-27
-docker_image_staleness: 2026-06-30
-backup_verification: 2026-06-30
-certificate_expiry: 2026-06-30
+repos_dashboard: 2026-07-31
+docker_image_staleness: 2026-07-31
+backup_verification: 2026-07-31
+certificate_expiry: 2026-07-31
 ```
 
 ## Decommissioned services
@@ -1578,3 +1578,17 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, contents still just `.github/` + `README.md`, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
 
 **Issues raised**: None. All hosts clean, no security-tagged updates, no drift, no new dashboard failures beyond the known deferral.
+
+### 2026-07-31 (checks 1, 6, 7, 8, 9 due; weekly checks 2-5 last ran 2026-07-27, 4 days — not due until 2026-08-03)
+
+**Container status**: avalon caught mid-rolling-redeploy — `lucos_arachne_web` showed `Created` (not-yet-started) at the moment of the check. Investigated before treating as a fault: `uptime` showed 146 days (no reboot), and `docker ps` CreatedAt timestamps for ~50 avalon containers span 05:27–07:50 UTC this morning in a clean sequential pattern (docker_mirror → dns → various app services → arachne stack last). This is a live rolling redeploy, not a crash — by the time I re-inspected seconds later, `lucos_arachne_web` was `Up (healthy)`. No issue raised. xwing and salvare: clean, no crashed/stopped/unhealthy containers.
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again, same deliberate deferral standing since 2026-07-13 (still pre-scaffolding: size 2, created 2026-07-09, pushed 2026-07-13). No new action.
+
+**Backup verification**: `lucos_backups` container was part of the same morning redeploy (started 07:26:25 UTC, ~25 min before this check ran). One `Tracking completed successfully` cycle observed post-restart, no errors in the logs. Not enough post-redeploy history for multi-day confidence, but nothing concerning — consistent with normal startup behaviour. No issue raised.
+
+**Certificate expiry**: avalon (29 domains) + xwing (4 domains) all >30 days from expiry. Nearest: configy.l42.eu expires Aug 31 2026 (31 days) — just outside the certbot auto-renewal window, expect it to renew within the next few days. No action needed yet; worth a spot-check next run if not renewed.
+
+**Docker image staleness**: avalon — `lucos_locations_otrecorder` (owntracks/recorder, third-party) still shows a 2025-08-12 build date. Re-verified against Docker Hub: upstream `last_updated` for the `latest` tag is also 2025-08-12T06:48:39Z, matching the production image almost exactly — this is genuinely the latest available upstream, not a stuck deploy (consistent with the resolution documented on lucos_locations#79, closed 2026-05-07: Dependabot's `directory` was fixed from `/bind` to `/` so it'll raise a PR automatically once upstream does publish). No issue raised. `lucos_locations_oauth2_proxy` at 52 days old — under the 60-day threshold, not flagged. All other images across avalon/xwing/salvare rebuilt within the last ~18 days (consistent with this morning's rolling redeploy). No issues raised.
+
+**Issues raised**: None. **Issues closed**: None. All hosts clean, no new dashboard failures, no security-tagged updates outstanding beyond already-tracked context (checks 2-5 not due this run).
