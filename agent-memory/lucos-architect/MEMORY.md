@@ -2,21 +2,6 @@
 
 Index only — one short line per entry; detail lives in each linked topic file (and per-project depth in `project-details.md`). **Trim before adding if this loads with a truncation warning.**
 
-## Architectural review convention (lucas42/lucos#24)
-
-- Reviews = committed Markdown in `docs/reviews/`, `YYYY-MM-DD-review.md`; separate from ADRs; no summary issues; via PR. Mandatory "Sensitive findings" section. lucos#25 tracks Security Advisory practice.
-
-## Cross-project patterns
-
-- Module-level side effects in shared packages = recurring fragility.
-- Auth origin = env-varying `AITHNE_ORIGIN` (aithne#148); `lucos_authentication` decommissioned 2026-06-29.
-- Always specify sequencing deps for cross-repo infra changes. lucas42 prefers splitting multi-concern issues.
-- **`git fetch` before reviewing EACH repo** (fetch is load-bearing, not checkout); read source from a fresh-origin/main worktree or `git show origin/main:file`, never the shared `~/sandboxes` tree. Refuting-grep on a stale tree is worse than none. Fix in implement-issue Step 4.
-- One-service-per-repo; naming `lucos_{subsystem}_{qualifier}`.
-- claude_config ADR-0001 (instruction compliance: short task files, counts, manifests, 200-line max); ADR-0002 (agent-teams/SendMessage). Issue-manager merged into team-lead (2026-04-02).
-- User-Agent = `SYSTEM` env value for inter-system HTTP (lucos ADR-0001).
-- Bearer auth migration (lucos#74): key→Bearer, 3-phase (server dual-accept→client switch→drop key).
-
 ## Feedback memories
 
 - [Slow-cooker symptoms are a smell](feedback_slow_cooker_symptoms.md)
@@ -85,7 +70,8 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md)
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md)
 - [Deployment model has no on-host source of truth](reference_no_onhost_source_of_truth.md)
-- [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md)
+- [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md) — incl. dependency-only `/_info` can't report self-failure
+- [Base-image bump incident class (lucos#273)](reference_base_image_bump_incident_class.md) — CI tests an artifact we don't ship; tests-in-image is coverage-dependent
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
 - [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md)
 - [creds key value and scope are independent](reference_creds_scope_keyvalue_independent.md)
@@ -116,23 +102,6 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [creds multi-line secrets](project_creds_multiline_secrets.md) — creds ADR-0006 (PR #484, Proposed); base64-at-rest for key-typed secrets; divergent-framing-guards blind to material-invalid values; transport≠content surfaces
 - [creds capability axis](project_creds_capability_axis.md) — creds ADR-0004 (PR #457); env×capability; metadata-vs-secret tier; SSH-only; default-allow; 4 deferred follow-ups on agreement
 - [Weightings festival migration](project_weightings_festival_migration.md) — weightings#266 plan posted, Awaiting Decision; out-of-season penalty is the blocker; 5 Qs open; ADR → lucos/docs/adr; #267 raised
-
-## Auto-merge & security checks
-
-- lucos#42: CodeQL race — make CodeQL a required status check (repo settings). lucos_photos check name `Analyze (python)`.
-- Dependabot auto-merge needs `LUCOS_CI_APP_ID`/`LUCOS_CI_PRIVATE_KEY` in the Dependabot secret scope. See [reference_github_dependabot_secrets.md](reference_github_dependabot_secrets.md).
-- Auto-merge caller workflows need ≥ `permissions: contents: read` (`{}` = startup_failure).
-- `.github` smoke tests cover `dependabot-auto-merge` only, not `code-reviewer-auto-merge` (gap lucos#58).
-
-## Infrastructure notes
-
-- CI token migration (lucos_deploy_orb ADR-0001): PAT→App token `lucos-ci`; MUST pass `repositories:["$CIRCLE_PROJECT_REPONAME"]`.
-- CI orb: `build-multiplatform` (amd64+arm64), `build-amd64` (amd64-only).
-- `depends_on` does NOT wait for readiness; Postgres/DB consumers need startup retry.
-- ARM-deployed: media_import, media_linuxplayer, private, router, static_media.
-- Volume restore gotcha: `docker run` new volume skips compose labels — use `docker compose` or apply labels (backups#64).
-- Bulk-deploy waves (Mar 2026): agent execution speed is a liability without verification gates at the same speed.
-- avalon memory pressure (photos_worker + docker_mirror OOM) — resist greenfield memory-hungry workloads there.
 
 ## Per-project pointers (depth in project-details.md)
 
