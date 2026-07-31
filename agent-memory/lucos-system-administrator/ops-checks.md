@@ -29,6 +29,7 @@ certificate_expiry: 2026-07-31
 - The router container is named **`lucos_router`** on both avalon and xwing (not `router` as previously noted — that was wrong).
 - `~/.ssh/known_hosts` is cleared between VM sessions on the current live VM — must run `ssh-keyscan -H avalon.s.l42.eu salvare.s.l42.eu xwing.s.l42.eu >> ~/.ssh/known_hosts` at start of each session. Fixed in lucos_agent_coding_sandbox#36 (merged 2026-03-18) — resolves on next VM rebuild from lima.yaml.
 - **Salvare runs WiFi-only by design** — the room it's in has no Ethernet ports. `eth0` will always show `NO-CARRIER`. Do NOT flag this as a fault. Salvare's network connectivity is entirely via `wlan0`. (Confirmed 2026-05-06, lucos_agent_coding_sandbox#69 closed as not_planned.)
+- **lucos_media_metadata_manager expected `stale-dependabot-prs` red (from ~2026-08-02)**: the CI guard added in #386 (rejecting alpha/beta/rc base image tags, per the 2026-07-31 php-alpha incident) will make Dependabot's re-proposed `php:8.6.0alpha2` bump fail visibly ~48h after it reopens, rather than never opening. That red is *correct* — a genuinely unmergeable PR, by design — not a new incident. Resolution is to close the bump PR, not to debug/re-run the deterministically-failing CI job. See `project_dependabot_prerelease_convention_273.md`.
 
 ## Run Log
 

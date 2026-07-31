@@ -49,6 +49,8 @@
 - [Priority field ≠ severity](feedback-priority-field-vs-severity.md) — a Priority-field override isn't pushback on my severity unless the severity text itself gets diluted or the item goes somewhere that reads as ignored.
 - [Stalled PR missing reviewer request](risk-stalled-pr-missing-reviewer-request.md) — green+approved supervised-repo PR can sit forever if `requested_reviewers` is empty; check this, not just CI status. Caught on tfluke#488 (2026-07-31), ops-checks Check 1 updated to detect it.
 
+- [Silent vs loud guards](lesson-silent-vs-loud-guards.md) — prefer guards that fail loudly; a working suppression/ignore/allowlist rule with no drift detection is a risk even while it's correct. From lucos#274 incident review, 2026-07-31.
+
 ## Topic Files (full detail)
 
 - [Grep verification blind spots](lesson-grep-verification-blind-spots.md) — zero-result grep ≠ proof of absence (multi-line wrapped comments won't match); truncated `head -N` output ≠ full count. Applies to my own source-verification greps, not just the teammate who taught it me.
