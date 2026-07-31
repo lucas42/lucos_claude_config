@@ -41,6 +41,14 @@ Three production breaks in ~7 weeks from container base-image changes. Decision 
 3. Non-HTTP services (backups, media_import, firewall, dns, cron/batch) have no `/_info` — narrower "does it start and stay up" form.
 4. Pre-release tag check kept, but justified as **"a pre-release base image requires a human decision"**, not as a safety net (it misses the mail case). That framing also dissolves the exemption question — repos deliberately tracking pre-releases pin explicitly.
 
+**Closing a Dependabot PR ≠ adding an `ignore` (verified 2026-07-31).** Closing a Dependabot PR makes it reply, verbatim: *"OK, I won't notify you again about this release, but will get in touch when a new version is available."* (observed on lucas42/lucos_eolas#311 and lucas42/lucos_contacts#741). So **closing is a per-version skip that self-reverses on the next release**, while an `ignore` condition is a **standing, silent rule**. Dependabot's own message offers `@dependabot ignore this minor version` as the deliberately *more permanent* option — the tool treats them as different levels of commitment, and this estate has been using the permanent one as though it were the cheap one.
+
+Consequence: any residue from a blocking CI check is recoverable *regardless* of supersession behaviour — sweep-close the blocked PR and it returns on the next version with nothing lost. Prefer restructuring a recommendation so an unverifiable premise stops being load-bearing, over asserting the premise.
+
+**Still unverified (2026-07-31):** whether Dependabot supersession fires when the open PR has a *failing* required check. lucas42/lucos_root#72 (the supersession example) was **green** at head; the two genuinely-red PRs above were closed *manually*, not superseded. No org-wide example found. Don't lean on it.
+
+**Baseline residue:** zero open Dependabot PRs org-wide (checked 2026-07-31) — so a blocking check adds a *visible* new cost, not a rounding error, and no sweep exists yet. Concede that honestly rather than arguing it away.
+
 **Layer choice principle:** prefer the layer that fails *visibly*. Rejected dependabot `ignore` as the estate mechanism — it never opens a PR, and the `lucos_media_import` comment records that its syntax fails silently. A defence you can't see working is one you'll wrongly trust.
 
 **Scale (2026-07-31, approximate — counted from local `origin/main` refs):** ~30 repos with a root `Dockerfile` + docker dependabot ecosystem + auto-merge, plus ~13 more with Dockerfiles in subdirectories (arachne, creds, photos, mail, dns, locations, media_metadata_api, configy, comhra, scheduled_scripts…). So ~43 ship images; 4 have any defence. Rollout should stage by blast radius (user-facing HTTP first) and each stage verified by re-introducing a known-bad bump — we now have three real ones, a better test set than anything invented.
