@@ -1,0 +1,11 @@
+---
+name: browser-verification-pattern
+description: How to do real browser-rendered UI verification headlessly when chromium-cli isn't installed and a live aithne login isn't available
+metadata:
+  type: reference
+---
+
+- **Playwright is pre-installed at `~/ux-tools/node_modules/playwright`** (chromium binaries already downloaded to `~/.cache/ms-playwright/`) — no `chromium-cli` binary exists in this environment despite the `run` skill recommending it first. Run scripts with `NODE_PATH=~/ux-tools/node_modules node script.mjs` (or `cd ~/ux-tools && NODE_PATH=./node_modules node /path/to/script.mjs`) rather than trying to `npm install playwright` fresh each time.
+- **When a page sits behind aithne login and no local aithne dev instance is running** (no way to mint a real `aithne_session` JWT — signing requires aithne's private key, which agents don't have), don't try to fake auth. Instead: render the page's server template to a **static HTML file** with the handful of server-side interpolations (env vars, nonces) substituted by hand, serve it with `python3 -m http.server`, and drive it with Playwright — using `page.route()` to intercept the page's own `fetch()` calls and return canned JSON matching the real API shape. This exercises the *actual* client-side diff (DOM rendering, event wiring, conditional show/hide logic) end-to-end in a real browser, which is what "browser-rendered verification" requires — it just substitutes the network layer instead of the auth layer. Document this substitution honestly in the PR test plan (don't claim a full authenticated click-through happened). Used successfully on lucas42/lucos_media_metadata_manager#334 (PR #392) for a PHP view with inline JS.
+- Companion boot check: still run the real `docker compose up <service>` and `curl` the actual routes unauthenticated — confirms `/_info` 200 and that the auth gate (302 to login) still fires correctly on the routes you touched, which the static-HTML approach above can't verify by itself.
+- See also [[lucos_worlds_page_excerpt_fix]] / the lucos_worlds CSP note for a case where only a *real* browser (not curl, not unit tests) caught a silent failure (`strict-dynamic` CSP blocking inline event handlers).

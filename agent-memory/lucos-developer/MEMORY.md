@@ -1,5 +1,8 @@
 # lucos-developer Memory
 
+## UI verification (no chromium-cli, no live aithne login)
+- [Static-render + Playwright substitute pattern](browser_verification_pattern.md) — `~/ux-tools/node_modules/playwright` is pre-installed; mock fetch() via `page.route()` on a hand-substituted static HTML render when auth can't be faked
+
 ## lucos_creds
 - [Structure, SSH command syntax, deploy-snapshot gotcha](lucos_creds.md) — CRITICAL: `LUCOS_DEPLOY_ENV_BASE64` silently overwrites live store on redeploy
 
