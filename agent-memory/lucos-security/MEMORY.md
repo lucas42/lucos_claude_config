@@ -50,6 +50,7 @@
 - [Stalled PR missing reviewer request](risk-stalled-pr-missing-reviewer-request.md) — green+approved supervised-repo PR can sit forever if `requested_reviewers` is empty; check this, not just CI status. Caught on tfluke#488 (2026-07-31), ops-checks Check 1 updated to detect it.
 
 - [Silent vs loud guards](lesson-silent-vs-loud-guards.md) — prefer guards that fail loudly; a working suppression/ignore/allowlist rule with no drift detection is a risk even while it's correct. From lucos#274 incident review, 2026-07-31.
+- [No raw git on shared ~/.claude checkout](feedback-shared-claude-checkout-no-raw-git.md) — `commit-claude-main` "nothing to commit" is success, not a prompt to `git checkout`/`git pull --rebase`; those are destructive on a checkout that's routinely hundreds of commits behind origin.
 
 ## Topic Files (full detail)
 
