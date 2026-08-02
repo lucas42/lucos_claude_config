@@ -114,7 +114,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 
 ## Standing rules — process / GitHub
 - [Ticket body is the spec — on design change AND new criteria](feedback_ticket_body_is_the_spec.md) — comment ≠ spec; re-fetch body before claiming it.
-- [Verify GitHub state before citing it](feedback_refetch_state_before_writing_final_artifact.md) — issue state before citing a #N.
+- [Verify GitHub state AND identity before citing](feedback_refetch_state_before_writing_final_artifact.md) — a fake `#issuecomment-NNN` never 404s.
 - [Verify closed-issue disposition (body+closing comment) before citing as preference evidence](feedback_verify_closed_issue_disposition.md).
 - [Check recent fixes before filing flap-investigation issues](feedback_check_recent_fixes_before_filing.md) — pre-fix alerts persist in lookback for days.
 - [Finalize + push before dispatching to an auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) — approval auto-merges the reviewed SHA.
