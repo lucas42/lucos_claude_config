@@ -10,8 +10,8 @@ external_deps: 2026-07-05
 
 lucos_schedule_tracker: 2026-07-14
 lucos_media_weightings: 2026-07-13
-lucos_photos_worker: 2026-07-01
-lucos_arachne_explore: 2026-07-01
+lucos_photos_worker: 2026-08-02
+lucos_arachne_explore: 2026-08-02
 lucos_arachne_web: 2026-07-02
 lucos_backups: 2026-07-18
 lucos_repos_app: 2026-07-02
@@ -33,12 +33,12 @@ lucos_locations_mosquitto: 2026-07-19
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-07-27
 lucos_locations_oauth2_proxy: 2026-07-31
-lucos_mail_smtp: 2026-07-13
+lucos_mail_smtp: 2026-08-02
 lucos_photos_api: 2026-07-19
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
-lucos_mail_docs: 2026-07-18
+lucos_mail_docs: 2026-08-02
 lucos_photos_postgres: 2026-07-27
 lucos_photos_redis: 2026-07-18
 lucos_scenes: 2026-07-27
@@ -46,14 +46,14 @@ lukeblaney_co_uk: 2026-07-27
 lucos_media_manager: 2026-07-14
 lucos_media_metadata_api: 2026-07-23
 lucos_monitoring: 2026-07-14
-lucos_media_seinn: 2026-07-01
-tfluke: 2026-07-01
+lucos_media_seinn: 2026-08-02
+tfluke: 2026-08-02
 lucos_media_metadata_api_exporter: 2026-07-15
 lucos_media_metadata_manager: 2026-07-15
 lucos_notes: 2026-07-15
 lucos_root_app: 2026-07-19
 lucos_router: 2026-07-14
-semweb: 2026-07-19
+semweb: 2026-08-02
 lucos_time: 2026-07-27
 lucos_aithne: 2026-07-31
 lucos_arachne_mcp: 2026-07-19
@@ -65,7 +65,7 @@ lucos_docker_mirror_registry: 2026-07-09
 lucos_worlds_web: 2026-07-09
 lucos_worlds_db: 2026-07-31
 lucos_docker_mirror_info: 2026-07-13
-lucos_firewall: 2026-07-18
+lucos_firewall: 2026-08-02
 
 ## SSH Hostname Note
 
@@ -116,3 +116,9 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-07-31 Check 4 (5 containers, chosen as **oldest-reviewed that still had real log history** after the burst — a deliberate deviation from pure oldest-first, since a wiped buffer can't return a positive): lucos_contacts_db (42 lines, **0** errors, 23d), lucos_eolas_db (45 lines, **0** errors), lucos_worlds_db (21 lines, all the known-benign linuxserver TCP DB-readiness aborted-connection probes), lucos_aithne (488 lines since 07-28, **0** errors), lucos_locations_oauth2_proxy (238 lines since 07-10, **0** errors over 3 weeks — the 07-10 crash-loop remains fully resolved). 0 overdue @60d; the four @30d deferred as above.
 - 2026-07-31: Monthly 5/6/7 NOT due (last 2026-07-05, 26d; due ~08-05).
 - 2026-07-31 **⚠️ CORRECTION to this run's Check-2/Check-3 locations entry (and to 07-15/07-19/07-23/07-27)**: lucas42 asked for a ticket on the "recurring client-side `cheetah` publishing failure". Before filing I checked the claim against the recorder store — **and the premise collapsed**. `location-freshness` alerts are largely FALSE. Verified from `/store/rec/lucas/viper/2026-07.rec` using each record's `created_at` (recorder receive time, NOT the leading `.rec` column which is the fix `tst`): 07-15 alert reported 30.0h when the newest held fix was **47 min** old; 07-28→29 alert reported 30.0h→49.1h when the newest held fix was **3h29m** old and **18 more fixes arrived live during the alert window**; only the 07-26 alert was real (one genuine 32.4h stationary spell). July's true gap distribution for the device is **6–23h** (ordinary overnight/idle) with exactly ONE >30h gap — so the "worsening trend 31h→18h→1min→32h→49h" I reported was an artefact of trusting the debug string. Signature of the bug: `max(tst)` pins and then tracks wall-clock. Mechanism NOT established (check reads `/api/0/last` = recorder's `last` *cache*, a different path from the `.rec` store; **undiagnosable until #103 unbuffers info_server.py stdout**). **Filed lucos_locations#105** with the disproof, a verified alternative source (`/api/0/locations?...&limit=1&sort=desc`, carries both `isotst` and `isorcv`), the `tst`-vs-ingestion-clock design point, and an explicit "Correction to prior reports" section. Lesson saved as [[feedback_verify_check_claim_against_underlying_store]]: a check's debug string is a claim, repetition is not corroboration, and "it's the client / outside our control" is the conclusion that needs the MOST scrutiny because it ends the investigation.
+- 2026-08-02 ops run: Monitoring **55/55 systems and 213/213 individual checks healthy** (0 failing/0 unknown), verified live at start AND end of run. Container count **57** on avalon. Check 2 (Loganne, fetched 411 events 07-26→08-02 = true 7d): 21 alert/recovery events, **20 of them pre-date the 07-31 run and were already triaged**. Only new one: **lucos_locations `location-freshness` 07-31 15:39:22→15:40:22 (1 poll)** — and it is a DIFFERENT debug string from the #105 staleness-claim family: `"Failed to fetch last recorded location data from the recorder"`, i.e. the fetch itself failed. Corroborated INDEPENDENTLY of the check's own claim, from the otfrontend access log: `/_info` was **835 bytes** at 15:39:22 vs 762/761 either side (+73 bytes = the failingChecks payload). And the diagnostic is still missing — otfrontend `StartedAt=07-31 07:25:20 restarts=0` so the buffer fully covers it, yet the only non-access-log line in the whole container is `Adding password for user lucas`. Textbook second confirmation of **lucos_locations#103** (info_server.py block-buffered stdout, Ready/Medium/owner=lucos-site-reliability) → **commented on #103**, no new file. ZERO alert/recovery events in the ~42h since. Check 3 (30d, range 07-06→08-02, 1976 events): **0 incident reports needed** — every >30min entry pre-triaged (07-16 22:39→07-17 00:07 CircleCI-API estate storm ~50 systems; 07-19→07-21 configy_sync key corruption, **report exists** `docs/incidents/2026-07-19-configy-sync-key-corruption.md`; backups 07-07 worlds bootstrap; repos 07-10 #465 + 07-30 #478; locations 07-15/07-26/07-28 (#91/#105); lukeblaney_co_uk 07-14 CI-only). `:_circleci` UNRECOVERED lines remain the known humanReadable-parsing artifact. Monthly 5/6/7 NOT due (last 2026-07-05, 28d; due ~08-05).
+- 2026-08-02 Check 4 (8 containers — deliberately mixed: 4 with genuine multi-week history after the 07-31 estate burst, plus the four 07-01 stragglers deferred last run, reviewed against their ~2-day post-burst buffers rather than deferred a second time). CLEAN/benign: lucos_firewall (66,510 lines, **0** err-ish since 07-18), semweb (1931 = 100% `curl/8.7.1` scanner 404s probing error-logs/.env), lucos_mail_docs (8 = same scanner class), lucos_arachne_explore (5 lines, 0 errors), tfluke (142 = the known Scrapy-bot `Fetching National Rail data not yet implemented` route). **THREE NEW FILES, all from Check 4.**
+- 2026-08-02 FINDING 1 → **lucas42/lucos_monitoring#294** (suggest Medium; repo had 0 open issues before, 111 total — positive control run after the empty search). **Every alert email lucos_monitoring sends is missing a `Message-ID:` header** (RFC 5322 non-compliant) and **Gmail has already bounced 2 of them, silently**. Parsed `lucos_mail_smtp` postfix log per queue-id since 07-13: 468 queue-ids with a message-id recorded, **466 EMPTY (`message-id=<>`) — all 466 from monitoring@l42.eu — 464 sent, 2 bounced**; only 2 non-empty. Bounces 07-20 20:19:01Z + 20:24:01Z: `dsn=5.7.1 550-5.7.1 Messages missing a valid Message-ID header are not accepted ... RFC 5322 ... - gsmtp`. Cross-referenced to Loganne, those two are the `lucos_docker_health` **recovery at 20:18Z and a fresh alert at 20:23Z — inside the configy_sync incident window** (sizes match: 658B recovery vs 1035B alert). Root cause verified from source: `src/email.erl sendEmail/2` composes only Subject/From/To/Date; relay does not compensate (`docker exec lucos_mail_smtp postconf always_add_missing_headers` → `no`, the postfix default). Proof it's the client not the relay: postfix's OWN bounce carries `message-id=<20260720201901.A604B4500095@avalon.s.l42.eu>`. **Silent by construction**: postfix accepted (queue-id assigned, 2xx to gen_smtp) so the `{error, send, {permanent_failure,...}}` clause never fired; the DSN went back to monitoring@l42.eu and Gmail took it with **`250 2.0.0 OK DMARC:Quarantine`** — the bounce notification went to spam. Second RFC-5322 bug on the adjacent line, flagged in the issue: `Date:` uses `calendar:system_time_to_rfc3339/1` (RFC **3339**), not RFC 5322 date format. Alternative/backstop noted but not filed separately: `always_add_missing_headers = yes` in lucos_mail.
+- 2026-08-02 FINDING 2 → **lucas42/lucos_photos#500** (suggest Medium). `lucos_photos_worker` **shares SQLAlchemy pooled psycopg2 connections across `fork()`** → `psycopg2.OperationalError: insufficient data in "D" message / lost synchronization with server: got message type "0", length 775041074` on 07-31 17:08:30. Timeline proves the collision: 30.148 work horse forked for `generate_profile_picture`; 30.767 the **parent's sweep thread** ran `cluster_faces()` (DB); 30.902 the child desynced. Mechanism verified from source — `worker/app/main.py` starts `run_sweep_loop` as a parent daemon thread then calls `worker.work(with_scheduler=True)` (the file's own faulthandler comment documents "Worker.work() forks a work horse per job"), and `shared/lucos_photos_common/database.py` keeps `_engine` in a module global with default QueuePool, so `db.close()` returns a LIVE socket to the pool that fork then duplicates. `docker top` confirms parent+long-lived child. `pool_pre_ping`/`pool_recycle` do NOT help (socket is alive; timer isn't a fork barrier). **Threads are not the bug — QueuePool is thread-safe; it is specifically the fork.** RQ retried 10s later and the job succeeded, but the same shared socket can equally hand one process the other's rows with NO exception. Fix = one line: `os.register_at_fork(after_in_child=lambda: _engine.dispose(close=False))`.
+- 2026-08-02 FINDING 3 → **lucas42/lucos_media_manager#283** (suggest Low; repo had 0 open issues before). **A 24-second TOTAL stall of lucos_media_manager, 2026-08-01 20:42:51Z→20:43:15Z**, with zero diagnostics. Established by extracting every `ceol.l42.eu` timestamp from the router access log — **59,699 requests over 50.4h (07-31 07:30:02 → 08-02 09:51:55), exactly ONE inter-request gap ≥12s**, and that's it. **Service-specific, not host/router**: total router throughput across all vhosts ran 1–5 req/s in every single second of the window (coincidence hypothesis killed with evidence). media_manager itself: `StartedAt 07-31 07:29:41 restarts=0 oom=false healthy`, RSS 143.8MiB, no container memory limit, and **zero log lines** 20:40–20:46. Runs as `java -cp manager.jar Manager` — **no JVM flags at all**, no GC/safepoint logging, no thread-dump-on-signal. Ask = the logging (`-Xlog:gc*,safepoint:stdout:time,level,tags`), NOT a fix — mechanism not established. Unverified lead recorded in the issue and explicitly labelled as such: `Status.waitForChange()` (Status.java:76) computes `this.hashCode()` (walks playlist/deviceList/collectionList) INSIDE `synchronized (changeLock)`, which `notifyChange()` also needs.
+- 2026-08-02 seinn#583 corroboration (commented, no new file): 4 more `media-manager` probe failures since the 07-31 redeploy — 07-31 17:18:04 (822ms), 07-31 19:23:40 (800ms), 08-01 20:43:00 (**1637ms**, i.e. the abort fired at ~2x its 800ms deadline), 08-01 20:43:04 (800ms). None crossed `failThreshold: 2` so Loganne carries NOTHING about them — the numbers exist only because v3.js:68 console.warns them. **The caveat I left in #583's body ("proves media_manager responded, not that it responded fast") is now CLOSED**: the 08-01 pair sits inside the 24s router gap ⇒ it didn't respond at all. **TWO DISTINCT MODES, don't conflate**: (a) 07-31 17:18/19:23 = slow-but-successful (>800ms, no router gap); (b) 08-01 20:43 = total stall. Probe correct in both.

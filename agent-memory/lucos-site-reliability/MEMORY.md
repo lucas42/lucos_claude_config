@@ -94,6 +94,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Bare "aborted due to timeout"? Probe discarded the number](pattern_probe_measures_then_discards_latency.md) — read source.
 - [Sandbox checkouts months-stale + undeployed repos](pattern_stale_sandbox_checkouts.md) — verify vs `git show origin/main:<path>`…
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
+- [Router gap analysis: stalled vs slow vs host](pattern_router_log_gap_analysis.md) — vhost gaps + estate-wide control kills "host blip".
 - [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs…
 - [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before…
 - [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead.
@@ -107,6 +108,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [The `url` field of an event is an identifier, not an API path](pattern_url_field_is_not_an_api_path.md) — extract ID, use own path conventions.
 - [Treat empty tool output as unknown, never data](feedback_treat_empty_tool_output_as_unknown.md) — re-run/wait before asserting.
 - [A DB `ERROR:` line is not an app failure](pattern_db_error_line_is_not_app_failure.md) — find the `except IntegrityError` first.
+- [fork() shares the DB pool → Postgres wire desync](pattern_fork_shares_db_connection_pool.md) — "lost synchronization"; pre_ping/recycle don't help.
 - [Healthcheck depth varies: `Healthy` ≠ end-to-end working](feedback_healthcheck_depth_varies.md) — read the healthcheck.test line.
 - [When a fix to live state doesn't take, ask whether deploy reads live state or a snapshot](feedback_snapshot_indirection.md).
 
@@ -144,6 +146,9 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Silent fallbacks are a security risk, not just operational](feedback_silent_fallbacks_are_a_security_risk.md).
 - [Don't game API contracts to work around design issues](feedback_dont_game_api_contracts.md) — fix at source.
 - [Keep the docker.l42.eu mirror in the orb](feedback_keep_docker_mirror.md) — fix mirror-side bugs at the mirror layer.
+
+## Mail
+- [Relay 2xx is NOT delivery](pattern_relay_accepted_mail_still_silently_lost.md) — Gmail bounces after, DSN quarantined; check lucos_mail_smtp per queue-id.
 
 ## Loganne (webhook errors never self-heal)
 - [Self-verify cred/deploy events via loganne](reference_loganne_read_self_verify.md) — bearer KEY_LUCOS_LOGANNE; /events filters…
