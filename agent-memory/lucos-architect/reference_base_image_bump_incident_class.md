@@ -47,7 +47,9 @@ Consequence: any residue from a blocking CI check is recoverable *regardless* of
 
 **Still unverified (2026-07-31):** whether Dependabot supersession fires when the open PR has a *failing* required check. lucas42/lucos_root#72 (the supersession example) was **green** at head; the two genuinely-red PRs above were closed *manually*, not superseded. No org-wide example found. Don't lean on it.
 
-**Baseline residue:** zero open Dependabot PRs org-wide (checked 2026-07-31) — so a blocking check adds a *visible* new cost, not a rounding error, and no sweep exists yet. Concede that honestly rather than arguing it away.
+**Baseline residue:** zero open Dependabot PRs org-wide (checked 2026-07-31, re-verified 2026-08-02) — so a blocking check adds a *visible* new cost, not a rounding error, and no sweep exists yet. Concede that honestly rather than arguing it away.
+
+**Unverified, 2026-08-02:** the coordinator predicted (issue comment 5143932531) that the mmm CI guard would make Dependabot re-propose the php alpha bump within ~48h, tripping `stale-dependabot-prs`. Two daily runs later, no such PR exists (`pulls?state=all` on mmm shows nothing after #384, the merged-then-reverted bad bump). Possible explanations: Dependabot doesn't re-propose a version whose PR it already opened+merged even after a revert, or it's just timing. If the first holds, the residue cost of the CI layer is smaller still — but don't lean on it without evidence.
 
 **Layer choice principle:** prefer the layer that fails *visibly*. Rejected dependabot `ignore` as the estate mechanism — it never opens a PR, and the `lucos_media_import` comment records that its syntax fails silently. A defence you can't see working is one you'll wrongly trust.
 
