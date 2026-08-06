@@ -23,6 +23,7 @@
 ## Review Patterns — Common Mistakes to Avoid
 
 - [`head_sha` on check-runs](review_headsha_checkruns.md) — read the field directly, never alias from `.pull_requests[0].head.sha` (null with no PR cross-ref); false APPROVE on seinn PR #460
+- [`mergeable_state: blocked` + green REST check-runs ≠ satisfied gate](review_mergeable_state_rollup_mismatch.md) — verify via GraphQL `statusCheckRollup` (Criterion 8) before calling a block "stale"; two agents agreeing from the same wrong endpoint isn't verification (lucos_worlds#72, 2026-08-06)
 - [CodeQL false-positive suppression](review_codeql_suppression.md) — use the config-file exclusion or Security-UI dismissal, not inline `// codeql[]` comments (silently inert without action config)
 - [Verify absence before requesting changes](review_verify_absence_before_requesting.md) — read the raw file/full JS source, not just the diff (can be stale); shadow-DOM fixes often live in JS handlers, not CSS
 - [Post review immediately, check CI after](review_post_then_check_ci.md) — waiting for CI first risks a race against a developer's mid-CI push (lucos_configy PR #64)
