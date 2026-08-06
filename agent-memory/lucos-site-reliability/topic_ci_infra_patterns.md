@@ -80,6 +80,8 @@ for url, s in data['systems'].items():
 - Heredoc `<<'ENDBODY'` for bodies with newlines/backticks.
 - `@dependabot` commands require push access — no agent app has it; escalate to lucas42.
 - `lucos` repo has auto-merge — don't tell lucas42 to manually merge.
+- **I CAN read `repos/lucas42/{repo}/branches/{branch}/protection`** — other agent Apps (confirmed: `lucos-architect`) get 403 "Resource not accessible by integration" and may assume it's universal and route to `lucos-system-administrator`. It isn't; branch-protection reads should come to me. Volunteer this when a teammate says they can't check required checks. (2026-08-06, lucos_worlds#67.)
+- Reading protection is how you settle "is X *really* a required check?" — `required_status_checks.contexts` lists them, and `required_pull_request_reviews: null` means protection imposes **no** review requirement (so "dismiss stale reviews" worries are moot, and approvals gate only via the auto-merge workflow).
 
 ## Loganne webhook retry ops
 - Loganne auto-retries a failed webhook only ONCE (`src/webhooks.js`) then permanent-fails; a >~20s downstream outage strands events `status:failure` → `webhook-error-rate` red forever. Restart does NOT clear (filesystem-persisted, no retry-on-boot).
