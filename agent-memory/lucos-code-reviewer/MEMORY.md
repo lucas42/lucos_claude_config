@@ -61,3 +61,4 @@
 - [Estate DNS failure pattern in CI](feedback_estate_dns_ci_pattern.md) — simultaneous GitHub Actions + CircleCI `*.l42.eu` DNS failure → authoritative outage, not a PR defect; configy silent fail-closed → .github#68
 - [GitHub Actions outage vs. required-check design gap](review_github_actions_outage_pattern.md) — zero check-runs estate-wide + open githubstatus.com incident = outage; check before proposing to drop a required check (lucos_worlds#67, 2026-08-06)
 - [Branch protection: use `/branches/{branch}`, not `/branches/{branch}/protection`](review_branch_protection_endpoint.md) — the latter 403s and produced a false "only sysadmin can read this" estate myth
+- [Review `event=` must match the body's stated intent](feedback_review_event_must_match_body.md) — hedge/hold language in the body ⇒ COMMENT not APPROVE; dismiss via `/reviews/{id}/dismissals` if caught late (lucos_worlds#68, 2026-08-06)
