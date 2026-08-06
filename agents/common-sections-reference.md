@@ -25,6 +25,19 @@ For an end-to-end description of the three-layer model and where new persona/wor
 | Scope of Work | `references/scope-of-work.md` | All personas EXCEPT the coordinator | The dispatch contract — only work on assigned issues, drive-by findings get raised as new issues, triage notifications are informational. The coordinator IS the dispatcher and is not subject to this contract. |
 | Committing ~/.claude Changes | included within `references/agent-github-identity.md` (under the heading "Committing `~/.claude` changes") | All personas EXCEPT the coordinator | The coordinator has its own `~/.claude` maintenance instructions. |
 | Teammate Quote Verification | `references/teammate-quote-verification.md` | All personas including the coordinator | Fires when about to quote another teammate verbatim with attribution. Does NOT fire for paraphrase or outcome-reporting. See the reference for the full rule and `verify-teammate-quote` script usage. |
+
+## No inline lesson anecdotes in instruction files
+
+**Applies to every persona, skill, workflow and reference file — this is a convention lucas42 has stated, not a coordinator-only habit.**
+
+When adding or strengthening a rule in any standing-instruction file, the file edit carries **rule + why + how-to-apply, and nothing more**. The incident that prompted it goes in the `commit-claude-main` message, where git preserves it permanently. Do **not** write a `(Lesson from YYYY-MM-DD: …)` / `(Confirmed …)` / `(Observed …)` parenthetical into the file itself.
+
+The tell is writing a parenthetical that opens with a date or an issue reference and recounts what went wrong. If you catch yourself doing it, cut it and move it to the commit message.
+
+**Why it matters more than it looks:** these files suffer attention degradation as they grow, so an anecdote justifying one rule pushes every rule below it deeper into the file and makes *those* rules likelier to be skipped. The cost is paid by rules other than the one being documented.
+
+Existing inline lessons are legacy — do not proactively sweep them, but remove them opportunistically when editing nearby content.
+
 ## Persona-specific additions (NOT drift)
 
 The following are intentional persona-specific sections or additions that are not in the references and must not be removed during audit:
