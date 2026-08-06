@@ -71,6 +71,30 @@ The wasted attempt does fail the workflow run rather than skipping silently — 
 
 ---
 
+## What the merge gate actually reads
+
+**`GET /commits/{sha}/check-runs` is NOT the surface branch protection gates on.** A check can be `completed`/`success` there — correct name, correct `app_id`, even carrying `pull_requests: [N]` — and still not satisfy the gate. To determine whether a PR can merge, use GraphQL:
+
+```graphql
+pullRequest(number: N) {
+  mergeStateStatus          # BLOCKED / CLEAN — the gating field
+  reviewDecision
+  commits(last: 1) { nodes { commit { statusCheckRollup {
+    state
+    contexts(first: 30) { nodes {
+      ... on CheckRun { name conclusion }
+      ... on StatusContext { context state }
+    } }
+  } } } }
+}
+```
+
+Three traps, all hit in one evening (2026-08-06, `lucos_worlds#72`):
+
+- **`mergeable` is not the gating field.** `mergeable: MERGEABLE` means "no merge conflict", not "allowed to merge". `mergeStateStatus` is the one that reflects branch protection.
+- **`statusCheckRollup.state: SUCCESS` is not proof a required context is present.** The rollup aggregates over the contexts *in* it, so a required context that is entirely **absent cannot make it fail** — it simply isn't counted. **Enumerate `contexts` and look for the required name**; never infer membership from the summary. Cross-check against `required_status_checks.contexts` (see the branch-protection entry above), and beware a similarly-named non-required check standing in for the required one (`CodeQL` vs the required `Analyze (python)`).
+- **A `workflow_dispatch`-triggered run may not join the rollup** even though it posts a check-run and the run is linked to the PR. Do not reach for `workflow_dispatch` expecting it to unblock a merge — it makes a check *visible*, not necessarily *counted*.
+
 ## After a PR is Created
 
 Implementation teammates are responsible for requesting their own code review after opening a PR. The handover is peer-to-peer: SendMessage `lucos-code-reviewer` directly, following the process in [`../pr-review-loop.md`](../pr-review-loop.md). The dispatcher does not orchestrate this. Do not consider an implementation task complete until the review loop has finished.
