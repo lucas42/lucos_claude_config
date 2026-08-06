@@ -32,6 +32,8 @@ done
 
 If any teammate's response is unverified, **do not start Phase 2** — wait for the real response (or, if a teammate appears stuck, nudge them via SendMessage and then re-verify).
 
+**Idle pings are NOT evidence a teammate has stalled, and an ops-check run is long — do not nudge off them.** A teammate emits `idle_notification`s between turns while still working through a multi-check run, so "idled without a manifest" is the normal mid-run appearance, not a stall. Before any nudge, probe their transcript for recent activity (`verify-teammate-quote --sender <persona> --quote "ops check" --scope today` and read the timestamps): **recent in-run activity means they are working — do not nudge**, no matter how many idle pings have arrived. Absence of a *later* check's content (CodeQL, backups, monitoring) is progress-so-far, not a stall. Only nudge when the transcript shows no activity for a sustained period. A premature nudge crosses with the in-flight report and costs the teammate a full duplicate re-send.
+
 ## Phase 2: Triage and Summary (sequential — after Phase 1 completes)
 
 Once Phase 1 is done **and verified**, invoke the `/triage` skill using the Skill tool. The triage skill handles issue discovery, inline agent consultation, project board updates, board verification, and the summary for the user. Do not duplicate any of that work here.
