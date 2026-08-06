@@ -11,6 +11,17 @@ When writing a "follow-up actions" table, an incident-report timeline row, a com
 
 This bit me 2026-05-28 on the xwing incident's TBD-fill PR #200: I wrote "lucas42/lucos#199 — Draft — awaiting lucas42 sign-off" into the Follow-up Actions row 5 based on architect's SendMessage from ~30 minutes earlier. The architect-message was accurate at the time it was sent; by the time I shipped #200, #199 had been signed off, marked ready, reviewed, and merged at 18:47:18Z — ~6 minutes before I opened #200 at ~18:53Z. I then repeated the stale "draft awaiting sign-off" framing in my completion summary to team-lead at ~19:08Z, ~21 minutes after the merge. team-lead caught the drift.
 
+## A COMPLETENESS claim must be enumerated from the source, never assembled from what you were told
+
+"All the PRs merged", "every affected service is back", "nothing else is outstanding" — the entire content of these is **completeness**, so the one thing that can't be secondhand is the *list*.
+
+**2026-08-06:** I declared an incident resolved with "all four PRs that needed to merge, merged". My list came from teammates' SendMessages. `lucos_worlds#74` was opened by Dependabot mid-incident, mentioned by nobody, and therefore absent from my table — I then asserted completeness off that table as though it were an enumeration. team-lead found it. (It was fine, so the claim held by luck rather than method.)
+
+**How to apply:**
+- Before any "all/every/nothing else" claim, **query the set**: `pulls?state=open`, `issues?state=open`, the full `/systems` list — not the items you can recall or were told about.
+- **Absence from a list is not an outcome.** A PR leaving `state=open` may have been *closed*, not merged. Confirm `merged=true` per item (see the identity/state rules above).
+- **Instrument the set, not the members.** I first armed a monitor on "#75" and swapped it for "the open-PR list until empty". The first can only ever confirm what I already believed; the second catches the item nobody told me about. Prefer watching a *query* over watching a *list of known items*.
+
 ## Scope is wider than "final artifacts": re-fetch at the moment of USE, not of first learning
 
 The rule above is written for artifacts, but the same decay hits **any claim you make to a teammate mid-conversation** — and that's the more frequent case, because it feels like recall rather than assertion.
