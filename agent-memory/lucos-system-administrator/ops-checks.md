@@ -16,6 +16,10 @@ backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
 ```
 
+## Pending follow-ups (check on next run regardless of trigger)
+
+- **lucos_creds#472/#484 convention-check re-run**: both PRs' `convention-check` GitHub Actions runs got `cancelled` during the 2026-08-06 GitHub Actions platform incident (status.github.com qcvjkzcs7j74, opened 15:22 UTC, still `investigating`/`major_outage` at 18:30 UTC — stood the watch-monitor down per team-lead at the 3h mark, not worth a 2-min poll loop for a cosmetic check). Confirmed non-blocking: `convention-check` is not in `required_status_checks.contexts` for lucos_creds main (`ci/circleci: test`, `Analyze (go)`, `ci/circleci: build` — all green on both heads); both PRs approved and `mergeable: true`, awaiting lucas42's sign-off on this supervised repo. Once the incident is confirmed resolved (check https://www.githubstatus.com/api/v2/incidents/unresolved.json for qcvjkzcs7j74), re-run: `gh-as-agent repos/lucas42/lucos_creds/actions/runs/31123913329/rerun-failed-jobs` (#484) and the equivalent for #472's convention-check run (re-fetch its latest run ID — head sha was c0a3d9d5dc20d88fe4b2c571536c72ab76a92ae8 as of 2026-08-06, may have moved). Purely cosmetic — do not treat as urgent, but don't lose track of it either.
+
 ## Decommissioned services
 
 - **lucos_comhra** — decommissioned 2026-05-21 per lucos#171. Containers stopped, repo archived. References in the run log below are historical only; no action needed.
