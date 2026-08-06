@@ -19,7 +19,11 @@ catch (error) {
 
 The number you need **already exists**. It goes to `console.warn` → `docker logs` → erased at the next redeploy. Meanwhile the Loganne alert, which is retained indefinitely, carries only the exception string. Since the estate redeploys roughly daily, any probe measurement has a shelf life shorter than the gap between an alert firing and an ops check noticing it.
 
-**Confirmed instances:** `lucos_arachne` `search` (#735, 3 occurrences 07-02/07-13/07-30, evidence erased all three times) and `lucos_media_seinn` `media-manager` (#583, 07-30).
+**Confirmed instances (3, no shared code — 3 separate fixes):** `lucos_arachne` `search` (#735, 3 occurrences 07-02/07-13/07-30, evidence erased all three times); `lucos_media_seinn` `media-manager` (#583, 07-30); `lucos_time` `media` (#348, 07-01 + 08-04).
+
+**A second sub-shape — the discarded `error.cause`.** #348 is not about elapsed-ms: Node/undici raises a bare `TypeError: fetch failed` whose actual reason (`ENOTFOUND` / `ECONNREFUSED` / `UND_ERR_CONNECT_TIMEOUT` / cert errors — *four different owners*) sits in **`error.cause`**, and `debug = error.message` throws it away. So when you see a bare `"fetch failed"`, the fix is `error.cause.code`, not a timer. Useful corollary: a fired `AbortSignal.timeout()` raises a **distinguishable** `TimeoutError`, so `"fetch failed"` positively indicates a network-layer failure rather than a too-tight budget — which both supports "the alert was real" and means **elapsed-ms adds little once `cause` is included** (team-lead scoped it out of #348 on exactly this reasoning, 2026-08-06 — agreed).
+
+**Standing decision on a spec change (2026-08-06):** I flagged, but deliberately did NOT propose, adding guidance to `references/info-endpoint-spec.md` about what belongs in `debug`. Reasoning: a doc line has near-zero cost but genuinely uncertain preventive value (it only helps someone who reads it *while writing a check*) and fixes none of the three existing instances. Team-lead correctly kept it at the confidence I gave it and out of #348's scope. **Trigger to revisit: a fourth independent instance** — at that point the pattern is systemic rather than coincidental and should be raised on its own merits, not as scope on someone else's ticket.
 
 ## How to work one of these
 
