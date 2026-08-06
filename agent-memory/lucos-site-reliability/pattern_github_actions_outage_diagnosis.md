@@ -55,6 +55,18 @@ Don't attempt remediation. Closing/reopening PRs and empty-commit pushes during 
 
 ⚠️ **Never relax branch protection to unstick a PR during an outage.** A missing required check reads exactly like a structural "this check can never fire on this diff shape" gap, and the obvious-looking remedy — drop the required context — is a *permanent* security regression traded for a *temporary* third-party outage. Before believing any "can never fire" claim, disconfirm it: read the workflow's `on:` block for real `paths:` filters, then find a historical SHA with a similarly-shaped diff and check `/commits/{sha}/check-runs` for that context concluding `success`. One counter-example kills the hypothesis.
 
+### ⚠️ Read the incident BODY, not just the component status — throttling is probabilistic
+
+The component status says `major_outage`; the *body* says how. On 2026-08-06 the 20:34Z update read: **"we are processing approximately 15% of webhooks"** and **"of jobs queued, approximately 65% are succeeding"** (up from 30-40%). Consequences, all of which change how you act:
+
+- **Absence of runs is probabilistic, not binary.** At 15% delivery, a low-volume estate goes hours with nothing by chance. Don't treat "last run at HH:MM" as a hard cutoff or reason about a sharp onset — I did, and it's a throttle, not a stop.
+- **This is why local hypotheses look so plausible.** Real `synchronize`/`opened` events are *emitted* and silently *not delivered*, which from the runs list is indistinguishable from "this trigger doesn't fire for this PR". The evidence genuinely points at the local theory.
+- **`workflow_dispatch` is a direct API call, not a webhook-delivered event**, so it routes around the throttled path. This makes it the *right* re-trigger mechanism during throttling, not merely a convenient one — while "just push something to wake it up" reaches for precisely the mechanism GitHub has said is throttled.
+- **An approval is also a webhook event.** At 15% delivery a single APPROVE has ~1-in-7 odds of reaching `code-reviewer-auto-merge.yml`. Plan an approve → *verify the run appeared* → re-approve loop, and warn the reviewer that a repeat ping means a dropped webhook, not a bad review.
+- **<100% job success means a started run may fail or hang** ("runners being assigned jobs that are no longer valid"). Verify the check is **present and green on the SHA** — never infer it from a dispatch call returning 200.
+
+Set the recovery Monitor to fire on `operational` only, so it doesn't wake you into a partial recovery where everything needs retrying.
+
 ### Re-triggering after recovery — events do NOT replay
 
 Runs missed during the outage are gone; the original `pull_request` / `pull_request_review` events never redeliver. Per stuck PR, by which trigger it needs:
