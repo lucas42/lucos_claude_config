@@ -12,6 +12,8 @@ metadata:
 - Auto-merge **caller workflows need at least `permissions: contents: read`** — an empty `{}` yields `startup_failure`.
 - The `lucas42/.github` smoke tests cover `dependabot-auto-merge` only, **not** `code-reviewer-auto-merge` (gap tracked as lucas42/lucos#58).
 
+- **On a SUPERVISED repo, amending an approved-but-unmerged PR is cheap — don't let "it would reset the approvals" veto a correction.** The bot approvals are not the merge gate there (lucas42's are), so the only cost is a bot re-review loop, measured at **~3 minutes** on `lucos_creds` PRs #472/#484 (push → both bots re-approved). A long wait on such a PR is the *human* queue, which a re-review doesn't touch. Check two things before deciding: has lucas42 reviewed yet (if not, nothing of his is invalidated and he reads the better document), and is the repo supervised (`check-unsupervised`). An unmerged ADR is the cheapest moment there will ever be to fix a decision record. A push *does* dismiss existing approvals — verified via `mergeable_state` flipping `clean` → `blocked` — so always re-request review after.
+
 See also [[base-image-bump-incident-class]] — auto-merged base-image bumps are the estate's most repeated production-break class.
 
 ## Infrastructure notes
