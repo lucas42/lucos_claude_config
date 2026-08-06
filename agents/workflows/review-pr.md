@@ -36,6 +36,7 @@ Do not rely on memory of prior reviews — each agent invocation starts fresh.
 - Identify linked issues in the PR body (`Closes #N`, `Fixes #N`, `Resolves #N`) and fetch them to understand the problem being solved. **If the PR clearly completes an issue but the body only uses `Refs #N`, request the change** — the body should use a closing keyword so the issue is auto-closed on merge.
 - Fetch the full diff and examine every changed file.
 - If the repo has a `CLAUDE.md` or `README`, consult it for project conventions.
+- **Check `draft` on the PR object before doing anything else.** If `draft: true`, do not review it — no `APPROVE`/`REQUEST_CHANGES`/`COMMENT`, and no waiting on CI. Report it (SendMessage to whoever dispatched you, or note it in the Step 8 completion report during a discovery pass) as "still a draft — waiting for the author to mark it ready" and move on. See "Draft PRs and auto-merge — a structural trap" below for why this matters more than it looks.
 
 All GitHub interactions go through `gh-as-agent --app lucos-code-reviewer`.
 
@@ -205,6 +206,17 @@ The message must cover, briefly:
 Keep it brief — a few lines is enough. The team-lead uses this to decide whether to proceed to triage or wait.
 
 **Specialist-referral case:** if you are mid-review and waiting for a specialist to respond (i.e. you sent `SPECIALIST_REVIEW_REQUESTED`), still send a completion SendMessage noting that you are awaiting the specialist's response and will post a final verdict when re-dispatched. Do not go idle silently.
+
+## Draft PRs and auto-merge — a structural trap
+
+`code-reviewer-auto-merge.yml` triggers only on `pull_request_review: submitted` and `pull_request: closed` — there is **no** `ready_for_review` trigger. Combined with GitHub's own refusal to enable auto-merge on a draft PR (documented GitHub behaviour, treat as very likely rather than directly confirmed in this estate), this means:
+
+- **An approval submitted while a PR is still a draft is wasted, and nothing re-fires when the PR is later marked ready.** The end state looks merge-ready — approved, no longer draft, checks green — but `auto_merge` stays `null` forever. This is the silently-stuck-PR shape: nothing about the PR's own state signals that anything is wrong.
+- The one partial tell: the workflow's enable-auto-merge step retries a few times then exits non-zero, so the wasted attempt shows as a failed Actions run — but only in the Actions tab, not on the PR, so it isn't a signal anyone actually sees.
+
+**Rule:** never post a review (of any kind) on a draft PR — see the check in Step 2. Wait for the author/dispatcher to mark it ready and re-request review.
+
+**Recovery, if an approval already landed on a draft PR:** marking the PR ready for review is not enough by itself — nothing re-triggers the merge pipeline retroactively. Submit a **fresh `APPROVE` review on the current (now-ready) head** once asked to review again; that new review submission is what the workflow's trigger actually fires on.
 
 ## Two auto-merge workflows — do not conflate
 
