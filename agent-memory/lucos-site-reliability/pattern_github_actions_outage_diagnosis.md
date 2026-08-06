@@ -69,15 +69,24 @@ The component status says `major_outage`; the *body* says how. On 2026-08-06 the
 
 Set the recovery Monitor to fire on `operational` only, so it doesn't wake you into a partial recovery where everything needs retrying.
 
-### ✅ "Throttled" means QUEUED, not dropped — parked PRs largely self-heal
+### ⚖️ "Throttled" means BOTH queued AND dropped — don't generalise from either
 
-**I got this wrong first and it cost a bad steer to three teammates.** From GitHub's wording ("events are not triggering new workflow runs") I concluded events were *dropped*, that recovery therefore wasn't self-healing, and that each parked PR needed a manual close+reopen with a linear tail cost. **Observed behaviour says otherwise.**
+**I got this wrong twice, in opposite directions, an hour apart.** The decisive data, `lucos_worlds#73` (2026-08-06):
 
-`lucos_worlds#72`, 2026-08-06: at **23:06:01Z** a fresh CodeQL run fired with `event=pull_request` on an **unchanged head SHA**, no new commits, no reopen — nothing had happened to that PR to generate an event. Seconds later the auto-merge workflow ran on a `pull_request_review` event from an approval submitted ~13 and ~23 minutes earlier, and the PR merged at 23:06:59Z by `lucos-ci[bot]`. That is a **backlog draining**, not a fresh trigger.
+```
+PR created                 22:58:00Z   -> `opened` event NEVER arrived (0 CodeQL runs on the branch, ever)
+review submitted           23:00:56Z   -> DRAINED at 23:18:27Z (auto-merge ran, success)
+```
 
-**So: wait before nudging.** A parked PR sitting `BLOCKED` with no runs is most likely queued behind the throttle, and will heal itself when throughput is restored. Don't spend a close+reopen (or a teammate's approval) on it early.
+The **later** event was delivered late; the **earlier** one was lost. So a throttle drops some events and delays others, and **you cannot tell which from the outside** — a dropped-event PR looks exactly like a still-queued one. Both my "it's all dropped, nudge everything" and my "it's all queued, nudge nothing" were true of the events I happened to be looking at and false as general claims.
 
-**If it genuinely doesn't drain**, close+reopen is still the right nudge: `reopened` is in the default `pull_request` trigger set (bare `on: pull_request:` = `[opened, synchronize, reopened]`) and **preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ With `delete_branch_on_merge: true`, do close and reopen **back-to-back** — a PR cannot be reopened once its branch is gone.
+**Working rule:** give it time first (most work self-heals), then nudge the stragglers. The tell for a genuinely lost trigger is **`total_count: 0` runs for the branch** while *other* event types on the same PR have demonstrably arrived. Check `actions/workflows/<wf>/runs?branch=<branch>` before deciding.
+
+⚠️ **The failure mode is silence, not an error.** A PR whose `opened` event was dropped sits `BLOCKED` forever with nothing anywhere reporting a problem. Tell the coordinator this explicitly — "recovery is automatic" is right for most events and dangerously wrong for the tail.
+
+**Useful:** check `auto_merge` before planning the finish. If a review event drained, auto-merge may already be **armed** (`enabled_by: lucos-ci[bot]`), so the only missing piece is the check — the PR then merges itself with no further approval needed.
+
+**Nudge of last resort — close + reopen.** preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ With `delete_branch_on_merge: true`, do close and reopen **back-to-back** — a PR cannot be reopened once its branch is gone.
 
 ### Re-triggering after recovery — events do NOT replay
 
