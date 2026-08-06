@@ -59,7 +59,7 @@ The `pull_requests: write` permission (which developer and other apps already ha
 
 `code-reviewer-auto-merge.yml` triggers on `pull_request_review: submitted` and `pull_request: closed` — there is **no** `ready_for_review` trigger. GitHub separately refuses to enable auto-merge on a draft. So an approval submitted while a PR is still a draft is wasted: the merge cannot be enabled at the time, and marking the PR ready afterwards re-fires nothing. The PR is left approved, un-drafted, and `auto_merge: null` — looking merge-ready and never merging.
 
-Always sequence it **mark ready → then request the review**. Never request or submit a review on a PR that is still a draft.
+Always sequence it **mark ready → then request the review**. Only an *approving* review is trapped — the merge job's `if` requires `review.state == 'approved'` — so a `COMMENT` or `REQUEST_CHANGES` review on a draft fires nothing and costs nothing. It is specifically approvals that must wait for the PR to be un-drafted.
 
 If an approval did land on a draft, the fix is a **fresh approval submitted on the now-ready head**. Marking the PR ready is not enough on its own; nothing else will start the merge.
 
