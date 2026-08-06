@@ -73,7 +73,7 @@ Set the recovery Monitor to fire on `operational` only, so it doesn't wake you i
 
 Runs missed during the outage are gone; the original `pull_request` / `pull_request_review` events never redeliver. Per stuck PR, by which trigger it needs:
 
-- **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. Check-runs attach to the branch head SHA, so this satisfies branch protection *without* moving the head SHA or invalidating approvals. Needs `actions:write` → `lucos-system-administrator`. (Reasoned from how check-runs attach, not yet observed end-to-end — verify on first use.)
+- **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. ✅ **CONFIRMED end-to-end 2026-08-06** (previously only reasoned): dispatching on `dependabot-pip-cryptography-bump` and `adr-npc-stat-blocks` produced `CodeQL | event=workflow_dispatch` runs at 22:51:01/02Z that attached `Analyze (python)` to the **unchanged head SHAs** (`cc765e55`, `93769f43`), turning `mergeable_state` from `blocked` to satisfiable with **every approval intact**. Needs `actions:write` → `lucos-system-administrator`. This is the primary recovery tool: it is a direct API call, so it works *during* webhook throttling.
 - **`code-reviewer-auto-merge.yml`** — only listens to `pull_request_review: submitted`, so it needs a *fresh approval* from the matched reviewer (`lucos-code-reviewer`) on the unchanged HEAD. Re-running the old run does not work.
 
 Order CodeQL first, then the re-approval, so auto-merge lands on an already-satisfiable PR.
