@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-02
-resource_checks: 2026-07-27
-syslog_review: 2026-07-27
-software_updates: 2026-07-27
-sandbox_drift: 2026-07-27
-repos_dashboard: 2026-08-02
+container_status: 2026-08-06
+resource_checks: 2026-08-06
+syslog_review: 2026-08-06
+software_updates: 2026-08-06
+sandbox_drift: 2026-08-06
+repos_dashboard: 2026-08-06
 docker_image_staleness: 2026-07-31
 backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
@@ -1602,3 +1602,23 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13 — registering now would cascade into ~20 `AppliesTo`-gated conventions with no scaffolding to satisfy them. No new action.
 
 **Issues raised**: None. **Issues closed**: None. All hosts clean, no new dashboard failures beyond the known deferral (checks 2-5, 7-9 not due this run).
+
+### 2026-08-06 (checks 1–6 due; weekly checks last ran 2026-07-27, 10 days — overdue; monthly checks last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo): no entries at err level or above in past 7 days. Clean.
+
+**Software updates** (no `-security`-tagged packages on any host, confirmed via explicit grep): avalon — routine docker tooling bumps only. xwing — docker tooling, cloud-init, firmware-*, libc6/libssl3/openssl (from `stable`, not `-security`), kernel 6.12→6.18, large raspi-*/camera batch. salvare — docker tooling, dpkg, libc6/libssl3/openssl (from `oldstable`, not `-security`), kernel 6.12.25→6.12.96, raspi-firmware/utils. All routine, same accumulating backlog as before (unattended-upgrades doesn't cover Docker's or RPi Foundation's repos — tracked context in lucos_agent_coding_sandbox#95/#100/#101). No new issue.
+
+**Resources**:
+- avalon: disk 42% (729G/1.8T), up from 39% on 07-27 — unremarkable. Memory 3.3Gi available. Swap 349Mi/4.5Gi (8%). Load 2.86/2.97/2.86 — back to normal (07-27's 7.07 1-min spike didn't recur). Journal 114.1M — fine.
+- xwing: disk **44%** (49G/117G), up from 36% (40G) on 07-27 — a notable acceleration (was +3pts/9days 07-18→07-27, now +8pts/10days). Investigated: `docker system df` shows Images 33.99GB with **28.39GB (83%) reclaimable** — `lucas42/lucos_media_import` alone has 15+ tagged versions going back 8 weeks (~2.35GB each), none dangling. Root-caused to the scheduled `prune-images` CircleCI workflow (lucos_agent, added 2026-05-09/06-11) never having run — zero CircleCI pipelines ever recorded for lucas42/lucos_agent, zero GitHub commit statuses on HEAD of main, CircleCI's project metadata shows a stale `default_branch: master` vs GitHub's actual `main`. **Issue raised: lucos_agent#72.** Did not prune manually — the orb's own docs mark `docker image prune -a -f` as off-peak-scheduled-only (2026-03-26/27 outage precedent, lucos_deploy_orb#54). Still well under the 80% threshold, not urgent. Memory 410Mi available (tight, as always). Swap 150Mi/905Mi (17%). Load 1.72/1.13/1.03 — fine.
+- salvare: disk 67% (37G/58G), up from 61% (34G) on 07-27 — also accelerating (+6pts/10days vs +1pt/9days prior period). Same underlying pattern as xwing (docker images not being pruned by the broken scheduled workflow), smaller absolute scale. `/srv/backups` = 25G (not the driver). Memory 3.4Gi available. No swap. Load 0.23/0.06/0.02 — fine. Not urgent (well under 80%), same root cause tracked in lucos_agent#72.
+- Local VM: disk 60% (57G/96G) — under threshold, no forced cleanup. Memory 4.9Gi available. Docker: 25.4GB images (7.646GB/30% reclaimable), 1.907GB local volumes (1.647GB/86% reclaimable), 2.081GB build cache. Headroom exists, not warranted yet.
+
+**Sandbox drift**: 3 remote commits behind (dependabot workflow bump — `.github/` only, no live action; a `lima.yaml` provisioning guard for malformed `~/.claude.json` — applies on next VM build, no live action; and the new `pi-hosts/setup-apt-timer-stagger.sh` for PR #103). Checked the last one specifically since it's an operational script, not just docs: confirmed via `systemctl show apt-daily-upgrade.timer` on salvare that the stagger **was already applied live** (`/etc/systemd/system/apt-daily-upgrade.timer.d/lucos-stagger.conf` dated Jul 27, matching the PR merge date) — someone with sudo ran it already. No live VM action needed. Pulled local checkout to sync (7185c20→7812438).
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again, same deliberate deferral standing since 2026-07-13 (still pre-scaffolding). No new action.
+
+**Issues raised**: lucos_agent#72 (scheduled prune-images CircleCI workflow never ran — 83% reclaimable docker images on xwing, root cause likely a stale CircleCI default-branch/project-sync issue, needs CircleCI admin access to fix — flagged as blocked-on-human-execution, not agent-fixable).
