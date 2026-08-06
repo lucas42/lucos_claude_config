@@ -86,6 +86,13 @@ The **later** event was delivered late; the **earlier** one was lost. So a throt
 
 **Useful:** check `auto_merge` before planning the finish. If a review event drained, auto-merge may already be **armed** (`enabled_by: lucos-ci[bot]`), so the only missing piece is the check — the PR then merges itself with no further approval needed.
 
+⏱️ **Measure the observed drain latency before judging any nudge.** On 2026-08-06 a #73 review event took **17.5 minutes** to arrive (submitted 23:00:56Z → workflow ran 23:18:27Z). So `total_count: 0` and `auto_merge: null` **90 seconds** after a close+reopen is what *healthy* looks like under throttle, not failure. Concluding "the nudge didn't work" that early leads straight to a second nudge, spending events into a queue already carrying the first. **Time-box against the measured latency, not impatience.**
+
+Confirmed by that close+reopen (both were open questions):
+- ✅ **Approvals persist** across close+reopen (same `commit_id` survives).
+- ⚠️ **`auto_merge` CLEARS** on close+reopen — so the sequence is close → reopen → *re-approve to re-arm*.
+- Therefore close+reopen costs **two** delivered webhooks (`reopened` to fire CI, `pull_request_review` to re-arm), roughly doubling the wait under throttle. A further argument for riding out a drain rather than nudging early.
+
 **Nudge for a genuinely-lost trigger — close + reopen.** `reopened` is in the default `pull_request` set (bare `on: pull_request:` = `[opened, synchronize, reopened]`) and **preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ Do close and reopen **back-to-back** where `delete_branch_on_merge: true` — a PR cannot be reopened once its branch is gone. Safe on linked issues: `close-linked-issues` is gated on `merged == true`, so a close-without-merge can't fire it.
 
 ### Re-triggering after recovery — events do NOT replay
