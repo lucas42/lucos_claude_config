@@ -34,6 +34,21 @@ If the github-actions check-suite is **entirely absent** (not just queued, not j
 
 Don't trust "other repos still fire" too quickly at the start of an outage — recent successful runs from the minute *before* the outage hit can mislead you. Cross-check by looking at most-recent run timestamps across several repos and checking the GitHub status page directly. Status page is authoritative.
 
+### The confound: every PR opened during the window shares every local property
+
+Teammates will arrive with a confident *local* explanation — "it's path-filtered", "it's because they were created as drafts", "it's this repo's workflow config". Those hypotheses are built from the only PRs available to look at, and **every PR opened inside the outage window is inside the outage window**, so any property those PRs happen to share is perfectly correlated with the real cause. With n=2 stuck PRs, nothing internal to that sample can separate the two.
+
+Break it with a **counterexample from outside the window**: find a historical PR sharing the suspect property and check whether Actions ran on it.
+
+- Suspected diff-shape/path filter → find a merged PR with the same diff shape. (2026-08-04 `lucos_worlds` `4a4e2eaa`: YAML-only, zero Python, `Analyze (python): success`.)
+- Suspected draft suppression → find an older draft PR. (`lucos_backups#346`, `draft: true` to this day, created 2026-06-17, CodeQL fired on `pull_request` **8s** after opening, green `Analyze (python)`.)
+
+Cheap sweep for candidates: `pulls?state=all&per_page=40 --jq '.[]|select(.draft==true)'` across a few repos.
+
+Also check whether the stuck PR got **post-open pushes** (`pulls/{n}/commits` vs `created_at`). Each is a `synchronize` event, which is in the bare-`pull_request:` default set `[opened, synchronize, reopened]` and fires on drafts. If pushes after open produced no runs, any hypothesis about the *opening* event is already dead — and it means "just push to re-trigger" has been trial-run for free, so don't spend a head SHA (and its approvals) re-testing it.
+
+Symmetry check that settles it: a local hypothesis must independently explain why *five other repos* stopped emitting runs of every event type at the same moment. Usually it has no account of that at all.
+
 ## When it IS an outage
 
 Don't attempt remediation. Closing/reopening PRs and empty-commit pushes during the outage either get dropped too OR queue up and all fire at once when service returns (causing duplicate-run noise). The correct response is "wait for resolution, then re-check; if specific PRs still missing check-suites after Actions is healthy, *then* nudge."
