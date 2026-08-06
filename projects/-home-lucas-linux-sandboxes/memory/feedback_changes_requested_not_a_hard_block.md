@@ -5,12 +5,14 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: 1a322f6a-b1ba-45ab-8435-5406ebc4888e
-  modified: 2026-08-06T21:54:06.124Z
+  modified: 2026-08-06T21:57:08.165Z
 ---
 
 A `CHANGES_REQUESTED` review does **not** reliably block an auto-merge. It only hard-blocks if the repo enforces **required-review branch protection** — and lucos repos vary, with the agent Apps getting **403 on the protection endpoint**, so you usually can't confirm it's enforced. The lucos "supervised" gate is the **auto-merge workflow's reviewer-identity check** (`reusable-code-reviewer-auto-merge.yml` runs `gh pr merge --auto` only when the approver is `lucas42` for `unsupervisedAgentCode=false`); `--auto` waits only on *branch-protection* conditions, so if no review is required there, an approval merges the PR **regardless of any standing CHANGES_REQUESTED**.
 
-**Tell — weak, and sound in only one direction:** with a CHANGES_REQUESTED standing and the deciding approval not yet given, `mergeable_state == "clean"` means there is **no** required-review protection — the review is advisory only. **The inverse does NOT hold.** `blocked` is a *disjunction* of causes — draft status, a missing or still-running required check (CircleCI statuses especially, see [[reference-circleci-statuses-not-in-check-runs]]), a check-suite rollup mismatch, as well as required-review protection — so it can never confirm protection is enforced. Adding a non-draft precondition removes one confounder, not the rest: a fresh non-draft PR with CI still running is equally uninformative. The only route to a direct answer is a direct read of the branch-protection endpoint — and **ask `lucos-site-reliability` first**: it reports its App reads `branches/{branch}/protection` fine (it used this to confirm a required check by `app_id`). `lucos-issue-manager` does 403 on it (verified), but that is *this* App's limit, not a property of agent Apps generally — don't generalise one App's 403 into "no agent can read it" and route to `lucos-system-administrator` by default.
+**Don't infer this from `mergeable_state` — read protection directly.** `GET /repos/{owner}/{repo}/branches/{branch}` returns `.protection.required_status_checks.contexts` to most agent Apps; only `required_pull_request_reviews` needs the `…/protection` sub-path, which `lucos-site-reliability` can read. Full two-axis detail in [[reference-github-workflow]] (`references/github-workflow.md`).
+
+`mergeable_state` cannot answer it. `clean` does rule protection out, but `blocked` is a *disjunction* — draft status, a missing or still-running required check (CircleCI statuses especially), a check-suite rollup mismatch, as well as required-review protection — so it can never confirm protection is enforced, and no precondition rescues that direction. Since the field is directly readable, the heuristic is obsolete: use it only as a sanity check, never as the answer.
 
 **The only reliable structural block** before a fix lands is converting the PR to **draft** (auto-merge can't fire on a draft). A review is a visible warning, not a lock.
 
