@@ -69,15 +69,15 @@ The component status says `major_outage`; the *body* says how. On 2026-08-06 the
 
 Set the recovery Monitor to fire on `operational` only, so it doesn't wake you into a partial recovery where everything needs retrying.
 
-### ⚠️⚠️ Recovery is NOT self-healing — a parked PR needs a NEW event
+### ✅ "Throttled" means QUEUED, not dropped — parked PRs largely self-heal
 
-**The single most important operational fact.** Dropped webhooks are never redelivered. A PR whose `opened`/`synchronize` events were discarded during the throttle will sit `BLOCKED` **forever** once delivery returns, because nothing re-fires for a PR that is sitting still. "It'll all merge when GitHub recovers" is false and was my working assumption for hours.
+**I got this wrong first and it cost a bad steer to three teammates.** From GitHub's wording ("events are not triggering new workflow runs") I concluded events were *dropped*, that recovery therefore wasn't self-healing, and that each parked PR needed a manual close+reopen with a linear tail cost. **Observed behaviour says otherwise.**
 
-**Fix: close + reopen** — `reopened` is in the default `pull_request` trigger set (a bare `on: pull_request:` with no `types:` means `[opened, synchronize, reopened]`), and it **preserves the head SHA**, so approvals survive. A push fires `synchronize` but moves the SHA and discards approvals — strictly worse. Do it **after** delivery is restored; a `reopened` event during throttling is just as droppable.
+`lucos_worlds#72`, 2026-08-06: at **23:06:01Z** a fresh CodeQL run fired with `event=pull_request` on an **unchanged head SHA**, no new commits, no reopen — nothing had happened to that PR to generate an event. Seconds later the auto-merge workflow ran on a `pull_request_review` event from an approval submitted ~13 and ~23 minutes earlier, and the PR merged at 23:06:59Z by `lucos-ci[bot]`. That is a **backlog draining**, not a fresh trigger.
 
-Needs `pull_requests: write` — `lucos-site-reliability`'s App does **not** have it (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds). Route to `lucos-code-reviewer`.
+**So: wait before nudging.** A parked PR sitting `BLOCKED` with no runs is most likely queued behind the throttle, and will heal itself when throughput is restored. Don't spend a close+reopen (or a teammate's approval) on it early.
 
-**Cost is per parked PR, not flat:** one close+reopen, one CodeQL run, one rollup verification, one approval — each needing its own delivered webhook. Worth telling the coordinator, since it makes parking further work during an outage carry a real linear tail.
+**If it genuinely doesn't drain**, close+reopen is still the right nudge: `reopened` is in the default `pull_request` trigger set (bare `on: pull_request:` = `[opened, synchronize, reopened]`) and **preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ With `delete_branch_on_merge: true`, do close and reopen **back-to-back** — a PR cannot be reopened once its branch is gone.
 
 ### Re-triggering after recovery — events do NOT replay
 
@@ -86,7 +86,14 @@ Runs missed during the outage are gone; the original `pull_request` / `pull_requ
 - **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. Needs `actions:write` → `lucos-system-administrator`. ⚠️ **It POSTS the check but does NOT necessarily COUNT it. These are different claims and only the first is evidenced.**
   - **Evidenced (2026-08-06):** the dispatched run attaches `Analyze (python)` to the **unchanged head SHA** with the correct `app_id` (15368, matching the protection entry), in a `completed/success` check-suite, and the run even carries `pull_requests: [72]`. Heads don't move; approvals survive. `/commits/{sha}/check-runs` shows it green.
   - **NOT evidenced — in fact falsified in practice:** that this unblocks the merge. On `lucos_worlds#72` the PR stayed `mergeStateStatus: BLOCKED` with `reviewDecision: APPROVED` and every required context green on the commit, because **`Analyze (python)` was absent from the PR's `statusCheckRollup`** — the rollup held exactly the 8 contexts that existed *before* the dispatch.
-  - **Positive control** (this is what makes it real rather than a guess): on `lucos_worlds#65`, a **`pull_request`-triggered** `Analyze (python)` from the same `github-actions` app **does** appear in the rollup. So the rollup can hold that context; it just didn't hold the dispatched one.
+  - **Positive control** (this is what makes it real rather than a guess): on `lucos_worlds#65`, a **`pull_request`-triggered` `Analyze (python)` from the same `github-actions` app **does** appear in the rollup. So the rollup can hold that context; it just didn't hold the dispatched one.
+  - 🔬 **The decisive test, and my worst near-miss of the night.** When #72 finally merged, `Analyze (python)` *was* in its rollup — and my first read was "staleness after all, the capability works, tell four people to revert their instruction fixes." Wrong. **There were TWO check-runs with that identical name on the one SHA:**
+    ```
+    run 92714088499  suite 84473025557  22:51:05Z   <- workflow_dispatch
+    run 92715819365  suite 84474862599  23:06:04Z   <- pull_request (fired when the backlog drained)
+    ```
+    The rollup held **92715819365 / suite 84474862599** — the `pull_request` one. The dispatched check sat on the SHA for 15 minutes and **never joined**. So the finding stands, and the merge was not a counter-example.
+    **Rule: when a check "appears", resolve it to a `databaseId`/`checkSuite.databaseId` and match it against the run you think produced it.** A name match is not a provenance match. This is the same read-the-artefact-not-its-name rule I cite at others — two artefacts, one name, opposite conclusions.
   - **Cause undetermined, and a later observation made it MORE open.** Comparing a dispatched PR against a never-dispatched one on the same repo/day (`lucos_worlds#72` vs `#73`):
 
     | rollup context | #73 (no dispatch) | #72 (dispatched) |
