@@ -80,6 +80,15 @@ review submitted           23:00:56Z   -> DRAINED at 23:18:27Z (auto-merge ran, 
 
 The **later** event was delivered late; the **earlier** one was lost. So a throttle drops some events and delays others, and **you cannot tell which from the outside** — a dropped-event PR looks exactly like a still-queued one. Both my "it's all dropped, nudge everything" and my "it's all queued, nudge nothing" were true of the events I happened to be looking at and false as general claims.
 
+**RESOLVED end-to-end, 2026-08-06 — both behaviours occurred, one PR each:**
+
+| PR | Outcome |
+|---|---|
+| `#72` | **self-healed** — backlog drained, auto-merged by `lucos-ci[bot]`, no intervention |
+| `#73` | **needed the nudge** — `opened` event genuinely lost; close+reopen at 23:20:49/50Z → `reopened` delivered ~4 min later → CodeQL fired via `pull_request` → `Analyze (python)` entered the rollup → re-approval re-armed auto-merge → merged 23:25:57Z by `lucos-ci[bot]` |
+
+So the close+reopen sequence is **verified working end-to-end**, and so is "wait first". Neither alone is the rule.
+
 **Working rule:** give it time first (most work self-heals), then nudge the stragglers. The tell for a genuinely lost trigger is **`total_count: 0` runs for the branch** while *other* event types on the same PR have demonstrably arrived. Check `actions/workflows/<wf>/runs?branch=<branch>` before deciding.
 
 ⚠️ **The failure mode is silence, not an error.** A PR whose `opened` event was dropped sits `BLOCKED` forever with nothing anywhere reporting a problem. Tell the coordinator this explicitly — "recovery is automatic" is right for most events and dangerously wrong for the tail.
