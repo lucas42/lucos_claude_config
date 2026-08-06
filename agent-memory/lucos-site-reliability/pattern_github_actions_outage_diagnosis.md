@@ -73,7 +73,17 @@ Set the recovery Monitor to fire on `operational` only, so it doesn't wake you i
 
 Runs missed during the outage are gone; the original `pull_request` / `pull_request_review` events never redeliver. Per stuck PR, by which trigger it needs:
 
-- **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. ✅ **CONFIRMED end-to-end 2026-08-06** (previously only reasoned): dispatching on `dependabot-pip-cryptography-bump` and `adr-npc-stat-blocks` produced `CodeQL | event=workflow_dispatch` runs at 22:51:01/02Z that attached `Analyze (python)` to the **unchanged head SHAs** (`cc765e55`, `93769f43`), turning `mergeable_state` from `blocked` to satisfiable with **every approval intact**. Needs `actions:write` → `lucos-system-administrator`. This is the primary recovery tool: it is a direct API call, so it works *during* webhook throttling.
+- **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. Needs `actions:write` → `lucos-system-administrator`. ⚠️ **It POSTS the check but does NOT necessarily COUNT it. These are different claims and only the first is evidenced.**
+  - **Evidenced (2026-08-06):** the dispatched run attaches `Analyze (python)` to the **unchanged head SHA** with the correct `app_id` (15368, matching the protection entry), in a `completed/success` check-suite, and the run even carries `pull_requests: [72]`. Heads don't move; approvals survive. `/commits/{sha}/check-runs` shows it green.
+  - **NOT evidenced — in fact falsified in practice:** that this unblocks the merge. On `lucos_worlds#72` the PR stayed `mergeStateStatus: BLOCKED` with `reviewDecision: APPROVED` and every required context green on the commit, because **`Analyze (python)` was absent from the PR's `statusCheckRollup`** — the rollup held exactly the 8 contexts that existed *before* the dispatch.
+  - **Positive control** (this is what makes it real rather than a guess): on `lucos_worlds#65`, a **`pull_request`-triggered** `Analyze (python)` from the same `github-actions` app **does** appear in the rollup. So the rollup can hold that context; it just didn't hold the dispatched one.
+  - **Cause undetermined** — either `workflow_dispatch` check-runs structurally never join the PR rollup, or the rollup simply hadn't recomputed (plausibly because that recompute is itself event-driven and throttled). I could not distinguish these. Don't assert either.
+  - **How to check, always** — REST check-runs is NOT the gate. Query the rollup:
+    ```
+    gh-as-agent --app lucos-site-reliability graphql -F owner=.. -F repo=.. -F num=.. -F query=@q.graphql
+    # want: mergeStateStatus, and the required context PRESENT in statusCheckRollup.contexts
+    ```
+    A green check on the commit plus `mergeStateStatus: BLOCKED` is exactly this trap. Predicted in advance by `agents/code-reviewer-stuck-pr-guide.md` item 8 (check-suite rollup mismatch) — read it before trusting a dispatch.
 - **`code-reviewer-auto-merge.yml`** — only listens to `pull_request_review: submitted`, so it needs a *fresh approval* from the matched reviewer (`lucos-code-reviewer`) on the unchanged HEAD. Re-running the old run does not work.
 
 Order CodeQL first, then the re-approval, so auto-merge lands on an already-satisfiable PR.
