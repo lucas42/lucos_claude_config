@@ -19,3 +19,14 @@ The mistake had two layers:
 If you find yourself reaching for "I'll just pass X here to get Y to happen", verify that's the API's documented intent. If it isn't, you're gaming an implementation detail, and a future change to that detail will silently break your callers.
 
 When in doubt, the architectural question is: "would this still be the right value if the downstream system's logic changed?" If the answer is no, the value is wrong.
+
+## Routing around a DELIVERY MECHANISM vs routing around a CONTROL
+
+During a degraded-platform incident, the same reasoning that justifies one workaround will appear to justify a second one that is categorically different. Draw the line explicitly (credit: `lucos-architect`, 2026-08-06 Actions outage):
+
+- **`workflow_dispatch` to re-fire a stalled CodeQL run** — legitimate. It re-runs a check that was never a gate on *judgement*: CodeQL passes or it doesn't, and dispatching changes no policy. This routes around a **delivery mechanism**.
+- **Merging by direct API call because `pull_request_review` webhooks are throttled** — not legitimate, even though it would work and the conditions genuinely appear met. `code-reviewer-auto-merge.yml` is the *enforcement point* for the estate's auto-merge approval policy (supervision via `unsupervisedAgentCode`; see `lucas42/lucos` `docs/adr/0013-…`, though note that ADR is **Proposed**, so the argument rests on the live mechanism it documents, not on the ADR's authority). This routes around a **control**, substituting my judgement for the gate.
+
+**A fail-closed control being unreliable is the circumstance it exists for.** "The enforcement mechanism is degraded right now" argues for waiting, not for stepping past it. Retrying a throttled approval as many times as needed is the policy being *applied*, repeatedly — hand-merging is the policy being *skipped* once.
+
+**How to apply:** when a workaround is proposed during an incident, ask what the bypassed component *decides*. If it only transports or schedules, routing around it is fine. If it adjudicates — who may approve, what must pass, who is notified — stop, and wait for it to recover. If something is still stuck after the platform is genuinely healthy, that's a real fault to diagnose, not licence to reach past the gate. Related: [[feedback_silent_fallbacks_are_a_security_risk]].
