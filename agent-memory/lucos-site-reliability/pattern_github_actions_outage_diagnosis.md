@@ -86,7 +86,7 @@ The **later** event was delivered late; the **earlier** one was lost. So a throt
 
 **Useful:** check `auto_merge` before planning the finish. If a review event drained, auto-merge may already be **armed** (`enabled_by: lucos-ci[bot]`), so the only missing piece is the check — the PR then merges itself with no further approval needed.
 
-**Nudge of last resort — close + reopen.** preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ With `delete_branch_on_merge: true`, do close and reopen **back-to-back** — a PR cannot be reopened once its branch is gone.
+**Nudge for a genuinely-lost trigger — close + reopen.** `reopened` is in the default `pull_request` set (bare `on: pull_request:` = `[opened, synchronize, reopened]`) and **preserves the head SHA**, so approvals survive; a push fires `synchronize` but moves the SHA and discards them. Needs `pull_requests: write`, which `lucos-site-reliability`'s App does **not** have (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds) — route to `lucos-code-reviewer`. ⚠️ Do close and reopen **back-to-back** where `delete_branch_on_merge: true` — a PR cannot be reopened once its branch is gone. Safe on linked issues: `close-linked-issues` is gated on `merged == true`, so a close-without-merge can't fire it.
 
 ### Re-triggering after recovery — events do NOT replay
 
