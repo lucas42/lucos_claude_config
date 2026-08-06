@@ -11,6 +11,8 @@
 - [Contrast ratio verification](feedback_contrast_ratio_verification.md) — never assert a specific contrast ratio in a PR test plan from hand calculation; verify with WebAIM first (hand calc gave 3.05:1 for #c49000, correct is 2.86:1 — caused CHANGES_REQUESTED)
 - [Pull architect back in on schema scope changes](feedback_pull_architect_on_schema_scope_changes.md) — a scope change that looks like a small UI subtraction can undercut the architect's original data-model justification; re-consult, don't shrink the schema myself (photos#471)
 - [Verify accessible-name computation in a real browser](feedback_verify_accname_in_browser.md) — a new aria-label on a child can silently override a parent link's `title` fallback; test with Playwright's ariaSnapshot before/after, don't trust a static per-element reading (photos#476)
+- [Positive-control verification](feedback_positive_control_verification.md) — for "A+B must ship together or Z breaks" claims, force Z, confirm A alone doesn't fix it, then confirm A+B does (worlds#61/#75)
+- [Stacked PR on unprotected branch hazard](feedback_stacked_pr_unprotected_branch_hazard.md) — stacking is fine, but the child can auto-merge into the parent's branch before the parent merges, discarding in-flight approvals (worlds#73/#75)
 
 ## Project
 
