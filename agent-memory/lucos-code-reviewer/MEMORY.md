@@ -59,3 +59,4 @@
 - [lucos_arachne: triplestore check](lucos_arachne_triplestore.md), [CLAUDE.md caveat](lucos_arachne_claude_md_convention_caveat.md) — triplestore: hold until #74; caveat: "every rdf:type" means domain types only, push back if #544 doesn't fix it
 - [lucos_media_seinn mocha regression](lucos_media_seinn_mocha_regression.md) — recurring Dependabot major-group CI failure; #462 fix applied but didn't work, new tracking in #466; leave open as live reference
 - [Estate DNS failure pattern in CI](feedback_estate_dns_ci_pattern.md) — simultaneous GitHub Actions + CircleCI `*.l42.eu` DNS failure → authoritative outage, not a PR defect; configy silent fail-closed → .github#68
+- [GitHub Actions outage vs. required-check design gap](review_github_actions_outage_pattern.md) — zero check-runs estate-wide + open githubstatus.com incident = outage; check before proposing to drop a required check (lucos_worlds#67, 2026-08-06)
