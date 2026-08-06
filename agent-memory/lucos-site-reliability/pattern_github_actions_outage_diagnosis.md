@@ -69,6 +69,16 @@ The component status says `major_outage`; the *body* says how. On 2026-08-06 the
 
 Set the recovery Monitor to fire on `operational` only, so it doesn't wake you into a partial recovery where everything needs retrying.
 
+### ⚠️⚠️ Recovery is NOT self-healing — a parked PR needs a NEW event
+
+**The single most important operational fact.** Dropped webhooks are never redelivered. A PR whose `opened`/`synchronize` events were discarded during the throttle will sit `BLOCKED` **forever** once delivery returns, because nothing re-fires for a PR that is sitting still. "It'll all merge when GitHub recovers" is false and was my working assumption for hours.
+
+**Fix: close + reopen** — `reopened` is in the default `pull_request` trigger set (a bare `on: pull_request:` with no `types:` means `[opened, synchronize, reopened]`), and it **preserves the head SHA**, so approvals survive. A push fires `synchronize` but moves the SHA and discards approvals — strictly worse. Do it **after** delivery is restored; a `reopened` event during throttling is just as droppable.
+
+Needs `pull_requests: write` — `lucos-site-reliability`'s App does **not** have it (`{admin:false, maintain:false, push:false, pull:false, triage:false}` on lucos_worlds). Route to `lucos-code-reviewer`.
+
+**Cost is per parked PR, not flat:** one close+reopen, one CodeQL run, one rollup verification, one approval — each needing its own delivered webhook. Worth telling the coordinator, since it makes parking further work during an outage carry a real linear tail.
+
 ### Re-triggering after recovery — events do NOT replay
 
 Runs missed during the outage are gone; the original `pull_request` / `pull_request_review` events never redeliver. Per stuck PR, by which trigger it needs:
