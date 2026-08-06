@@ -91,6 +91,8 @@ Always use `gh-as-agent --app lucos-code-reviewer`. Never `gh api` directly, nev
 
 **Always use the file-backed body pattern for review bodies.** Code reviews routinely discuss code containing `{repo}`, `{owner}`, `{sha}`, and other `{...}` placeholder patterns — `gh api` performs template substitution on these inside `--field body="..."` even when the shell doesn't, silently corrupting the posted text. Writing the body to a temp file and passing `--field body=@$BODY_FILE` bypasses this entirely. See [`references/agent-github-identity.md`](../../references/agent-github-identity.md) for the full gotcha explanation.
 
+**Before sending, re-read the drafted body for any hedge/hold language** — "I'll approve once X", "holding on Y", "not yet", "pending Z" — anywhere in it, including in a merge-order or sequencing note that's otherwise unrelated to code quality. If present, `-f event=` **must** be `COMMENT`, never `APPROVE`. There is no conditional or partial APPROVE at the API level — GitHub's review state is exactly what `event` says, regardless of what the prose claims, and on an unsupervised repo an APPROVE *is* the auto-merge trigger regardless of your intent. (Confirmed failure: `lucos_worlds#68`, 2026-08-06 — body said "I'll hold my approval on this PR until #67 has actually merged" to avoid a merge-order race, submitted with `event="APPROVE"` in the same call, recreating the exact race the sentence was warning about. Caught immediately via the response's `state: "APPROVED"` and dismissed with `PUT .../reviews/{id}/dismissals`, then re-posted as `COMMENT`.)
+
 ### Approve
 
 Single encouraging, specific sentence relevant to the actual change (not generic "looks good").
