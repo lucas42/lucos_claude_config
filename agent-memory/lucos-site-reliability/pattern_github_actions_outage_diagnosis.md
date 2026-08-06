@@ -1,6 +1,6 @@
 ---
 name: pattern-github-actions-outage-diagnosis
-description: Check githubstatus.com/api EARLY when GitHub Actions triggers seem to be silently failing on a repo
+description: Check githubstatus.com/api EARLY when Actions triggers silently fail; estate-wide latest-run sweep to confirm; never relax branch protection to unstick a PR during an outage
 metadata:
   type: pattern
 ---
@@ -38,10 +38,24 @@ Don't trust "other repos still fire" too quickly at the start of an outage — r
 
 Don't attempt remediation. Closing/reopening PRs and empty-commit pushes during the outage either get dropped too OR queue up and all fire at once when service returns (causing duplicate-run noise). The correct response is "wait for resolution, then re-check; if specific PRs still missing check-suites after Actions is healthy, *then* nudge."
 
+⚠️ **Never relax branch protection to unstick a PR during an outage.** A missing required check reads exactly like a structural "this check can never fire on this diff shape" gap, and the obvious-looking remedy — drop the required context — is a *permanent* security regression traded for a *temporary* third-party outage. Before believing any "can never fire" claim, disconfirm it: read the workflow's `on:` block for real `paths:` filters, then find a historical SHA with a similarly-shaped diff and check `/commits/{sha}/check-runs` for that context concluding `success`. One counter-example kills the hypothesis.
+
+### Re-triggering after recovery — events do NOT replay
+
+Runs missed during the outage are gone; the original `pull_request` / `pull_request_review` events never redeliver. Per stuck PR, by which trigger it needs:
+
+- **CodeQL / any workflow with `workflow_dispatch:`** — dispatch it on the PR's branch. Check-runs attach to the branch head SHA, so this satisfies branch protection *without* moving the head SHA or invalidating approvals. Needs `actions:write` → `lucos-system-administrator`. (Reasoned from how check-runs attach, not yet observed end-to-end — verify on first use.)
+- **`code-reviewer-auto-merge.yml`** — only listens to `pull_request_review: submitted`, so it needs a *fresh approval* from the matched reviewer (`lucos-code-reviewer`) on the unchanged HEAD. Re-running the old run does not work.
+
+Order CodeQL first, then the re-approval, so auto-merge lands on an already-satisfiable PR.
+
 ## When it ISN'T an outage (per-repo drop)
 
 The standard nudge is **close + reopen the PR** (preserves the head SHA, generates a fresh `pull_request opened` event, doesn't invalidate the approval). Empty-commit push is heavier (changes the SHA, may invalidate stale approvals depending on branch protection).
 
-## 2026-05-26 occurrence
+## Occurrences
 
-PRs `lucas42/lucos_photos#407` (head `2068af86`, created 10:56:51 UTC) and `#408` (head `9a44257e`, created 11:02:53 UTC) hit this. Outage started 10:57:13 UTC ("Incident with Actions and Pages", critical impact, components: Actions + Pages). Resolution observable when GitHub status returns to "operational" or "none" and a fresh push/PR action on any repo successfully triggers Actions again.
+Resolution is observable when GitHub status returns to "operational"/"none" AND a fresh push/PR action on any repo successfully triggers Actions again. Arm a `Monitor` polling the status API on recovery rather than hand-polling — outages run for hours and stuck PRs get forgotten.
+
+- **2026-05-26** — `lucos_photos#407` (head `2068af86`, 10:56:51Z) and `#408` (`9a44257e`, 11:02:53Z). Outage from 10:57:13Z, "Incident with Actions and Pages", critical, components Actions + Pages.
+- **2026-08-06** — `lucos_worlds#67` (head `123e3a3b`, 21:17:36Z). "Incident with Actions", critical, opened 15:22:49Z, Actions + Pages `major_outage`. Estate sweep of latest run per repo across 12 repos showed **nothing anywhere since 18:49:33Z** — that per-repo-latest-timestamp sweep is the cheapest, most decisive outage-vs-per-repo test I have; keep using it. Note the ~3h gap between incident open (15:22Z) and total estate stop (18:49Z): early in an incident Actions degrades *partially*, so "a repo ran something after the incident opened" does not disprove an outage. Escalation arrived pre-diagnosed with two wrong theories (CodeQL path-filtered to Python; auto-merge workflow broken for the repo) — one outage explained both, and the workflow had no `paths:` filter at all.

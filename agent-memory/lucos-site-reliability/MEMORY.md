@@ -80,7 +80,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [exit 127 after pip install = machine image rolled BACK](pattern_rolling_machine_image_tag_moves_backwards.md) — fix w/ venv not a pin.
 - [lucos_repos deploy auto-triggers an audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min.
 - [repos audit reds: we discard GitHub's Retry-After](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md) — #462 dry-run fixed.
-- [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — don't close/reopen/empty-commit during outage.
+- [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — estate latest-run sweep; ⚠️never relax branch protection to unstick.
 - [Checks that NEVER fired = CircleCI 400'd the webhook](pattern_circleci_400_webhook_drops_pr.md) — hooks/{id}/deliveries.
 
 ## Estate topology / docker
