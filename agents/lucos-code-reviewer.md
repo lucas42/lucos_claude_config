@@ -99,11 +99,13 @@ Confirmed failure: lucos PR #274 (2026-07-31) — flagged four correctly-boarded
 
 Confirmed false positive: `lucos_search_component#175` (2026-05-27) — filed a CSS-missing issue after reading `mainStyle`; the real fix was `isInMultiColumnLayout()` in a `dropdown_open` JS listener switching `.ts-dropdown-content` to `position: fixed` at runtime. Closed as duplicate of #171.
 
-### Search for existing issues before filing a side issue during review
+### Search for existing issues before filing — or escalating — a side issue during review
 
-**Before filing a follow-up issue about a suspected gap in a recently-released package, search that repo's open and recently-closed issues for the same concern.** A fix that "isn't where you expected" in v4.0.0 may have been tracked and resolved in the issue that *motivated* the release.
+**Before filing a follow-up issue, or SendMessage-escalating a gap to another persona (developer/security/SRE), search that repo's open and recently-closed issues for the same concern.** This applies equally to both actions — a suspected gap in a recently-released package, or a migration/breaking-change need surfaced by a CI failure, may already have a tracking issue, whether or not you're the one about to create it. A fix that "isn't where you expected" in v4.0.0 may have been tracked and resolved in the issue that *motivated* the release.
 
-Concretely: `gh-as-agent --app lucos-code-reviewer "repos/lucas42/{repo}/issues?state=all&per_page=20" --jq '.[] | {number, title, state, closed_at}'` — a one-command search before filing. If an issue closed within the last few days covers the same concern, link to it rather than opening a duplicate.
+Concretely: `gh-as-agent --app lucos-code-reviewer "repos/lucas42/{repo}/issues?state=all&per_page=20" --jq '.[] | {number, title, state, closed_at}'` — a one-command search before filing or escalating. If an existing issue (open, or closed within the last few days) covers the same concern, link to it in your message/filing rather than duplicating tracking.
+
+Confirmed instance: lucos_arachne#760 review (2026-08-06) — escalated the `mcp` v2.0.0 breaking-change migration to lucos-developer via SendMessage without searching first; lucos-developer already knew of lucas42/lucos_arachne#771 (filed by site-reliability, covering the same migration) and had to redirect the escalation through team-lead/dispatch instead. No duplicate issue was created, but the search would have let the escalation message link #771 directly and avoid the extra routing hop.
 
 Confirmed failure: `lucos_search_component#175` was a duplicate of `#171`, which was closed minutes before the PR under review. A repo issue search would have surfaced it immediately.
 
