@@ -64,6 +64,8 @@ Runs missed during the outage are gone; the original `pull_request` / `pull_requ
 
 Order CodeQL first, then the re-approval, so auto-merge lands on an already-satisfiable PR.
 
+⚠️ **With two or more stuck PRs, merge them ONE AT A TIME with a mergeability re-check between.** `mergeable: true` is computed against the *current* base; when PR A merges, PR B is recomputed against the new one. A bad recompute needs a rebase, and **a rebase moves B's head SHA, which discards both its approvals AND the check-run you just spent the whole recovery obtaining** — sending B back for another `workflow_dispatch` and another round of approvals. Cheap insurance: `pulls/{n}/files --jq '[.[].filename]'` on each before planning the order. Never accept "they touch disjoint files" as an assertion — on 2026-08-06 `lucos_worlds` #67/#68 were twice described as disjoint by two different agents and both edited `README.md` (the changed hunks happened not to overlap, but nobody had looked).
+
 ## When it ISN'T an outage (per-repo drop)
 
 The standard nudge is **close + reopen the PR** (preserves the head SHA, generates a fresh `pull_request opened` event, doesn't invalidate the approval). Empty-commit push is heavier (changes the SHA, may invalidate stale approvals depending on branch protection).
