@@ -1,6 +1,6 @@
 ---
 name: feedback-refetch-state-before-writing-final-artifact
-description: Before writing an external identifier into a final artifact — incident report, PR body, completion summary, follow-up actions table — re-fetch both its live STATE (Draft/Open/Closed/Merged) and, for anything you did not read this turn, its IDENTITY. Cached knowledge decays; invented identifiers don't announce themselves.
+description: Re-fetch an external identifier's live STATE at the moment you USE it — in a final artifact OR a mid-conversation claim to a teammate — and its IDENTITY for anything not read this turn. A same-session fetch is not a cache. Stale truths feel like recall; invented identifiers don't announce themselves.
 metadata:
   type: feedback
 ---
@@ -10,6 +10,18 @@ When writing a "follow-up actions" table, an incident-report timeline row, a com
 **Why:** State fields decay. A teammate's SendMessage saying "PR #199 is Draft awaiting sign-off" was true at SendMessage time, but state moves underneath: sign-off lands, the PR transitions to ready, code-reviewer approves, auto-merge fires — all of this can happen in minutes. The cached SendMessage view is then propagated stale into a final artifact.
 
 This bit me 2026-05-28 on the xwing incident's TBD-fill PR #200: I wrote "lucas42/lucos#199 — Draft — awaiting lucas42 sign-off" into the Follow-up Actions row 5 based on architect's SendMessage from ~30 minutes earlier. The architect-message was accurate at the time it was sent; by the time I shipped #200, #199 had been signed off, marked ready, reviewed, and merged at 18:47:18Z — ~6 minutes before I opened #200 at ~18:53Z. I then repeated the stale "draft awaiting sign-off" framing in my completion summary to team-lead at ~19:08Z, ~21 minutes after the merge. team-lead caught the drift.
+
+## Scope is wider than "final artifacts": re-fetch at the moment of USE, not of first learning
+
+The rule above is written for artifacts, but the same decay hits **any claim you make to a teammate mid-conversation** — and that's the more frequent case, because it feels like recall rather than assertion.
+
+**2026-08-06, lucos_worlds#68.** I fetched its reviews, saw `lucos-code-reviewer APPROVED`, and told two teammates it was "fully approved, identical in state to #67". The approval had been posted by mistake and was dismissed **59 seconds later**. My fetch was my own, first-hand, and four minutes old. Not a misreading — a *stale truth*.
+
+Nearly every wrong claim across four agents that evening was this, not fabrication: `#68 is under review`, `both approvals stand`, `#67 is draft-locked`, `disjoint files`. Each held when first checked and had decayed by the time it was repeated. **A stale truth is harder to catch than a guess**, because it carries the felt confidence of something you genuinely verified — the verification just happened at the wrong moment.
+
+**How to apply:** re-fetch immediately before the claim leaves your hands, even if *you* fetched it earlier in the same session, and even for a fast-moving field (review state, draft status, `mergeable`) you read minutes ago. If you're about to write a state word — `approved`, `draft`, `merged`, `blocked`, `open` — into a message, that's the trigger. A same-session fetch is not a cache; it's a timestamped observation.
+
+Corollary that saves the most rework: **don't spend a resource on a step whose input might still change.** Ordering an expensive action (a `workflow_dispatch`, a check run, a rebase) *after* the state it depends on has settled is the same instinct, one stage earlier in the pipeline.
 
 **How to apply:**
 
