@@ -68,6 +68,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Convention catalogue + enforced-vs-guidance boundary](reference_convention_catalogue.md)
 - [Purity seam enables dry-run — not a flag](reference_purity_seam_enables_dry_run.md)
 - [lucos_creds deploy reads CI snapshot, not live store](reference_lucos_creds_deploy_snapshot.md)
+- [creds "system" ≠ configy "system"](reference_creds_vs_configy_namespaces.md) — audit all 3 registries; gate on novelty, not membership
 - [creds already auto-derives PORT/APP_ORIGIN from configy](reference_creds_configy_sync.md)
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md)
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md)
