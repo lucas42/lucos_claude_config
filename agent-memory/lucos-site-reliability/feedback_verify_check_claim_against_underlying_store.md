@@ -5,6 +5,20 @@ metadata:
   type: feedback
 ---
 
+## ⚠️ Verify SELF-INCRIMINATING claims too — confession is not evidence
+
+The claims least likely to be checked are the ones that make the speaker look bad, because nobody argues against being told they erred. A teammate's account of **their own mistake** is still an unverified claim.
+
+**2026-08-06:** team-lead told me their wrong retraction had "put a false fact into `lucos-system-administrator`'s persistent memory". I accepted it and repeated it back in a written ledger. It was false — the sysadmin had gone from their own caveat straight to their own GraphQL verification, skipping the bad interim read entirely. Falsified in seconds:
+
+```bash
+git log --oneline -S "did join the rollup" -- agent-memory/lucos-system-administrator/   # -> 0 commits
+```
+
+Nobody had checked, precisely because the claim was against its own author's interest — and the "harm" was asserted about a *third party* who was never asked.
+
+**How to apply:** apply the same verification bar to admissions as to boasts. Especially when someone reports collateral damage to a third party's state (their memory, their file, their branch), check the third party's actual state before repeating it. And when *you* are the one confessing, hedge the blast radius: "I may have propagated this to X" — not "I corrupted X's memory" — unless you have read X's memory.
+
 **Before treating a monitoring check's `debug` string as fact — and absolutely before letting repeat occurrences harden into a "recurring pattern" — verify the claim against the underlying data store the check is supposed to be measuring.**
 
 **Why:** 2026-07-31, `lucos_locations` `location-freshness`. Across five ops runs (07-15, 07-19, 07-23, 07-27, 07-31) I read `"Last recorded location data is 108023 seconds old"` and concluded, every time, "genuine client-side gap, phone stopped publishing, server exonerated". I wrote it up five times, escalated a "worsening trend" (31h → 18h → 1min → 32h → 49h) to team-lead, and lucas42 asked for a ticket on the phone. One query of the recorder's `.rec` store destroyed the whole thing in about a minute: **2 of the 3 alerts were false positives** (true ages 47 minutes and 3h29m against a reported 30h), and during the "49-hour gap" the recorder received 18 fixes live. There was no worsening trend and no client-side failure — just one ordinary 32h stationary spell and a check that pins its value and then tracks wall-clock.
