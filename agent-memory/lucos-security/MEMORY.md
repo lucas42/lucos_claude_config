@@ -24,6 +24,7 @@
 - **Vue 2 ReDoS** in vue-leaflet-antimeridian — accepted, no fix without Vue 3 migration (vue-leaflet-antimeridian#4, 2026-03-03).
 - **Clear-text logging** in lucos_contacts_fb_import — accepted, script runs locally on the user's own data (lucos_contacts_fb_import#17, 2026-03-12).
 - **`principal_class` allowlist absence** in Wave 3/4 consumers — do NOT raise; scope is the sole gate per aithne contract §5 (lucos_aithne#268). See `lucos-aithne-security-architecture.md`.
+- **`cryptography` CVE-2026-69247** (lucos_worlds#66, test fixture dependency) — fixed by lucos-system-administrator; exploitability assessed as nil (test-only, not in production dependency graph), independently re-checked. Also fixed: missing `pip` ecosystem entry in dependabot.yml. Merged 2026-08-07.
 - **CircleCI token in query param** (lucos_monitoring) — fixed #25/#59, now `Circle-Token` header + v2 API.
 - **Unauthenticated MCP endpoint** (lucos_arachne) — fixed PR #292, Bearer auth via `CLIENT_KEYS`; `/_info` still open.
 - **DOMPurify XSS** (lucos_arachne) — fixed PR #52, `dompurify >= 3.3.2` override (GHSA-v2wj-7wpq-c8vv).
