@@ -1,13 +1,17 @@
 ---
 name: adr-standard
-description: "lucos ADR-0014 — merged means decided, no Status field, and the first written ADR format standard (docs/adr/README.md); draft PR lucos#275 awaiting lucas42"
+description: "lucos ADR-0014 — merged means decided, no Status field, and the first written ADR format standard at lucos/docs/adr/README.md; MERGED 2026-08-07"
 metadata:
   type: project
 ---
 
 **lucas42 decided "merged means decided"** on lucas42/lucos_worlds#71 (2026-08-06 22:52:43Z), after asking "I don't really see value in a `Status` field living inside the ADR… Could we consider removing the status entirely from our ADR standard?".
 
-Written up as **`lucos` ADR-0014** (`docs/adr/0014-merged-means-decided.md`), **draft PR lucas42/lucos#275**, filed 2026-08-07. `lucos` is unsupervised → draft blocks auto-merge; awaiting lucas42's sign-off, then mark ready, *then* run the code-reviewer loop.
+**MERGED 2026-08-07** — `lucos` ADR-0014 (`docs/adr/0014-merged-means-decided.md`) + the standard at `docs/adr/README.md`, via lucas42/lucos#275, merge commit `48db014`. Under §1 the merge *is* the ratification.
+
+**Observed timeline, worth keeping — it's the draft/ready sequence confirmed rather than inferred:** lucas42 APPROVED 00:58:35Z while still draft (workflow's identity check *skipped*, nothing spent) → marked ready ~01:04Z → `lucos-code-reviewer[bot]` APPROVED 01:05:17Z → **merged 01:05:29Z, 12s later**. So on an unsupervised repo the bot approval on the *ready* head is the trigger, and a human approval on a draft is harmless. Note this still does **not** test the case my persona flags as documented-not-observed: a *bot* approval on a still-draft PR. That remains untested.
+
+**Estate-rollout routing trap, caught before it fired (2026-08-07).** The coordinator initially routed lucas42/lucos#276 via `/estate-rollout`. That skill is built around a **`lucos_repos` convention** — Step 1 is "update or create the convention", Step 2 gates on the dry-run diff and says to stop if absent. #276 has no convention, so neither step can run. Worse than a stall: an agent satisfying Step 1 literally would *build* an ADR-format convention — the option ADR-0014 rejects by name — with the ADR's own follow-up as warrant. Root cause: `/dispatch`'s routing rule defines an estate rollout by **shape** (same change, many repos) while `/estate-rollout` is built on a **mechanism**; they coincide for every rollout run to date. Coordinator corrected the skill (`51ba545`). **Generalise: before routing to a skill, read its Steps, not its description — "no convention involved" is a routing constraint, not a scoping aside.**
 
 **What it decides:** (1) an ADR on a default branch is an agreed decision, unmerged = proposal; (2) no `Status:` field; (3) supersession is an explicit pointer (`**Superseded by:**`, or a section-level note for partial supersession), not a status word; (4) implementation tracking lives in GitHub issues; (5) the ADR format is written down at **`lucos/docs/adr/README.md`** — normative for *every* lucos repo, and a **living standard** (cosmetic clarifications don't need a new ADR; changing §1–§4 does).
 
