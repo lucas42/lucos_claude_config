@@ -135,6 +135,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Crash-loop recovery Monitor design](pattern_crashloop_recovery_monitor_design.md) — keep counter out of change-key.
 
 ## Standing rules — reports / proposals
+- [Apply your OWN new evidence to your OWN open positions](feedback_apply_own_evidence_to_own_positions.md) — esp. priority + "not proposing X because Y".
 - [Ask "what problem?" of the QUESTION, not just the solution](feedback_ask_what_problem_before_accepting_scope.md) — "too narrow" isn't evidence.
 - [Read the originating PR/issue body in full when writing causation](feedback_read_pr_body_for_causation.md) — don't reflex-frame triggers as "routine".
 - [Don't overclaim attributions in incident reports](feedback_no_attribution_overclaim.md) — restrict to what people actually said.
