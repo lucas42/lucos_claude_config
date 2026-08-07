@@ -12,7 +12,9 @@ metadata:
 - A **0-byte** `Bardix le Gaulois - Acte II - Escale à Lutèce.mp3` (accented duplicate stub beside the real 12MB `...Escale a Lutece.mp3`) got past `taglib` but raised `EOFError` in `acoustid.fingerprint_file()` → `logic.py` line 54 → process died mid-list.
 - Result: 5/5 loose tracks imported, 0/41 album tracks. The directory distinction is an **artifact of walk ordering**, not directory handling. Don't chase the directory theory.
 
-**Misses are PERMANENT.** `isRecent()` = 2-minute ctime window; `dirs[:] = [d for d in dirs if isRecent(root, d)]` prunes the walk. One minute later the album dirs were already stale → no later scan revisits them. Only the weekly `import.py` full scan recovers them. Same applies to `raise Exception("Empty Track")` / `duration < 1` in `logic.py`.
+**Misses are PERMANENT.** `isRecent()` = 2-minute ctime window; `dirs[:] = [d for d in dirs if isRecent(root, d)]` prunes the walk. One minute later the album dirs were already stale → no later scan revisits them. Same applies to `raise Exception("Empty Track")` / `duration < 1` in `logic.py`.
+
+⚠️ **Do NOT assume the weekly `import.py` full scan is the backstop** — I asserted this twice (report + ticket) before checking, and it was false. `import.py` iterates `sorted(os.listdir(...))` and Python sorts **uppercase before lowercase**, so it always dies (per #173) at the case boundary: as of 2026-08-07, 15 capitalised dirs DONE, **11 lowercase dirs NEVER reached** — incl. `bandcamp`, `iTunes`, `classical`, `artists`, `qobuz`. Deterministic starvation, same tail every week. Check `/var/state/import_checkpoint.json` `completed_dirs` against the sorted top-level listing before claiming any dir is covered. Evidence recorded on #173.
 
 **Silent failure:** the crash also skips the trailing `updateScheduleTracker(...)`, so **neither success nor failure** is posted. Adding the try/except makes `errorCount` non-zero and the *existing* schedule-tracker call fires a real alert — no new monitoring needed.
 
