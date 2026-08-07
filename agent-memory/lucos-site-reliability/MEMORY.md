@@ -101,6 +101,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead.
 - [Verify claims; write falsifiably](feedback_verify_check_claim_against_underlying_store.md) — read the artefact, not its name; scrutinise agreement.
 - [A working-state file is NOT a history](feedback_verify_state_file_semantics_before_reading_history.md) — checkpoints self-delete on success; use schedule-tracker.
+- [Don't infer a FIX's mechanism from the BUG's](feedback_dont_infer_fix_mechanism_from_bug_mechanism.md) — read the diff before claiming coverage limits.
 - [flat-or-shrink targets DUPLICATE rules, not wrong ones](feedback_consolidation_rule_scope.md) — a misleading rule may GROW.
 - [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
 - [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before…
