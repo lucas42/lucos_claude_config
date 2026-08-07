@@ -65,6 +65,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [/_info = availability/config, NOT content correctness](pattern_info_endpoint_boundary.md) — ⚠️REOPENED (lucos#273); boot+curl /_info goes GREEN through outages.
 
 ## Scheduled-job / service failures
+- [media_import new_files.py: unguarded loop, 1 bad file kills scan](pattern_new_files_unguarded_loop_poison_file.md) — looks like "dirs don't import"; misses PERMANENT.
 - [Hung Python: py-spy/gdb ABSENT on prod](pattern_hung_python_process_no_pyspy_use_faulthandler.md) — pre-armed faulthandler+SIGUSR1.
 - [RQ `with_scheduler=False` silently loses retries](pattern_rq_scheduler_disabled_silently_drops_retries.md) — `ZCARD rq:scheduled:*`.
 - [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError.
