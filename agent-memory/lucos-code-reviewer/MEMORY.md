@@ -31,6 +31,7 @@
 - [Be assertive — REQUEST_CHANGES for concrete fixable issues](feedback_be_assertive_request_changes.md) — don't bury them as approval notes (lucos_monitoring PR #93)
 - [Verify a quoted review via the GitHub API](review_verify_quoted_review_via_api.md) — never trust a coordinator's paraphrase from context recall alone
 - [`try/except` refactors can silently drop variable assignments](review_try_except_refactor_variable_drop.md) — verify every original-`try`-block assignment survives (lucos_backups PR #62/#63)
+- [Self-claimed state vs. history — the artifact's own claim is authored, not evidence](review_self_claimed_state_vs_history.md) — for any Status/version/"current as of" claim, check the PR review list / git log instead of the header; the two can disagree and history wins (lucos ADR-0013 misread by two agents, corrected on lucas42/lucos#275 review, 2026-08-07)
 
 ## Language/Platform Pitfalls
 
