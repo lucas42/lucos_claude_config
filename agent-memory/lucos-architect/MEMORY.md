@@ -105,6 +105,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [creds ORIGIN_* envvars](project_creds_origin_envvars.md) — creds ADR-0005 (PR #472); origin from link row's serverenvironment; ~19% zoo-migration ceiling; scope trap already closed by ADR-0003
 - [creds multi-line secrets](project_creds_multiline_secrets.md) — creds ADR-0006 (PR #484, Proposed); base64-at-rest for key-typed secrets; divergent-framing-guards blind to material-invalid values; transport≠content surfaces
 - [creds capability axis](project_creds_capability_axis.md) — creds ADR-0004 (PR #457); env×capability; metadata-vs-secret tier; SSH-only; default-allow; 4 deferred follow-ups on agreement
+- [ADR standard](project_adr_standard.md) — lucos ADR-0014 (draft PR lucos#275): merged=decided, no Status field, format at lucos/docs/adr/README.md; 3 follow-ups
 - [Weightings festival migration](project_weightings_festival_migration.md) — weightings#266 plan posted, Awaiting Decision; out-of-season penalty is the blocker; 5 Qs open; ADR → lucos/docs/adr; #267 raised
 
 ## Per-project pointers (depth in project-details.md)
