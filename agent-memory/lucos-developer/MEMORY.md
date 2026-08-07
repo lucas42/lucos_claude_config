@@ -55,6 +55,9 @@ Always manually review generated migration files before committing. Autogenerate
 ## lucos_configy
 - [Null serialisation for optional fields](configy_null_fields.md) — use `dict.get(key) or default`, not `dict.get(key, default)`; configy sends explicit `null` for absent optional fields
 
+## Schema/format migrations
+- [Exercise real prod format before claiming backward compat](feedback_exercise_prod_format_before_migration.md) — reconstruct actual on-disk content, run new code against it, report literal output (lucos_media_import#173/PR#188)
+
 ## TODO/FIXME Interpretation
 - [Check for deferred intent before raising TODO as an issue](feedback_todo_deferred_intent.md) — "For now", "until X", "placeholder", "reserved for future" signals mean the author intentionally deferred; don't raise as actionable without design input
 
