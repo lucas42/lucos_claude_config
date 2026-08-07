@@ -8,26 +8,45 @@ Follow this process. Do not ask for clarification — immediately begin.
 
 ## How teams work in this Claude Code version
 
-Teams are **session-keyed and auto-created**. There is no named-team concept and no
-team-creation/deletion tool: the team forms implicitly the moment you spawn the first
-teammate with the **Agent tool**, and its config lives at:
+Teams are **auto-created**. There is no named-team concept and no team-creation/deletion
+tool: the team forms implicitly the moment you spawn the first teammate with the **Agent
+tool**, and its config lives at `~/.claude/teams/session-{id}/config.json`. The
+`team_name` input on the Agent tool is accepted but ignored.
 
-```
-~/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json
-```
+**Never locate that config by deriving the path from `CLAUDE_CODE_SESSION_ID`, and never
+treat a missing config as "no team".** Teammates are long-lived tmux processes that
+survive events which rotate the session id (`/clear` being the common one), so they stay
+registered under the *old* session directory while `CLAUDE_CODE_SESSION_ID` names a new,
+empty one. A session-derived lookup therefore returns NO_TEAM while a full team is
+running, and the skill spawns a duplicate of every persona. **`ListAgents` does not
+rescue you — it reports "No reachable agents" for tmux teammates and is not evidence of
+absence either.** The only reliable signal is a live tmux pane.
 
-The `team_name` input on the Agent tool is accepted but ignored, so you cannot choose a
-name — the team is identified by this session's id. Throughout this skill, derive the
-config path from the session id rather than hardcoding a name:
+Throughout this skill, locate the live team by scanning every team config for members
+whose panes are still alive:
 
 ```bash
-TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
-cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
+TEAM_CONFIG=$(python3 - <<'PY'
+import json, glob, os, subprocess
+alive = set(subprocess.run(['tmux','list-panes','-a','-F','#{pane_id}'],
+                           capture_output=True, text=True).stdout.split())
+best = None
+for path in glob.glob(os.path.expanduser('~/.claude/teams/*/config.json')):
+    try: cfg = json.load(open(path))
+    except Exception: continue
+    live = [m for m in cfg.get('members', [])
+            if m.get('backendType') == 'tmux' and m.get('tmuxPaneId') in alive]
+    if live and (best is None or len(live) > best[0]):
+        best = (len(live), path)
+print(best[1] if best else '')
+PY
+)
+[ -n "$TEAM_CONFIG" ] && cat "$TEAM_CONFIG" || echo "NO_TEAM"
 ```
 
-Because the team is keyed to the **current** session, a fresh session always starts with
-no team — you will not pick up a stale team from a previous session. The only "existing
-team" case is re-running `/team` within the same live session.
+Use `$TEAM_CONFIG` (and only a config found this way) wherever this skill reads or prunes
+the roster. If it resolves to a config from a different session directory than the current
+one, that is the normal post-`/clear` case — reuse that team, do not rebuild it.
 
 ## Step 0: Parse arguments
 
@@ -41,12 +60,8 @@ Continue with Step 1.
 
 ## Step 1: Check for existing team
 
-Before spawning, check whether this session already has a team:
-
-```bash
-TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
-cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
-```
+Before spawning, run the live-team discovery snippet from "How teams work" above to find
+`$TEAM_CONFIG` and print the roster. Do not substitute a session-id-derived path.
 
 **If NO_TEAM** (or the config has no members besides `team-lead`): Proceed to Step 2.
 
@@ -74,12 +89,12 @@ Run this with `run_in_background: true`. You will be notified automatically when
 
 After the background sleep completes, check whether a teammate reply has appeared in the conversation (it will show as a `<teammate-message>` turn). If a reply arrived, the team is healthy — **stop here** and reuse the existing team.
 
-If no teammate reply appeared by the time the background sleep completes, the team is stale. Do **not** delete the session team directory — the harness owns it and auto-removes it when the session ends. Instead, prune only the dead member entries (those whose tmux pane is no longer alive), then fall through to Step 2/Step 4, which will respawn the missing personas:
+If no teammate reply appeared by the time the background sleep completes, the team is stale. Do **not** delete the session team directory — the harness owns it and auto-removes it when the session ends. Instead, prune only the dead member entries (those whose tmux pane is no longer alive), then fall through to Step 2/Step 4, which will respawn the missing personas. Shell variables do not persist between Bash calls, so run the discovery snippet and this prune in the **same** Bash invocation:
 
 ```bash
-python3 - <<'PY'
-import json, os, subprocess
-cfg = os.path.expanduser(f"~/.claude/teams/session-{os.environ['CLAUDE_CODE_SESSION_ID'][:8]}/config.json")
+python3 - <<PY
+import json, subprocess
+cfg = "$TEAM_CONFIG"
 config = json.load(open(cfg))
 alive = set(subprocess.check_output(['tmux', 'list-panes', '-a', '-F', '#{pane_id}'], text=True).split())
 before = len(config['members'])
@@ -112,6 +127,8 @@ In both modes, derive the **teammate name** from each filename without the `.md`
 
 There is no separate team-creation step — the team forms automatically when the first
 teammate is spawned. Spawn each teammate with the **Agent tool**.
+
+**Last-chance duplicate detector — check every spawn result's `name` before spawning the next.** The Agent tool does not reject a name that is already taken: it silently appends a numeric suffix and returns `name: lucos-developer-2`. A returned name that differs from the one you asked for is proof a live teammate already holds that name, i.e. the checks above failed. Stop spawning immediately, send a `shutdown_request` to every suffixed duplicate you just created, and reuse the existing team.
 
 **Never spawn a teammate whose name already exists in the team config AND whose tmux pane is still alive.** Spawning a duplicate name is a sign something has gone wrong (a stale entry that should have been pruned in Step 1b, or a roster mismatch that should have stopped earlier) — stop and investigate rather than continuing. Dead/pruned entries are fine to respawn.
 
@@ -159,10 +176,7 @@ If not found, stop: "No persona file found for `{teammate-name}`. Check the name
 
 ### A2: Check the existing team
 
-```bash
-TEAM_CONFIG="$HOME/.claude/teams/session-${CLAUDE_CODE_SESSION_ID:0:8}/config.json"
-cat "$TEAM_CONFIG" 2>/dev/null || echo "NO_TEAM"
-```
+Run the live-team discovery snippet from "How teams work" above to find `$TEAM_CONFIG` and print the roster. Do not substitute a session-id-derived path.
 
 If NO_TEAM, stop: "No running team found. Use `/team` to start a team first."
 
@@ -180,9 +194,9 @@ If **ALIVE**, stop: "`{teammate-name}` is already a member of this team."
 If **DEAD** (crashed), the config entry is stale. Remove it before respawning:
 
 ```bash
-python3 - <<'PY'
-import json, os
-cfg = os.path.expanduser(f"~/.claude/teams/session-{os.environ['CLAUDE_CODE_SESSION_ID'][:8]}/config.json")
+python3 - <<PY
+import json
+cfg = "$TEAM_CONFIG"   # run in the same Bash call as the discovery snippet
 config = json.load(open(cfg))
 config['members'] = [m for m in config['members'] if m['name'] != '{teammate-name}']
 json.dump(config, open(cfg, 'w'), indent=2)
