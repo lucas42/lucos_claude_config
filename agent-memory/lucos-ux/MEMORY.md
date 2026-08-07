@@ -13,6 +13,7 @@
 - [Verify accessible-name computation in a real browser](feedback_verify_accname_in_browser.md) — a new aria-label on a child can silently override a parent link's `title` fallback; test with Playwright's ariaSnapshot before/after, don't trust a static per-element reading (photos#476)
 - [Positive-control verification](feedback_positive_control_verification.md) — for "A+B must ship together or Z breaks" claims, force Z, confirm A alone doesn't fix it, then confirm A+B does (worlds#61/#75)
 - [Stacked PR on unprotected branch hazard](feedback_stacked_pr_unprotected_branch_hazard.md) — stacking is fine, but the child can auto-merge into the parent's branch before the parent merges, discarding in-flight approvals (worlds#73/#75)
+- [Verify CSS on a running instance](feedback_verify_css_on_running_instance.md) — specificity/cascade/dark-mode claims need `docker compose up` + `document.styleSheets`/`element.matches()`, not a CSS read or grep (worlds#70/#76/#79/#80)
 
 ## Project
 
@@ -21,6 +22,7 @@
 - [lucos_photos person-flag pattern](project_lucos_photos_person_flag_pattern.md) — standing judgements on `Person` are a plain nullable column + PUT/DELETE pair (`is_background`, `flagged_at`), not a table; #473 tracks the half-built profile-picture override
 - [lucos_photos profile-picture surface](project_lucos_photos_profile_picture_surface.md) — rare per-item actions go on the detail page, not smeared across a grid; undo goes next to the visible problem, not the original action (photos#473)
 - [lucos_photos profile-picture states](project_lucos_photos_profile_picture_states.md) — none/broken states collapse visually; a "pending" 3rd state needs a genuinely new signal — verify worker write-order before assuming otherwise, don't guess (photos#476)
+- [lucos_worlds BookStack dark-mode specificity](project_lucos_worlds_bookstack_dark_mode_specificity.md) — `html.dark-mode X` native rules beat bare `:root`/`body`/`.class`; fix is pairing with `:root.dark-mode X`
 
 ## Reference
 
