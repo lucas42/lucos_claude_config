@@ -98,6 +98,8 @@ Read the issue body. If it describes adding a new convention, modifying an exist
 
 More broadly, any issue whose resolution requires the same change to be applied across many repos (enabling a GitHub setting, updating a workflow file, etc.) is an estate rollout, regardless of which repo the issue lives on. Route these to `/estate-rollout`.
 
+**But breadth alone is not the trigger — `/estate-rollout` requires a `lucos_repos` convention to exist or be created.** Its Step 1 is "update or create the convention" and its Step 2 gates on the audit dry-run diff, stopping outright if no diff posts. A change that touches many repos but has **no convention** (e.g. a documentation-format sweep, where nothing in `lucos_repos` audits the files being changed) cannot run those steps: there is no convention to modify and the dry-run shows zero, forever. **The specific hazard is that an agent following Step 1 literally will satisfy it by *inventing* a convention** — writing a new `lucos_repos` check purely to make the dry-run produce output, which is a Go check plus tests plus its own estate rollout, to police something nobody asked to be policed. For conventionless multi-repo changes, coordinate the fan-out using `/estate-rollout`'s **Step 4 onward** (sysadmin fan-out, "migration means merged not PR-opened", CI verification) and **record on the ticket that Steps 1–2 do not apply and there is no dry-run gate** — otherwise whoever picks it up waits for a diff that can never arrive, or manufactures a convention to make one appear.
+
 If the issue is not an estate rollout (e.g. it's a bug fix, API change, dashboard change, or infrastructure work), continue.
 
 ## Step 5: Dispatch to the correct teammate
