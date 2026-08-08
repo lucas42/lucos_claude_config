@@ -47,7 +47,7 @@
 - [SendMessage has no broadcast](feedback_shutdown_no_broadcast.md) — fan out individual SendMessage per teammate
 - [Follow archival checklist](feedback_follow_archival_checklist.md) — use lucos/docs/repo-archival.md when decommissioning
 - [Triage agent-raised issues immediately](feedback_triage_agent_raised_issues.md) — inline, don't wait for next triage run
-- [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — let major bumps flow; CI catches breakage
+- [No semver-major ignore rules](feedback_no_semver_major_ignore.md) — let major bumps flow; CI catches breakage. Does NOT extend to pre-releases (they build fine, break at runtime) — route those to lucos#273, not a per-repo ignore rule
 - [Consult github-workflow.md first](feedback_consult_github_workflow_doc.md) — read the doc, don't recall syntax (some PATCH fields silently ignored)
 - [Don't endorse unverified analysis](feedback_no_unverified_endorsement.md) — no editorial praise unless checked against ground truth
 - [No inline lessons in instruction files](feedback_no_inline_lessons.md) — narrative goes in the commit message, not the file
