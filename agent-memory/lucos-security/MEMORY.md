@@ -37,6 +37,7 @@
 
 - **unattended-upgrades `Allowed-Origins` + stock `Origins-Pattern` union, not override** — a "security-only" custom restriction layered on top of the stock file doesn't actually restrict anything, since `get_allowed_origins()` concatenates both (verified against source on xwing). Check for this on any host with a customized unattended-upgrades scope. Detail: `risk-unattended-upgrades-origin-scope.md`.
 - **`lucos-agent` lacks `adm`/`systemd-journal` group on avalon/xwing/salvare** — `journalctl` returns nothing for any unit; can't distinguish "never ran" from "no read access." Don't assert service history from journalctl on these hosts.
+- [lucos_firewall is inbound-only; egress is deliberately unfiltered (v4 and v6)](risk-lucos-firewall-inbound-only-egress-unfiltered.md) — ADR-0007 scopes `OUTPUT ACCEPT` out; a container gaining a new address family for egress (e.g. lucos#278) is not a posture change since no egress path was ever filtered. Verified 2026-08-08.
 
 - **Prompt injection via external text** (CI logs, issue/PR bodies) + **secrets leaking through CircleCI log masking**. Detail: `risk-prompt-injection-and-ci-logs.md`.
 - **OS command injection via `os:cmd`** with unsanitised input — found in `lucos_monitoring/src/fetcher.erl` `checkTlsExpiry/1`; low exploitability today but fragile pattern to check for elsewhere.
