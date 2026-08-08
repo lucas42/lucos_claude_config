@@ -107,6 +107,17 @@ When an `Owner = lucas42` item's most recent comment is lucas42 **supplying the 
 
 This is the mirror of the agent-completed-input rule below (an agent's completed input transitions the item *to* lucas42 or Ready): **lucas42's completed input transitions it *back to the agent*.** Applies to any `Owner = lucas42` item regardless of Status (Ready, Awaiting Decision, Ideation). Read his comment in full to distinguish *providing requested input* (re-route off him) from *requesting a change / asking a new question* (which may legitimately stay per the classification above). The trap to avoid: reading a data dump or decision lucas42 posted as "context/FYI, leave as-is" when it was actually the answer the workflow was blocked on.
 
+### Always tell the RAISER what triage decided — especially when it rejects their proposed fix
+
+The Ready path's step 8 notifies interacting agents, but the obligation is not specific to Ready and is **most** important on the outcomes that overrule the raiser: their suggested fix marked NOT chosen, the issue re-scoped, re-owned, Blocked, or closed. An agent who filed an issue and hears nothing back has every reason to assume it is still theirs to progress — so they will keep acting on it, and their next action will reflect the state they last knew rather than the state you set.
+
+Two concrete failures this prevents, both observed on `lucas42/lucos_creds#512` (2026-08-08):
+
+- **Duplicated investigation.** The raiser independently researched the same question a consulted specialist had already answered, and posted a second, near-identical occurrence comment on the same upstream ticket — noise on a ticket awaiting lucas42's decision.
+- **A contradicting action taken in good faith.** Not knowing it had been triaged to Blocked, the raiser proposed closing it as a duplicate and said they would default to closing if they did not hear back. They did, and a deliberate Blocked decision was silently undone.
+
+So: when triage lands on a decision the raiser would not predict, SendMessage them the outcome **in the same pass**, before moving on. Say what was decided, what it overrules, and whether anything is still theirs. Telling them "I'll triage this and board it" is not this notification — that describes your intent, not the result, and an agent holding only that will fill the gap with their own judgement.
+
 ### If there are agreed changes to make to the issue
 
 Check the changes have been suggested or approved by `lucas42` or by a consulted agent whose input is uncontroversial. Update the issue body with the agreed clarifications/scope changes:
