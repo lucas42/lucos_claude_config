@@ -24,7 +24,9 @@ Rollback if redeploy fails after delete: `docker network create --subnet 172.28.
 
 Declared target config (docker-compose.yml, origin/main): `enable_ipv6: true`, `subnet: fd00:3::/64`.
 
-Status: PENDING
+Status: IN PROGRESS — preflight probe succeeded (fd00:3::/64 allocatable on xwing), containers
+stopped+removed, live network removed cleanly (no error), redeploy triggered via empty commit
+ff94ed5 pushed to lucos_dns_secondary main. Monitoring CI + container recovery.
 
 ## avalon — lucos_monitoring_default
 
