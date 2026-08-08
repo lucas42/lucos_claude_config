@@ -38,6 +38,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md) — configy certonly + stock certbot renew…
 - [All l42.eu SERVFAIL = apex zone failed to load on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon.
 - [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time IPv4-only](reference_avalon_ipv6_bridging.md) — enable_ipv6 per-network.
+- [Duplicate `fd00:*::/64` blocks network recreate → service left with NO container](pattern_duplicate_ula_subnet_blocks_network_recreate.md) — "Pool overlaps"; check before deleting any net.
 - [Compose silently REUSES a stale network](compose-reuses-stale-network.md) — inspect live net, not compose; network…
 
 ## Dev wiring / creds
@@ -61,6 +62,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [red-means-down: no ack/known-issue state](feedback_red_means_down_no_ack_state.md) — [`/suppress`=deploy window only](pattern_monitoring_suppress_is_deploy_window_only.md).
 - [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or…
+- [/_info in-band 1s dep probe > monitoring's 1s poll timeout](pattern_info_inband_dependency_probe_exceeds_poll_timeout.md) — healthy service reports itself unreachable; alerts on WRONG service first.
 - [Checks AND thresholds live in /_info, not lucos_monitoring](feedback_failthreshold_lives_in_info.md) — monitoring is aggregation only.
 - [/_info = availability/config, NOT content correctness](pattern_info_endpoint_boundary.md) — ⚠️REOPENED (lucos#273); boot+curl /_info goes GREEN through outages.
 
