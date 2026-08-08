@@ -17,6 +17,8 @@
 
 ## Project
 
+- [Monitoring dependent-failure grouping trap](project_monitoring_dependent_failure_grouping.md) — lucos_monitoring#296/#297: key grouping on system-level `dependsOn`, not the failing check's (`fetch-info` has none)
+
 - [SW health pattern](project_sw_health_pattern.md) — SW-backed UIs (seinn) can degrade silently; pattern for surfacing SW health + guided recovery in UIs
 - [CSP data: URI img-src](project_csp_data_uri_img_src.md) — CSS background-image data: URIs need `img-src data:` explicitly; style-src alone isn't enough
 - [lucos_photos person-flag pattern](project_lucos_photos_person_flag_pattern.md) — standing judgements on `Person` are a plain nullable column + PUT/DELETE pair (`is_background`, `flagged_at`), not a table; #473 tracks the half-built profile-picture override
