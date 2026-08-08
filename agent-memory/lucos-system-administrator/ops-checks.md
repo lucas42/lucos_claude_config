@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-06
+container_status: 2026-08-08
 resource_checks: 2026-08-06
 syslog_review: 2026-08-06
 software_updates: 2026-08-06
 sandbox_drift: 2026-08-06
-repos_dashboard: 2026-08-06
+repos_dashboard: 2026-08-08
 docker_image_staleness: 2026-07-31
 backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
@@ -18,7 +18,8 @@ certificate_expiry: 2026-07-31
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **lucos_creds#472/#484 convention-check re-run**: both PRs' `convention-check` GitHub Actions runs got `cancelled` during the 2026-08-06 GitHub Actions platform incident (status.github.com qcvjkzcs7j74, opened 15:22 UTC, still `investigating`/`major_outage` at 18:30 UTC — stood the watch-monitor down per team-lead at the 3h mark, not worth a 2-min poll loop for a cosmetic check). Confirmed non-blocking: `convention-check` is not in `required_status_checks.contexts` for lucos_creds main (`ci/circleci: test`, `Analyze (go)`, `ci/circleci: build` — all green on both heads); both PRs approved and `mergeable: true`, awaiting lucas42's sign-off on this supervised repo. Once the incident is confirmed resolved (check https://www.githubstatus.com/api/v2/incidents/unresolved.json for qcvjkzcs7j74), re-run: `gh-as-agent repos/lucas42/lucos_creds/actions/runs/31123913329/rerun-failed-jobs` (#484) and the equivalent for #472's convention-check run (re-fetch its latest run ID — head sha was c0a3d9d5dc20d88fe4b2c571536c72ab76a92ae8 as of 2026-08-06, may have moved). Purely cosmetic — do not treat as urgent, but don't lose track of it either.
+- **lucos_agent#72** (raised 2026-08-06): scheduled `prune-images` CircleCI workflow on `lucos_agent` has never run (zero pipelines ever recorded, stale `default_branch: master` vs GitHub's actual `main`) — xwing 83% reclaimable docker images, salvare same root cause. Blocked on CircleCI admin/human access to fix project sync. Not urgent (both hosts well under 80% disk threshold) but keep tracking disk trend on xwing/salvare each weekly resource check until fixed.
+- **lucos_creds#472/#484 convention-check**: RESOLVED 2026-08-08. GitHub Actions incident qcvjkzcs7j74 confirmed `resolved` (resolved_at 2026-08-07T02:04:44Z). Confirmed both cancelled runs were genuinely incident artifacts (job-level conclusion `cancelled`, empty steps — not a real failure) before re-running. Triggered `rerun-failed-jobs` on both (run 31123913329 for #484, run 31123956119 for #472) — both showed `status: in_progress` 15s after trigger. Not polled to completion (non-gating, cosmetic check, not in required_status_checks for lucos_creds main) — next ops run should spot-check both runs concluded `success` and drop this line if so.
 
 ## Decommissioned services
 
@@ -1626,3 +1627,13 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again, same deliberate deferral standing since 2026-07-13 (still pre-scaffolding). No new action.
 
 **Issues raised**: lucos_agent#72 (scheduled prune-images CircleCI workflow never ran — 83% reclaimable docker images on xwing, root cause likely a stale CircleCI default-branch/project-sync issue, needs CircleCI admin access to fix — flagged as blocked-on-human-execution, not agent-fixable).
+
+### 2026-08-08 (checks 1 + 6 due; weekly checks 2-5 last ran 2026-08-06, 2 days — not due until ~2026-08-13; monthly checks 7-9 last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (same deliberate deferral standing since 2026-07-13, still pre-scaffolding). No new action.
+
+**Follow-up cleared**: lucos_creds#472/#484 convention-check reruns. GitHub Actions incident qcvjkzcs7j74 confirmed `resolved` (resolved_at 2026-08-07T02:04:44Z). Verified both cancelled runs were genuine incident artifacts (job-level `conclusion: cancelled`, empty steps) before re-triggering — not a real CI failure worth investigating. Triggered `rerun-failed-jobs` on both; both `in_progress` 15s after trigger. Not polled to completion — non-gating (not in lucos_creds' `required_status_checks`), both PRs already `mergeable: true` and approved, awaiting lucas42's sign-off. Next run should spot-check both concluded `success`.
+
+**Issues raised**: None. **Issues closed**: None. All hosts clean, no new dashboard failures beyond the known deferral. lucos_agent#72 (docker image prune backlog on xwing/salvare) still open, unchanged since 2026-08-06 — blocked on CircleCI admin access, not re-litigated this run.
