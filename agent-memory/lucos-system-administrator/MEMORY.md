@@ -61,7 +61,8 @@
 - **Verify cumulative diff before un-drafting a PR or adding `Closes #N`**: on shared/force-pushed branches a commit can drop out of `main...HEAD` — run `git diff origin/main...HEAD -- <file>`. `feedback_verify_cumulative_diff.md`.
 - **lucos_firewall ADR-0007**: all 3 hosts ENFORCED 2026-06-08; lucos_backups#307 (bridge mode) next. `project_firewall_rollout.md`.
 - **Docker 29.x chains**: DOCKER-FORWARD/DOCKER-BRIDGE/DOCKER-CT + 3 others needed for `docker network create` — deleted by old firewall code, manually recreated on avalon 2026-06-08. `docker-29x-chains.md`.
-- **Docker compose stale network**: compose reuses an existing network even if config (enable_ipv6/subnet) changed — must `docker rm` + recreate + CI trigger. `docker-compose-stale-network.md`.
+- **Docker compose stale network**: compose reuses an existing network even if config (enable_ipv6/subnet) changed — must `docker rm` + recreate + CI trigger. "Not needed for its declared targets" ≠ "has any IPv6 egress" — the June 2026 all-clear on lucos_monitoring/time was wrong per the 2026-08-08 Happy-Eyeballs incident. `docker-compose-stale-network.md`.
+- **Self-check before `commit-claude-main`**: re-read the diff for a dated "(Prompted by...)" narrative parenthetical and strip it to the commit message. `feedback_no_inline_lessons_self_check.md`.
 - **Multi-PR issues**: drive the review loop for ALL PRs before reporting done — a co-primary cross-repo PR isn't a "drive-by extra". `feedback_multi_pr_review_loop.md`.
 - **xwing SSH from sandbox**: direct SSH is blocked (sandbox egress IP = xwing's own NAT IP) — use `-J avalon.s.l42.eu` (salvare: `-J xwing.s.l42.eu` or chain via avalon). `xwing-ssh-via-avalon.md`.
 - **lucos_creds SSH exec write format**: `{system}/{environment}/{KEY}={value}`, no command prefix; empty value deletes the credential; "No assignment character found" = missing `=`.
