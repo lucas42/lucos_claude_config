@@ -108,6 +108,11 @@ Create a branch, commit the report, and open a **draft** PR on the `lucos` repo 
 
 ```bash
 cd ~/sandboxes/lucos
+# The lucos sandbox holds ~75 stale incident-report branches from past sessions,
+# so `checkout -b` branches from whatever was last checked out — NOT from main.
+# Start from a known base every time, or you will silently bundle someone else's
+# unmerged report into your PR:
+git fetch -q origin && git checkout -q main && git reset -q --hard origin/main
 git checkout -b incident-report-{short-description}
 ~/sandboxes/lucos_agent/git-as-agent --app lucos-site-reliability \
     add docs/incidents/{filename}.md
@@ -129,6 +134,14 @@ Then open the PR as a **draft** with `create-pr` (always use `create-pr`, never 
 ```
 
 Put the source/originating issue(s) and the list of outstanding TBDs in the body so a cold reader (you, in a future session) can pick up the work. If multiple critical issues need reports, include them all in one PR with a commit per report.
+
+**Then confirm the PR contains only your report**, before notifying anyone:
+
+```bash
+gh-as-agent --app lucos-site-reliability "repos/lucas42/lucos/pulls/{N}/files" --jq '.[].filename'
+```
+
+One filename, and it is yours. A branch cut from a stale base bundles another report's commits, and the PR body will not mention them — so the only way to see it is to look. If it is wrong, `git rebase --onto origin/main <last-foreign-commit> <your-branch>` and force-push with `--force-with-lease`; note GitHub takes a few seconds to re-derive the file list, so re-check rather than trusting the first response. (2026-08-08: PR lucas42/lucos#281 silently carried all of lucas42/lucos#280's report — merging it would have landed a second report whose own domain review was still outstanding.)
 
 **Do NOT mark this PR ready or drive it to merge yet.** Every amendment through the incident — verification results, folded-in team responses, late follow-up links — goes on this same branch (Step 3). It is finalised only in Step 4. A draft PR cannot auto-merge, which is exactly why it can stay open and absorb everything in one place.
 
