@@ -1637,3 +1637,13 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Follow-up cleared**: lucos_creds#472/#484 convention-check reruns. GitHub Actions incident qcvjkzcs7j74 confirmed `resolved` (resolved_at 2026-08-07T02:04:44Z). Verified both cancelled runs were genuine incident artifacts (job-level `conclusion: cancelled`, empty steps) before re-triggering — not a real CI failure worth investigating. Triggered `rerun-failed-jobs` on both; both `in_progress` 15s after trigger. Not polled to completion — non-gating (not in lucos_creds' `required_status_checks`), both PRs already `mergeable: true` and approved, awaiting lucas42's sign-off. Next run should spot-check both concluded `success`.
 
 **Issues raised**: None. **Issues closed**: None. All hosts clean, no new dashboard failures beyond the known deferral. lucos_agent#72 (docker image prune backlog on xwing/salvare) still open, unchanged since 2026-08-06 — blocked on CircleCI admin access, not re-litigated this run.
+
+### 2026-08-09 (checks 1 + 6 due; weekly checks 2-5 last ran 2026-08-06, 3 days — not due until ~2026-08-13; monthly checks 7-9 last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**: all clean — no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — same deliberate deferral standing since 2026-07-13 (Blocked on lucas42/lucos_worlds_atlas#1, still pre-scaffolding — see `configy-undeployed-system-entry-pattern.md`). Re-confirmed via issue #3 comments (my own prior deferral comment + issue-manager's triage). No new action.
+
+**Follow-up cleared**: lucos_creds#472/#484 spot-check — both `rerun-failed-jobs` runs (31123913329, 31123956119) confirmed `status: completed`, `conclusion: success`. Dropped from pending follow-ups.
+
+**Issues raised**: None. **Issues closed**: None. lucos_agent#72 (docker image prune backlog) still open, unchanged — weekly resource check not due this run so disk trend not re-measured; will pick up 2026-08-13.
