@@ -72,7 +72,14 @@ When asked to create a new issue:
 
    The same rule applies to `PATCH` calls that update an existing issue body (`repos/.../issues/{number}` with `--method PATCH`) and to comments (`repos/.../issues/{number}/comments`).
 
-5. **Add the issue to the project board** immediately after creation. Read `~/.claude/references/triage-reference-data.md` for field IDs and API patterns.
+5. **Add the issue to the project board** immediately after creation, using **`~/sandboxes/lucos_agent/gh-projects`** — *not* `gh-as-agent`. GitHub Apps cannot access v2 user projects, so `gh-as-agent graphql … addProjectV2ItemById` returns `FORBIDDEN: Resource not accessible by integration`; `gh-projects` authenticates with a PAT that has project scope. Read `~/.claude/references/triage-reference-data.md` for field IDs and further API patterns.
+
+   ```bash
+   NODE=$(~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/<repo>/issues/<N> --jq '.node_id')
+   ~/sandboxes/lucos_agent/gh-projects graphql -f query='
+   mutation($pid:ID!,$cid:ID!){ addProjectV2ItemById(input:{projectId:$pid, contentId:$cid}){ item { id } } }
+   ' -f pid='PVT_kwHOAAaLL84BRh5d' -f cid="$NODE" --jq '.data.addProjectV2ItemById.item.id'
+   ```
 
    **Run creation, board-add, and field-setting as separate commands — not one bundled script.** If they are bundled and the call is interrupted or rejected, earlier steps may have already executed, orphaning a created-but-unconfigured issue. After *any* interrupted or rejected side-effecting command, re-fetch the actual state (does the issue exist? is it on the board?) before asserting what happened — never conclude "nothing was created" from the tool verdict alone.
 
