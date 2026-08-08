@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-08
+container_status: 2026-08-09
 resource_checks: 2026-08-06
 syslog_review: 2026-08-06
 software_updates: 2026-08-06
 sandbox_drift: 2026-08-06
-repos_dashboard: 2026-08-08
+repos_dashboard: 2026-08-09
 docker_image_staleness: 2026-07-31
 backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
@@ -19,7 +19,7 @@ certificate_expiry: 2026-07-31
 ## Pending follow-ups (check on next run regardless of trigger)
 
 - **lucos_agent#72** (raised 2026-08-06): scheduled `prune-images` CircleCI workflow on `lucos_agent` has never run (zero pipelines ever recorded, stale `default_branch: master` vs GitHub's actual `main`) — xwing 83% reclaimable docker images, salvare same root cause. Blocked on CircleCI admin/human access to fix project sync. Not urgent (both hosts well under 80% disk threshold) but keep tracking disk trend on xwing/salvare each weekly resource check until fixed.
-- **lucos_creds#472/#484 convention-check**: RESOLVED 2026-08-08. GitHub Actions incident qcvjkzcs7j74 confirmed `resolved` (resolved_at 2026-08-07T02:04:44Z). Confirmed both cancelled runs were genuinely incident artifacts (job-level conclusion `cancelled`, empty steps — not a real failure) before re-running. Triggered `rerun-failed-jobs` on both (run 31123913329 for #484, run 31123956119 for #472) — both showed `status: in_progress` 15s after trigger. Not polled to completion (non-gating, cosmetic check, not in required_status_checks for lucos_creds main) — next ops run should spot-check both runs concluded `success` and drop this line if so.
+- **lucos_creds#472/#484 convention-check**: fully resolved and closed out 2026-08-09 — spot-checked both rerun-failed-jobs runs (31123913329, 31123956119), both `status: completed`, `conclusion: success`. No further tracking needed.
 
 ## Decommissioned services
 
