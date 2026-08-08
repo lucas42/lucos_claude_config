@@ -90,15 +90,15 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [named volume shadows image contents at mount path](pattern_named_volume_shadows_image.md) — first-init-only semantics.
 
 ## Diagnostic methodology
+- [`UND_ERR_CONNECT_TIMEOUT` @~510ms = Happy Eyeballs, not a dead server](pattern_happy_eyeballs_amplifies_syn_loss.md) — 8x amplifier; SYN loss fingerprint 1.03s/3.06s; ICMP filtered to xwing.
+- [Orphaned agent `ssh "… &"` job spun at 100% CPU for 108 days](pattern_orphaned_ssh_background_job.md) — nothing alerts on host CPU; check `ps --sort=-%cpu` on every visit.
 - [A guard keyed on a symptom is absent during incidents](pattern_guard_keyed_on_symptom_absent_during_incident.md) — correlate trigger vs incident window.
 - [Container restart clears docker logs → false "onset"](pattern_container_restart_log_buffer_artifact.md) — check StartedAt + full status distribution…
 - [Bare "aborted due to timeout"? Probe discarded the number](pattern_probe_measures_then_discards_latency.md) — read source.
 - [Sandbox checkouts months-stale + undeployed repos](pattern_stale_sandbox_checkouts.md) — verify vs `git show origin/main:<path>`…
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
 - [Router gap analysis: stalled vs slow vs host](pattern_router_log_gap_analysis.md) — ⚠️avalon's router only logs ITS vhosts; run a positive control.
-- [Avoid coincidence as default framing](feedback_avoid_coincidence_default.md) — default to causation; coincidence needs…
-- [Correlation is not "confirmed" root cause](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation before…
-- [Verify incident root cause by reproduction before publishing](feedback_verify_root_cause_by_reproduction.md) — plausible mechanism is a lead.
+- Causation discipline: [coincidence is not the default framing](feedback_avoid_coincidence_default.md) · [correlation is not "confirmed"](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation · [reproduce before publishing a root cause](feedback_verify_root_cause_by_reproduction.md).
 - [Verify claims; write falsifiably](feedback_verify_check_claim_against_underlying_store.md) — read the artefact, not its name; scrutinise agreement.
 - [A working-state file is NOT a history](feedback_verify_state_file_semantics_before_reading_history.md) — checkpoints self-delete on success; use schedule-tracker.
 - [Don't infer a FIX's mechanism from the BUG's](feedback_dont_infer_fix_mechanism_from_bug_mechanism.md) — read the diff before claiming coverage limits.
@@ -116,40 +116,19 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [When a fix to live state doesn't take, ask whether deploy reads live state or a snapshot](feedback_snapshot_indirection.md).
 
 ## Standing rules — process / GitHub
+- Verify-before-citing: [GitHub state+identity](feedback_refetch_state_before_writing_final_artifact.md) · [closed-issue disposition](feedback_verify_closed_issue_disposition.md) · [token/invite lifecycle](feedback_verify_token_lifecycle_claims.md) · [recent fixes before flap tickets](feedback_check_recent_fixes_before_filing.md) · [probe before requesting a feature](feedback_check_before_requesting.md).
 - [Ticket body is the spec — on design change AND new criteria](feedback_ticket_body_is_the_spec.md) — comment ≠ spec; re-fetch body before claiming it.
-- [Verify GitHub state AND identity before citing](feedback_refetch_state_before_writing_final_artifact.md) — a fake `#issuecomment-NNN` never 404s.
-- [Verify closed-issue disposition (body+closing comment) before citing as preference evidence](feedback_verify_closed_issue_disposition.md).
-- [Check recent fixes before filing flap-investigation issues](feedback_check_recent_fixes_before_filing.md) — pre-fix alerts persist in lookback for days.
-- [Finalize + push before dispatching to an auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) — approval auto-merges the reviewed SHA.
-- [Flag follow-up disposition, don't set it](feedback_flag_followup_disposition_to_coordinator.md) — don't toggle issue state on crossed messages.
-- [PR state checks must include `merged` field first](feedback_pr_check_merged_field_first.md) — merged PR shows UNKNOWN like an open one…
-- [Check a trap's PRECONDITION before firing it at a teammate](feedback_check_trap_precondition_before_firing.md) — `auto_merge: null` = not yet approved.
-- [Probe before requesting a feature](feedback_check_before_requesting.md) — one curl/grep it doesn't already exist.
-- [Verify token/invite lifecycle claims before asserting](feedback_verify_token_lifecycle_claims.md) — grep store/handler or hedge.
-- [`gh api --jq` on a 404 outputs `null`, not empty](feedback_jq_on_error_response.md) — use `--silent`+$? for existence.
-- [Verify body-file content before create-pr / gh body-file calls](feedback_verify_body_file_before_pr.md) — unique tempfile names.
-- [`gh api` POST/PATCH body: default to heredoc-var or `--input JSON`](feedback_gh_api_body_at_prefix.md) — avoid `body=@FILE` (posts literal `@path`).
-- [Use canonical persona name for SendMessage, not envelope teammate_id](feedback_teammate_id_vs_name.md).
-- [Don't file GitHub artifacts on behalf of another agent](feedback_dont_file_on_behalf_of_other_agents.md) — unblock them instead.
-- [Sandbox branch hygiene: reset --hard origin/main before branching](feedback_sandbox_branch_hygiene.md).
-- [No destructive remediation without a recovery path](feedback_no_destructive_without_recovery_path.md) — compose files live only on CI runners…
-- [Use Monitor (not bg-bash) to wait on prod conditions](feedback_monitor_over_bg_bash_for_waits.md) — bg-bash loops reaped ~2min.
-- [Crash-loop recovery Monitor design](pattern_crashloop_recovery_monitor_design.md) — keep counter out of change-key.
+- PR/review mechanics: [check `merged` field first](feedback_pr_check_merged_field_first.md) · [finalize+push before auto-merging reviewer](feedback_finalize_pr_before_dispatch_automerge.md) · [check a trap's PRECONDITION](feedback_check_trap_precondition_before_firing.md) (`auto_merge: null` = not yet approved).
+- gh/CLI foot-guns: [`--jq` on a 404 outputs `null`](feedback_jq_on_error_response.md) · [avoid `body=@FILE`](feedback_gh_api_body_at_prefix.md) · [verify body-file content, unique tempfiles](feedback_verify_body_file_before_pr.md).
+- Lane discipline: [flag follow-up disposition, don't set it](feedback_flag_followup_disposition_to_coordinator.md) · [don't file on behalf of other agents](feedback_dont_file_on_behalf_of_other_agents.md) · [canonical persona name for SendMessage](feedback_teammate_id_vs_name.md).
+- Ops safety: [no destructive remediation without a recovery path](feedback_no_destructive_without_recovery_path.md) · [sandbox branch hygiene](feedback_sandbox_branch_hygiene.md) · [Monitor not bg-bash for prod waits](feedback_monitor_over_bg_bash_for_waits.md) · [crash-loop Monitor design](pattern_crashloop_recovery_monitor_design.md).
 
 ## Standing rules — reports / proposals
 - [Apply your OWN new evidence to your OWN open positions](feedback_apply_own_evidence_to_own_positions.md) — esp. priority + "not proposing X because Y".
 - [Ask "what problem?" of the QUESTION, not just the solution](feedback_ask_what_problem_before_accepting_scope.md) — "too narrow" isn't evidence.
-- [Read the originating PR/issue body in full when writing causation](feedback_read_pr_body_for_causation.md) — don't reflex-frame triggers as "routine".
-- [Don't overclaim attributions in incident reports](feedback_no_attribution_overclaim.md) — restrict to what people actually said.
-- [Confirm before shipping a report gated on external verification](feedback_parallel_drafting_verification_scope.md) — parallel-drafting rule is for…
-- [Active recurrence justifies priority above default-P3](feedback_priority_active_recurrence.md).
-- [Test follow-ups must be deterministic AND actionable](feedback_test_proposals_must_be_actionable.md) — no alarm clocks for third-party bugs.
-- [Loganne is for cross-estate events, not fine-grained instrumentation](feedback_loganne_scope.md) — enumerate alternatives.
-- [Enumerate existing surfaces before proposing new persistence](feedback_enumerate_existing_mechanisms.md) — inverse of loganne_scope.
-- [Verify "alternatives" are actually equivalent](feedback_verify_alternatives_are_equivalent.md) — SPARQL COUNT(DISTINCT) over OPTIONAL gotcha.
-- [Silent fallbacks are a security risk, not just operational](feedback_silent_fallbacks_are_a_security_risk.md).
-- [Don't game API contracts to work around design issues](feedback_dont_game_api_contracts.md) — fix at source.
-- [Keep the docker.l42.eu mirror in the orb](feedback_keep_docker_mirror.md) — fix mirror-side bugs at the mirror layer.
+- Incident-report rigour: [read the originating PR/issue body for causation](feedback_read_pr_body_for_causation.md) · [don't overclaim attributions](feedback_no_attribution_overclaim.md) · [confirm before shipping a report gated on external verification](feedback_parallel_drafting_verification_scope.md) · [active recurrence justifies >P3](feedback_priority_active_recurrence.md).
+- Proposal hygiene: [tests must be deterministic AND actionable](feedback_test_proposals_must_be_actionable.md) · [enumerate existing surfaces first](feedback_enumerate_existing_mechanisms.md) · [loganne is cross-estate events only](feedback_loganne_scope.md) · [verify "alternatives" are equivalent](feedback_verify_alternatives_are_equivalent.md).
+- Fix at source: [silent fallbacks are a security risk](feedback_silent_fallbacks_are_a_security_risk.md) · [don't game API contracts](feedback_dont_game_api_contracts.md) · [keep the docker.l42.eu mirror in the orb](feedback_keep_docker_mirror.md).
 
 ## Mail
 - [Relay 2xx is NOT delivery](pattern_relay_accepted_mail_still_silently_lost.md) — Gmail bounces after, DSN quarantined; check lucos_mail_smtp per queue-id.

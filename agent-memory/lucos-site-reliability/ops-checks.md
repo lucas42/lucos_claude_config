@@ -12,13 +12,13 @@ lucos_schedule_tracker: 2026-07-14
 lucos_media_weightings: 2026-07-13
 lucos_photos_worker: 2026-08-02
 lucos_arachne_explore: 2026-08-02
-lucos_arachne_web: 2026-07-02
-lucos_backups: 2026-07-18
-lucos_repos_app: 2026-07-02
+lucos_arachne_web: 2026-08-08
+lucos_backups: 2026-08-08
+lucos_repos_app: 2026-08-08
 lucos_dns_bind: 2026-07-27
 lucos_loganne: 2026-07-23
 lucos_configy: 2026-07-23
-lucos_contacts_app: 2026-07-02
+lucos_contacts_app: 2026-08-08
 lucos_contacts_db: 2026-08-06
 lucos_contacts_googlesync_import: 2026-07-05
 lucos_contacts_web: 2026-07-05
@@ -26,7 +26,7 @@ lucos_creds: 2026-07-14
 lucos_creds_configy_sync: 2026-07-05
 lucos_creds_ui: 2026-07-05
 lucos_dns_sync: 2026-07-09
-lucos_eolas_app: 2026-07-02
+lucos_eolas_app: 2026-08-08
 lucos_eolas_db: 2026-08-06
 lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-07-19
@@ -54,7 +54,7 @@ lucos_notes: 2026-07-15
 lucos_root_app: 2026-07-19
 lucos_router: 2026-07-14
 semweb: 2026-08-02
-lucos_time: 2026-07-27
+lucos_time: 2026-08-08
 lucos_aithne: 2026-07-31
 lucos_arachne_mcp: 2026-07-19
 lukeblaney_blog: 2026-07-23
@@ -133,3 +133,11 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-06 Check 6 (/_info quality, monthly): swept **33 domains** derived from configy `config/systems.yaml`. **No defects.** Re-read `references/info-endpoint-spec.md` and corrected my own past framing: **Tier 1 is `system`/`checks`/`metrics`, and `checks`/`metrics` MAY be empty `{}` — only omission is a defect.** All 33 carry all three. So the long-standing "empty checks/metrics" list (configy, scenes, static_media, private, semweb, lukeblaney.co.uk, blog, tfluke + several `metrics: {}`) is **spec-conformant, not a defect** — worth remembering before re-flagging it. `lucos_worlds` omits `ci`, but `ci`/`title` are **Tier 2 (recommended)** ⇒ not a defect, AND **verified no monitoring gap: lucos_worlds HAS a `circleci` check** (monitoring sources the mapping elsewhere). Only 4 monitored systems lack a `circleci` check: `avalon`, `xwing` (hosts, not repos), `.github`, `vue-leaflet-antimeridian` — all legitimate. dns.l42.eu + dns2.l42.eu EMPTY BODY = known-expected (public host empty, monitoring polls internally, both healthy). **schedule-tracker.l42.eu returned a 502 mid-sweep → RE-PROBED rather than filed: 200/200/200, container StartedAt 17:10:50 restarts=0 healthy** ⇒ it was a deploy-window artifact (its CircleCI build was `running` at the time). Textbook case for re-probing before writing.
 - 2026-08-06 Check 7 (external deps, monthly): Let's Encrypt **200**, Docker Hub **401**, CircleCI **401**, GitHub API **200**, docker.l42.eu mirror **401** — all nominal, nothing to raise.
 - 2026-08-06: Monthly 5/6/7 now run (were 32d overdue, last 2026-07-05). Next due ~2026-09-06.
+- 2026-08-08 ops run: **LIVE DEGRADATION FOUND — the day's headline.** Monitoring at start: 51/55 healthy, **0 failing but 4 "buffering"** (rotating set: configy/media_manager/media_metadata_api `fetch-info` timeouts + private `tls-certificate`). Buffering = failThreshold not yet crossed, so `failing: 0` HID an ongoing problem — **do not read `summary.failing == 0` as "all well"; read the per-system `status` field.** Loganne (2012 events, range 07-12 → 08-08 = 27d): 2026-08-08 is a massive outlier — `lucos_time` `media` **16 alerts** (vs 0–1/month), `lucos_media_seinn` `media-manager` 7, `lucos_static_media` `fetch-info` 2, `lucos_private` 2, `lucos_backups` `host-tracking-failures` 1. Storm onset **~00:00Z**, no deploy anywhere near it.
+- 2026-08-08 ROOT CAUSE (two layers, both verified by live probe, not logs). **(1) External:** the home broadband link fronting **xwing** and **salvare** started dropping packets ~00:00Z. TCP connect (family 4, 80 samples each) from inside `lucos_time`: `152.37.104.10:443` (xwing via home NAT) p50 20ms / **p90 1027ms / 9-of-80 needing a SYN retransmit**; `178.32.218.44:443` (avalon public), `8.8.8.8`, `1.1.1.1` all **0/80**. Slow values cluster at **1028–1048ms and 3038–3065ms** = Linux SYN backoff (1s, 3s). Confirmed bidirectional: from a host ON the home LAN, avalon-public AND Cloudflare both showed 7/40 retransmits while xwing-local was 0/40 ⇒ the loss is the home WAN link, not the avalon↔xwing pair. Independent corroboration: `lucos_backups` logged **72 consecutive** `salvare.s.l42.eu: [Errno 110] Operation timed out` **00:09:20Z → 08:43:52Z**, reddening `host-tracking-failures` 00:14:28→08:49:19 (**8h35m**). ⚠️`ping` to 152.37.104.10 is USELESS (ICMP filtered → 100% "loss" on a healthy path); the 1.1.1.1 control caught that.
+- 2026-08-08 ROOT CAUSE **(2) Ours — the amplifier → FILED lucas42/lucos#278** (suggest Medium). Node Happy Eyeballs gives the IPv4 attempt `autoSelectFamilyAttemptTimeout` = **500ms**, but the first SYN retransmit is at **~1s** — so one lost SYN becomes a hard `fetch failed` / `cause.code=UND_ERR_CONNECT_TIMEOUT` at a tight **508–517ms** mode instead of a 1s-slow success. Only bites when the target is **dual-stack** AND the container's docker network has no IPv6 egress (`lucos_time_default`/`lucos_monitoring_default` = EnableIPv6 false ⇒ `ENETUNREACH` in 3ms). **A/B during a live burst, interleaved, n=70: default 500ms → 29 fails (41%); 3000ms → 3 (4.3%); autoSelectFamily=false → 4 (5.7%)** ≈ 8x amplification over ~5% underlying loss. Which domains are dual-stack is an ACCIDENT OF DNS AUTHORING (AAAA iff CNAME to `*.s.l42.eu`): staticmedia/am/media-api YES; ceol/seinn/configy/monitoring/private NO. Issue offers 3 options (bump attempt timeout / give the networks IPv6 egress / drop the AAAAs) and deliberately does NOT pick one — spans DNS + docker networking + every Node service. See [[pattern_happy_eyeballs_amplifies_syn_loss]]. Also **commented on lucos_time#348** — its one-line `error.cause.code` fix is exactly what would have short-cut this; and my earlier "don't raise the 900ms timeout" call is now confirmed (failures aborted at ~510ms inside connect, the 900ms budget was never binding).
+- 2026-08-08 ⚠️**BURSTY-PHENOMENON TRAP, nearly fell in twice**: failure rate swung 0% ↔ 41% within minutes. Two A/B runs returned **0/120 and 0/60** and would have "disproved" a real, ongoing fault. Fix: interleave all arms inside ONE loop so every arm sees identical conditions, and check the alert duty-cycle before concluding "not reproducible".
+- 2026-08-08 **HOST FINDING → killed a 108-day runaway.** avalon PID 985893, user `lucos-agent`, PPID 1: `bash -c 'docker run … & sleep 3 kill %1 … wait'` — a malformed agent SSH one-liner from **2026-04-22** (missing `;`/newlines made `kill`/`wait` arguments to `sleep`) pinned at **99.7% CPU with 107 days of CPU time**, i.e. a full core of a 4-core host, with a `<defunct>` docker child. Nothing alerts on it: host CPU isn't a monitoring check and a runaway `bash` isn't a container crash. Killed (baseline captured first per production-change-verification): **1-min load 2.60 → 1.21**, monitoring 53→54/55 healthy. Prevention added to `references/ssh-production.md` §Connecting via SSH (never `&` inside an `ssh host "…"` one-liner; use `timeout N` in the foreground). xwing swept, clean. See [[pattern_orphaned_ssh_background_job]].
+- 2026-08-08 Check 3 (30d, range 07-12 → 08-08): **0 incident reports written — 1 DEFERRED, deliberately.** The only new >30min entry is today's `lucos_backups host-tracking-failures` 8h35m, which is the same home-link fault and **still live at report time** ⇒ per the "ongoing impact → don't write yet" rule, a report is owed once the link recovers. Everything else pre-triaged (07-16 CircleCI storm; 07-19→21 configy_sync key corruption, report exists; repos/locations/lukeblaney_co_uk entries). `lucos_repos stale-dependabot-prs` **recovered 08-07 11:39Z** — lucos_arachne#771 and Dependabot #760 both now CLOSED, so last run's finding is resolved.
+- 2026-08-08 Check 4 (5 containers): `lucos_time` and `lucos_backups` reviewed exhaustively as part of the investigation above. Plus the four 37-day-overdue 07-02 stragglers (arachne_web, contacts_app, repos_app, eolas_app) — all restarted in the 08-07 07:1x–07:4x deploy burst, so their buffers cover only ~28h, but that is 100% of the CURRENT container's life, which is the best coverage obtainable; **recorded as reviewed rather than deferred a second time** (the 07-02→08-07 gap is permanently unrecoverable). All four: **0 err-ish lines** (arachne_web 11,956 lines, contacts_app 210,805, repos_app 91, eolas_app 23,912). 0 overdue @60d.
+- 2026-08-08 Monthly 5/6/7 NOT due (last 2026-08-06, 2d; next ~2026-09-06).
