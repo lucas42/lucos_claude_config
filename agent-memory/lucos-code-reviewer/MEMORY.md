@@ -3,6 +3,8 @@
 ## Review Behaviour
 
 - [Three-stage env-var wiring](review_envvar_wiring.md) — new `os:getenv`/`os.environ`/`process.env` reads need matching compose `environment:` entry AND lucos_creds value; `_ENDPOINT` path-append is a convention violation; flag until lucos_repos#387 lands
+- [Dependabot pre-release base-image bumps](review_dependabot_prerelease_estate_convention.md) — don't recommend a per-repo `dependabot.yml ignore` rule; it's an open estate convention question at lucos#273, which rejects that layer — add occurrences there instead
+- [WebFetch on GitHub blob URLs paraphrases, doesn't return literal text](review_webfetch_github_blob_paraphrase.md) — use `gh-as-agent`'s contents API when exact numbers/quotes matter
 - [Incident report completeness checks](feedback_incident_report_followups.md) — missing action items, "(updated)" cumulative tables missing prior rows, detector signal-class mismatches, and unread linked follow-up issues all warrant REQUEST_CHANGES
 - [Loganne webhook subscriber hostnames](review_loganne_webhook_urls.md) — curl the hostname before approving; `media-metadata.l42.eu` is manager not API (lucos_loganne PR #467)
 - [Stale Dependabot regression PRs](feedback_dependabot_stale_regression.md) — `@dependabot recreate` is deterministic; net regression vs main = close it, not recreate
