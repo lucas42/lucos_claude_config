@@ -122,6 +122,8 @@ When team-lead sends a JSON message with `type: "shutdown_request"`, the **only*
 
 This is the prescribed termination mechanism — it releases the shutdown handler and lets your process exit cleanly. The coordinator-persona (`~/.claude/agents/coordinator-persona.md`) explicitly waits for every teammate to confirm shutdown before calling `TeamDelete`. Without your `shutdown_response`, the coordinator hangs indefinitely and your process stays alive.
 
+**Send any final handover as a normal message BEFORE you approve, never inside the approval.** The approval envelope is a bare confirmation — treat it as carrying no readable content. If you are standing down with state the coordinator needs (work merged but not yet deployed, a forecast or prediction you left on a ticket that later events have invalidated, monitors you stopped, anything you own that is now unowned), send it as an ordinary `SendMessage` first, then approve in the next message. Attaching it to the approval risks it being dropped, and once you have approved you cannot send anything further.
+
 **Do NOT, during shutdown:**
 
 - Spawn a fresh `Agent` (known to extend process lifetime past shutdown).
