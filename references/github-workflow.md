@@ -103,12 +103,17 @@ Implementation teammates are responsible for requesting their own code review af
 
 ## Censusing PRs/issues across the org — always reconcile against an unsliced total
 
-`gh search` (and the `search/issues` API) **silently returns 0 results for an impossible date** rather than erroring. A census sliced as `merged:YYYY-MM-01..YYYY-MM-31` therefore returns **nothing at all** for February and every 30-day month — well-formed, plausible-looking, empty output with no warning. Half a year can vanish from a tally with nothing announcing it, and every conclusion drawn from the tally inherits the hole.
+Two independent failure modes make a sliced census silently wrong, and **they are easy to conflate — one gives you too few slices' worth of data, the other too little data per slice.** Print both numbers per slice and one line catches both.
 
-So whenever you slice a search by date to get around result caps:
+**1. An impossible date silently yields zero.** `gh search` (and the `search/issues` API) returns `issueCount: 0` with a well-formed response and **no error** for a date that does not exist. `merged:YYYY-MM-01..YYYY-MM-31` therefore returns **nothing at all** for February and every 30-day month. It is not only `..-31`: `..-30` fails the same way on February. Half a year can vanish from a tally with nothing announcing it, and every conclusion drawn from the tally inherits the hole.
 
-- **Use each month's real last day** (or slice by a span that cannot overflow, e.g. `..YYYY-MM+1-01` exclusive-style bounds).
-- **Reconcile the summed slices against the unsliced query's `issueCount`** before drawing any conclusion from the total. This is the check that actually catches it — a wrong slice looks identical to a genuinely empty month, and only the reconciliation distinguishes them.
+**2. Search paginates to a hard 1000 results.** A slice whose `issueCount` exceeds what you actually fetched is **silently truncated** — the count is honest, the data is short, and nothing errors.
+
+So whenever you slice a search to get around result caps:
+
+- **Don't hand-build month boundaries.** Compute each month's real last day, or — simpler and immune to the whole class — slice by **fixed-length windows** (7 or 10 days) that don't care where months end.
+- **Reconcile the summed slices against the unsliced query's `issueCount`** before drawing any conclusion from the total. This is the check that actually catches failure 1: a bad slice is indistinguishable from a genuinely empty period at the per-slice level, and only the reconciliation distinguishes them.
+- **Print each slice's `issueCount` alongside the number of items you fetched for it**, and assert they match. That catches failure 2, which reconciliation against the total will *not* catch on its own.
 - Treat a per-slice zero as *suspect* until reconciled, not as data. Same principle as validating an extraction pattern against a known-positive: an instrument that returns nothing looks the same whether the thing is absent or the probe is broken.
 
 ## Bulk Cross-Repo Operations
