@@ -58,3 +58,21 @@ Practical note: get the exact `com.docker.compose.project` value from the target
 own labels before deleting it (`docker network inspect <net> --format '{{json .Labels}}'`) —
 it's usually the compose project name (often the repo name minus `lucos_` prefix quirks, but
 don't assume, just read it), not something to guess.
+
+## Companion lesson: post-change verification must probe the self-referential path, not just generic egress
+
+Found by `lucos-site-reliability` immediately after this same #278 work (2026-08-09): both my
+dual-stack post-recreate probes (xwing dns_secondary, avalon monitoring) hit `cloudflare.com`
+as the IPv6/IPv4 control — generic external egress, confirmed working both times. What that
+missed: `lucos_monitoring` fetching **its own** hostname (`monitoring.l42.eu`) now hairpins
+container → NAT66 → avalon's global IPv6 → router → back into the same container, and that
+path is *slow-but-successful* (2-6s observed) rather than failing outright. The consumer
+(`fetcher_info.erl`, `{ipfamily, inet6fb4}`) only falls back to IPv4 on IPv6 **failure**, not
+on IPv6 **slowness**, so a working-but-slow hairpin blows its 1s budget every time — invisible
+to any check that doesn't specifically fetch the self-hostname.
+
+Generalise: after any network-level change to a service, the verification probe should include
+the service fetching **itself** by its public hostname (not just an arbitrary external target)
+whenever the service's own code does that (self-health-checks, self-referential `/_info`
+calls, etc.) — a hairpin is a distinct failure mode from general egress and a generic dual-stack
+probe will not catch it.
