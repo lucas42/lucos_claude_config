@@ -109,6 +109,7 @@ Use `test -x /usr/sbin/tool` not `command -v tool` — `/usr/sbin` isn't in PATH
 
 ## lucos_media_seinn
 - [forEach(async ...) is implicit parallelism](seinn_async_foreach_parallelism.md) — shared state mutations need serialisation; chain onto existing `evictionLock` rather than adding a second mutex
+- [Node Happy Eyeballs fetch amplifier](node_happy_eyeballs_fetch_amplifier.md) — set attempt timeout explicitly + log `error.cause.code`; seinn's own IPv6 gap isn't covered by lucos#278/#279 as filed (2026-08-08 incident)
 - `src/server/auth.js` has the aithne JWKS serve-stale wrapper (`createServeStaleJWKS` / `isJWKSInfraError`, lucos_media_seinn#543).
 
 ## lucos_backups
