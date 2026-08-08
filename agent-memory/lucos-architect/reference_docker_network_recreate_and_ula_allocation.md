@@ -20,6 +20,18 @@ docker network create --ipv6 --subnet <declared-subnet> lucos-preflight-tmp \
 
 Generalise: *a human gate defends against the machine acting unprompted; it does nothing when the human is the one performing the risky action.* Ask which of the two you're actually defending against before proposing a gate.
 
+## Compose will not adopt a resource lacking its labels
+
+Verified by `lucos-system-administrator` on a disposable avalon project, 2026-08-09. A rollback that recreates a network with a bare `docker network create --subnet <recorded> <name>` **fails**: `docker compose up` exits 1 with *"a network with name X exists but was not created by compose … incorrect label com.docker.compose.network set to ''"*. Compose matches on its own labels, not name/subnet. The recreate must carry `com.docker.compose.network`, `com.docker.compose.project` and `com.docker.compose.version`.
+
+Network **ID** is irrelevant — compose reattaches by name, so a replacement network with a new ID is fine.
+
+**The rule is general, not network-specific**: the same applies to volumes (`lucos_backups/docs/restore-runbook.md` documents it thoroughly — labels table, `restore-volume.sh`, and a `docker volume create --label` manual fallback for when the image can't be pulled). Lift that prose rather than rewriting it.
+
+Gap as of 2026-08-09: `~/.claude/references/docker-conventions.md` states it only for anonymous volumes breaking backups monitoring (line ~49). Its "Live-restore" section does say *"Do not use `docker network create` manually"* — but justifies it via ADR-0008 (no on-host source of truth), which does **not** cover the rollback case where you hold the recorded config and are mid-outage. So the generic rule is written nowhere a reader looking at networks will reach it.
+
+**Meta-pattern, seen twice on 2026-08-09** (also lucas42/lucos#283, the `/_info` 1s budget): *a rule that exists, but in a document the reader doesn't reach.* When a convention is "folklore", check whether it is actually written down somewhere else before concluding it is unwritten — the fix is usually relocation, not authorship.
+
 ## `lucos_deploy_orb` never removes a network
 
 `src/commands/deploy.yml` runs `docker compose up -d --no-build --wait --wait-timeout 180` in a 3-attempt loop, plus a `docker compose stop` for `network_mode: host` services only. No `compose down`, no `network rm`. So any network deletion in the estate is **out-of-band/manual** — a deploy-time gate would sit on a path the destructive step never takes. It also PUTs `monitoring.l42.eu/suppress/$REPO` with `|| true`, so while monitoring is down every *other* service's deploy silently loses alert suppression.
