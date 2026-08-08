@@ -23,22 +23,32 @@ rescue you — it reports "No reachable agents" for tmux teammates and is not ev
 absence either.** The only reliable signal is a live tmux pane.
 
 Throughout this skill, locate the live team by scanning every team config for members
-whose panes are still alive:
+whose panes are still alive. **tmux pane ids reset to `%0` each time the tmux server
+restarts and are then reused**, so an old config's dead `%1`–`%7` will match today's live
+panes — the scan must discard any config written before the oldest live tmux session was
+created, and break remaining ties on config mtime (newest wins):
 
 ```bash
 TEAM_CONFIG=$(python3 - <<'PY'
 import json, glob, os, subprocess
-alive = set(subprocess.run(['tmux','list-panes','-a','-F','#{pane_id}'],
-                           capture_output=True, text=True).stdout.split())
+alive, born = set(), None
+for line in subprocess.run(['tmux','list-panes','-a','-F','#{pane_id} #{session_created}'],
+                           capture_output=True, text=True).stdout.split('\n'):
+    if not line.strip(): continue
+    pane, created = line.split()
+    alive.add(pane)
+    born = int(created) if born is None else min(born, int(created))
 best = None
 for path in glob.glob(os.path.expanduser('~/.claude/teams/*/config.json')):
     try: cfg = json.load(open(path))
     except Exception: continue
+    mtime = os.path.getmtime(path)
+    if born is None or mtime < born: continue   # predates every live pane: ids are reused, not this team's
     live = [m for m in cfg.get('members', [])
             if m.get('backendType') == 'tmux' and m.get('tmuxPaneId') in alive]
-    if live and (best is None or len(live) > best[0]):
-        best = (len(live), path)
-print(best[1] if best else '')
+    if live and (best is None or (len(live), mtime) > best[:2]):
+        best = (len(live), mtime, path)
+print(best[2] if best else '')
 PY
 )
 [ -n "$TEAM_CONFIG" ] && cat "$TEAM_CONFIG" || echo "NO_TEAM"
