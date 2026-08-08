@@ -24,19 +24,24 @@ Rollback if redeploy fails after delete: `docker network create --subnet 172.28.
 
 Declared target config (docker-compose.yml, origin/main): `enable_ipv6: true`, `subnet: fd00:3::/64`.
 
-Status: IN PROGRESS — preflight probe succeeded (fd00:3::/64 allocatable on xwing), containers
-stopped+removed, live network removed cleanly (no error), redeploy triggered via empty commit
-ff94ed5 pushed to lucos_dns_secondary main. Monitoring CI + container recovery.
+Status: **DONE 2026-08-09.** CI build+deploy succeeded (`lucos/deploy-xwing: success`).
+`lucos_dns_secondary_bind`/`_check` both `Up ... (healthy)`. Network recreated with
+`EnableIPv6=true`, `fd00:3::/64` + `172.28.0.0/16`. Dual-stack egress probe from a throwaway
+container on the network confirmed both families work (IPv6 http=200 316ms, IPv4 control
+http=200 260ms, cloudflare.com/cdn-cgi/trace). No rollback needed — safe to discard the
+recorded 172.28.0.0/16 rollback value above.
 
 ## avalon — lucos_monitoring_default
 
-Recorded: (not yet — capture immediately before action, same pattern as above)
+Recorded 2026-08-09 immediately before action. Fresh drift check confirmed fd00:1::/64 still
+unclaimed on avalon (avalon fd00:* map: fd00:2 dns, fd00:3 backups, fd00:4 time-post-fix).
 ```
 Subnet: 172.22.0.0/16
-Gateway: (capture at time of action)
+Gateway: 172.22.0.1
 EnableIPv6: false
 Driver: bridge
 ```
+Rollback if redeploy fails after delete: `docker network create --subnet 172.22.0.0/16 --gateway 172.22.0.1 lucos_monitoring_default` then trigger redeploy to restore containers.
 Declared target config: `enable_ipv6: true`, `subnet: fd00:1::/64`.
 
 Status: NOT STARTED — do second, after xwing confirmed healthy. Do not schedule any other
