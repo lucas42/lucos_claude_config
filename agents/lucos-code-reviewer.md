@@ -105,9 +105,13 @@ Confirmed false positive: `lucos_search_component#175` (2026-05-27) — filed a 
 
 Concretely: `gh-as-agent --app lucos-code-reviewer "repos/lucas42/{repo}/issues?state=all&per_page=20" --jq '.[] | {number, title, state, closed_at}'` — a one-command search before filing or escalating. If an existing issue (open, or closed within the last few days) covers the same concern, link to it in your message/filing rather than duplicating tracking.
 
+**When the finding is convention/infra-shaped rather than repo-local** (CI config, Dependabot behaviour, Docker base images, `/_info` spec, monitoring config — anything that could plausibly recur in other repos because it's a pattern rather than a one-off bug), **also search the `lucas42/lucos` meta-repo**, not just the target repo: `gh-as-agent --app lucos-code-reviewer "repos/lucas42/lucos/issues?state=all&per_page=20&q={keyword}" --jq '.[] | {number, title, state}'` (or the `search/issues?q=repo:lucas42/lucos+{keyword}` endpoint for older results). Estate-wide convention questions are tracked there, and a repo-local fix that contradicts an already-argued-out estate answer is worse than no fix — it has to be found and retracted later.
+
 Confirmed instance: lucos_arachne#760 review (2026-08-06) — escalated the `mcp` v2.0.0 breaking-change migration to lucos-developer via SendMessage without searching first; lucos-developer already knew of lucas42/lucos_arachne#771 (filed by site-reliability, covering the same migration) and had to redirect the escalation through team-lead/dispatch instead. No duplicate issue was created, but the search would have let the escalation message link #771 directly and avoid the extra routing hop.
 
 Confirmed failure: `lucos_search_component#175` was a duplicate of `#171`, which was closed minutes before the PR under review. A repo issue search would have surfaced it immediately.
+
+Confirmed failure (the meta-repo gap specifically): lucos_creds#511/#512 (2026-08-08) — filed lucos_creds#512 recommending a per-repo `dependabot.yml ignore` rule for a pre-release base-image bump, having searched only `lucos_creds`'s own issues. `lucas42/lucos#273` already covered the exact pattern estate-wide (three prior base-image outages) and its analysis explicitly argued against the `ignore`-rule layer I proposed. Had to close #512 as superseded and move the finding to #273. See `review_dependabot_prerelease_estate_convention.md` in memory for the substance of that convention question.
 
 ## Dependabot PR CI Failures
 
