@@ -74,6 +74,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [GitHub code search is lossy for estate sweeps](reference_github_codesearch_lossy_for_sweeps.md)
 - [Test environments in lucos_creds (ADR-0002)](reference_creds_test_environments.md)
 - [Deployment model has no on-host source of truth](reference_no_onhost_source_of_truth.md)
+- [Compose network config is declared, not deployed](reference_declared_vs_deployed_docker_networks.md) — 3 nets ignored `enable_ipv6` 10wks; Happy Eyeballs needs 2 addrs; l42.eu dual-stack by construction; salvare has no A
 - [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md) — incl. dependency-only `/_info` can't report self-failure
 - [Base-image bump incident class (lucos#273)](reference_base_image_bump_incident_class.md) — CI tests an artifact we don't ship; tests-in-image is coverage-dependent
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
