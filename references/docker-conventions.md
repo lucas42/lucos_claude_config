@@ -76,6 +76,17 @@ Every named volume must also be added to **`lucos_configy/config/volumes.yaml`**
 - Services are exposed on `${PORT}`, configured per-environment via lucos_creds
 - Containers on the same Docker Compose network communicate via service name as hostname
 
+### An existing network silently ignores changed `networks:` config — so neither the file nor the live state is evidence on its own
+
+**A Docker network that already exists does not pick up changed configuration when its compose project is redeployed.** The declared config is ignored, the deploy reports success, `docker compose config` renders clean, and nothing detects the divergence. Three estate networks ran with `EnableIPv6=false` for **ten weeks** while declaring `enable_ipv6: true` (merged 2026-05-22), because they were created in 2024 and never recreated. Applying such a change requires **recreating** the network, which stops every attached container.
+
+Two opposite misreadings follow, and the estate has made **both** within ten weeks. Before citing either source, say which question you are answering:
+
+- **The compose file tells you what was *declared*, never what is *live*.** Do not cite `enable_ipv6: true` (or any network attribute) in a compose file as evidence the running network has it. Check with `docker network inspect <net> --format '{{.EnableIPv6}}'`, and for reachability run an actual probe from inside a container with a control alongside.
+- **`docker network inspect` tells you the *live state*, never the *intent*.** An accurate observation that a network is IPv4-only is not a record that IPv4-only was chosen. Do not let "verified live" harden into "documented" or "by design" — that inversion is what kept the ten-week divergence looking deliberate.
+
+There is no on-host compose file to consult ([ADR-0008](https://github.com/lucas42/lucos/blob/main/docs/adr/0008-no-onhost-source-of-truth-for-compose-managed-state.md)); compose files are deployed transiently by CI and gone afterwards. Deploy-time detection of declared-vs-live divergence is tracked at lucas42/lucos#279.
+
 ## Restart policy
 
 Always set `restart: always` on persistent service containers. Without it, containers stay down after a host reboot or `docker compose stop`. One-shot/batch containers (e.g. ingestors that run to completion) should use `restart: no`.
