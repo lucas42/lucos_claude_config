@@ -101,6 +101,16 @@ Implementation teammates are responsible for requesting their own code review af
 
 ---
 
+## Censusing PRs/issues across the org — always reconcile against an unsliced total
+
+`gh search` (and the `search/issues` API) **silently returns 0 results for an impossible date** rather than erroring. A census sliced as `merged:YYYY-MM-01..YYYY-MM-31` therefore returns **nothing at all** for February and every 30-day month — well-formed, plausible-looking, empty output with no warning. Half a year can vanish from a tally with nothing announcing it, and every conclusion drawn from the tally inherits the hole.
+
+So whenever you slice a search by date to get around result caps:
+
+- **Use each month's real last day** (or slice by a span that cannot overflow, e.g. `..YYYY-MM+1-01` exclusive-style bounds).
+- **Reconcile the summed slices against the unsliced query's `issueCount`** before drawing any conclusion from the total. This is the check that actually catches it — a wrong slice looks identical to a genuinely empty month, and only the reconciliation distinguishes them.
+- Treat a per-slice zero as *suspect* until reconciled, not as data. Same principle as validating an extraction pattern against a known-positive: an instrument that returns nothing looks the same whether the thing is absent or the probe is broken.
+
 ## Bulk Cross-Repo Operations
 
 When pushing commits to many repos simultaneously (rolling out a workflow change, bulk secret updates, convention fixes), **stagger them in batches of 3-5 repos with a few minutes between batches**. Do not push to all repos at once.
