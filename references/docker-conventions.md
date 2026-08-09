@@ -46,7 +46,7 @@ The Dockerfile can then `COPY shared/ /shared/` from the repo root.
 
 Always declare every volume explicitly — both in the service's `volumes:` mount and in the top-level `volumes:` section. Never rely on anonymous volumes created implicitly by a Docker image's `VOLUME` directive.
 
-Anonymous volumes don't receive Docker Compose project labels, which breaks `lucos_backups` monitoring.
+Anonymous volumes don't receive Docker Compose project labels, which breaks `lucos_backups` monitoring. The same labels also govern whether compose will adopt a volume at all — see [Recreating compose-managed resources by hand](#recreating-compose-managed-resources-by-hand).
 
 ```yaml
 services:
@@ -69,6 +69,30 @@ Every named volume must also be added to **`lucos_configy/config/volumes.yaml`**
 | `considerable` | Considerable effort to recreate |
 | `huge` | Huge effort / primary source data |
 | `remote` | Remote mount from elsewhere — set `skip_backup: true` |
+
+## Recreating compose-managed resources by hand
+
+**Compose will not adopt a resource it did not create.** It matches networks and volumes on its own `com.docker.compose.*` labels, not on name or configuration, so a resource recreated with a bare `docker network create` / `docker volume create` is invisible to it. The next `docker compose up` exits 1:
+
+```
+a network with name <name> exists but was not created by compose.
+network <name> was found but has incorrect label com.docker.compose.network set to ""
+(expected: "default")
+```
+
+Prefer letting CI redeploy the service, which recreates and labels the resource correctly — and note there is no on-host compose file to fall back on ([ADR-0008](https://github.com/lucas42/lucos/blob/main/docs/adr/0008-no-onhost-source-of-truth-for-compose-managed-state.md)). Where a manual recreate is unavoidable — a rollback mid-outage, where the recorded config is in hand and waiting for CI is not an option — apply the labels explicitly:
+
+```bash
+docker network create \
+  --label com.docker.compose.network=default \
+  --label com.docker.compose.project=<project_name> \
+  --label com.docker.compose.version=<compose_version> \
+  --subnet <recorded_subnet> <network_name>
+```
+
+Network **ID** does not matter — compose reattaches by name, so a replacement with a new ID is fine.
+
+The volume case is the same rule and is documented in depth, including a degraded-mode path for when the image cannot be pulled: [`lucos_backups/docs/restore-runbook.md`](https://github.com/lucas42/lucos_backups/blob/main/docs/restore-runbook.md). Follow that procedure for volumes rather than improvising.
 
 ## Networking
 
@@ -163,7 +187,7 @@ sudo journalctl -u docker --since "5 minutes ago" | grep "take affect"
 1. Send a `plannedMaintenance` Loganne event before stopping anything.
 2. `docker stop` all running containers — no sudo required.
 3. `sudo systemctl restart docker` — with no running containers, Docker initialises fully and recreates `bridge`/`host`/`none`.
-4. Retrigger CI redeploys for every service that was running. Each `docker compose up -d` recreates its declared user-defined network and reattaches its container. **Do not use `docker network create` manually** — lucos compose files are deployed transiently via CI and are not present on the host after deploy; there is no on-host source of truth (see [ADR-0008](https://github.com/lucas42/lucos/blob/main/docs/adr/0008-no-onhost-source-of-truth-for-compose-managed-state.md)).
+4. Retrigger CI redeploys for every service that was running. Each `docker compose up -d` recreates its declared user-defined network and reattaches its container. **Do not use `docker network create` manually here** — lucos compose files are deployed transiently via CI and are not present on the host after deploy, so there is no on-host source of truth for what to recreate (see [ADR-0008](https://github.com/lucas42/lucos/blob/main/docs/adr/0008-no-onhost-source-of-truth-for-compose-managed-state.md)). Where the config *is* in hand and CI is not an option, see [Recreating compose-managed resources by hand](#recreating-compose-managed-resources-by-hand) — a bare `docker network create` produces a network compose refuses to adopt.
 5. Verify: `docker network ls` shows all built-ins + user-defined networks; `curl https://<domain>/_info` returns HTTP 200 for each service. See [`references/healthcheck-depth.md`](healthcheck-depth.md) for the full verifier-side checklist.
 
 The planned brief outage (step 2) is the unavoidable cost of a clean restart. On lucos, where all compose files are CI-managed and CI deploys are fast, the downtime window is typically under 10 minutes.
