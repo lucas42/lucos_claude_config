@@ -10,7 +10,7 @@ metadata:
 Four confirmed instances (as at 2026-08-09):
 
 - **lucos_monitoring#298** — `/_info` served by the same `gen_server` that ingests every check result from ~100 pollers. Each `updateSystem` cast synchronously renders the full dashboard HTML for all systems *inside the state server's process* (~25ms measured, ≈2.4s per 60s cycle). `/_info` also makes *two* `gen_server:call`s, so it queues twice — and `encodeInfo` uses only `length(Systems)` from that expensive read.
-- **lucos_monitoring#299** — same property filed as a latent scaling property; scoped by triage to measurement only.
+- **lucos_monitoring#299** — the instrumentation, and the **gate on #298** (which is Blocked on it). Body rewritten 2026-08-09 after I found my own "unobservable" premise was wrong. Scope: expose per-system poll durations (already collected) + state-server mailbox depth sampled per message, both as max-over-rolling-window. ADR at #300.
 - **lucos_backups#374** — single-threaded `HTTPServer` blocked ~20s hourly at :07 by `refresh-tracking`. 96 failures over 7 days, 100% at :07. **One-line `ThreadingHTTPServer` fix sat Ready three weeks** — the best argument that per-instance tickets don't stop the pattern recurring.
 - **lucos_media_weightings#277** — two `dependsOn` probes at 1.0s timeout each; alerted *weightings* 7 min before the actually-down `lucos_time`.
 
