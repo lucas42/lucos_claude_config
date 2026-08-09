@@ -91,6 +91,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [/_info fetch mechanics + adopted-app shim pattern](reference_info_fetch_and_shim_pattern.md)
 - [Three aithne auth-integration patterns + sidecar /_info blind-spot](reference_aithne_integration_patterns.md)
 - [/current-items currency = Festival-only; collections absent from RDF](reference_current_items_currency_model.md)
+- [configy has no model for a routed domain without a system](reference_configy_routed_domain_gap.md) — router hardcodes are lucos_router#11 residue; DNS-last sequencing
 
 ## Project memories
 
