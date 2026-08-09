@@ -36,6 +36,16 @@ Nearly every wrong claim across four agents that evening was this, not fabricati
 
 Corollary that saves the most rework: **don't spend a resource on a step whose input might still change.** Ordering an expensive action (a `workflow_dispatch`, a check run, a rebase) *after* the state it depends on has settled is the same instinct, one stage earlier in the pipeline.
 
+## The highest-cost case is a WRITE, not a claim — and it fails silently
+
+Everything above is about *claims*, where staleness costs your credibility. **When the stale read feeds a `PATCH` instead of a sentence, it costs someone else's work**, and nothing tells you it happened: no conflict, no error, no 409. A title/body `PATCH` is last-writer-wins.
+
+**Why:** 2026-08-09, lucas42/lucos_locations#105. team-lead fetched the title at 14:24:31Z, did unrelated work for ~20 minutes, then composed a `PATCH` from that stale read. It landed at 14:47:02Z — **37 seconds after** my 14:46:10Z retitle, which they had never seen — and silently reverted the exact fix they later agreed was the better catch.
+
+⚠️ **You cannot detect this after the fact from GitHub's rename events.** `rename.from` is stamped server-side at write time, so the chain is byte-perfect whether or not the writer saw what they clobbered. It proves ordering, never awareness. I "disproved" a real lost update with that test — see the 2026-08-09 entry in `ops-checks.md`.
+
+**How to apply:** **re-fetch immediately before the write, not at the start of composing.** This is single-sided — it needs nothing from the other writer, and it is strictly cheaper than a coordination protocol ("tell me if you're mid-edit"), which taxes every future write for both parties. If the artifact changed between your read and your write, reconcile rather than overwrite. Pair it with the grep rule in the persona's SRE Extensions: after changing an artifact, grep it for prose that *describes* what you changed.
+
 **How to apply:**
 
 - Before writing any external-state field (PR `Draft`/`Open`/`Closed`/`Merged`; issue `Open`/`Closed`) into a final artifact, run a `gh-as-agent repos/{owner}/{repo}/{pulls|issues}/{N} --jq '{state, merged, merged_at}'` (or equivalent) **at the time of writing**, not from prior memory.
