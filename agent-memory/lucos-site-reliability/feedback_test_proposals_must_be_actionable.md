@@ -26,3 +26,14 @@ Both objections were sound. I'd framed #252 as "open for discussion" partly beca
 - The incident report's Analysis section is a good home for "this bug class can only be fixed upstream; here's what we did to harden against the impact" framing — that captures the lesson without filing a follow-up.
 
 **Relationship to other calibration rules:** this is sister to `feedback_calibrate_runtime_check_proposals.md` (which covers runtime monitoring checks) and to the persona's "Calibrating Scope and Follow-up Proposals" section. Where that section says "build-time CI assertions are often cheap and effective" — true, but only when (1) and (2) above also hold. Don't read that line as universal endorsement of CI assertions.
+
+## A rule phrased as "do X carefully" is satisfied by someone who did X carefully
+
+**2026-08-09, lucas42/lucos#288** — two proposed rules in a row were defeated by the *same* four instances, both because they were procedural:
+
+- **A numeric bar** ("`/_info` generates in <0.5s", or "O(1) in the working set"). Tested against all four instances: neither number catches more than one, and they catch **different** ones. A reviewer holding either passes two live violators *while believing they have checked*.
+- **My own "no unbounded duration" clause.** `lucos_media_weightings` **did** bound it — `UPSTREAM_TIMEOUT_SECONDS = 1.0`, both probes via `ThreadPoolExecutor(max_workers=2)` so cost is `max` not `sum`, and the docstring shows 1.0s was deliberately raised *from* 0.5s after false positives. A careful implementation that thought about exactly this, and still failed, because a bounded 1.0s probe inside a 1.0s poll budget leaves nothing for the response.
+
+**Why:** a procedural rule describes an action, so it is satisfied by performing the action. The defect survives. **What worked instead: an outcome + a reviewer test.** *"`/_info` must fail only when the service itself is failing"*, applied via *"if this service were completely healthy, could this endpoint still fail or exceed its budget?"* — four for four, and applicable to a diff without tracing every path.
+
+**How to apply:** when drafting or reviewing any convention, ask **"could a conscientious author satisfy this wording and still ship the defect?"** If yes, it is procedural — restate it as the outcome you actually want, and attach a test a reviewer can run against a diff. Watch for the pull back toward the procedural form: it reads more actionable, which is exactly why it gets chosen. Two related traps seen the same day: a rule must also **ship green** (a convention red on day one trains everyone to ignore it — lucas42/lucos#282), and one-line *reasons* need the same scrutiny as the rule ("must fail only when the service is failing" can be read as licensing a degraded report from a merely *busy* service, which is the inversion the rule exists to prevent).
