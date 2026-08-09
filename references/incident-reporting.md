@@ -188,9 +188,23 @@ Only once the incident is resolved AND the team's responses have settled (Step 3
 1. **Tick the outstanding-items checkboxes in the PR body** (the TBD list from Step 2) now that each is done, *then* **mark the draft PR ready for review** (GraphQL `markPullRequestReadyForReview` — see `references/github-workflow.md` for the mutation and node-id lookup). The code-reviewer verifies those checkboxes on unsupervised repos and an unchecked gate can hold the approval, so don't leave them unticked even when the body text demonstrably satisfies them.
 2. **Drive the code-reviewer review loop to approval and merge**, per `pr-review-loop.md` — message `lucos-code-reviewer` and don't stop at "marked ready". On `lucos` (unsupervised) reviewer approval triggers auto-merge.
 
-**Once you mark it ready, the draft's protection is gone — on `lucos`, approval merges it within minutes.** So do not mark ready while any teammate thread is still live, however nearly finished it looks: a correction that arrives after the merge cannot be pushed to that branch. **And the push will appear to succeed** — git reports the branch updated, the PR page shows nothing, and the commit simply is not in `main`. There is no error to notice.
+### ⚠️ On `lucos`, requesting review IS requesting merge — the branch is frozen from that moment
 
-If a correction does arrive late, verify where it landed rather than assuming: `git log --oneline origin/main..origin/<branch>` should be empty, and grep `origin/main` for the corrected text with a positive control. Then open a **follow-up PR from a fresh branch off `origin/main`** referencing the original. (2026-08-08: a corrected rollback command was pushed ~2 minutes after lucas42/lucos#281 auto-merged, leaving the published report telling readers to "restore from the recorded config" while the obvious implementation of that fails — in the recovery step of a destructive operation. Fixed by lucas42/lucos#284.)
+`lucos` is unsupervised, so code-reviewer approval triggers auto-merge, often within minutes. Two consequences, and they apply to **every** PR on this repo — the draft report, follow-up corrections, amendments — not just the first one:
+
+1. **Make the PR complete before you ask for review.** Marking ready (or opening non-draft) ends the draft's protection; there is no window afterwards in which you can still tidy something up.
+2. **Once you have requested review, treat the branch as frozen.** Any further change — a reviewer's own requested edit, a late teammate correction, a typo — goes in a **new** PR off `origin/main`, never as another push to the branch under review.
+
+**A late push fails silently.** Git reports the branch updated, the PR page shows nothing amiss, and the commit simply is not in `main`. There is no error to notice, so you must check rather than assume:
+
+```bash
+git log --oneline origin/main..origin/<branch>   # must be empty
+git show origin/main:<file> | grep -c '<text you just added>'   # plus a positive control
+```
+
+If something did miss the merge, cherry-pick it onto a fresh branch off `origin/main` and open a follow-up PR referencing the original.
+
+> 2026-08-08, **twice within one hour.** First: a corrected rollback command pushed ~2 minutes after lucas42/lucos#281 auto-merged, leaving the published report telling readers to "restore from the recorded config" while the obvious implementation of that fails — in the recovery step of a destructive operation (fixed by lucas42/lucos#284). Then, while lucas42/lucos#284 was in review, the reviewer's *own* requested edit was pushed to that same branch and missed its merge too (fixed by lucas42/lucos#285). The first version of this rule said "don't mark ready while a thread is live", which did not fire the second time because lucas42/lucos#284 was never a draft. Hence the broader rule above.
 
 After merge the report is final. If something material develops *afterwards*, the report is still amendable via a fresh follow-up PR referencing the original — but that's the rare exception; the draft-stays-open lifecycle exists so nearly everything lands before this single merge.
 
