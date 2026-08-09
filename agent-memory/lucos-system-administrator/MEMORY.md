@@ -6,7 +6,7 @@
 - **configy null serialisation**: use `get(key) or default`, not `get(key, default)` — configy returns explicit `null`. `configy-null-serialisation.md`.
 - **aurora NAS**: QNAP busybox host, storage-only. `aurora-host.md`.
 - **Verify timeline before stating root cause**. `feedback_verify_timeline_before_stating.md`.
-- **Verify-before-propagating** (4 instances: unverified-host generalising, plausibility-inferred facts, dropped hedges, wrapper-tag-as-upstream-version) — same root failure: asserting past the evidence. `feedback_verify_before_propagating.md`.
+- **Verify-before-propagating** (5 instances: unverified-host generalising, plausibility-inferred facts, dropped hedges, wrapper-tag-as-upstream-version, generalised-absence-claim) — same root failure: asserting past the evidence. `feedback_verify_before_propagating.md`.
 - **Verify the dispatch premise before shipping a fix** — false triggers can make valid fixes ship for wrong reasons. `feedback_verify_dispatch_premise.md`.
 - **Estate-wide sweeps**: always `users/lucas42/repos?per_page=100`, never a partial sample — missed 3 repos in the 2026-04-21 batch.
 - **GitHub API timestamps are UTC; VM is BST (UTC+1)**. `timezone-github-api.md`.
@@ -87,3 +87,4 @@
 - **Google `ghs.google.com`/`ghs.googlehosted.com` custom URLs are HTTP-only by design** — never a DNS issue; verify via `openssl s_client` TLS handshake before assuming DNS fault. `google-ghs-custom-url-http-only.md`.
 - **Local transcript/session store is redaction-capable**: 7 plaintext stores under `~/.claude/`, all rw, none git-tracked — capability, not a harness limitation.
 - **lucos_router**: certbot (`--nginx`, HTTP-01) has no l42.eu restriction — precedent `tfluke.uk` proves non-l42.eu domains work today. `https.conf`=proxy_pass only; `router.conf`'s `return 301` is the precedent for external-URL redirects. Domain-set entries for non-configy domains are hardcoded in `fetch-domainsets.sh`. `lucos-router-mechanism.md`.
+- **State the categorical reason a precedent/shortcut applies, not just that it exists** — "least invasive, matches prior art" reads as ungrounded and can get a Ready ticket pulled back to Needs Analysis even when the underlying call is right. `feedback_spell_out_shortcut_rationale.md`.
