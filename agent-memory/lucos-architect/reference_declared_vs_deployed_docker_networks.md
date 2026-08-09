@@ -31,4 +31,14 @@ Found 2026-08-08 (lucas42/lucos#278 → raised lucas42/lucos#279): `lucos_time_d
 
 **`salvare.s.l42.eu` has no A record at all** (configy gives salvare only `ipv6` + `ipv4_nat`; the template emits A only `if host.ipv4`). Anything that must reach salvare requires working IPv6 egress — "just stop publishing AAAA" is structurally impossible for salvare-hosted systems.
 
+# A hand probe silently picks a different address family than the poller
+
+`lucos_monitoring`'s `fetcher_info.erl` fetches `/_info` with `{ipfamily, inet6fb4}` — IPv6 first, falling back **only on failure, never on slowness** (not Happy Eyeballs; nothing races). So a slow-but-working v6 path consumes the shared 1s request budget and the fetch fails closed.
+
+**Signature:** a service intermittently reporting `HTTP Request timed out` in monitoring while answering a direct probe fine. **The trap:** an unforced `wget`/`curl` from a container usually selects **IPv4** and returns in tens of milliseconds — a reassuring result about a path the poller never took. Force the family (`-6`/`-4`) before concluding anything. This is [[verify-ci-mechanism-before-relying-on-it]]'s probe-shaping rule in its most concrete estate form: read the calling code's address-family option, not just its URL.
+
+Accepted, deliberately not fixed (`lucas42/lucos_monitoring#298`, closed) — self-clearing, bounded to minutes, confined to the self-check. But note the acceptance was reasoned the same evening the last two divergent networks gained IPv6, so estate exposure to slow-but-working v6 rose on the day it was accepted. Recorded on #298; if the signature appears on any service, revisit rather than open a fresh investigation.
+
+Corollary for the `/_info` spec: the 1s budget bounds the **whole request** (DNS + connect + TLS + response), which is what makes the 0.5s in-band-probe ceiling a derivation rather than a folk figure — 500ms of headroom for whatever the transport does. Carried into `lucas42/lucos#283`.
+
 **Caution when checking any of this under packet loss:** a `dig` timeout is indistinguishable from an empty answer. On 2026-08-08 I produced the false claim "28 of 33 service domains lack AAAA" — the near-exact inverse of the truth — until a known-positive control also came back empty and exposed the instrument. Separate ERROR from NO-ANSWER as distinct states, and always run a control. See [[parse-reference-data-never-handbuild]].
