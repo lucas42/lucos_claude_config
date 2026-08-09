@@ -63,6 +63,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or…
 - [/_info in-band 1s dep probe > monitoring's 1s poll timeout](pattern_info_inband_dependency_probe_exceeds_poll_timeout.md) — healthy service reports itself unreachable; alerts on WRONG service first.
+- [monitoring self-poll blocks on its OWN mailbox burst](pattern_monitoring_selfpoll_mailbox_burst.md) — ⚠️5% duty cycle defeats slow probes; erl_call recipe; router-vhost attribution.
 - [Checks AND thresholds live in /_info, not lucos_monitoring](feedback_failthreshold_lives_in_info.md) — monitoring is aggregation only.
 - [/_info = availability/config, NOT content correctness](pattern_info_endpoint_boundary.md) — ⚠️REOPENED (lucos#273); boot+curl /_info goes GREEN through outages.
 
