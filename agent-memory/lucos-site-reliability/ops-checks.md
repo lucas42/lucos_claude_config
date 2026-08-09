@@ -20,10 +20,10 @@ lucos_loganne: 2026-07-23
 lucos_configy: 2026-07-23
 lucos_contacts_app: 2026-08-08
 lucos_contacts_db: 2026-08-06
-lucos_contacts_googlesync_import: 2026-07-05
+lucos_contacts_googlesync_import: 2026-08-09
 lucos_contacts_web: 2026-07-05
 lucos_creds: 2026-07-14
-lucos_creds_configy_sync: 2026-07-05
+lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-07-05
 lucos_dns_sync: 2026-07-09
 lucos_eolas_app: 2026-08-08
@@ -32,13 +32,13 @@ lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-07-19
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-07-27
-lucos_locations_oauth2_proxy: 2026-08-06
+lucos_locations_oauth2_proxy: 2026-08-09
 lucos_mail_smtp: 2026-08-08
 lucos_photos_api: 2026-07-19
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
-lucos_mail_docs: 2026-08-02
+lucos_mail_docs: 2026-08-09
 lucos_photos_postgres: 2026-07-27
 lucos_photos_redis: 2026-07-18
 lucos_scenes: 2026-08-06
@@ -54,7 +54,7 @@ lucos_notes: 2026-07-15
 lucos_root_app: 2026-07-19
 lucos_router: 2026-08-08
 semweb: 2026-08-08
-lucos_time: 2026-08-08
+lucos_time: 2026-08-09
 lucos_aithne: 2026-07-31
 lucos_arachne_mcp: 2026-07-19
 lukeblaney_blog: 2026-07-23
@@ -143,3 +143,9 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-08 Monthly 5/6/7 NOT due (last 2026-08-06, 2d; next ~2026-09-06).
 - 2026-08-08 LINK RECOVERED + incident report. Last alert 10:52:35Z→recovery 10:53:30Z (alerting window 00:00:56→10:53:30 = 10h53m), but **loss outlasted the alerts**: my own probes still showed 8/40 retransmits at ~12:00Z and only went clean at ~12:41Z (0/50 avalon→xwing; 0/40 home→avalon AND home→Cloudflare, i.e. both directions). ⚠️**Alert cessation is NOT fault clearance** — checks are probabilistic, so a partly-lossy link stops crossing failThreshold long before it's healthy. Verify recovery by direct measurement, not by the alert feed going quiet. Monitoring 55/55 healthy 0 unknown at 12:41Z. Final alert tally for the day: **29 monitoringAlerts** — lucos_time `media` 17 (00:09:30→10:52:35), seinn `media-manager` 7, static_media `fetch-info` 2, private `fetch-info`/`tls-certificate` 1 each, backups `host-tracking-failures` 1. **24 of 29 (time+seinn) are Node ⇒ amplifier-attributable; the other 5 are Erlang (`fetch-info` = monitoring's own `src/fetcher_info.erl`) and Python/Fabric ⇒ ordinary loss.** Report drafted + **draft PR lucas42/lucos#280** open, six domain teammates notified. Follow-ups all pre-existing: lucos#278 (Ready), lucos#279 (Ready, sysadmin), lucos_time#348. **Deliberately NOT filed, argued in the report**: an external-link check (can't fix or action an ISP fault) and an alert-rate anomaly detector (would have caught it hours earlier, but #278 removes 24 of 29 alerts at source — revisit with evidence if a storm recurs after that lands).
 
+- 2026-08-09 ops run: Monitoring **55/55 healthy, 0 failing, 0 unknown, 0 buffering** (checked per-system `status`, not just `summary.failing`). Loganne 1933 events, range 07-13 → 08-09 (27d). Check 3 30d pairing: everything pre-triaged (07-16 CircleCI storm; 07-19→21 docker_health/configy_sync — report exists; locations `location-freshness` = known-untrustworthy #105; repos `stale-dependabot-prs` hygiene; 08-08 backups `host-tracking-failures` 8h35m = home-link, report exists) **except** the 08-08 `lucos_time`/`lucos_media_weightings` pair — see below. **0 new incident reports needed, 0 new issues filed.** Check 4: 5 containers (creds_configy_sync, contacts_googlesync_import, mail_docs, locations_oauth2_proxy, time) all **0 err-ish lines**; 0 overdue @60d (oldest last_reviewed = 07-05, 35d). Monthly 5/6/7 NOT due (last 08-06, 3d; next ~09-06).
+- 2026-08-09 **⚠️ NEAR-MISS: I nearly wrote a DUPLICATE incident report.** Check 3 flagged the 08-08 `lucos_time` outage as uncovered — `git -C ~/sandboxes/lucos pull --ff-only` + `ls docs/incidents/` + `grep -ril 'pool overlap|fd00:2|subnet collision'` all said NO MATCH. **The checkout was parked on my own `incident-report-home-link-packet-loss` branch**, so `pull` refreshed *that* branch and the listing showed its tree. `2026-08-08-time-ipv6-subnet-collision.md` **was merged to main at 00:04:17Z** (PR lucas42/lucos#281). The grep still returned hits from *older* incident files, so the probe looked healthy while the specific answer was wrong — a per-item negative, not a blank result. Caught only because lucas42/lucos#282's body cited the report path. **Instruction FIXED** in `agents/sre-ops-checks.md` Check 3 Step 2: never read the working tree — `git fetch origin main` then `git ls-tree`/`git grep` against **`origin/main` by name**, and cross-check "missing" against the PR list (an unmerged draft PR is the expected mid-incident state and still means don't write a second). See [[feedback_read_origin_main_not_working_tree]].
+- 2026-08-09 08-08 `lucos_time` outage — my independent re-derivation **corroborated the existing report exactly**, nothing to add. Root cause: `lucos_time_default` removed out-of-band, then pipeline 846 (job 2515) failed 3× on `invalid pool request: Pool overlaps with other one on this address space` — `lucos_time` + `lucos_dns` both declared `fd00:2::/64` on avalon. Ground truth from **router access log** (survives container restarts, unlike `docker logs`): last 200 on am.l42.eu **12:28:01Z**, first 200 **23:21:21Z**, **zero 200s in between** = **10h53m20s**; ~7,618 failed upstream requests (6163×499, 1362×504, 93×502) incl. real Chrome traffic referred from seinn/notes. Alert lagged onset by 12m36s. Report's 10h52m42s (pipeline-start→container-healthy anchors) is consistent. Fix = lucas42/lucos_time#352 (→`fd00:4::/64`), deployed v1.0.118 23:21:20Z.
+- 2026-08-09 **weightings collateral — independent quantified proof** of the report's "functionally fine" claim, from the router log: during 13:00–22:59 mid-outage, `media-weighting.l42.eu/_info` returned **590/590 = 100% `499` to UA `lucos_monitoring`** and **600/600 = 100% `200` to UA `lucos_root`** (baseline 09:00–12:00: monitoring 155×200/20×499). Same server, same window — the only variable is the client's timeout. Confirms weightings was never broken; its in-band 1.0s `time-api-reachable` probe just exceeded monitoring's 1.0s `/_info` budget. Tracked lucas42/lucos_media_weightings#277; spec gap lucas42/lucos#283. **Splitting router-log status by user-agent is the cheapest way to separate "service is down" from "one client's timeout is too tight".**
+- 2026-08-09 Estate `fd00:*` allocation VERIFIED live (post-fix): monitoring `fd00:1`, dns `fd00:2`, backups `fd00:3` (avalon), time `fd00:4` (avalon), dns_secondary `fd00:3` (xwing). All 5 live with `ipv6=true`; **avalon has no remaining duplicate**, so further lucas42/lucos#279 recreates on avalon won't re-detonate. ⚠️**GitHub code search (`search/code?q=org:lucas42+fd00`) MISSED `lucos_dns_secondary`** — returned only 4 of 5 repos; a direct `contents/docker-compose.yml` fetch found it. Never treat the code-search index as an exhaustive estate sweep; confirm per-repo. Registry prevention already filed + Ready: lucas42/lucos#282 (`ula_subnet` in configy `systems.yaml` + `lucos_repos` convention; decision = `lucos_dns_secondary`→`fd00:5::/64`, first-declarer-keeps).
+- 2026-08-09 Estate error sweep since 08-08 23:21 (recovery deploy) — 8 containers with err-ish lines, **all benign**: locations_mosquitto 920 (TLS handshake noise: 894 from docker gateway 192.168.176.1 `unexpected eof while reading` + internet scanners `wrong version number`), backups 51 (`BrokenPipeError` from 127.0.0.1 healthcheck disconnects), tfluke 32 (third-party TfL API 503s — not actionable our side), weightings 9 (one 23:32:52 media-api ReadTimeout stack), media_manager 6, otfrontend 3, monitoring 1, mail_smtp 1. Sweep returning positives doubles as the **known-positive control** proving the grep works, so the 5 reviewed containers' `0` results are genuine negatives.

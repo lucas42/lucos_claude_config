@@ -187,17 +187,21 @@ Note: monitoringAlertSuppressed events (deploy-window suppression) are intention
 
 For each outage from step 1, check whether an incident report in the `lucos` repo at `docs/incidents/` mentions the affected system around that date.
 
-**Refresh the local checkout first.** `~/sandboxes/lucos` is frequently several commits behind `origin/main`, so a raw `ls` of the local `docs/incidents/` can report a report as missing when it was merged hours ago — leading you to write a duplicate. Always pull (or query GitHub) before trusting the listing:
+**Never read the working tree — `fetch`, then read `origin/main` explicitly.** A missing report here makes you write a duplicate, and the working tree lies in two independent ways: it may be behind `origin/main`, *and* it may be parked on a feature branch (yours, from a previous report). `git pull --ff-only` does not fix the second — it refreshes whatever branch is checked out, so `ls docs/incidents/` then lists that branch's tree and silently omits reports merged to `main`. Note a `grep` across the directory still returns hits from the older files, so the probe looks healthy while the specific answer is wrong. Always name the ref:
 
 ```bash
-git -C ~/sandboxes/lucos pull --ff-only -q   # or: gh-as-agent ... "repos/lucas42/lucos/contents/docs/incidents"
-ls ~/sandboxes/lucos/docs/incidents/*.md
+git -C ~/sandboxes/lucos fetch -q origin main
+git -C ~/sandboxes/lucos ls-tree --name-only origin/main docs/incidents/
 
-# Find reports mentioning a specific system
-grep -ril "<system_name>" ~/sandboxes/lucos/docs/incidents/
+# Find reports mentioning a specific system (searches origin/main, not the checkout)
+git -C ~/sandboxes/lucos grep -il "<system_name>" origin/main -- docs/incidents/
+```
 
-# Or filter by date in the filename (incident reports follow YYYY-MM-DD-summary.md)
-ls ~/sandboxes/lucos/docs/incidents/2026-05-*.md
+Cross-check anything you are about to conclude is *missing* against the open/merged PR list — a report written hours ago may be an unmerged draft PR, which is the expected mid-incident state and still means "do not write a second one":
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "search/issues?q=repo:lucas42/lucos+is:pr+incident+report+sort:created-desc&per_page=10" --jq '.items[]|{n:.number,t:.title,state}'
 ```
 
 If a matching report already covers the outage, skip — no action needed.

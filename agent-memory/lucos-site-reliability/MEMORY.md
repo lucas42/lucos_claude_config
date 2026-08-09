@@ -97,7 +97,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [A guard keyed on a symptom is absent during incidents](pattern_guard_keyed_on_symptom_absent_during_incident.md) — correlate trigger vs incident window.
 - [Container restart clears docker logs → false "onset"](pattern_container_restart_log_buffer_artifact.md) — check StartedAt + full status distribution…
 - [Bare "aborted due to timeout"? Probe discarded the number](pattern_probe_measures_then_discards_latency.md) — read source.
-- [Sandbox checkouts months-stale + undeployed repos](pattern_stale_sandbox_checkouts.md) — verify vs `git show origin/main:<path>`…
+- [Sandbox checkouts lie 2 ways: stale AND on a feature branch](pattern_stale_sandbox_checkouts.md) — `git pull` won't fix branch; name `origin/main`.
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
 - [Router gap analysis: stalled vs slow vs host](pattern_router_log_gap_analysis.md) — ⚠️avalon's router only logs ITS vhosts; run a positive control.
 - Causation discipline: [coincidence is not the default framing](feedback_avoid_coincidence_default.md) · [correlation is not "confirmed"](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation · [reproduce before publishing a root cause](feedback_verify_root_cause_by_reproduction.md).
