@@ -26,6 +26,10 @@ git show origin/main:<file> | grep -c '<text you added>' # + a positive control
 ```
 `ahead_by` is also unreliable **in the other direction**: a branch whose content shipped via a cherry-pick reports `ahead_by: 1` forever and reads as unmerged work. **Diff the content, not the commit graph** — that's what makes a stale branch safe to delete (record the tip SHA first; branches restore from it).
 
+**Base rate, measured 2026-08-09 — and it does NOT weaken the rule.** I content-diffed every branch on `lucos`: 121 besides `main`, 115 fully merged, 6 ahead, of which 5 had no open PR. **All five were superseded drafts — zero genuine instances of the lost-push mechanism across ~4 months of history.** So the hazard is *situational*, not long-standing: the trigger is a burst of rapid follow-up PRs on one artifact (3 PRs on one report inside 20 minutes), not everyday PR work. Keep the freeze rule at full strength — its justification is the two instances that day, not a base rate — and note team-lead deliberately kept this figure **out** of `pr-review-loop.md`, because "this has never happened before" sitting beside a rule is an invitation to ignore it. It lives here as calibration, not as an argument.
+
+⚠️ **Do not audit branches by `ahead_by` — diff the content.** `ahead_by: 1` persists forever when content shipped via cherry-pick. And when asking "does file X exist in `main`?", **ask the same of the branch**: a file *deleted on the branch* reads identically to a file *lost from `main`*. That inverse-question control is the only thing that stopped me publishing "an entire incident report is unpublished" — it wasn't; the branch had deleted it during a consolidation.
+
 **How to apply**: every PR-state fetch made before a write action (close, reopen, merge, label change, auto-merge toggle) must include `merged`, `merged_at`, and `state` at minimum. A safe canonical query:
 
 ```bash
