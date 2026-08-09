@@ -24,7 +24,13 @@ Production changes routinely surface alerts that look like they were caused by t
 
 4. **After:** fetch monitoring again and compare against your baseline.
 
-5. **If new alerts appeared:** investigate immediately. Your change may have caused a regression (e.g. a health check referencing a removed service, or a downstream consumer that didn't reconnect cleanly). Fix it before moving on. Don't declare the change complete until the alert picture matches the baseline or has been explained.
+5. **If new alerts appeared:** investigate immediately — but **do not *conclude* immediately.** Investigating fast is right; publishing a verdict from measurements taken minutes after the change is not. Anything that restarted a container or created a network behaves oddly while it settles (NDP, conntrack, DNS/route learning, caches, and monitoring's own post-restart warm-up — it logs `Warm-up: skipping alert for "<system>" on first poll`, which is your cue, not your finding).
+
+   **Before you call anything a regression, measure it a second time with a gap, and never assert a duration you have not observed.** Words like "permanent", "ongoing" and "not self-clearing" are claims about a time series; a single snapshot cannot support them. If a background watcher or Monitor is already collecting that series, read it before you write — do not file against a snapshot while the answer is being collected in the next terminal.
+
+   Then fix it before moving on. Don't declare the change complete until the alert picture matches the baseline or has been explained.
+
+   > 2026-08-08: `lucos_monitoring`'s self-poll went `unknown` after its network was recreated. I measured a genuinely slow IPv6 hairpin, correctly diagnosed the mechanism, and reported it as a **permanent** regression to two teammates plus a priority request. It cleared on its own after **four minutes**. A watcher I had already started printed `ALL GREEN` shortly after I filed. Note this cuts against the instinct to probe hard and fast: a dual-stack probe run straight after that recreate would have returned the alarming numbers and argued for rolling back a change that was working correctly.
 
 ## What this catches
 
