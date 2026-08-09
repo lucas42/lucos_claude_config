@@ -1,6 +1,6 @@
 ---
 name: feedback-pr-check-merged-field-first
-description: When fetching PR state to decide on action, always include `merged`/`merged_at` in the query — post-merge `mergeStateStatus` is misleadingly UNKNOWN
+description: "PR state fetches must include merged/merged_at — and never answer 'did my change land?' from the PR at all: merged PRs freeze, so a later push is invisible. Verify against origin/main by content."
 metadata:
   type: feedback
 ---
@@ -15,6 +15,16 @@ When re-fetching a PR's state to decide whether to act on it, **always pull `mer
 - `autoMergeRequest: null`
 
 If you only inspect the second cluster of fields, a merged PR looks *very* similar to an open PR whose state is still being computed by GitHub. Same `UNKNOWN`/`null` values, same superficially-stuck appearance. Acting on this false negative led me to close + attempt-reopen an already-merged PR.
+
+**⚠️ The bigger trap (2026-08-08, twice in one hour): a merged PR's state FREEZES, so no PR endpoint can show a commit pushed afterwards.** `commits`, `head.sha`, `changed_files` and `reviews` all stop at the merge — they return a confident, coherent, *wrong* picture. On `lucos` (unsupervised) approval auto-merges within minutes, so pushing a follow-on commit to a branch whose review you requested loses it **silently**: git reports success, the PR page looks fine, the commit is not in `main`, and there is no error. Both team-lead and I checked `/pulls/N/commits` + `head.sha` and concluded "it landed"; only the **live branch tip** + `compare` showed otherwise (`lucos-code-reviewer` did it right).
+
+**Never answer "did my change land?" from the PR. Answer it from `main`, by content:**
+```bash
+git fetch -q origin
+git log --oneline origin/main..origin/<branch>          # must be empty
+git show origin/main:<file> | grep -c '<text you added>' # + a positive control
+```
+`ahead_by` is also unreliable **in the other direction**: a branch whose content shipped via a cherry-pick reports `ahead_by: 1` forever and reads as unmerged work. **Diff the content, not the commit graph** — that's what makes a stale branch safe to delete (record the tip SHA first; branches restore from it).
 
 **How to apply**: every PR-state fetch made before a write action (close, reopen, merge, label change, auto-merge toggle) must include `merged`, `merged_at`, and `state` at minimum. A safe canonical query:
 
