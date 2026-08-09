@@ -77,6 +77,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Compose network config is declared, not deployed](reference_declared_vs_deployed_docker_networks.md) — 3 nets ignored `enable_ipv6` 10wks; Happy Eyeballs needs 2 addrs; l42.eu dual-stack by construction; salvare has no A
 - [Network recreate is non-atomic; ULA key is (host,subnet)](reference_docker_network_recreate_and_ula_allocation.md) — human gate ≠ precondition check; orb never rm's networks
 - [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md) — incl. dependency-only `/_info` can't report self-failure
+- [/_info observability inversion](reference_info_endpoint_observability_inversion.md) — cost scaling with own workload; 3 instances; lucos#288; unstaggered poller herds
 - [Base-image bump incident class (lucos#273)](reference_base_image_bump_incident_class.md) — CI tests an artifact we don't ship; tests-in-image is coverage-dependent
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
 - [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md)
