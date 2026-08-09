@@ -59,20 +59,27 @@ own labels before deleting it (`docker network inspect <net> --format '{{json .L
 it's usually the compose project name (often the repo name minus `lucos_` prefix quirks, but
 don't assume, just read it), not something to guess.
 
-## Companion lesson: post-change verification must probe the self-referential path, not just generic egress
+## Companion lesson (RETRACTED, corrected below): settling time after recreate, not a self-referential-probe gap
 
-Found by `lucos-site-reliability` immediately after this same #278 work (2026-08-09): both my
-dual-stack post-recreate probes (xwing dns_secondary, avalon monitoring) hit `cloudflare.com`
-as the IPv6/IPv4 control — generic external egress, confirmed working both times. What that
-missed: `lucos_monitoring` fetching **its own** hostname (`monitoring.l42.eu`) now hairpins
-container → NAT66 → avalon's global IPv6 → router → back into the same container, and that
-path is *slow-but-successful* (2-6s observed) rather than failing outright. The consumer
-(`fetcher_info.erl`, `{ipfamily, inet6fb4}`) only falls back to IPv4 on IPv6 **failure**, not
-on IPv6 **slowness**, so a working-but-slow hairpin blows its 1s budget every time — invisible
-to any check that doesn't specifically fetch the self-hostname.
+`lucos-site-reliability` initially reported (2026-08-09, ~23:5x) that `lucos_monitoring`
+couldn't poll itself post-recreate — a hairpin through NAT66 blowing the fetcher's 1s budget —
+and I wrote that up here as "verification must probe the self-hostname, not just generic
+egress." **They retracted this within the hour.** The self-poll recovered on its own ~4
+minutes after the container restarted (2144/5699/3431ms measured during the scare →
+26-95ms fifteen minutes later, forced-IPv6, same command). Most likely ordinary
+post-network-creation settling (NDP, NAT66 conntrack, the router learning the new subnet) —
+not a code defect, not a hairpin routing problem, nothing to fix in `lucos_monitoring`.
 
-Generalise: after any network-level change to a service, the verification probe should include
-the service fetching **itself** by its public hostname (not just an arbitrary external target)
-whenever the service's own code does that (self-health-checks, self-referential `/_info`
-calls, etc.) — a hairpin is a distinct failure mode from general egress and a generic dual-stack
-probe will not catch it.
+**The corrected, durable lesson**: after any Docker network recreate, expect several minutes
+of settling on the newly-created address family before any *behavioural* probe (latency,
+dual-stack fetch, self-referential health check) is trustworthy. Verify container health and
+that the network's live config matches its declaration **immediately** — those checks are
+structural, not timing-sensitive, and were both correct within seconds in this incident.
+But defer behavioural/latency probes until the dust settles, and if a probe looks wrong right
+after a recreate, **measure twice with a gap before believing it (and especially before
+rolling back a change that's actually fine)** — a dual-stack probe run in the first minute
+here would have reproduced the scary numbers and made a working change look broken.
+
+(The self-referential-vs-generic-egress distinction isn't *wrong* as a general verification
+idea — it's just not what happened here, and doesn't need to be the reason to defer behavioural
+checks. The reason is settling time, full stop.)
