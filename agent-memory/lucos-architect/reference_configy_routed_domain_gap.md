@@ -47,8 +47,25 @@ The existing hardcodes hit *different combinations*, which is why no single char
 - Consequence for sequencing: **land code+config first, flip DNS second, restart immediately.** DNS-first maximises the dark window (a domain pointed at a router with no vhost hits the `000-error` catch-all over *both* schemes).
 - Nothing currently prevents a system's domain colliding with a hardcoded one — two nginx `server_name` blocks for the same name. Putting both lists in configy makes that a build-time assertion in `api/tests/validation.rs`.
 
+## Convergence asymmetry between the two configy consumers (reusable fact)
+
+- `lucos_dns` sync cron: **every 15 minutes** (`sync/crontab`)
+- `lucos_router` `update-domains.sh` cron: **once a day, 22:16 UTC** (`scripts/startup.sh`)
+
+96×, pointing the wrong way. Once configy drives both, a new domain gets its CNAME published within 15 min and its cert up to 24h later. In the gap the domain resolves to the router with no vhost: port 80's `default_server` 301s everything to HTTPS (`conf/default.conf`), and HTTPS falls through to `templates/error.conf`'s `server_name _`, which serves the **host's own cert** → TLS name-mismatch. **Both schemes broken, not just HTTPS.**
+
+Precision that stops this being overstated: for a *genuinely new* subdomain this is the accepted self-healing latency the router README documents. For *migrating a domain that already works*, it's a live regression. Only the second case needs a mitigation.
+
 ## Where this came up
 
 lucas42/lucos_router#104 (2026-08-09) — self-hosting TLS-terminated redirects for 5 subdomains CNAMEd to `ghs.google.com`. lucas42 challenged the plan to hardcode them ("or we just vibing it big time?"). Assessment: recommended a new first-class configy resource, absorbing the 3 existing hardcodes, split into configy → router (Blocked on configy) → dns tickets. See [[feedback-check-originating-decision-before-forking]] — reading lucas42/lucos_router#11 was what settled it.
 
 Scale at the time: 31 configy-derived routed domains (29 avalon, 2 xwing) vs 3 hardcoded; the ticket would have taken hardcodes to 8.
+
+**DECIDED by lucas42, 2026-08-09** (lucas42/lucos_router#104): introduce the new configy concept; cover the 5 redirects **and** the 3 existing hardcodes; and it must power **both** the nginx logic **and** the `lucos_dns` entries. Structure of the type explicitly left open → ticket **lucas42/lucos_configy#267**, raised Needs Analysis owned by me. No ADR (decision taken on lucas42/lucos_router#11 + #104).
+
+Decision 3 is the widening: `run_sync` only generates `l42.eu`/`s.l42.eu` today, so powering DNS means converting the static `lukeblaney.co.uk`/`rowanblaney.co.uk`/`tfluke.uk` zones to Jinja on the `l42.eu.jinja` pattern (static MX/SPF/DKIM/TXT preserved + generated CNAME loops).
+
+## Sequencing reconciliation (the "DNS first or last?" trap)
+
+Both "DNS must be updated before Let's Encrypt will mint" and "do DNS last" are true — different steps. DNS must precede the **certbot run**, not the **code deploy**. Correct order: (1) configy, (2) router code deploy — certbot fails harmlessly here, `|| true` swallows it and it retries, (3) DNS repoint ← *the README gotcha's step*, (4) restart router → cert mints. Say "DNS last **of the three code/config changes**" — unqualified "DNS last" reads as contradicting the cert constraint.
