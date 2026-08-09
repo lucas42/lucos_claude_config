@@ -59,27 +59,35 @@ own labels before deleting it (`docker network inspect <net> --format '{{json .L
 it's usually the compose project name (often the repo name minus `lucos_` prefix quirks, but
 don't assume, just read it), not something to guess.
 
-## Companion lesson (RETRACTED, corrected below): settling time after recreate, not a self-referential-probe gap
+## Companion lesson: probe the self-hostname AND wait out the settling window — both halves are real
 
 `lucos-site-reliability` initially reported (2026-08-09, ~23:5x) that `lucos_monitoring`
 couldn't poll itself post-recreate — a hairpin through NAT66 blowing the fetcher's 1s budget —
-and I wrote that up here as "verification must probe the self-hostname, not just generic
-egress." **They retracted this within the hour.** The self-poll recovered on its own ~4
-minutes after the container restarted (2144/5699/3431ms measured during the scare →
-26-95ms fifteen minutes later, forced-IPv6, same command). Most likely ordinary
-post-network-creation settling (NDP, NAT66 conntrack, the router learning the new subnet) —
-not a code defect, not a hairpin routing problem, nothing to fix in `lucos_monitoring`.
+then **partially retracted**: the self-poll recovered on its own ~4 minutes after the
+container restarted (2144/5699/3431ms measured during the scare → 26-95ms fifteen minutes
+later, forced-IPv6, same command). Most likely ordinary post-network-creation settling (NDP,
+NAT66 conntrack, the router learning the new subnet), not a code defect.
 
-**The corrected, durable lesson**: after any Docker network recreate, expect several minutes
-of settling on the newly-created address family before any *behavioural* probe (latency,
-dual-stack fetch, self-referential health check) is trustworthy. Verify container health and
-that the network's live config matches its declaration **immediately** — those checks are
-structural, not timing-sensitive, and were both correct within seconds in this incident.
-But defer behavioural/latency probes until the dust settles, and if a probe looks wrong right
-after a recreate, **measure twice with a gap before believing it (and especially before
-rolling back a change that's actually fine)** — a dual-stack probe run in the first minute
-here would have reproduced the scary numbers and made a working change look broken.
+**Both halves of the original lesson are still true — only the sequencing was wrong.** SRE's
+own follow-up correction: deleting the self-hostname point (my first pass at editing this
+note) would have thrown out the real gap it identified — both my dual-stack probes that night
+went to `cloudflare.com`, generic external egress, and a hairpin or self-resolution problem is
+genuinely invisible to that. What was wrong was running that probe *immediately* after the
+recreate, inside the settling window, where it reproduces scary-looking transient numbers that
+have nothing to do with whether the change actually worked.
 
-(The self-referential-vs-generic-egress distinction isn't *wrong* as a general verification
-idea — it's just not what happened here, and doesn't need to be the reason to defer behavioural
-checks. The reason is settling time, full stop.)
+**The composed, correct lesson**: after any Docker network recreate —
+1. Verify **immediately** what is immediately true and non-timing-sensitive: container
+   healthy, network's live config matches its declaration. Both were correct within seconds
+   here.
+2. **Wait out a settling window** (a few minutes) before trusting any *behavioural* probe —
+   latency, dual-stack fetch, self-referential health check.
+3. Once past that window, **do** probe the service's own self-hostname specifically, not just
+   generic external egress — a hairpin/self-resolution failure is a distinct failure mode a
+   generic dual-stack probe cannot see.
+4. If a behavioural probe looks wrong right after a recreate, measure twice with a gap before
+   believing it (and especially before rolling back a change that's actually fine) — running
+   the self-hostname probe in the first minute here would have reproduced the alarming numbers
+   and made a working change look broken.
+
+Now captured as an instruction in `production-change-verification.md`, not just a memory note.
