@@ -69,6 +69,23 @@ If an approval did land on a draft, the fix is a **fresh approval submitted on t
 
 The wasted attempt does fail the workflow run rather than skipping silently — the enable-auto-merge step retries three times and then exits non-zero — but that surfaces only as a red run in the repo's Actions tab, which nobody is watching. Do not rely on spotting it.
 
+### A push that races the merge is lost silently
+
+The mirror of the trap above. Because approval fires the merge immediately on an unsupervised repo, a commit pushed to the branch *while the review is in flight* can land after the merge has already been computed. The push succeeds, the PR closes as merged without it, and **nothing reports an error to anyone** — not the pusher, not the reviewer, not the merge job.
+
+Every endpoint hanging off the merged PR then agrees the work is present: `/pulls/{n}/commits`, `head.sha` and the reviews list all **freeze at merge time**, so they show the state the reviewer approved and not the later push. Checking any of them confirms a false picture with apparent authority.
+
+To test whether specific work is actually in the base branch, resolve the live tip and compare:
+
+```bash
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/branches/{branch} --jq '.commit.sha'
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> "repos/lucas42/{repo}/compare/main...{branch}" --jq '{status, ahead_by, behind_by}'
+```
+
+`ahead_by: 0` is the only result that means nothing is outstanding; `status: diverged` with `ahead_by ≥ 1` means the branch holds commits `main` does not. Confirm with a content probe on the file itself at `?ref=main` versus `?ref={branch}` — the commit graph and the content can tell different stories when a fix has been re-landed via a different branch.
+
+The operational rule this implies is in [`pr-review-loop.md`](../pr-review-loop.md) § Step 1: once review is requested on an unsupervised repo the branch is frozen, and any further change — **including one the reviewer asks for** — belongs in a new PR.
+
 ---
 
 ## What the merge gate actually reads

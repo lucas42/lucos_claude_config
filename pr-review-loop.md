@@ -20,6 +20,10 @@ The message body is:
 
 Wait for the lucos-code-reviewer to respond.
 
+**On an unsupervised repo, requesting review IS requesting merge — treat the branch as frozen from the moment you send that message.** The reviewer's approval fires auto-merge directly, so a commit you push while they are reviewing races the merge and loses silently: the push succeeds, the PR merges without it, and nothing errors. Run `~/sandboxes/lucos_agent/check-unsupervised {repo}` if you are unsure which kind of repo you are on.
+
+So: get the branch into the state you want merged **before** requesting review. If anything needs changing afterwards — including an edit the reviewer themselves asks for — put it in a **new PR** rather than pushing to the reviewed branch. Do not assume a late push landed because it succeeded; verify with `GET /branches/{branch}` for the live tip and `GET /compare/main...{branch}` (`ahead_by: 0` is the only result meaning nothing is outstanding). A merged PR's `/commits` and `head.sha` freeze at merge time and will not show a later push.
+
 ### Step 2: Check the review outcome
 
 **Review precedence rule:** A PR is approved only when *all* reviewers who have submitted reviews are in APPROVED state. A CHANGES_REQUESTED from any reviewer — including lucas42 — is binding until *that same reviewer* submits a new APPROVED review. An APPROVED from a *different* reviewer does not dismiss someone else's CHANGES_REQUESTED. Before declaring a PR approved, query the GitHub API and verify no reviewer has a current CHANGES_REQUESTED state.
