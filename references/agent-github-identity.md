@@ -80,6 +80,21 @@ Each persona authenticates with its own GitHub App credentials. **Never run `gh-
 
 Any other use of another persona's `--app` flag is a violation. If you find yourself reaching for `--app lucos-developer` to read a PR because the issue-manager bot gave 403, stop — escalate the permission gap instead.
 
+## Debugging environment variables: never dump, always name
+
+**When checking an environment variable, grep for its exact name. Never run a bare `env`, and never `env | grep <partial-pattern>` where the pattern could match something other than the variable you want.** A broad dump prints every secret in scope — App private keys, API keys, database passwords — into the session transcript, which is a file on disk that persists indefinitely and is readable by other tooling (`verify-teammate-quote` reads transcripts routinely). "I only looked at one line of the output" does not help: the whole match is written to the transcript regardless of what you read.
+
+This costs nothing to follow. `env | grep LUCOS_AGENT_PEM` is not meaningfully harder to type than `env | grep PEM`, and the second one is how a key ends up at rest outside its designated store.
+
+**If a secret does get printed to a transcript, the default response is to rotate it.** Do not re-open the rotate-versus-accept debate from scratch each time — the asymmetry settles it in advance. Rotating a credential that turned out not to need it costs a bounded, known amount: a new key, a lucos_creds write, and a convergence window. *Not* rotating one that was in fact exposed costs an open-ended amount, and "no evidence of misuse" is a weak signal for a credential that would not necessarily announce being misused.
+
+Two things follow from that default:
+
+- **Disclose it immediately**, in the same breath as whatever you were doing — as `lucos-system-administrator` did on 2026-08-09. Nobody else can see your transcript, so an undisclosed exposure is simply invisible.
+- **The person who made the exposure does not get to clear it.** Route the disposition to `lucos-security`, whose remit it is, regardless of how confident you are that it is contained. That is process, not doubt.
+
+Note that "not in git" is not the same as "not persisted": `~/.claude` default-denies transcripts via `.gitignore`, so an exposure will usually not reach the public repo — and the key is still sitting in plaintext on disk afterwards.
+
 ## Cross-repo issue references
 
 In GitHub comments and issue/PR bodies, references to issues in **other repositories** must use `owner/repo#N` format (e.g. `lucas42/lucos_arachne#326`). A bare `#326` always links to the **current** repository's issue #326, even when you mean a different repo. Same-repo references can stay as `#N`.
