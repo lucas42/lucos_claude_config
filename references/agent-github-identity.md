@@ -52,7 +52,17 @@ ENDBODY
 
 `$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. **Do not use `--field "body=@$BODY_FILE"` (passes the literal path string, not file contents)** and **do not use `--field body-file=$FILE`** (silently creates an ignored field). Both patterns fail silently — the body ends up as a path string or null with no error from the wrapper.
 
-**If the body contains curly-brace placeholders** (e.g. `{owner}/{repo}` in prose): `gh api` performs template substitution on these tokens inside field values regardless of shell quoting. To prevent this, reword the prose to avoid the `{owner}/{repo}` syntax — use the docs title instead.
+**If the body contains curly-brace placeholders** (e.g. `{owner}/{repo}` in prose): `gh api` performs template substitution on these tokens inside field values regardless of shell quoting. When the braces are your own prose, reword to avoid the syntax — use the docs title instead.
+
+**When the braces are content you must preserve verbatim, reword is not available and the heredoc pattern is not enough.** This is the normal case for a `PATCH` that prepends to *someone else's* body — nginx/mustache templates (`{{target}}`), GitHub Actions expressions, Helm values — where altering the braces would corrupt technical content that has to stay exact. Bypass field templating entirely by sending a pre-built JSON body with `--input`:
+
+```bash
+python3 -c 'import json;json.dump({"body":open("/path/to/body.md").read()},open("/path/to/payload.json","w"))'
+~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/<repo>/issues/<N> \
+    --method PATCH --input /path/to/payload.json
+```
+
+`--input` sends the file as the raw request body, so no `-f`/`--field` value is parsed and no substitution runs. Build the JSON with a real JSON serialiser rather than by hand — the body will contain quotes, backslashes and newlines. **Fetch the existing body to a file first and keep it as a backup**, then after posting assert the original survives as a verbatim substring of the new body and that the placeholders are still present; a corrupted `PATCH` overwrites work that was not yours.
 
 The same gotcha applies to `PATCH` calls that update an existing issue/PR body and to comments. See [`references/issue-creation.md`](issue-creation.md) for the canonical issue-creation patterns.
 
