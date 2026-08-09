@@ -33,15 +33,33 @@ flagged by the architect as a separate decision needing lucas42's sign-off,
 not yet tracked as of 2026-08-08** — if this comes up again, don't assume
 it's decided; check for a tracking issue first.
 
-Also: `lucos_media_seinn` (avalon, no `networks:` block in its
-docker-compose.yml — plain default project network, never declared
-`enable_ipv6` at all) was one of the two Node services actually amplified in
-this incident (7 of the 24 manufactured alerts) but is covered by **neither**
-#278 (root fix scoped to the three networks that *declared* IPv6 and didn't
-get it applied — lucos_time_default, lucos_monitoring_default,
+**Correction (2026-08-08, post-review of the incident report draft):** an
+earlier version of this memory said `lucos_media_seinn` was amplified by
+Happy Eyeballs (7 of what was then counted as 24 manufactured alerts). That
+was wrong and has been retracted in the incident report itself after
+`lucos-architect` challenged it: seinn's `media-manager` check probes
+`ceol.l42.eu`, which resolves to **avalon** (seinn's own host) — a path
+measured at 0/80 retransmits throughout the incident, so the amplifier
+cannot apply there. Seinn's logs confirm it: 74 failures, all `The operation
+was aborted due to timeout` at 799–823 ms (its own 800 ms `AbortSignal`
+budget), **zero** `UND_ERR_CONNECT_TIMEOUT`. **The confirmed amplified count
+is 17, all from `lucos_time`.** Seinn's 74 failures correlate strongly in
+time with the incident but the causal mechanism was explicitly *not*
+established (lucas42/lucos#280 says so directly) — don't backfill one.
+Related open tickets if this resurfaces: lucas42/lucos_media_seinn#583,
+lucas42/lucos_media_manager#283 (media_manager has no GC/safepoint logging,
+so a stall of this kind currently leaves no evidence behind).
+
+Separately, confirmed still accurate: `lucos_media_seinn` (avalon, no
+`networks:` block in its docker-compose.yml — plain default project network,
+never declared `enable_ipv6` at all) is covered by **neither** #278 (root
+fix scoped to the three networks that *declared* IPv6 and didn't get it
+applied — lucos_time_default, lucos_monitoring_default,
 lucos_dns_secondary_default) **nor** #279 (detects declared-vs-live
-divergence; seinn has no declaration to diverge from). If asked to implement
-#278/#279, check whether seinn's exposure is in scope — as filed it isn't.
+divergence; seinn has no declaration to diverge from) — this part of the
+gap analysis holds regardless of the amplifier-attribution correction above.
+If asked to implement #278/#279, check whether seinn's exposure is in scope
+— as filed it isn't.
 
 **How to apply:** in any Node lucos service that calls another l42.eu
 service via `fetch()` — set the attempt timeout explicitly rather than
