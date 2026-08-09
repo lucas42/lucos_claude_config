@@ -30,6 +30,6 @@ docker network create --subnet <recorded> \
 
 ⚠️ Recreating `lucos_monitoring_default` is the worst case: the orb's `PUT monitoring.l42.eu/suppress/$REPO` is `|| true`, so while monitoring is down **every other service's deploy silently loses alert suppression** — and a quiet dashboard is not health. Confirm from off-avalon.
 
-Known state 2026-08-08 (snapshot, re-probe): avalon `fd00:2::/64` lucos_dns · `fd00:3::/64` lucos_backups · `fd00:4::/64` lucos_time · `fd00:1::/64` declared by lucos_monitoring but **not yet live**. xwing: no `fd00:*` at all, though `lucos_dns_secondary` declares `fd00:3::/64`. Still to recreate per lucas42/lucos#279: `lucos_monitoring_default`, `lucos_dns_secondary_default`.
+Known state **2026-08-09 00:0x, all five live** (snapshot, re-probe): avalon — `fd00:1::/64` lucos_monitoring · `fd00:2::/64` lucos_dns · `fd00:3::/64` lucos_backups · `fd00:4::/64` lucos_time. xwing — `fd00:3::/64` lucos_dns_secondary (different daemon, so not a collision with backups). **All three lucas42/lucos#279 recreates are DONE** (lucos_time 23:21, dns_secondary 23:47, monitoring 23:53 on 2026-08-08); nothing outstanding. Registry proposed at lucas42/lucos#282 — note it proposes the *stricter* one-subnet-per-**system** rule, under which the backups/dns_secondary `fd00:3::/64` pair must be renumbered rather than grandfathered.
 
 Related: [[pattern_named_volume_shadows_image]], [[pattern_docker_live_restore_skips_network_init]].
