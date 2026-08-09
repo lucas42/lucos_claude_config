@@ -61,6 +61,30 @@ PERSONAS_JSON="/home/lucas.linux/sandboxes/lucos_agent/personas.json"
 SYSADMIN_NAME="lucos-system-administrator[bot]"
 SYSADMIN_EMAIL="264392982+lucos-system-administrator[bot]@users.noreply.github.com"
 
+# Quiescence window for sweep mode only (seconds). A persona directory with
+# any file modified more recently than this is skipped for this cycle rather
+# than committed immediately.
+#
+# Why: post-turn-hook.sh's Stop hook runs sweep mode after every single turn,
+# for every session. The documented agent workflow is "write a memory file,
+# then commit it" — necessarily two different turns — so without this window
+# the hook races that workflow on every memory write, not just occasionally.
+# lucos-architect hit exactly this (2026-08-09): their own commit-claude-main
+# call lost the race to a sweep that fired in the gap between their edit and
+# their own commit, and — even after the per-persona attribution fix above —
+# the sweep would still have committed their file under their own identity
+# with the generic "Auto-commit agent memory updates" message, discarding the
+# rationale they'd written into their intended commit message. Skipping
+# recently-modified directories lets a persona's own deliberate commit land
+# first in the common case, while still catching genuinely-forgotten files
+# once they've been quiet for a while — the 15-minute cron re-checks on every
+# tick regardless, so nothing is ever silently missed forever, just delayed.
+# Tracked in lucas42/lucos_claude_config (cross-referenced against #124, a
+# different symptom of the same underlying "the sweep stages things it
+# doesn't own" root cause — that one's about partial/atomic-write races, not
+# attribution).
+QUIESCENCE_SECONDS=300
+
 APP=""
 
 # Parse arguments
@@ -106,6 +130,29 @@ EOF
 
 # Ensure git uses the correct SSH key, even in cron's minimal environment.
 export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+
+# is_recently_modified <path> <window_seconds>
+#
+# True (exit 0) if any modified-or-untracked file under <path> (relative to
+# origin/main, evaluated from $CLAUDE_DIR) has an mtime within the last
+# <window_seconds>. Used only by sweep mode's quiescence check — persona mode
+# always commits immediately regardless, since that's an explicit, deliberate
+# call by the persona itself.
+is_recently_modified() {
+    local path="$1" window="$2"
+    local now cutoff f mtime
+    now=$(date +%s)
+    cutoff=$((now - window))
+    while IFS= read -r f; do
+        [ -z "$f" ] && continue
+        [ -f "$CLAUDE_DIR/$f" ] || continue
+        mtime=$(stat -c %Y "$CLAUDE_DIR/$f" 2>/dev/null) || continue
+        if [ "$mtime" -gt "$cutoff" ]; then
+            return 0
+        fi
+    done < <(cd "$CLAUDE_DIR" && { git diff --name-only origin/main -- "$path"; git ls-files --others --exclude-standard -- "$path"; } | sort -u)
+    return 1
+}
 
 # commit_scope <identity_name> <identity_email> <check_path...>
 #
@@ -234,6 +281,12 @@ else
                 overall_status=1
                 continue
             }
+
+            if is_recently_modified "agent-memory/$persona/" "$QUIESCENCE_SECONDS"; then
+                echo "$(date -Iseconds) [$persona] Skipping this cycle — files modified within the last ${QUIESCENCE_SECONDS}s (quiescence window; will retry next run)."
+                continue
+            fi
+
             name=$(echo "$identity" | cut -f1)
             email=$(echo "$identity" | cut -f2)
             commit_scope "$name" "$email" "agent-memory/$persona/" || overall_status=1
