@@ -22,6 +22,20 @@ metadata:
 
 Only two behaviours exist in the wild: **proxy to an arbitrary URL** and **redirect to an arbitrary URL**. The domain-set line format `DOMAIN TARGET_URL` is already the first; the second needs one more column.
 
+## It is THREE separable limitations, not one concept
+
+My first framing ("a domain with no system behind it") under-described it; so does "the backend isn't a local container port". Neither fits all the entries. The actual limitations:
+
+1. **One hostname per system** — `domain` is `Option<String>` (`data.rs:46`), singular. Aliases are inexpressible *even for a local backend*.
+2. **The backend is always a local container port** — configy stores `http_port`; `fetch-domainsets.sh` composes `http://172.17.0.1:$port`. No other target is expressible.
+3. **Every domain must hang off a repo** — `systems.yaml` keys are repository ids.
+
+The existing hardcodes hit *different combinations*, which is why no single characterisation fits: `tfluke.uk`/`www.tfluke.uk` → (1)+(2), **not** (3) (the `tfluke` repo exists and is registered). `nas.l42.eu` → (2)+(3). Redirect-only domains → (2)+(3).
+
+`http_port` being absent is **not** one of the limitations — "domain with no port" is already schema-legal, live precedents `lucos_dns` and `lucos_dns_secondary`.
+
+**Cost trap:** the repo-binding friction (dummy repo / `in-lucos-configy` exemption) is a cost of the **`systems.yaml`** option, *not* of a separate domain-keyed resource. That convention resolves types from `/systems`, `/components`, `/scripts` only and runs per GitHub repo, so a `domains.yaml` key is invisible to it. Don't let this inflate the price of the right option.
+
 ## DNS split (don't confuse it with the router split)
 
 `lucos_dns` generates `l42.eu` and `s.l42.eu` zones from configy (`sync/config-sync.py` + Jinja). The three non-`l42.eu` zones (`lukeblaney.co.uk`, `rowanblaney.co.uk`, `tfluke.uk`) are **static hand-maintained files** in `bind/config/zones/`. Generating those would be a bigger job than it looks — the systems-zone renderer only emits A/AAAA/CNAME, and those zones carry MX, SPF, DKIM and verification TXT records.
