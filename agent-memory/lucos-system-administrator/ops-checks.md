@@ -1647,3 +1647,11 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Follow-up cleared**: lucos_creds#472/#484 spot-check — both `rerun-failed-jobs` runs (31123913329, 31123956119) confirmed `status: completed`, `conclusion: success`. Dropped from pending follow-ups.
 
 **Issues raised**: None. **Issues closed**: None. lucos_agent#72 (docker image prune backlog) still open, unchanged — weekly resource check not due this run so disk trend not re-measured; will pick up 2026-08-13.
+
+### 2026-08-09 (SECOND RUN — check 1 only; check 6 already ran earlier today, not re-run; weekly checks 2-5 last ran 2026-08-06, 3 days — not due until ~2026-08-13; monthly checks 7-9 last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**: fresh SSH check (not reused from earlier today) — all clean, no crashed, stopped, or unhealthy containers on avalon, xwing, or salvare (via xwing jump host).
+
+**Repos dashboard**: not re-run — already checked earlier today (2026-08-09 first run), 1 known deliberate deferral (`lucos_worlds_atlas` `in-lucos-configy`), no change expected within the same day.
+
+**Issues raised**: None. **Issues closed**: None. No change from earlier today's run.
