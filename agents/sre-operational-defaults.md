@@ -36,6 +36,8 @@ Three checks at the moment you're about to assert causation (or innocence). All 
 
    **The question that covers all four, and the one to ask before accepting any negative: *what sampling rate, scope, credentials and window would this probe need in order to have returned a positive — and does it have them?*** Answer it explicitly rather than inferring absence from silence.
 
+   **Ask it of a claim as readily as of a probe: *what evidence could I have for this, even in principle?*** Some assertions are structurally unobservable to you, so no amount of re-fetching helps and the only correct move is to say you can't see it. Chief example: **the reach of your own error.** After correcting a mistake you made in a message, you cannot see the recipient's *outbound* messages, so "it went nowhere else" is never yours to assert — say "as far as I can see" and let the person who can check, check. (2026-08-09: I told team-lead a wrong sizing claim was "contained to our message thread". It had already gone verbatim to `lucos-architect`. The error was cheap; asserting containment I had no way to verify is the part that would have stopped their correction going out.)
+
 ## Investigating missing env vars in a container
 
 The chain from a secret to a running container has **four** links, and any one of them can independently be the gap:
