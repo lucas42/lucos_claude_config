@@ -45,6 +45,26 @@ Checked 2026-08-18 while correcting the scope of `lucas42/lucos_repos#488`. Both
 - **Subdirectory Dockerfiles are already discovered** — `conventions/dockerfile-version-arg.go`'s `dockerfilePathForBuild` resolves a service's Dockerfile from its compose `build:` stanza (string and mapping forms; `context: foo` → `foo/Dockerfile`). `dockerfile-copy-from-blind.go` uses the same discovery. Reuse it.
 - **The real limitation is narrower:** discovery is via `docker-compose.yml`, so **a Dockerfile no compose service references is invisible**. Verified all 8 pipenv repos' affected Dockerfiles *are* reachable from a `build:` stanza, so it's fine today — but state it as a limitation of any new Dockerfile convention.
 
+## The wider family: build integrity
+
+Frozen install is one instance of a larger property — **the shipped artefact is fully determined by what is committed**. Siblings found so far, each a distinct *property* even though they share a mechanism (a static Dockerfile check):
+
+- **Which dependencies ship** — frozen install (this file).
+- **Which *stage* ships** — `lucos_backups` `buildx bake` uses a bare `build: .` with no `target:`, so the Dockerfile's *last* stage is what ships. Appending a test stage at the end would ship pytest to production. The guarantee is currently **a comment saying "keep production last"**, not anything that fails when it stops holding. code-reviewer proposed a CI grep asserting the final `FROM ... AS production`; routed to team-lead 2026-08-18.
+
+**Don't fold the sibling into frozen install.** Shared mechanism ≠ decision coupling (see [[new-consideration-gets-own-adr]]). Same family, own convention. The family name is the useful thing: it tells you where the next check belongs.
+
+## Verifying a deployed lucos_backups image (from lucos-site-reliability, 2026-08-18)
+
+Re-verify **at the moment of citing**, not in advance — a point-in-time infra fact goes stale between verification and citation.
+
+```
+ssh avalon.s.l42.eu "docker inspect -f 'image={{.Config.Image}} health={{.State.Health.Status}} restarts={{.RestartCount}}' lucos_backups"
+ssh avalon.s.l42.eu "docker run --rm --entrypoint sh lucas42/lucos_backups:<ver> -c 'ls /root/.local/share/virtualenvs/*/lib/*/site-packages/ | grep -c \"^pytest\"'"
+```
+
+Zero pytest packages proves `buildx bake` resolved the `production` target **on the published artefact**, not merely in the branch.
+
 ## Method notes
 
 - **GitHub code search missed 3 repos** (lucos_media_import for pipenv; lucos_authentication and `frontend` for npm). Sweep off clones — as `lucos_repos` already does. See [[github-codesearch-lossy-for-sweeps]].
