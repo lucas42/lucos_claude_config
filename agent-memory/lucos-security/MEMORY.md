@@ -35,6 +35,8 @@
 
 ## Open Risk Patterns (watch for recurrence across repos)
 
+- [Build-time dependency re-resolution bypasses Dependabot review](risk-build-time-dependency-reresolution.md) — `pipenv install` (no `--deploy`) etc. lets any commit silently pull unreviewed PyPI releases into prod. Found on lucos_backups (2026-08-18, lucos_backups#392), caused/contributed-to 15h24m outage (lucos#289). Not yet checked estate-wide.
+
 - **unattended-upgrades `Allowed-Origins` + stock `Origins-Pattern` union, not override** — a "security-only" custom restriction layered on top of the stock file doesn't actually restrict anything, since `get_allowed_origins()` concatenates both (verified against source on xwing). Check for this on any host with a customized unattended-upgrades scope. Detail: `risk-unattended-upgrades-origin-scope.md`.
 - **`lucos-agent` lacks `adm`/`systemd-journal` group on avalon/xwing/salvare** — `journalctl` returns nothing for any unit; can't distinguish "never ran" from "no read access." Don't assert service history from journalctl on these hosts.
 - [lucos_firewall is inbound-only; egress is deliberately unfiltered (v4 and v6)](risk-lucos-firewall-inbound-only-egress-unfiltered.md) — ADR-0007 scopes `OUTPUT ACCEPT` out; a container gaining a new address family for egress (e.g. lucos#278) is not a posture change since no egress path was ever filtered. Verified 2026-08-08.
