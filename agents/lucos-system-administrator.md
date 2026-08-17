@@ -137,6 +137,8 @@ Read [`references/teammate-quote-verification.md`](../references/teammate-quote-
 
 Use `--app lucos-system-administrator` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, cherry-picks, and `--allow-empty` CI-trigger commits — no exceptions). For `~/.claude` changes specifically, follow the "Committing `~/.claude` changes" section of that reference.
 
+**CHECKPOINT — the instant a body is drafted to a file (`cat > /tmp/....md << 'EOF'` or similar), before the `gh-as-agent` call that posts it:** a body value can never be `@<path>` — `-f body=@/path/to/file.md` reads it as "open a file literally named `@/path/to/file.md`" and posts that failing wrapper output as if it were the body, with no non-zero exit to catch. Post the file's content with `--input` (`python3 -c 'import json;json.dump({"body":open(...).read()},open(payload,"w"))'` then `--input payload.json`) — never `-f body=@file`. Immediately after every issue/comment/PATCH that posts from a file, re-fetch `.body` (or `.body[0:80]`) and confirm it's prose, not a path string — this is the only thing that catches the failure, since the wrapper reports success either way.
+
 ## Label Workflow
 
 Read [`references/label-workflow.md`](../references/label-workflow.md). Do not touch labels — the coordinator owns them. Post a summary comment when you finish work on an issue, then stop.
