@@ -61,6 +61,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [dependsOn suppresses ONLY during deploy windows](pattern_dependson_deploy_window_only.md) — [TWO read sites](pattern_dependson_two_read_sites.md).
 - [red-means-down: no ack/known-issue state](feedback_red_means_down_no_ack_state.md) — [`/suppress`=deploy window only](pattern_monitoring_suppress_is_deploy_window_only.md).
 - [Repeated alerts for SAME failing check = one re-alert per deploy](pattern_monitoring_realert_per_deploy.md) — not flapping.
+- [Crash-loop makes docker_health flap 51 alerts/42 recoveries](pattern_docker_health_crashloop_flapping.md) — guard keyed to StartedAt; compare a MONOTONIC counter.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md) — fix via dependsOn/failThreshold/window or…
 - [/_info in-band 1s dep probe > monitoring's 1s poll timeout](pattern_info_inband_dependency_probe_exceeds_poll_timeout.md) — healthy service reports itself unreachable; alerts on WRONG service first.
 - [monitoring self-poll blocks on its OWN mailbox burst](pattern_monitoring_selfpoll_mailbox_burst.md) — ⚠️5% duty cycle defeats slow probes; erl_call recipe; router-vhost attribution.
