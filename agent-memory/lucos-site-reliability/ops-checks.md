@@ -10,10 +10,10 @@ external_deps: 2026-08-06
 
 lucos_schedule_tracker: 2026-07-14
 lucos_media_weightings: 2026-07-13
-lucos_photos_worker: 2026-08-02
+lucos_photos_worker: 2026-08-17
 lucos_arachne_explore: 2026-08-02
 lucos_arachne_web: 2026-08-08
-lucos_backups: 2026-08-08
+lucos_backups: 2026-08-17
 lucos_repos_app: 2026-08-08
 lucos_dns_bind: 2026-07-27
 lucos_loganne: 2026-07-23
@@ -21,15 +21,15 @@ lucos_configy: 2026-07-23
 lucos_contacts_app: 2026-08-08
 lucos_contacts_db: 2026-08-06
 lucos_contacts_googlesync_import: 2026-08-09
-lucos_contacts_web: 2026-07-05
+lucos_contacts_web: 2026-08-17
 lucos_creds: 2026-07-14
 lucos_creds_configy_sync: 2026-08-09
-lucos_creds_ui: 2026-07-05
-lucos_dns_sync: 2026-07-09
+lucos_creds_ui: 2026-08-17
+lucos_dns_sync: 2026-08-17
 lucos_eolas_app: 2026-08-08
 lucos_eolas_db: 2026-08-06
 lucos_eolas_web: 2026-07-09
-lucos_locations_mosquitto: 2026-07-19
+lucos_locations_mosquitto: 2026-08-17
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-07-27
 lucos_locations_oauth2_proxy: 2026-08-09
@@ -40,10 +40,10 @@ lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
 lucos_mail_docs: 2026-08-09
 lucos_photos_postgres: 2026-07-27
-lucos_photos_redis: 2026-07-18
-lucos_scenes: 2026-08-06
+lucos_photos_redis: 2026-08-17
+lucos_scenes: 2026-08-17
 lukeblaney_co_uk: 2026-08-06
-lucos_media_manager: 2026-07-14
+lucos_media_manager: 2026-08-17
 lucos_media_metadata_api: 2026-07-23
 lucos_monitoring: 2026-08-08
 lucos_media_seinn: 2026-08-02
@@ -156,3 +156,13 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-09 **⚠️ A CORRECTION IN A COMMENT IS NOT A CORRECTION — twice in one afternoon.** (a) backups#374: I posted a thorough comment correcting the wrong "monitoring's 60s poll doesn't reliably land in the window" mechanism, then **told team-lead I'd corrected the body**. I hadn't — `CONSECUTIVE_UNKNOWNS` appeared 0 times in it. On a **Ready** ticket the implementer reads the *body*, sizes the work against its impact section, and opens a PR — and that body's version argued the impact was *smaller*, i.e. argued against the fix. (b) locations#105: I merged a count back into the title while the body blockquote still said "The counts live in the table below instead" — a self-contradicting artifact that looks reviewed. **Rule added to persona §Working on Issues — SRE Extensions:** comment for evidence, then EDIT THE BODY, re-fetch to confirm, then grep the artifact for anything that *describes* what you changed (title, summary, impact, suggested-priority, update blockquote) and fix in the same pass.
 - 2026-08-09 backups#374 body now corrected + Priority raised **Low → Medium** by coordinator, *because of the mechanism correction, not the fresh measurements*: the old reason made it self-limiting ("a dashboard fetch fails hourly"); the real one makes it **latent** — a slow-GitHub day widens the 15-20s window toward the 60s poll interval, consecutive polls land, and 5-in-a-row is a **false alert claiming the backup service is unreachable**. False alerts on backups are expensive out of proportion to frequency. Also struck the stale "Suggested priority: P3" in the body (my own, resting on the wrong mechanism) rather than leaving it to contradict the new priority.
 - 2026-08-09 ⚠️**CORRECTED — my earlier note here was WRONG.** I recorded that "a lost update shows a `from` that does NOT match the preceding `to`, so a clean chain disproves a race". **False.** `rename.from` is stamped **server-side at write time** — it is "whatever the title was the instant this PATCH landed", not "what the author had read". So the chain chains byte-perfectly **by construction**, whether or not the writer ever saw what they overwrote. **A clean chain proves ORDERING, not AWARENESS — and a lost update is a failure of awareness, so this test can never detect one.** A real lost update *had* occurred on locations#105 (team-lead's 14:47:02 write, composed from a 14:24:31Z read, silently reverted my 14:46:10 fix 37s later, no error, no conflict). **My reasoning error, worth more than the API fact:** I checked whether *my own* write (14:48:44) had lost anything — it hadn't, I'd re-fetched and merged deliberately — and generalised "no lost update" to all four writes without testing the other writer's. I had first-hand evidence about one sample and inferred the population. Still true and useful: the timeline query itself (`issues/{n}/timeline?per_page=100 --jq '.[]|select(.event=="renamed")|{at,actor:.actor.login,from:.rename.from,to:.rename.to}'`) is the authoritative record of who changed what and when. Just don't ask it a question it structurally cannot answer.
+- 2026-08-17 ops run: **MAJOR INCIDENT — `lucos_backups` down 15h24m** (07:21→22:45Z), zero backups any host, one `create-backups` cycle (15:25Z) missed. Base image was `python:3.15.0a2-alpine` (CPython **alpha**, Dependabot `version-update:semver-minor`, auto-merged 08-06, **latent 11 days**); detonated when `charset_normalizer` 3.5.1 shipped a cp315 wheel built against a later 3.15 pre-release → `SystemError: unknown slot ID 84`. Fixed by me: PR lucas42/lucos_backups#391 (→`python:3.14.6-alpine`), merged 22:42:56, image 1.4.34 healthy 22:45:07. Verified with BOTH controls on avalon before pushing (alpha+3.5.1 → reproduces; 3.14.6+3.5.1 → IMPORT OK). Issue lucas42/lucos_backups#390 was filed by sysadmin at 22:30 with the **wrong** root cause (blamed the charset-normalizer lockfile PR #389) — corrected by comment.
+- 2026-08-17 ⚠️**`pipenv install` IGNORES `Pipfile.lock` in lucos_backups.** Proven from INSIDE the images: 1.4.32 ships lock `==3.4.9` + installed **3.5.1**; current prod 1.4.34 ships lock `==3.5.0` + installed **3.5.1**. Consequence: pipeline 816 — a `github/codeql-action` bump changing NO python dep — rebuilt, re-resolved, and shipped the poisoned image; its deploy failed 07:23:04Z, BEFORE #389 ever deployed. So "revert the dependency bump" was a no-op remediation. Filed lucas42/lucos_backups#392 (`--deploy`). **Habit: on this repo read the ARTEFACT, not the commit log.**
+- 2026-08-17 ⚠️**A CircleCI job re-run of an old pipeline is NOT a rollback.** I re-ran `deploy-avalon` from the last-good pipeline 813 (built healthy 1.4.31) to restore service; the orb's "Determine deployed version from git tags" step resolves the **newest tag**, not the pipeline's own commit, and it printed `Deploying version: 1.4.33` — redeploying the broken image. Cost ~7min. Also: deploy is driven from CircleCI over `DOCKER_HOST=ssh`, so **there is no compose project dir on avalon** (`com.docker.compose.project.working_dir` = `/home/circleci/project`) — you cannot `docker compose restart` there. Fix-forward is the only path.
+- 2026-08-17 ⚠️**A failed deploy leaves the service BROKEN, not unchanged.** `docker compose up` recreates the container then waits on the healthcheck; when it never passes the step fails but the working container is already gone. Red CI here meant prod was already down (RestartCount 877).
+- 2026-08-17 **Detection worked; response didn't.** Monitoring alerted 11 min after the break (07:32Z), escalated to 4 red checks, propagated to docker_health, and `lucos_mail_smtp` shows every alert email `status=sent` `250 OK`, **0 deferred/bounced**. Outage still ran 15h. This QUALIFIES the 2026-07-31 report's "quiet failures are the expensive ones" — that one was quiet and lasted 6h29m; this one was loud in every channel and lasted **more than twice as long**. Loudness isn't the variable; whether anyone is listening is. Raised for lucas42's direction, deliberately NOT filed as a ticket presuming a remedy.
+- 2026-08-17 Check 2: **596 monitoring emails in one day vs baseline Aug14=4, Aug15=2, Aug16=1.** Cross-check: 313 alerts + 281 recoveries = 594 loganne events ≈ one email each. Cause = ~1h41m CircleCI **API** outage (13:57:45→15:38:42Z), 236 alerts / 54 systems; `failingChecks[].debug` = 109 `Transport error … timeout` + 71 `502 Bad Gateway` + 55 workflow-fetch variants, and exactly **1** genuine `Workflow "release" failed`. Classic UnknownsGate pattern. Filed lucas42/lucos_monitoring#302 (coalesce alerts sharing a cause) — explicitly NOT another threshold bump (#226/#279 signed off + vindicated).
+- 2026-08-17 ⚠️**Check-3 script has a pairing bug**: systems with no hostname in parens (CI-only repos) parse as `lucos_pubsub:_circleci` on alert but `lucos_pubsub` on recovery, so they NEVER pair → a wall of false `UNRECOVERED` entries. All ~18 of today's were storm artefacts; all were healthy in `/api/status`. Don't chase them.
+- 2026-08-17 Estate pre-release sweep: 98 repos, **42 Dockerfiles, 3 pre-release** — backups (fixed), `lucos_contacts_googlesync_import` + `lucos_media_weightings` (both `python:3.15.0rc1-alpine`). **`rc` is materially SAFER than `a`/`b` — CPython freezes the ABI at rc.** Tested `3.15.0rc1-alpine` + charset_normalizer 3.5.1 → IMPORT OK, so those two are NOT exposed; deliberately filed no repo-local guard (that's lucas42/lucos#273's call, now **4th** break of the class — commented with evidence). Scope caveat: only `Dockerfile`, `src/Dockerfile`, `app/Dockerfile` paths checked.
+- 2026-08-17 ⚠️**Blocked by permission classifier: ad-hoc `create-backups` run.** My persona mandates an end-to-end cron-path rerun as *authoritative* verification, but `docker exec … python -m scripts.create-backups` was denied. Fell back to a read-only import check (Python 3.14.6; fabric/paramiko/invoke/requests/yaml/jwt/cryptography/jinja2 + charset_normalizer 3.5.1 all import). **This is an instruction/environment gap, not a one-off** — flagged to team-lead. Hourly paths WERE verified via schedule-tracker (config age 21s, tracking age 7s, 0 errors).
+- 2026-08-17 Check 4: 5 containers (contacts_web 110,384 lines/1 benign nginx buffering warn; creds_ui clean start "UI listening on port 8031"; dns_sync 128 lines/0; scenes 34/0; photos_redis 17,165/0). Estate sweep since 07:00 gave the known-positive control (11 containers with hits). `lucos_photos_worker` = **recurrence of lucas42/lucos_photos#500** (fork/DB pool) — commented, NOT refiled; new symptom string `error with status PGRES_TUPLES_OK and no message from the libpq` (the ticket only records `insufficient data in "D" message`/`lost synchronization`, so it was under-discoverable), and it failed on **`commit()`**. mosquitto 1047 / tfluke 47 / media_manager 24 all benign & consistent with baseline. 0 overdue @60d.

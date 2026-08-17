@@ -80,7 +80,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 
 ## CI / build / deploy
 - [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
-- [Auto-merged base-image bump breaks at runtime not build](pattern_baseimage_bump_runtime_break.md) — ⚠️3x; deploys HEALTHY+green while 500ing. lucos#273.
+- [Auto-merged base-image bump breaks at runtime not build](pattern_baseimage_bump_runtime_break.md) — ⚠️4x; can lie LATENT 11d; `rc` safer than `a`/`b`; rerun≠rollback. lucos#273.
 - [exit 127 after pip install = machine image rolled BACK](pattern_rolling_machine_image_tag_moves_backwards.md) — fix w/ venv not a pin.
 - [lucos_repos deploy auto-triggers an audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min.
 - [repos audit reds: we discard GitHub's Retry-After](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md) — #462 dry-run fixed.
