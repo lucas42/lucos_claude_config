@@ -20,6 +20,8 @@ The decisive argument: **the dominant risk here is invisible to every defence lu
 
 **How to apply:** progress frozen install separately and first — it's cheap, mechanical, has no open decision, and can move while lucas42/lucos#273 waits on lucas42. **Do not let a completed frozen-install rollout read as progress against lucas42/lucos#273** — it does not reduce its urgency (Priority Critical, Awaiting Decision). Rollout must tier by remediation cost, not by package manager (tier 3 — repos with no lockfile — cannot take `npm ci` at all).
 
-**Open decisions belonging to lucas42:** (1) tier 3's initial lockfile freezes whatever is current, unreviewed — unavoidable, but do it deliberately with a human reading the dependency list; (2) whether lucos_backups goes further to `pip install -r requirements.txt --require-hashes`, dropping pipenv from the image entirely — strongest control on the highest-value target.
+**Live ticket: `lucas42/lucos_repos#488`** (filed by lucos-site-reliability; my scope-correcting fold-in is comment 5321557255). Do NOT open a second estate ticket. `lucas42/lucos_backups#392` is the per-repo fix and stays Ready.
+
+**Open decisions belonging to lucas42** (written as options A1–A3 / B1–B2 on #488): (1) tier 3's initial lockfile freezes whatever is current, unreviewed — unavoidable, but do it deliberately with a human reading the dependency list; (2) whether lucos_backups goes further to `pip install -r requirements.txt --require-hashes`, dropping pipenv from the image entirely — strongest control on the highest-value target.
 
 Mechanism and estate sweep: [[frozen-install-build-integrity]].

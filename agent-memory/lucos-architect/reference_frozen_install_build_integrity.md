@@ -37,6 +37,14 @@ The estate **already holds this principle**: `lucos_repos`' `reusable-workflow-p
 - **Unpinned `requirements.txt`** — lucos_photos api (15/15), worker (6/10), lucos_comhra/agent (3/4).
 - **Not closed by any of this:** unpinned `apk add`/`apt-get install` (23 repos — Alpine drops old versions, impractical) and `FROM <tag>` rather than digest (all 66).
 
+## lucos_repos machinery — two things already handled (don't rebuild them)
+
+Checked 2026-08-18 while correcting the scope of `lucas42/lucos_repos#488`. Both were reported to me as gaps a new check would need to close; **both already exist**, and asserting them as gaps would have caused duplicated work:
+
+- **Archived repos are already skipped unconditionally** — `src/audit.go:250`. So a bad table listing archived repos is a *scope/impact* error in the ticket, not a defect the check inherits. No new exclusion logic needed.
+- **Subdirectory Dockerfiles are already discovered** — `conventions/dockerfile-version-arg.go`'s `dockerfilePathForBuild` resolves a service's Dockerfile from its compose `build:` stanza (string and mapping forms; `context: foo` → `foo/Dockerfile`). `dockerfile-copy-from-blind.go` uses the same discovery. Reuse it.
+- **The real limitation is narrower:** discovery is via `docker-compose.yml`, so **a Dockerfile no compose service references is invisible**. Verified all 8 pipenv repos' affected Dockerfiles *are* reachable from a `build:` stanza, so it's fine today — but state it as a limitation of any new Dockerfile convention.
+
 ## Method notes
 
 - **GitHub code search missed 3 repos** (lucos_media_import for pipenv; lucos_authentication and `frontend` for npm). Sweep off clones — as `lucos_repos` already does. See [[github-codesearch-lossy-for-sweeps]].
