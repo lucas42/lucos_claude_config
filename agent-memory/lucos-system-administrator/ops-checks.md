@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-09
-resource_checks: 2026-08-06
-syslog_review: 2026-08-06
-software_updates: 2026-08-06
-sandbox_drift: 2026-08-06
-repos_dashboard: 2026-08-09
+container_status: 2026-08-17
+resource_checks: 2026-08-17
+syslog_review: 2026-08-17
+software_updates: 2026-08-17
+sandbox_drift: 2026-08-17
+repos_dashboard: 2026-08-17
 docker_image_staleness: 2026-07-31
 backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
@@ -18,8 +18,8 @@ certificate_expiry: 2026-07-31
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **lucos_agent#72** (raised 2026-08-06): scheduled `prune-images` CircleCI workflow on `lucos_agent` has never run (zero pipelines ever recorded, stale `default_branch: master` vs GitHub's actual `main`) — xwing 83% reclaimable docker images, salvare same root cause. Blocked on CircleCI admin/human access to fix project sync. Not urgent (both hosts well under 80% disk threshold) but keep tracking disk trend on xwing/salvare each weekly resource check until fixed.
-- **lucos_creds#472/#484 convention-check**: fully resolved and closed out 2026-08-09 — spot-checked both rerun-failed-jobs runs (31123913329, 31123956119), both `status: completed`, `conclusion: success`. No further tracking needed.
+- **lucos_backups#390** (raised 2026-08-17, URGENT — flagged to team-lead for SRE): `lucos_backups` on avalon crash-looping since 2026-08-17T07:37:42Z (RestartCount=878 at time of check). Root cause: PR #389 (Dependabot bump of `charset-normalizer`, auto-merged 07:18 UTC) broke the container on startup — `SystemError: module charset_normalizer.cd uses unknown slot ID 84` (Python C-extension ABI mismatch). Zero backup runs completed since — verified via `docker logs --since 240h`, no "Tracking completed successfully" anywhere in the 10-day window. Check status on next run; if still crash-looping, escalate again — this is the single backup container covering avalon/xwing/salvare.
+- **lucos_agent#72** (raised 2026-08-06): scheduled `prune-images` CircleCI workflow on `lucos_agent` has never run (zero pipelines ever recorded, stale `default_branch: master` vs GitHub's actual `main`) — xwing 83% reclaimable docker images, salvare same root cause. Blocked on CircleCI admin/human access to fix project sync. Not urgent (both hosts well under 80% disk threshold) but keep tracking disk trend on xwing/salvare each weekly resource check until fixed. 2026-08-17: xwing disk 49% (54G/117G, up from 44%), salvare disk 68% (38G/58G, up from 67%) — both still well under threshold, trend continuing gradually.
 
 ## Decommissioned services
 
@@ -1655,3 +1655,23 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Repos dashboard**: not re-run — already checked earlier today (2026-08-09 first run), 1 known deliberate deferral (`lucos_worlds_atlas` `in-lucos-configy`), no change expected within the same day.
 
 **Issues raised**: None. **Issues closed**: None. No change from earlier today's run.
+
+### 2026-08-17 (checks 1–6 due; weekly checks last ran 2026-08-06, 11 days — overdue; monthly checks last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**: **avalon — `lucos_backups` crash-looping** (`Restarting (1)`, RestartCount=878, started 2026-08-17T07:37:42Z). Root cause traced to PR #389 (Dependabot `charset-normalizer` bump, auto-merged 07:18 UTC) — `SystemError: module charset_normalizer.cd uses unknown slot ID 84` on every startup. No successful backup run since the redeploy (`docker logs --since 240h` shows zero "Tracking completed successfully"). Issue raised: **lucos_backups#390**. Flagged to team-lead for SRE mid-run (didn't wait for full manifest — single backup container covers all 3 hosts, ~15h fully down at time of check). xwing and salvare: clean, no crashed/stopped/unhealthy containers.
+
+**Syslog** (avalon only — xwing/salvare journal inaccessible without sudo, known limitation): one transient `sshd fatal: ssh_packet_send_debug: Connection reset by peer` (08:14 UTC) — benign network blip, not a pattern. No hardware errors, no OOM kills.
+
+**Software updates** (no `-security`-tagged packages on any host, confirmed via explicit grep): avalon — routine docker tooling bumps (containerd, buildx, docker-ce, compose). xwing — docker tooling, bluez, cloud-init, firmware-*, libc/libssl/openssl (from `stable`/`stable-updates`, not `-security`), kernel 6.12→6.18, large raspi-*/camera batch. salvare — docker tooling, dpkg, libc6/libssl3/openssl (from `oldstable`, not `-security`), kernel 6.12.25→6.12.96, raspi-firmware/utils. All routine, same accumulating backlog as before (unattended-upgrades doesn't cover Docker's or RPi Foundation's repos — tracked context in lucos_agent_coding_sandbox#95/#100/#101). No new issue.
+
+**Resources**:
+- avalon: disk 45% (766G/1.8T), up from 42% on 08-06 — unremarkable continuation. Memory 2.8Gi available. Swap 453Mi/4.5Gi (10%). Load 1.55/1.96/2.03 — 1-min lower than 5/15-min, no runaway. Journal 123.9M — fine.
+- xwing: disk 49% (54G/117G), up from 44% (49G) on 08-06 — continuing the lucos_agent#72-driven acceleration, still well under 80%. Memory 405Mi available (tight, as always). Swap 162Mi/905Mi (18%). Load 1.14/1.12/1.02 — normal.
+- salvare: disk 68% (38G/58G), roughly flat vs 67% (37G) on 08-06. Memory 3.4Gi available. No swap in use. Load 0.00 — fully idle.
+- Local VM: disk 60% (58G/96G) — under threshold, no forced cleanup. Memory 4.4Gi available. Docker: 24.67GB images (4.993GB/20% reclaimable), 1.907GB volumes (1.647GB/86% reclaimable), 3.432GB build cache (0% reclaimable, none stale). Headroom exists, not warranted yet.
+
+**Sandbox drift**: clean — no local unpushed commits, no remote commits to pull.
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13. No new action.
+
+**Issues raised**: lucos_backups#390 (crash-loop, urgent, flagged to team-lead for SRE — see Pending follow-ups). **Issues closed**: None.
