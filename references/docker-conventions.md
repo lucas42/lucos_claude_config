@@ -164,6 +164,16 @@ Until the CI convention check in `lucos_repos` ships, there is no automated guar
 
 **Beware empty-string defaults masking wiring failures.** A `getenv("X", "")` followed by an HTTP call fails quietly (e.g. `{no_scheme}` warnings) rather than crashing at startup. Prefer a startup crash over silent degradation when config is missing — quiet warnings delay detection.
 
+## Reproducible builds — package installs must honour the lockfile
+
+A Dockerfile step that re-resolves dependencies at build time (e.g. plain `RUN pipenv install` without `--deploy`, `npm install` without `ci`) silently ignores the committed lockfile. The build installs whatever the freshest matching version is *today*, regardless of what `Pipfile.lock`/`package-lock.json` pins — so the lockfile stops describing what's actually deployed, and reverting/pinning the dependency bump that "must have" caused a break can be a complete no-op if a same-day *unrelated* commit triggered the rebuild instead. Use the frozen/deploy install mode (`pipenv install --deploy`, `npm ci`) so the build fails loudly on a lock/manifest mismatch instead of silently drifting. See `docs/incidents/2026-08-17-backups-python-alpha-charset-normalizer.md` for the incident this was found in.
+
+**Corollary for diagnosis:** don't reason about "what's deployed" from the commit log alone on a repo with this gap — read the lockfile and the installed package versions out of the actual running/built image.
+
+## CI deploy failure does not mean production is unchanged
+
+`docker compose up` recreates the container and only *then* waits on the healthcheck. If the healthcheck never passes, the deploy step reports failure — but the previous, working container is already gone. A red CircleCI deploy job therefore does not mean "nothing happened"; it can mean "the working container was just destroyed, and we're telling you by failing the build." Treat a red `deploy-avalon`/`deploy-xwing`/`deploy-salvare` job as itself a signal to check whether the target container is now down, not just as "the new version didn't ship."
+
 ## Live-restore: recovering missing built-in networks
 
 When a host has `live-restore: true` in `daemon.json` and Docker's network database has been flushed (e.g. during a `fixed-cidr-v6` repair), the daemon restart will **not** recreate the built-in `bridge`/`host`/`none` networks if any containers are running. Docker emits:
