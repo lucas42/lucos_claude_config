@@ -79,6 +79,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md) — incl. dependency-only `/_info` can't report self-failure
 - [/_info observability inversion](reference_info_endpoint_observability_inversion.md) — cost scaling with own workload; 4 instances; lucos#288; unstaggered poller herds; monitoring self-polls
 - [Base-image bump incident class (lucos#273)](reference_base_image_bump_incident_class.md) — CI tests an artifact we don't ship; tests-in-image is coverage-dependent
+- [Frozen-install build integrity](reference_frozen_install_build_integrity.md) — pipenv silently re-locks; `--deploy` not a drop-in; full estate sweep by package manager
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
 - [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md)
 - [creds key value and scope are independent](reference_creds_scope_keyvalue_independent.md)
@@ -110,6 +111,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [creds multi-line secrets](project_creds_multiline_secrets.md) — creds ADR-0006 (PR #484, Proposed); base64-at-rest for key-typed secrets; divergent-framing-guards blind to material-invalid values; transport≠content surfaces
 - [creds capability axis](project_creds_capability_axis.md) — creds ADR-0004 (PR #457); env×capability; metadata-vs-secret tier; SSH-only; default-allow; 4 deferred follow-ups on agreement
 - [ADR standard](project_adr_standard.md) — lucos ADR-0014 MERGED 2026-08-07: merged=decided, no Status field, format at lucos/docs/adr/README.md; 3 follow-ups
+- [Frozen install vs lucos#273](project_frozen_install_vs_lucos273.md) — separate problems, sequence frozen install first; it's a precondition for #273's verification
 - [Weightings festival migration](project_weightings_festival_migration.md) — weightings#266 plan posted, Awaiting Decision; out-of-season penalty is the blocker; 5 Qs open; ADR → lucos/docs/adr; #267 raised
 
 ## Per-project pointers (depth in project-details.md)
