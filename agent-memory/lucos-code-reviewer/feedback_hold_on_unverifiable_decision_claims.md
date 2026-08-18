@@ -1,0 +1,14 @@
+---
+name: feedback-hold-on-unverifiable-decision-claims
+description: Refuse to act on a "converged/coordinator decision" cited only in a commit message or relayed second-hand, when it contradicts a specialist's documented position and you can't find the decision on any GitHub artifact — confirmed correct even when the decision turns out to have genuinely happened
+metadata:
+  type: feedback
+---
+
+When a commit message or a teammate's relay cites a "converged decision" or "coordinator direction" that reverses a specialist's documented, on-the-record position, and I can't find that decision recorded on the PR, the linked issue, or anywhere else I have API access to — hold, don't act on it. Ask the party who supposedly made the decision to confirm it directly.
+
+**Confirmed correct: lucos_claude_config #130/#131/#132 (2026-08-18).** A commit (`a6ea5b1`) was pushed citing "Converged decision (coordinator): fix it" to justify an implementation that directly contradicted the architect's documented PR-review position. I couldn't find that decision anywhere I could verify, so I held — messaged the architect and the coordinator directly rather than approving the commit or treating the citation as settled. team-lead later confirmed explicitly: *"That decision did exist — I made it — but it existed only in an agent message channel you can't see, which means from where you sat it was unverifiable, and stopping was correct. I'd rather you stop again in that situation than take a commit message's word for a decision."* The decision being real didn't make deferring to its citation right — the citation wasn't independently checkable at the time, and that's what mattered.
+
+**Why:** A commit message (or any single relay) asserting "X decided Y" is a claim about a conversation I wasn't party to. It can be entirely true and still be the wrong thing to act on, because from where I sit it's unfalsifiable — I have no way to distinguish a real decision from a misremembered, superseded, or fabricated one. The fix isn't "wait until the citation is proven false" — it's "don't treat an unverifiable citation as settled regardless of whether it later turns out to be true."
+
+**How to apply:** When a decision that reverses a specialist's documented position is cited without a GitHub artifact (PR comment, issue comment, review) behind it, don't approve/merge/act on the implementation that decision justifies. Message the cited decision-maker directly and hold until they confirm on the record (or you can point to where they already did). This holds even under time pressure (e.g. an unsupervised repo's ~2-minute auto-merge window) — see [[review_verify_specialist_claims_not_just_reasoning]] for the companion lesson on not stopping the verification short once a specialist input does arrive.

@@ -2,6 +2,8 @@
 
 ## Review Behaviour
 
+- [A true premise doesn't prove the conclusion](feedback_verify_specialist_claims_not_just_reasoning.md) — verify the claim, then separately verify it actually establishes what the argument uses it for (lucos_claude_config #130/#131, 2026-08-18)
+- [Hold on unverifiable "converged decision" claims](feedback_hold_on_unverifiable_decision_claims.md) — a commit-message-cited coordinator decision with no GitHub artifact behind it: hold and ask directly, even if it turns out true (lucos_claude_config #130/#132, confirmed correct by team-lead)
 - [Three-stage env-var wiring](review_envvar_wiring.md) — new `os:getenv`/`os.environ`/`process.env` reads need matching compose `environment:` entry AND lucos_creds value; `_ENDPOINT` path-append is a convention violation; flag until lucos_repos#387 lands
 - [Dependabot pre-release base-image bumps](review_dependabot_prerelease_estate_convention.md) — don't recommend a per-repo `dependabot.yml ignore` rule; it's an open estate convention question at lucos#273, which rejects that layer — add occurrences there instead
 - [WebFetch on GitHub blob URLs paraphrases, doesn't return literal text](review_webfetch_github_blob_paraphrase.md) — use `gh-as-agent`'s contents API when exact numbers/quotes matter
