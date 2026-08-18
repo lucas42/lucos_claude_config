@@ -195,6 +195,19 @@ commit_scope() {
         cp -rT "$CLAUDE_DIR/$path" "$worktree_dir/$path"
     done
 
+    # Strip atomic-write temp files before staging anything. Claude Code's own
+    # Write/Edit tool writes to "<name>.tmp.<pid>.<hash>" alongside the target
+    # and renames it into place — if the sweep's `cp` above lands in the narrow
+    # window between that write and the rename, the temp file gets copied into
+    # the worktree and `git add` below would happily commit it as a real memory
+    # file. This isn't hypothetical: it happened twice (commits 6af519e,
+    # dc79389 — lucos_claude_config, found during the 2026-08-18 origin/main
+    # reconciliation) and a third stale temp file was found sitting uncommitted
+    # on disk in this very directory during that same investigation. Deleting
+    # the copies here (not the originals in $CLAUDE_DIR) is enough — the
+    # rename on the live tree completes on its own and is untouched by this.
+    find "$worktree_dir" -type f -name '*.tmp.[0-9]*.*' -delete
+
     # Do the risky, multi-step part (stage/verify/commit/push-with-retry) in a
     # subshell rather than returning early from this function directly. This
     # keeps worktree cleanup unconditional and in one place below, regardless
