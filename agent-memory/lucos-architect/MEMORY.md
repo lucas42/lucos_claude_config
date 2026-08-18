@@ -49,6 +49,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [New write-time validation can make existing rows unwritable](feedback_new_validation_makes_existing_rows_unwritable.md) — check rotation/update paths, not just creation
 - [Ask usage context before ranking options](feedback_ask_usage_context_before_ranking_options.md) — device/role/when-they-learn, not an imagined user
 - [New consideration/reversal gets its own ADR](feedback_new_consideration_gets_own_adr.md) — shared mechanism ≠ decision coupling
+- [Commit the tool's own serialisation](feedback_commit_the_tools_own_serialisation.md) — check a rewritten file's order history before proposing a canonical/generated split
 
 ## Reference memories
 
