@@ -1,7 +1,7 @@
 #!/bin/bash
 # return-to-main.sh
 #
-# Two jobs for the shared ~/.claude working tree:
+# Three jobs for the shared ~/.claude working tree:
 #
 # 1. If it's on a feature branch whose commits are fully contained in
 #    origin/main (i.e. the branch has been merged), switch it back to main.
@@ -20,6 +20,19 @@
 #    misleading "hundreds of files modified" shape that invites someone to
 #    reach for `git reset --hard` — which CLAUDE.md correctly forbids here,
 #    because it WOULD discard those in-flight edits.
+# 3. After syncing on main, check whether the tree is still dirty — and if
+#    so, whether it has been dirty for longer than one sweep cycle. A dirty
+#    moment is normal (an in-flight memory write mid-commit, or a scratch
+#    file mid-atomic-write) and resolves within a cycle on its own; a dirty
+#    tree that PERSISTS is a file outside commit-agent-memory.sh's scope
+#    (agents/, references/, scripts/, CLAUDE.md, .github/, ...) that someone
+#    edited and never committed via commit-claude-main, with nothing else to
+#    catch it. lucos_claude_config#129 — see the target definition there:
+#    clean at any instant no agent is mid-write; anything that persists past
+#    a cycle gets surfaced here rather than staying silent indefinitely.
+#    Calibrated tight deliberately: post-#127 the synced state is durable and
+#    self-correcting (no expected "decay"), so persistence past one cycle is
+#    real signal, not noise to be tolerated.
 #
 # The main-branch sync in job 2 is guarded to run ONLY when the checkout is
 # on a branch literally named "main" (not detached HEAD, not any other
@@ -42,14 +55,64 @@
 # - Branch not yet merged → exits silently
 # - Checkout blocked by dirty files → logs a warning, does not force
 # - Detached HEAD → exits silently
+# - Dirty tree persisting past one cycle (on main only) → logs a WARNING
 
 set -euo pipefail
 
 CLAUDE_DIR="/home/lucas.linux/.claude"
 
+# State file for the persistence check (job 3) — records the epoch timestamp
+# the tree was FIRST observed dirty in the current unbroken streak. Not
+# committed (see .gitignore) — purely local bookkeeping, safe to lose (worst
+# case: one streak's clock restarts, delaying a warning by up to one window).
+DIRTY_STATE_FILE="$CLAUDE_DIR/scripts/.return-to-main-dirty-since"
+
+# How long a dirty tree must persist before it's surfaced. The cron interval
+# is 15 minutes and the post-turn hook fires far more often during active
+# sessions, so 20 minutes is comfortably more than "one sweep cycle" even
+# accounting for cron scheduling jitter, while still catching a forgotten
+# edit well within the hour. See the header comment for why this must stay
+# tight rather than being loosened to absorb false "decay".
+DIRTY_QUIESCENCE_SECONDS=1200
+
 export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent \
     -o IdentitiesOnly=yes \
     -o StrictHostKeyChecking=accept-new"
+
+# check_persistent_dirt — job 3. Call only on main, after the sync attempt
+# above. Compares the current `git status --porcelain` against the recorded
+# first-seen timestamp of the current dirty streak: clears the state file the
+# moment the tree is clean, starts a new streak the moment it isn't, and logs
+# a WARNING only once a streak has outlived DIRTY_QUIESCENCE_SECONDS. Never
+# fatal — every path through this function returns 0.
+check_persistent_dirt() {
+    local porcelain
+    porcelain=$(git status --porcelain 2>/dev/null) || return 0
+
+    if [[ -z "$porcelain" ]]; then
+        rm -f "$DIRTY_STATE_FILE" 2>/dev/null || true
+        return 0
+    fi
+
+    local now first_seen elapsed
+    now=$(date +%s)
+    if [[ -f "$DIRTY_STATE_FILE" ]]; then
+        first_seen=$(cat "$DIRTY_STATE_FILE" 2>/dev/null || echo "$now")
+        # Guard against a corrupt/non-numeric state file rather than failing
+        # the whole script under set -e on the arithmetic comparison below.
+        [[ "$first_seen" =~ ^[0-9]+$ ]] || first_seen="$now"
+    else
+        first_seen="$now"
+    fi
+    echo "$first_seen" > "$DIRTY_STATE_FILE" 2>/dev/null || true
+
+    elapsed=$((now - first_seen))
+    if (( elapsed > DIRTY_QUIESCENCE_SECONDS )); then
+        echo "$(date -Iseconds) WARNING: working tree has been dirty for ${elapsed}s (since $(date -Iseconds -d "@$first_seen")) — longer than one sweep cycle. This is likely a file outside commit-agent-memory.sh's scope (agents/, references/, scripts/, CLAUDE.md, .github/, ...) that was edited and never committed via commit-claude-main:" >&2
+        echo "$porcelain" | sed 's/^/  /' >&2
+    fi
+    return 0
+}
 
 cd "$CLAUDE_DIR"
 
@@ -64,6 +127,7 @@ if [[ "$current_branch" == "main" ]]; then
     else
         echo "$(date -Iseconds) WARNING: could not sync local main to origin/main (fetch or reset failed) — leaving HEAD as-is." >&2
     fi
+    check_persistent_dirt
     exit 0
 fi
 

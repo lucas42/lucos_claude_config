@@ -43,6 +43,8 @@
 !scripts/**
 # ...but not log files generated at runtime
 scripts/*.log
+# ...and not return-to-main.sh's persistent-dirt tracking state (lucos_claude_config#129)
+scripts/.return-to-main-dirty-since
 
 # GitHub Actions workflows and other repo config
 !.github/
@@ -57,6 +59,17 @@ scripts/*.log
 # Infrastructure and convention reference files
 !references/
 !references/**
+
+# Atomic-write scratch files: Write/Edit writes "<name>.tmp.<pid>.<hash>" next
+# to its target and renames it into place. The window where the temp file
+# genuinely exists on disk can't be closed from this side, but it doesn't need
+# to be visible to git — this pattern is placed last, after every allowlist
+# re-include above, so it wins even inside e.g. agent-memory/**. Same pattern
+# commit-agent-memory.sh already strips defensively before staging (added
+# after two of these got committed for real: 6af519e, dc79389) — this is the
+# other half of that fix: that stops them being committed, this stops them
+# being seen. lucos_claude_config#129.
+*.tmp.[0-9]*.*
 
 .DS_Store
 
