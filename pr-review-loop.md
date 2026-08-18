@@ -2,7 +2,9 @@
 
 This document describes the standard review loop that an implementation teammate follows after creating a pull request. It applies in all contexts -- the `/next` skill, ad-hoc implementation tasks, ops check fixes, or any other workflow where a teammate opens a PR.
 
-Every teammate that creates a PR is responsible for driving the review loop to completion before reporting back to whoever asked it to do the work.
+Every teammate that creates a PR is responsible for driving the review loop to completion before reporting back to whoever asked it to do the work. **This applies the instant a PR exists — regardless of which trigger phrase or ad-hoc request produced it.** A PR opened as a side-effect of some other task (e.g. building a tool a different task needs) is still a PR you created; the loop is not conditional on having been dispatched via "implement issue" or similar.
+
+**Opening a PR is not "in review" or "open for review".** Those phrases are only accurate once Step 1 below has actually been executed — a message sent to `lucos-code-reviewer` and, ideally, some response received. `gh api .../pulls` distinguishes the two states plainly: `review_requested` events and submitted reviews are separate from PR creation. Before describing a PR's status to anyone — in a report, a comment, a memory note — check which state you're actually in and say so precisely: "opened, review not yet requested" is a different fact from "review requested, awaiting response" or "approved, awaiting merge".
 
 **Coordinator override rule:** If a coordinator instruction reverses a step you are in the middle of (e.g. "stop pushing", "leave the PR as-is", "don't dispatch the reviewer"), drop any in-flight work in that step immediately — even if a commit is half-staged or a message is about to be sent. Do not complete the step and then apply the instruction to the next one. Message queues are async, so an override that arrives mid-step is still binding for everything you haven't yet executed.
 
