@@ -8,7 +8,7 @@ The dispatch contract — only work on issues you have been explicitly assigned,
 
 ## Step 1 — Read the issue first
 
-Before any code changes, **read the full issue body AND all comments**. Make two separate API calls — the body and comments are different endpoints:
+Before any code changes, **read the full issue body AND all comments**. The body and comments are different endpoints — **issue both calls in the same tool-call round, never sequentially**, so there is no gap where you send the first and move on without the second:
 
 ```bash
 # 1a. Body
@@ -18,7 +18,7 @@ Before any code changes, **read the full issue body AND all comments**. Make two
 ~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{number}/comments
 ```
 
-A jq-scoped body fetch (e.g. `--jq '{title: .title, body: .body}'`) does not include comments — they are on a separate endpoint. Skipping the comments call means you miss corrective context posted after the issue was filed (agreed approaches, scope changes, acceptance criteria additions).
+A jq-scoped body fetch (e.g. `--jq '{title: .title, body: .body}'`) does not include comments — they are on a separate endpoint. Skipping the comments call means you miss corrective context posted after the issue was filed (agreed approaches, scope changes, acceptance criteria additions) — including a **dispatch comment added after triage**, which is exactly where a process requirement specific to this issue (e.g. "loop in a specialist before opening the PR") is most likely to live. Having correctly made both calls on a previous issue earlier in the same session does not carry forward — re-issue both, every time, even the tenth time this session.
 
 Follow the **latest agreed direction**: this might be a comment from `lucas42`, or a suggestion from another commenter that `lucas42` has approved (via a +1 reaction or explicit agreement). When earlier suggestions conflict with later consensus, follow the later consensus. If in doubt about which direction was agreed, ask team-lead before proceeding.
 
