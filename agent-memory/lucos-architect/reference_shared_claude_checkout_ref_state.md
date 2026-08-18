@@ -17,4 +17,12 @@ The shared `~/.claude` checkout (`lucas42/lucos_claude_config`) is written by ~7
 
 `settings.json` chronically differs (key ordering + local `"tui"`), so this tree can never have a clean `git status` — a refresh makes it legible, not clean.
 
+**Simulating the post-refresh state without touching the shared tree:** `GIT_INDEX_FILE=$(mktemp) git read-tree origin/main && git status --porcelain` — the *second* column (worktree-vs-index) is what status will show once HEAD/index track `origin/main`; the first column is just the stale-HEAD delta, ignore it. Measured 2026-08-18: **one line, `M settings.json`, zero untracked.**
+
+**I got the steady-state claim wrong once (2026-08-18, #127 §7):** said the tree "will never have a clean `git status`" because in-flight untracked memory files are the normal working state. That conflates an *instantaneous* observation with a *steady state* — an in-flight file is transient by construction and becomes tracked+clean within one sweep cycle. lucas42 pushed back and was right. Distinguish "true at this instant" from "true at rest" before calling anything a permanent residual.
+
+**Why the tree is nearly clean already:** `.gitignore` is **allowlist-shaped** (`*` and `.*` ignored, named paths re-included), so Claude Code's runtime state is structurally excluded rather than enumerated. Preserve that shape. But the allowlist also re-includes Claude Code's `*.tmp.<pid>.<hash>` atomic-write scratch files (`git check-ignore -v` shows `!agent-memory/**` winning) — #124 stopped them being *committed*, nothing stops them being *seen*.
+
+**Precedent for a tool-rewritten tracked file:** `teams/*/config.canonical.json` tracked, `config.json` gitignored. Reuse it for `settings.json` (rewritten at session start) — but note the difference: `teams/config.json` is regenerable runtime state, `settings.json` is *functional* (hooks + permissions), so a canonical file needs a **materialisation step** or it decays into fiction. Do **not** solve it by auto-committing: that file carries `defaultMode: bypassPermissions` and a `Stop` hook running arbitrary code every turn, so it must stay behind deliberate review. Follow-up: `lucos_claude_config#129`.
+
 Related: [[verify-mechanism-before-relying-on-it]], [[test-prescribed-values-against-rule]].
