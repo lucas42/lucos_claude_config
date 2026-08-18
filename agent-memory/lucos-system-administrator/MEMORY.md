@@ -93,3 +93,4 @@
 - **lucos_claude_config#127** (HEAD drift fix): COMPLETE 2026-08-18, PR #128 merged, verified live (721 behind→0). `project_head_drift_fix_127.md`.
 - **lucos_claude_config#129** (clean-status target): PR #130 MERGED as-is (unconditional `check_persistent_dirt`, per architect's original call — a gate-on-success attempt was reverted). Issue stays open for item 2 (`settings.json` restart check). `settings-json-restart-verification-129.md`.
 - **PR merged on a stale commit despite a later push landing on the branch** — `merged:true` isn't proof your push's content shipped; verify review `commit_id`/`merge_commit_sha` match what you pushed. `pr-merged-stale-commit-despite-later-push.md`.
+- **Rehearsal validates intent, not soundness** — a passing disposable-repo test proves the code does what you built it to, not that the design was right; ask "would this look different if the design were wrong?" `feedback_rehearsal_validates_intent_not_soundness.md`.
