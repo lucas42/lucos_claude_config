@@ -5,8 +5,6 @@
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
-  "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "tmux",
   "hooks": {
     "Stop": [
       {
@@ -18,5 +16,8 @@
         ]
       }
     ]
-  }
+  },
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "teammateMode": "tmux"
 }
