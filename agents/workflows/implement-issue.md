@@ -161,6 +161,8 @@ The one situation where you must manually call `POST /requested_reviewers` yours
 
 The login will typically be `lucas42` (supervised repos only, when he has personally reviewed) or `lucos-code-reviewer` (after the bot has submitted CHANGES_REQUESTED on any repo).
 
+**The API call above works for `lucas42` and does NOT work for `lucos-code-reviewer`.** Requesting a bot/App reviewer via `reviewers[]` silently fails: the API returns 200, `requested_reviewers` stays empty, and no `review_requested` event is written to the timeline. There is no error to notice, so a fix pushed after CHANGES_REQUESTED can sit indefinitely believing the reviewer was re-engaged. **`SendMessage` is the only working way to re-request `lucos-code-reviewer`** — send it the PR URL and ask for re-review. Use the API call only when the reviewer to re-request is a human. Do not treat an empty `requested_reviewers` on a bot-reviewed PR as evidence that anyone skipped a step; it is the expected state.
+
 **Never request a reviewer who has not already reviewed the PR.** Specifically: do not request `lucas42` on an unsupervised repo — he was not added at PR creation, so there is nothing to re-engage. Hard-coding `lucas42` in this step pollutes his review queue with PRs he never volunteered to review.
 
 ## Step 8 — Comment on unexpected obstacles
