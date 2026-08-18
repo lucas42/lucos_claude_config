@@ -124,10 +124,18 @@ current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
 if [[ "$current_branch" == "main" ]]; then
     if git fetch --quiet origin main 2>/dev/null && git reset --mixed --quiet origin/main 2>/dev/null; then
         echo "$(date -Iseconds) Synced local main to origin/main ($(git rev-parse --short HEAD))."
+        # Only check for persistent dirt once we know the index actually
+        # reflects origin/main. A repeatedly-failing sync (network blip, SSH
+        # key issue) leaves the index stale — the #127 shape — and running
+        # the check there would misattribute that as a forgotten local edit
+        # via check_persistent_dirt's "likely a file ... never committed"
+        # wording. The "could not sync" WARNING in the else branch below
+        # already surfaces the real cause on every cycle, so nothing is
+        # lost by skipping this check during an outage.
+        check_persistent_dirt
     else
         echo "$(date -Iseconds) WARNING: could not sync local main to origin/main (fetch or reset failed) — leaving HEAD as-is." >&2
     fi
-    check_persistent_dirt
     exit 0
 fi
 
