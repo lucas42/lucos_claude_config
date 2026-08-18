@@ -16,3 +16,6 @@ When coordinating a low-stakes, **reversible** choice (e.g. which of two equival
 4. **Name equivalent choices early and converge.** If two options are functionally identical, say so and pick the zero-churn one; don't optimise a cosmetic decision through multiple round-trips.
 
 Related: [[feedback_verify_past_tense_work_claims]], [[feedback_refetch_state_before_writing_final_artifact]].
+
+**A concession is the moment a claim is least likely to be examined (2026-08-18).** When a disagreement resolves, everyone relaxes: the conceder has stopped arguing and the receiver has just been agreed with, so nobody stress-tests the argument that won. Check at the concession — specifically, ask *what argument am I conceding to, and is it stronger than the one I was making?* Instance: I abandoned a correct position on "the other WARNING already fires, so nothing goes blind", which was **weaker** than my original argument and was the very reasoning the ticket I was writing existed to reject; it then propagated into two other agents within minutes. Related asymmetry: a finding marked **non-blocking** gets less scrutiny from *both* directions at once — the author folds more easily and the reviewer overrules more easily — so the label itself lowers the quality of the decision.
+
