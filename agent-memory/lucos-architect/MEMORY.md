@@ -93,6 +93,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Three aithne auth-integration patterns + sidecar /_info blind-spot](reference_aithne_integration_patterns.md)
 - [/current-items currency = Festival-only; collections absent from RDF](reference_current_items_currency_model.md)
 - [configy has no model for a routed domain without a system](reference_configy_routed_domain_gap.md) — router hardcodes are lucos_router#11 residue; DNS-last sequencing
+- [Shared ~/.claude checkout ref-state](reference_shared_claude_checkout_ref_state.md) — stale index = phantom diffs + 97% wasted sweep work; `git reset` clobbers the checked-out branch
 
 ## Project memories
 
