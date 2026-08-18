@@ -138,6 +138,8 @@ The script prints the PR URL on success.
 
 If `lucas42` is missing, request him immediately with `POST /requested_reviewers` before reporting the PR open. A silent miss means the PR waits indefinitely with no one assigned.
 
+**This check works only because it names a human. Never generalise it to "confirm the reviewer is queued"** — App/bot reviewer requests leave no trace at all (see Step 7), so such a check would fail permanently on every `lucos-code-reviewer` PR. `requested_reviewers` is therefore never evidence that the code-reviewer was engaged; the only proof the review loop actually ran is a **submitted review** in `/reviews`. Audit for that instead.
+
 ## Step 7 — Re-request reviewer after pushing fixes
 
 `create-pr` handles the *initial* reviewer request automatically at PR creation: it adds `lucas42` on supervised repos and adds nobody on unsupervised repos.
