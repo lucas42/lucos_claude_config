@@ -50,6 +50,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Ask usage context before ranking options](feedback_ask_usage_context_before_ranking_options.md) — device/role/when-they-learn, not an imagined user
 - [New consideration/reversal gets its own ADR](feedback_new_consideration_gets_own_adr.md) — shared mechanism ≠ decision coupling
 - [Commit the tool's own serialisation](feedback_commit_the_tools_own_serialisation.md) — check a rewritten file's order history before proposing a canonical/generated split
+- [Measure the section before editing the persona](feedback_measure_the_section_before_editing.md) — Self-Verification grew +429 in one "consolidation" evening
 
 ## Reference memories
 
