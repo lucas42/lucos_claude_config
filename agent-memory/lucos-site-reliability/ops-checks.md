@@ -32,8 +32,8 @@ lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-08-17
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-07-27
-lucos_locations_oauth2_proxy: 2026-08-09
-lucos_mail_smtp: 2026-08-08
+lucos_locations_oauth2_proxy: 2026-08-19
+lucos_mail_smtp: 2026-08-19
 lucos_photos_api: 2026-07-19
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
@@ -52,8 +52,8 @@ lucos_media_metadata_api_exporter: 2026-07-15
 lucos_media_metadata_manager: 2026-07-15
 lucos_notes: 2026-07-15
 lucos_root_app: 2026-07-19
-lucos_router: 2026-08-08
-semweb: 2026-08-08
+lucos_router: 2026-08-19
+semweb: 2026-08-19
 lucos_time: 2026-08-09
 lucos_aithne: 2026-07-31
 lucos_arachne_mcp: 2026-07-19
@@ -65,7 +65,7 @@ lucos_docker_mirror_registry: 2026-07-09
 lucos_worlds_web: 2026-07-09
 lucos_worlds_db: 2026-07-31
 lucos_docker_mirror_info: 2026-07-13
-lucos_firewall: 2026-08-08
+lucos_firewall: 2026-08-19
 
 ## SSH Hostname Note
 
@@ -173,3 +173,8 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-17/18 ⚠️**"All N lack the flag" ≠ "all N are broken" — I asserted a measurement nobody took.** #488's title said "8 of 8 re-resolve at build time"; architect actually ran the 8 `Pipfile`/`Pipfile.lock` pairs through pipenv and compared `_meta.hash`: **3 mismatched (backups, contacts, eolas) / 5 in sync**. The 5 are correct **only by coincidence of which unpinned pipenv the build installs**, nothing asserts the agreement, and it flips **silently** (pipenv treats hash mismatch as staleness → re-locks the whole graph from PyPI, exit 0, no warning; then `COPY src` restores the committed lock over the re-locked one ⇒ self-contradictory image). Correct-by-coincidence + silently-reversible is a STRONGER argument for a convention than "everything is broken" — a sweep fixes a state, a convention fixes the property. Fix is **two lines**: pin pipenv AND `--deploy` (cost: Dependabot doesn't parse `pip install` lines, so a pinned pipenv goes stale unmonitored).
 - 2026-08-17/18 `lucos_backups` CI guard SHIPPED (lucas42/lucos_backups#393 → PR #394 → 1.4.35). Two levers in the existing **`test`** job (kept that name deliberately — it's already a required branch-protection check, so a NEW job name would run, go red, and merge anyway). Verified against the published artefact, not the branch: `CMD=[./scripts/startup.sh]`, 0 pytest, py3.14.6, restarts=0, estate 55/55. ⚠️Only **2 of 204** existing tests caught the broken image, incidentally via a transitive `requests` import in `test_loganne_emit` — every other test stubs deps with MagicMock. New `tests/test_image_imports.py` imports the REAL chain (stubbing only `utils.tracking`, whose module level spawns a fetch thread). Open follow-up idea from code-reviewer, routed to team-lead: a CI grep asserting the Dockerfile's last `FROM` is `AS production`.
 - 2026-08-18 ⚠️**CORRECTION to my own #394 reasoning: `docker buildx bake` DOES honour compose `build.target`.** I rejected pinning `target: production` in `docker-compose.yml` as "riskier if bake doesn't honour it" — **untested, and wrong**. Verified with a control: compose with `target: app` → `bake --print` shows `"target": "app"` and the built image IS the app stage; remove the line → the built image is the **LAST** stage. So (a) the hazard is confirmed by direct demonstration (unpinned ⇒ last stage ships), and (b) **pinning `target:` is the STRONGER fix** — declarative, self-documenting, immune to stage reordering — whereas stage-ordering survives only as a comment saying "keep this last". I shipped the weaker one for a false reason. ⇒ Any estate convention here must be **conditional**: fail only if compose pins no `target` AND the last stage isn't production. A flat "last FROM must be AS production" grep would fail repos that are already safe by construction.
+- 2026-08-19 ⚠️**BIG CORRECTION — OwnTracks `created_at` is a CLIENT clock, not a receipt clock.** I set out to file the 08-13 `location-freshness` alert as a 5th false positive and instead invalidated the *method* that produced #105's premise. Proof: in the window 2026-08-07T17:10:05Z→2026-08-08T23:45:34Z (four receipt-side sources say we received NOTHING), `2026-08.rec` holds 29 records with `created_at` and 37 with `tst` inside it, both stopping the second the client reconnected — a queue flush. ⇒ lucas42/lucos_locations#105 now has 0 confirmed false positives, not 2. Commented the correction. Receipt-side sources are `/store/monitor`, `.rec`/`last` mtimes, mosquitto connection log. See [[pattern_locations_silent_data_gap]].
+- 2026-08-19 Check 2: **estate went completely silent after the 08-17 storm — 0 monitoring events on 08-18 and 08-19** (baseline 2-5/day). Not a broken probe: loganne received 31 and 28 non-monitoring events on those days, and /api/status is 55/55. Flaps in the 7d window: `lucos_docker_health/avalon` ×14 on 08-17 (100% `Unhealthy containers: lucos_backups` — the covered incident, ended 22:46 when backups recovered); `location-freshness` ×4 single-poll fetch blips (→ #111).
+- 2026-08-19 **`stale-dependabot-prs` fired 3 times in 15 days; I root-caused all 4 stuck PRs.** (a) lucas42/lucos_arachne#760 major `mcp` 1.28→2.0 bump — correct behaviour; (b) lucas42/lucos_creds#515 python 3.15.0b2 pre-release — correctly blocked (lucos#273 class); (c) lucas42/lucos_repos#485 — **GitHub silently DISABLED auto-merge** (`auto_merge_disabled` by lucos-ci[bot] at 2026-08-11T07:14:58Z, 3s after the last required check went green, base branch unmoved, no push) → sat 6d until a reviewer approval merged it; mechanism GitHub-side, unexplained; (d) lucas42/lucos_repos#491 — flaky test (→ #492). Deliberately did NOT file a re-enable-auto-merge job for (c): 1 occurrence in 27.7d vs a scheduled workflow to maintain; the gap is response, not detection.
+- 2026-08-19 Check 4: 5 containers (router, mail_smtp, semweb, firewall, locations_oauth2_proxy). firewall 51,513 lines/**0** matches; oauth2_proxy 114/0; semweb 142k lines — all PHP scanner 404s; mail_smtp 676k lines — ~1,950 failed SASL LOGIN brute-force attempts on `@l42.eu`/`@s.l42.eu` in 11 days (flagged to team-lead for lucos-security, not mine to file); router 4.9M lines — WP/PHP scanner 404s + 175 `connect() failed (Connection refused)` to `backups.l42.eu/_info` (the 08-17 crash-loop, covered). ⚠️**`docker logs` on lucos_router since a >3-day window exceeds the 120s Bash timeout** (4.9M lines) — always bound router greps to ~3 days or use `--tail`.
+- 2026-08-19 ⚠️`info-endpoint-spec.md` documents `dependsOn` but **NOT `failThreshold`**, which is live on at least 4 systems (metadata_manager 3, media_manager 3/2, backups 5). Flagged to team-lead — instruction files are coordinator-owned.

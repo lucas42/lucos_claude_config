@@ -7,17 +7,17 @@ metadata:
 
 **lucos_locations = OwnTracks** on avalon: phone app → MQTT/TLS :8883 → `lucos_locations_mosquitto` → `lucos_locations_otrecorder` (stores in `store` vol) → `lucos_locations_otfrontend` (map + `/_info` + proxies recorder HTTP API). Recorder HTTP API on :8083.
 
-**⚠️ 2026-07-31 CORRECTION — `location-freshness` EXISTS but is NOT TRUSTWORTHY. Do not treat its alerts as evidence of anything until lucos_locations#105 is fixed.** `/_info` exposes `location-freshness` + metric `location-data-age-seconds`; threshold `LOCATION_FRESHNESS_THRESHOLD_SECONDS = 30*60*60` (30h) in `otfrontend/info_server.py`; fail-closed. **But 2 of its 3 alerts to date were FALSE POSITIVES**, proven against the recorder's own store:
+**⚠️ 2026-08-19 SUPERSEDES the 2026-07-31 correction. The "2 of 3 alerts were FALSE POSITIVES" finding was itself produced by an invalid method — do not repeat it.** `/_info` exposes `location-freshness` + metric `location-data-age-seconds`; threshold `LOCATION_FRESHNESS_THRESHOLD_SECONDS = 30*60*60` (30h) in `otfrontend/info_server.py`; fail-closed; computed as `now - max(tst)` over `GET otrecorder:8083/api/0/last` (timeout 0.3s).
 
-| alert | reported age | TRUE age (from `.rec` `created_at`) | verdict |
-|---|---|---|---|
-| 07-15 19:01:59Z | 30.0h | **47 min** | ❌ false |
-| 07-26 20:33:12Z | 30.0h | **30.0h** | ✅ real (one genuine 32.4h stationary spell) |
-| 07-28 04:57:28Z | 30.0h → 49.1h | **3h29m** (18 more fixes arrived live during the alert) | ❌ false |
+**`created_at` and `tst` in `/store/rec/<user>/<device>/YYYY-MM.rec` are BOTH client clocks.** `created_at` is stamped by the OwnTracks app when it builds the message, NOT by the recorder on receipt. The phone queues while disconnected and flushes on reconnect, so both fields run straight through an outage. Proof: in the window 2026-08-07T17:10:05Z → 2026-08-08T23:45:34Z, four independent receipt-side sources showed the recorder received nothing, yet `2026-08.rec` holds **29 records with `created_at`** and **37 with `tst`** inside it, both stopping the second the client reconnected. So any "true age" derived from `.rec` is meaningless for freshness. Posted as a correction on lucas42/lucos_locations#105 (2026-08-19).
 
-Signature: `max(tst)` pins to one value and then just tracks wall-clock while fresh data flows in underneath. Mechanism NOT established (`/api/0/last` serves the recorder's `last` cache, a different path from `.rec`; undiagnosable until #103 unbuffers stdout). Filed **lucos_locations#105**.
+**Receipt-side sources (the only ones that answer "when did we learn this?"):** `/store/monitor` (`<epoch> <topic>`, rewritten per received message); mtime of the `.rec` and of `/store/last/<user>/<device>/<user>-<device>.json`; `lucos_locations_mosquitto` connection log (bounded by container `StartedAt` — check it before trusting a negative).
 
-**I built a completely false narrative on this for four consecutive ops runs** (07-15/19/23/27/31): "recurring worsening client-side phone gaps, 31h → 18h → 1min → 32h → 49h". None of that is real. July's actual gap distribution for `lucas/viper` is 6–23h (ordinary overnight/idle) with exactly ONE >30h gap. See [[feedback_verify_check_claim_against_underlying_store]].
+**Current alert ledger:** confirmed TRUE — 2026-07-26, 2026-08-08 (client stopped 08-07 17:10 → reconnect 08-08 23:45, cleared by lucas42 restarting OwnTracks); probable TRUE — 2026-08-13 (implied frozen reference 2026-08-12T15:23:35Z matches a real fix to the second). Confirmed FALSE: **none**. 2026-07-15 and 2026-07-28 are *unsupported* (method invalid) and un-re-verifiable — July receipt-side artefacts are gone.
+
+**Separate, still-open design flaw:** `tst` only advances on a NEW fix, while the client republishes its last known fix on a timer — across 2,552 records in `2026-08.rec`, `created_at - tst` has median 1s but p90 3h05m, p95 5h19m, max 14h31m, and 515 (20%) exceed 10 min. So `max(tst)` ages while messages flow. Whether that is a false positive depends on what the check should mean (receipt liveness vs. fix freshness) — that is design point 2 on #105, still lucas42's call. Cannot be resolved from `.rec` alone (both timestamps client-side); #103 (unbuffer stdout) is the enabler.
+
+**A distinct, unambiguous noise source:** `debug` = `Failed to fetch last recorded location data from the recorder` — the otfrontend→otrecorder call losing a race. 6 occurrences 2026-07-26→2026-08-17, **every one exactly one poll (60s) long**. No `failThreshold` declared ⇒ defaults to 1 ⇒ each one pages. Filed lucas42/lucos_locations#111 (add `failThreshold: 2`).
 
 **Silent-gap failure mode (historical, pre-#91):** data just stops and NOTHING alerts, because `/_info` only had the `mosquitto-tls` check (cert expiry). A data stall from any other cause stayed green.
 - 2025 (issue #5): weeks of data lost to an **expired TLS cert**, unnoticed → the tls check was added after.
@@ -34,7 +34,7 @@ Signature: `max(tst)` pins to one value and then just tracks wall-clock while fr
 **Fix for the class = data-freshness check** — issue #91, raised 2026-07-02, **SHIPPED + CLOSED**. Monitor the OUTCOME not each cause; threshold tolerates a stationary/asleep/off-grid human.
 
 **Interpreting a `location-freshness` alert (revised 2026-07-31 — the 07-15 playbook's first line was WRONG):**
-- debug `"Last recorded location data is N seconds old"` ⇒ **DO NOT conclude "client-side". First verify the claim against the recorder store**, which is the only source of truth:
+- debug `"Last recorded location data is N seconds old"` ⇒ **DO NOT conclude "client-side" — and DO NOT verify against `.rec` timestamps, they are client clocks (see above). Use the receipt-side sources.** For context on what was recorded:
   ```bash
   ssh avalon.s.l42.eu "docker exec lucos_locations_otrecorder sh -c 'grep location /store/rec/lucas/viper/YYYY-MM.rec'"
   ```
