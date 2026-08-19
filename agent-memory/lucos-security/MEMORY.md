@@ -21,6 +21,7 @@
 
 ## Accepted Risks / Closed Findings (do not re-raise)
 
+- **SASL auth-failure background noise on lucos_mail public MX** (93 IPs/11 days) — decided against a volume detector: only 2 non-guessable accounts exist, no rate-limiting to bypass anyway, real exploit path is the already-public leaked hashes (lucos_mail#75/#76), not brute force (lucos_mail#77, 2026-08-19). Deferred idea if revisited post-rotation: successful-login-from-unexpected-IP detector, not a volume/count one.
 - **Vue 2 ReDoS** in vue-leaflet-antimeridian — accepted, no fix without Vue 3 migration (vue-leaflet-antimeridian#4, 2026-03-03).
 - **Clear-text logging** in lucos_contacts_fb_import — accepted, script runs locally on the user's own data (lucos_contacts_fb_import#17, 2026-03-12).
 - **`principal_class` allowlist absence** in Wave 3/4 consumers — do NOT raise; scope is the sole gate per aithne contract §5 (lucos_aithne#268). See `lucos-aithne-security-architecture.md`.
