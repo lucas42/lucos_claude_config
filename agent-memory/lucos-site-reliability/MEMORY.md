@@ -87,6 +87,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [repos audit reds: we discard GitHub's Retry-After](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md) — #462 dry-run fixed.
 - [GitHub Actions outage: check status page early](pattern_github_actions_outage_diagnosis.md) — estate latest-run sweep; ⚠️never relax branch protection to unstick.
 - [Checks that NEVER fired = CircleCI 400'd the webhook](pattern_circleci_400_webhook_drops_pr.md) — hooks/{id}/deliveries.
+- [GitHub silently disables auto-merge on a green Dependabot PR](pattern_github_silently_disables_automerge.md) — occurrence log; check the timeline for `auto_merge_disabled`.
 
 ## Estate topology / docker
 - [Repo name ≠ container name (_ui/_mcp/_explore)](pattern_repo_name_not_container_name.md) — creds_ui not creds.
