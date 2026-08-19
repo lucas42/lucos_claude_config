@@ -156,14 +156,13 @@ for e in events:
     except: continue
     if ts < cutoff: continue
     hr = e.get('humanReadable', '')
-    # 'N failing check(s) on lucos X (host)' or 'All checks healthy on lucos X (host)'
-    if ' on ' in hr:
-        sysname = hr.split(' on ', 1)[1].split(' (', 1)[0].strip()
-        # Loganne renders the system display name with spaces; normalise back to
-        # the underscore form used by repo/container names (e.g. lucos_loganne).
-        sysname = sysname.replace(' ', '_')
-    else:
-        continue
+    # Key on the event's own `system` field — NEVER by re-parsing `humanReadable`.
+    # The prose form omits the parenthesised hostname for CI-only systems, so an
+    # alert ('... on lucos pubsub: circleci') and its recovery ('... on lucos
+    # pubsub') parse to different keys, never pair, and emit a wall of false
+    # UNRECOVERED rows that reads as a real backlog of unresolved outages.
+    sysname = e.get('system')
+    if not sysname: continue
     per_system[sysname].append((ts, t, hr))
 
 print(f'Outages >{int(threshold.total_seconds()/60)} minutes in last 30 days:')
