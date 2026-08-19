@@ -96,6 +96,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [/current-items currency = Festival-only; collections absent from RDF](reference_current_items_currency_model.md)
 - [configy has no model for a routed domain without a system](reference_configy_routed_domain_gap.md) — router hardcodes are lucos_router#11 residue; DNS-last sequencing
 - [Shared ~/.claude checkout ref-state](reference_shared_claude_checkout_ref_state.md) — stale index = phantom diffs + 97% wasted sweep work; `git reset` clobbers the checked-out branch
+- [Ops checks duplicating running machinery](reference_ops_checks_duplicate_machinery.md) — 3 of SRE's 7 already automated; /routine barrier makes reallocation a no-op
 
 ## Project memories
 
