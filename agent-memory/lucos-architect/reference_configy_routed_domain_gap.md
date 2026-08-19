@@ -69,3 +69,14 @@ Decision 3 is the widening: `run_sync` only generates `l42.eu`/`s.l42.eu` today,
 ## Sequencing reconciliation (the "DNS first or last?" trap)
 
 Both "DNS must be updated before Let's Encrypt will mint" and "do DNS last" are true — different steps. DNS must precede the **certbot run**, not the **code deploy**. Correct order: (1) configy, (2) router code deploy — certbot fails harmlessly here, `|| true` swallows it and it retries, (3) DNS repoint ← *the README gotcha's step*, (4) restart router → cert mints. Say "DNS last **of the three code/config changes**" — unqualified "DNS last" reads as contradicting the cert constraint.
+
+## Design settled 2026-08-19 (analysis on lucas42/lucos_configy#267)
+
+- **`/domains` should be COMPLETE** — read-time union of system domains (`systems.yaml`) + a new `config/domains.yaml` for the non-system ones. Storage stays single-source-of-truth; nobody edits a system domain twice.
+- **The heterogeneity objection I raised in my own ticket body was WRONG.** configy already does field projection (`?fields=…` + `Accept: text/csv;header=absent`) and already renders absent values as literal `null` — in the exact call site (`fetch-domainsets.sh` tests `!= "null"`). So a union costs the CSV consumer nothing. Check the consumer's existing call before pricing a schema change as expensive for it.
+- **Killer argument for complete over narrow:** domain-collision validation is *structurally impossible* under the narrow option, because nothing then knows all the domains. That's the class of bug the whole ticket exists over.
+- **`mode` discriminator (`system` | `proxy` | `redirect`), not mutually-exclusive `proxy_to`/`redirect_to`.** Exclusive optionals encode an invariant the schema can't enforce; a mode makes the consumer's switch exhaustive and lets a 4th behaviour add a value not a field.
+- **Deliberately NOT having configy compute a uniform `target`** (i.e. `http://172.17.0.1:{port}` for system rows). Tempting — collapses the router loop — but `172.17.0.1` is the Docker bridge *as seen from the router's network position*, not a fact about the system. configy says what exists and where; the caller decides how it reaches it. Keep `http_port` on system rows.
+- Routes mirror `/systems`: `/domains`, `/domains/host/{host}`, `/domains/subdomain/{root_domain}`.
+- **Convergence asymmetry: document a runbook step, do NOT reduce the router cron.** It only bites when migrating an already-working domain (a one-off); shrinking the interval trades that for a permanent rise in failed LE validations against the 5/hour/hostname limit.
+- Open for lucas42: complete-vs-narrow. Everything else answered → status Awaiting Decision on that single question.
