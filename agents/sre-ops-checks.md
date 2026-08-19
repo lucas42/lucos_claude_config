@@ -241,8 +241,10 @@ Aim to review **3-5 containers per run**.
 
 Lookback window: review logs since the last time you reviewed that container (check `ops-checks.md`).
 
+**Bound high-volume containers explicitly, or the command dies instead of the review failing loudly.** `lucos_router` emits ~4.9M log lines over a week — a `docker logs` window longer than about 3 days on it exceeds the 120s command timeout, so you get a killed command rather than a result. Cap the router (and any similarly chatty container) at ~3 days regardless of its `last_reviewed` date, and say in your output that you did, so a truncated window is never silently recorded as a full review.
+
 ```bash
-ssh avalon "docker logs --since <last-reviewed-timestamp> <container_name> 2>&1 | tail -200"
+ssh avalon.s.l42.eu "docker logs --since <last-reviewed-timestamp> <container_name> 2>&1 | tail -200"
 ```
 
 **After an estate-wide deploy or client-library rollout, add a whole-estate error sweep** — it costs one command, and it is the cheapest way to catch a bad rollout while the buffers are still warm. This is complementary to the rotation, not a substitute for it:
