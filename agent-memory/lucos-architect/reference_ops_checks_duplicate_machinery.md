@@ -7,13 +7,17 @@ metadata:
 
 Consulted 2026-08-19 on whether SRE's ops-check load should be reallocated to an idle persona. Findings below verified by reading code that day.
 
-## The /routine barrier — why reallocation is a no-op
+## The /routine barrier — and the makespan error I made about it
 
 `~/.claude/skills/routine/SKILL.md`: Phase 1 dispatches code-reviewer, security, sysadmin and SRE **concurrently**; Phase 2 (triage) is gated on **all four** completing. SRE is therefore the critical path.
 
-Consequence: moving work from SRE to another persona just moves which leg of the same barrier is longest. A parallel barrier has three levers — remove work from it, delete work, move work outside it. "Who owns it" is not one of them. Adding a persona not already in Phase 1 makes it worse (a fifth participant).
+**I initially claimed rebalancing between personas was "a no-op by construction". That is FALSE — see [[feedback_absolute_then_hedge_detector]].** makespan = max(legs), not sum, so rebalancing an *unequal* set strictly reduces it. Measured 2026-08-19: SRE 37m36s (still running), security ~2-3m, sysadmin ~3m, code-reviewer ~5m. Moving 15m off SRE to any lighter leg takes makespan 37→~22. Rebalancing is a real lever with a bounded payoff — rank it **third, behind delete and automate**, never rule it out.
 
-Free win requiring no automation: the barrier's stated rationale is "issues raised are available for triage in this pass". That justifies only checks which can surface something needing *this* pass's triage. Monthly checks filing P3s, and Check 3 (which files a PR), do not need to gate triage at all.
+Two bounds worth quoting when anyone cites a `total/N` figure: transferred work is **not conserved** (the recipient pays context-load, and hands back to SRE for diagnosis on a finding), and ops-check work is **not infinitely divisible** (Check 1's root-cause mandate doesn't split at all).
+
+**Which checks actually cost makespan.** Every-run is Checks 1, 2, 3 (sre-ops-checks.md:39) plus Check 4 as the rotating one (:223). Monthly is 5, 6, 7 (:265) — and they're usually skipped. So **deleting 5/6/7 buys ~zero makespan**; do it for signal-honesty, not workload. The every-run judgement-dense checks dominate — which means automation has *less* headroom against the measured problem than the duplication findings below suggest. The makespan-relevant automation targets are the **detection halves of Checks 2 and 3** (both every-run, both pure functions over Loganne events).
+
+Free win requiring no automation: the barrier's stated rationale is "issues raised are available for triage in this pass". That justifies only checks which can surface something needing *this* pass's triage. Monthly checks filing P3s, and Check 3 (which files a PR), do not need to gate triage at all — though on a typical run this is a signal/clarity win rather than a time one.
 
 ## Checks that duplicate running machinery
 
