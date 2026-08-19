@@ -210,6 +210,20 @@ Protects against penalising agents who did the work but didn't mention it in the
   skills/routine/SKILL.md [other/paths...]
 ```
 
+**Pass the message via a quoted heredoc, never a double-quoted `-m "..."` string.** Commit messages here routinely name code identifiers in backticks, and inside double quotes bash treats a backtick as command substitution — so ``the `system` field`` runs `system`, prints `command not found` to stderr, and silently commits "the  field" with the word deleted. The commit still succeeds, so nothing fails loudly and the loss is only visible if you re-read the pushed message. `$(...)`, `$VAR` and `!` corrupt the same way. Use:
+
+```bash
+~/sandboxes/lucos_agent/commit-claude-main --app lucos-issue-manager \
+  -m "$(cat <<'ENDMSG'
+Subject line
+
+Body with `backticks`, $VARS and other shell metacharacters, all literal.
+ENDMSG
+)" agents/coordinator-persona.md
+```
+
+`commit-claude-main` accepts only `-m` (there is no `-F`), so the heredoc feeds it through `$(cat ...)`. The **quoted** delimiter — `<<'ENDMSG'`, never bare `<<ENDMSG` — is what disables interpolation; this is the same file-backed pattern already used for `gh-as-agent` bodies.
+
 Paths are relative to `~/.claude/` (absolute paths under `~/.claude/` also work). The tool commits the current on-disk content of those files onto a freshly-fetched `origin/main` via an **isolated throwaway worktree**, so it is immune to the shared `~/.claude` working tree's state -- it never needs you to be on `main`, never runs `git pull`, and never touches other agents' uncommitted memory files. It prints a clean commit SHA to stdout (git noise goes to stderr, so `SHA=$(commit-claude-main ...)` is safe), exits 0 with "Nothing to commit" if the files already match `origin/main`, and exits non-zero on a push race (just re-run).
 
 **Do NOT** fall back to the old `git checkout main && git pull --ff-only` + commit + push flow, and do **NOT** route a `~/.claude` change through a branch + PR -- that needlessly drags in the developer/reviewer and only ever existed because direct push used to break on a dirty shared tree, which `commit-claude-main` now fixes. Use `commit-claude-main` for every `~/.claude` commit.
