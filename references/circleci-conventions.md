@@ -1,14 +1,36 @@
 # CircleCI Conventions
 
+> **Enforced rules are linked here, never restated.** Any rule with an automated check in `lucos_repos` is defined in `lucos_repos/conventions/*.go` and rendered into the generated [convention catalogue](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md). That catalogue is the single source of truth; this page links it. Everything below the enforced-conventions table is hand-written guidance with **no** enforcement counterpart — templates, platform notes, runbooks.
+>
+> **Editing this page?** If the rule has (or gains) a convention check, link its catalogue entry — do not paraphrase it. If it has no check, write it in the guidance half. Rationale: `lucos_repos` ADR-0007 — a hand-written copy of an enforced rule drifts silently from the check, and agents trust the doc over the source.
+
 **Before concluding any lucos repo "has no test/build CI gate," check `.circleci/config.yml`, not just `.github/workflows/`.** CircleCI is this estate's primary build/test/deploy CI; GitHub Actions in most repos is limited to CodeQL and auto-merge automation, so `.github/workflows/` alone will look test-less even when a real, deploy-gating `test` job exists in CircleCI. Check both before asserting a CI coverage gap.
+
+## Enforced conventions — link, don't restate
+
+| Topic | Catalogue entry |
+|---|---|
+| A `.circleci/config.yml` exists | [`circleci-config-exists`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-config-exists) |
+| The lucos deploy orb is declared | [`circleci-uses-lucos-orb`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-uses-lucos-orb) |
+| `serial-group` on every `lucos/build*` and `lucos/deploy-*` job | [`circleci-deploy-serial-group`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-deploy-serial-group) |
+| Exactly one `lucos/deploy-<host>` job per host configured in configy | [`circleci-system-deploy-jobs`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-system-deploy-jobs) |
+| Components publish via a `lucos/release-*` job | [`circleci-has-release-job`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-has-release-job) |
+| No `release-*`/`deploy-*` jobs on other repo types | [`circleci-no-forbidden-jobs`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-no-forbidden-jobs) |
+| `test*`/`build*` jobs are required status checks on `main` | [`circleci-jobs-in-required-checks`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-jobs-in-required-checks) |
+
+Each entry carries the rule, its rationale and the suggested fix, generated from the check itself. Read the entry — and `lucos_repos/conventions/<id>.go` behind it — before changing a config; the check is what gates the audit, not the templates on this page.
+
+**Before removing a `serial-group` as "non-standard", read [`circleci-deploy-serial-group`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-deploy-serial-group) first.** Both the build serial-group and the deploy serial-group are required, and they take different forms; each has previously been dropped by an editor working from a doc rather than the source.
+
+---
+
+The rest of this page is guidance. None of it has an automated check.
 
 ## Pipeline trigger behaviour
 
 **Every push to any branch triggers a full pipeline.** CircleCI does not support file-path filtering — there is no equivalent of GitHub Actions' `paths:` filter. Any file change, regardless of type (application code, config files, `dependabot.yml`, documentation), will trigger a full build pipeline on push and a full build + deploy pipeline on merge to main.
 
 When planning estate-wide rollouts or any bulk merge operation, assume that every merge will trigger a CI pipeline. Stagger merges accordingly — see the estate-rollout skill for guidance.
-
-## Standard configs
 
 ## Platform selection
 
@@ -22,18 +44,9 @@ The `platform` value for `lucos/build` must match the actual deploy targets — 
 
 If `platform` is omitted, the orb's default builds an amd64-only image (CI runners are x86_64).
 
-## Serial-group requirements (enforced by `circleci-deploy-serial-group` audit convention)
+## Standard config templates
 
-Both `lucos/build*` and `lucos/deploy-*` jobs **must** declare a `serial-group`. The convention source is `lucos_repos/conventions/circleci-deploy-serial-group.go` — it is the authoritative check, not these templates. Before removing either serial-group as "non-standard", verify against that source first.
-
-| Job | Required `serial-group` | Why |
-|---|---|---|
-| `lucos/build` (and any `lucos/build*`) | `<< pipeline.project.slug >>/build/<< pipeline.git.branch >>` | Prevents concurrent pipelines from computing the same `VERSION` and overwriting each other's Docker images. Branch-scoped form lets PR builds run in parallel without blocking behind `main`. |
-| `lucos/deploy-avalon` | `deploy-avalon` | Prevents concurrent deploys to the same host from racing in containerd (blob-lease conflicts observed 2026-04-21). |
-
-Note: the deploy serial-group is the bare form (`deploy-avalon`) — **not** prefixed with `<< pipeline.project.slug >>`.
-
----
+These are worked examples, not the rule. Where a template shows something the audit enforces — the orb declaration, the `serial-group` values, the set of deploy jobs — the catalogue entry above is authoritative and a template that has fallen behind it is a bug in this page.
 
 When a project has no tests, the standard `.circleci/config.yml` is:
 
