@@ -66,47 +66,192 @@
 # - Branch not yet merged → exits silently
 # - Checkout blocked by dirty files → logs a warning, does not force
 # - Detached HEAD → exits silently
-# - Dirty tree persisting past one cycle (on main only) → logs a WARNING
+# - Stalled dirt persisting past one cycle (on main only) → logs a WARNING
+#   AND emits a Loganne event (lucos_claude_config#131 — a log line nobody
+#   reads doesn't count as detection; see check_persistent_dirt)
+# - A sync that's been failing past one cycle → same, via track_sync_failure
 
 set -euo pipefail
 
 CLAUDE_DIR="/home/lucas.linux/.claude"
 
-# State file for the persistence check (job 3) — records the epoch timestamp
-# the tree was FIRST observed dirty in the current unbroken streak. Not
-# committed (see .gitignore) — purely local bookkeeping, safe to lose (worst
-# case: one streak's clock restarts, delaying a warning by up to one window).
+# State files for the persistence tracks (job 3 and job 2c). Each pairs a
+# "-since" file (epoch timestamp the condition was FIRST observed in the
+# current unbroken streak) with an "-alerted" marker (present once a Loganne
+# event has fired for this streak, so the edge-trigger only fires once).
+# None are committed (see .gitignore) — purely local bookkeeping, safe to
+# lose: worst case a streak's clock restarts or one alert re-fires.
 DIRTY_STATE_FILE="$CLAUDE_DIR/scripts/.return-to-main-dirty-since"
+DIRTY_ALERTED_FILE="$CLAUDE_DIR/scripts/.return-to-main-dirty-alerted"
+SYNC_FAIL_STATE_FILE="$CLAUDE_DIR/scripts/.return-to-main-syncfail-since"
+SYNC_FAIL_ALERTED_FILE="$CLAUDE_DIR/scripts/.return-to-main-syncfail-alerted"
 
-# How long a dirty tree must persist before it's surfaced. The cron interval
+# How long a condition must persist before it's surfaced. The cron interval
 # is 15 minutes and the post-turn hook fires far more often during active
 # sessions, so 20 minutes is comfortably more than "one sweep cycle" even
 # accounting for cron scheduling jitter, while still catching a forgotten
-# edit well within the hour. See the header comment for why this must stay
-# tight rather than being loosened to absorb false "decay".
+# edit (or a stuck sync) well within the hour. See the header comment for
+# why this must stay tight rather than being loosened to absorb false
+# "decay". Shared between the dirty-tree track and the sync-failure track —
+# lucos_claude_config#131 didn't specify a separate number for the latter,
+# and there's no reason for the two windows to differ.
 DIRTY_QUIESCENCE_SECONDS=1200
+
+# A dirty path only counts toward the persistence clock once it has stopped
+# moving. commit-agent-memory.sh already carries this exact notion for
+# memory files — a persona directory touched within the last 300s is "in
+# use", not stalled — so reuse it here rather than inventing a second
+# quiescence concept. A path written faster than this (a session writing
+# memory heavily) never starts the clock at all: not suppressed, just not
+# the condition. lucos_claude_config#131 item 1.
+STALL_SECONDS=300
+
+# Cap on how many paths get named in a warning or Loganne event. The volume
+# of a full porcelain dump, not the warning itself, is what makes a
+# stale-index episode (hundreds of phantom paths) unreadable — and once the
+# warning reaches a channel someone actually watches, unreadable becomes
+# actively harmful rather than merely wasted. lucos_claude_config#131 item 2.
+PATH_LIST_CAP=10
+
+# The sanctioned way to write a Loganne event (see references/monitoring-loganne.md)
+# — source is hardcoded to lucos_agent by the wrapper itself.
+LOGANNE_EVENT_SCRIPT="/home/lucas.linux/sandboxes/lucos_agent/loganne-event"
 
 export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent \
     -o IdentitiesOnly=yes \
     -o StrictHostKeyChecking=accept-new"
 
-# check_persistent_dirt — job 3. Call only on main, after the sync attempt
-# above. Compares the current `git status --porcelain` against the recorded
-# first-seen timestamp of the current dirty streak: clears the state file the
-# moment the tree is clean, starts a new streak the moment it isn't, and logs
-# a WARNING only once a streak has outlived DIRTY_QUIESCENCE_SECONDS. Never
-# fatal — every path through this function returns 0.
-check_persistent_dirt() {
-    local porcelain
-    porcelain=$(git status --porcelain 2>/dev/null) || return 0
+# emit_loganne_event — best-effort POST to Loganne. Monitoring must never be
+# able to break the job it's monitoring: a network/API failure here logs a
+# WARNING (to the same log this whole ticket exists to stop being the only
+# channel) and returns 0 regardless.
+emit_loganne_event() {
+    local type="$1" human_readable="$2"
+    if [[ -x "$LOGANNE_EVENT_SCRIPT" ]]; then
+        "$LOGANNE_EVENT_SCRIPT" "$type" "$human_readable" >/dev/null 2>&1 || \
+            echo "$(date -Iseconds) WARNING: could not emit Loganne event '$type' (network or API issue)." >&2
+    fi
+    return 0
+}
 
-    if [[ -z "$porcelain" ]]; then
-        rm -f "$DIRTY_STATE_FILE" 2>/dev/null || true
+# cap_paths — join up to PATH_LIST_CAP of the given paths with ", ", adding
+# a "(+N more)" suffix when truncated. Used for both the stderr log and the
+# Loganne text, so the reader-facing artifact is never the full dump.
+cap_paths() {
+    local -a paths=("$@")
+    local total=${#paths[@]}
+    # NOTE: "${arr[*]}" with IFS=', ' joins on only the first IFS char (','),
+    # dropping the space — join by hand instead.
+    local -a shown=("${paths[@]:0:PATH_LIST_CAP}")
+    local joined="" p
+    for p in "${shown[@]}"; do
+        if [[ -z "$joined" ]]; then joined="$p"; else joined="$joined, $p"; fi
+    done
+    (( total > PATH_LIST_CAP )) && joined="$joined (+$((total - PATH_LIST_CAP)) more)"
+    echo "$joined"
+}
+
+# track_sync_failure — job 2c. Tracks how long the fetch+reset step has been
+# continuously failing, independent of check_persistent_dirt: a failing sync
+# against a currently-clean tree produces no porcelain diff at all (nobody
+# has any local files), so the dirt detector would never fire even though
+# HEAD is silently falling behind origin/main — the #127 shape recurring.
+# Edge-triggered onto the same Loganne channel as check_persistent_dirt: one
+# event when a failure streak outlives the quiescence window, one when the
+# sync next succeeds. Never fatal — every path returns 0.
+track_sync_failure() {
+    local sync_ok="$1"
+    local now elapsed first_seen
+
+    if [[ "$sync_ok" == "true" ]]; then
+        if [[ -f "$SYNC_FAIL_ALERTED_FILE" ]]; then
+            first_seen=$(cat "$SYNC_FAIL_STATE_FILE" 2>/dev/null || date +%s)
+            [[ "$first_seen" =~ ^[0-9]+$ ]] || first_seen=$(date +%s)
+            elapsed=$(( $(date +%s) - first_seen ))
+            emit_loganne_event "syncFailureRecovered" \
+                "~/.claude: sync to origin/main recovered after failing for ~$((elapsed/60))m."
+        fi
+        rm -f "$SYNC_FAIL_STATE_FILE" "$SYNC_FAIL_ALERTED_FILE" 2>/dev/null || true
         return 0
     fi
 
-    local now first_seen elapsed
     now=$(date +%s)
+    if [[ -f "$SYNC_FAIL_STATE_FILE" ]]; then
+        first_seen=$(cat "$SYNC_FAIL_STATE_FILE" 2>/dev/null || echo "$now")
+        [[ "$first_seen" =~ ^[0-9]+$ ]] || first_seen="$now"
+    else
+        first_seen="$now"
+    fi
+    echo "$first_seen" > "$SYNC_FAIL_STATE_FILE" 2>/dev/null || true
+
+    elapsed=$((now - first_seen))
+    if (( elapsed > DIRTY_QUIESCENCE_SECONDS )) && [[ ! -f "$SYNC_FAIL_ALERTED_FILE" ]]; then
+        emit_loganne_event "syncFailurePersisted" \
+            "~/.claude: sync to origin/main has been failing for ~$((elapsed/60))m (since $(date -Iseconds -d "@$first_seen"))."
+        touch "$SYNC_FAIL_ALERTED_FILE" 2>/dev/null || true
+    fi
+    return 0
+}
+
+# check_persistent_dirt — job 3. Call only on main, after the sync attempt
+# and materialize_pr_content. Redefined per lucos_claude_config#131: a
+# porcelain path only counts as persistent dirt once it is both dirty AND
+# *stalled* — untouched on disk for STALL_SECONDS — AND has stayed that way
+# past DIRTY_QUIESCENCE_SECONDS. A path being actively rewritten faster than
+# STALL_SECONDS (a session hammering one persona's memory file) never starts
+# the clock at all: it isn't suppressed as a special case, it simply isn't
+# the condition. Edge-triggered: emits one Loganne event when a streak first
+# crosses the window, one when it next clears — never per-turn. $sync_ok
+# (passed in from the caller) decides the attribution: dirt surviving a
+# *successful* sync is a forgotten local edit (reliable now that #134's
+# materialize_pr_content runs first and absorbs anything merely stale);
+# dirt surviving a *failed* sync is drift, and track_sync_failure is already
+# covering that condition in its own right. Never fatal — every path
+# through this function returns 0.
+check_persistent_dirt() {
+    local sync_ok="$1"
+    local porcelain
+    porcelain=$(git status --porcelain 2>/dev/null) || return 0
+
+    local now
+    now=$(date +%s)
+
+    # stalled_paths: the porcelain paths untouched for STALL_SECONDS. A path
+    # git reports that no longer exists on disk (worktree-deleted, status
+    # " D") has no mtime to check — treat it as immediately stalled, since
+    # there's no "actively being written" story for a file that's simply
+    # missing.
+    local -a stalled_paths=()
+    if [[ -n "$porcelain" ]]; then
+        local line path mtime age
+        while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            path="${line:3}"
+            mtime=$(stat -c '%Y' "$path" 2>/dev/null) || { stalled_paths+=("$path"); continue; }
+            age=$((now - mtime))
+            (( age > STALL_SECONDS )) && stalled_paths+=("$path")
+        done <<< "$porcelain"
+    fi
+
+    if (( ${#stalled_paths[@]} == 0 )); then
+        # Either fully clean, or every dirty path is actively in use — in
+        # either case this is not the condition being tracked. Clear any
+        # in-progress streak, and emit a recovery event only if we'd
+        # actually alerted on this streak (never fire a clear with no
+        # matching persist).
+        if [[ -f "$DIRTY_ALERTED_FILE" ]]; then
+            local first_seen elapsed
+            first_seen=$(cat "$DIRTY_STATE_FILE" 2>/dev/null || echo "$now")
+            [[ "$first_seen" =~ ^[0-9]+$ ]] || first_seen="$now"
+            elapsed=$((now - first_seen))
+            emit_loganne_event "persistentDirtCleared" \
+                "~/.claude working tree: persistent dirt cleared (was stalled for ~$((elapsed/60))m)."
+        fi
+        rm -f "$DIRTY_STATE_FILE" "$DIRTY_ALERTED_FILE" 2>/dev/null || true
+        return 0
+    fi
+
+    local first_seen elapsed
     if [[ -f "$DIRTY_STATE_FILE" ]]; then
         first_seen=$(cat "$DIRTY_STATE_FILE" 2>/dev/null || echo "$now")
         # Guard against a corrupt/non-numeric state file rather than failing
@@ -119,8 +264,21 @@ check_persistent_dirt() {
 
     elapsed=$((now - first_seen))
     if (( elapsed > DIRTY_QUIESCENCE_SECONDS )); then
-        echo "$(date -Iseconds) WARNING: working tree has been dirty for ${elapsed}s (since $(date -Iseconds -d "@$first_seen")) — longer than one sweep cycle. This is likely a file outside commit-agent-memory.sh's scope (agents/, references/, scripts/, CLAUDE.md, .github/, ...) that was edited and never committed via commit-claude-main:" >&2
-        echo "$porcelain" | sed 's/^/  /' >&2
+        local capped
+        capped=$(cap_paths "${stalled_paths[@]}")
+        echo "$(date -Iseconds) WARNING: working tree has stalled dirt for ${elapsed}s (since $(date -Iseconds -d "@$first_seen")): $capped" >&2
+
+        if [[ ! -f "$DIRTY_ALERTED_FILE" ]]; then
+            local attribution
+            if [[ "$sync_ok" == "true" ]]; then
+                attribution="forgotten local edit — a file outside commit-agent-memory.sh's scope, edited and never committed via commit-claude-main"
+            else
+                attribution="drift — the sync to origin/main has itself been failing (see syncFailurePersisted)"
+            fi
+            emit_loganne_event "persistentDirtDetected" \
+                "~/.claude working tree: ${#stalled_paths[@]} path(s) stalled >$((DIRTY_QUIESCENCE_SECONDS/60))m (${attribution}): $capped"
+            touch "$DIRTY_ALERTED_FILE" 2>/dev/null || true
+        fi
     fi
     return 0
 }
@@ -231,13 +389,16 @@ current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
 # mixed reset forever.
 if [[ "$current_branch" == "main" ]]; then
     old_head=$(git rev-parse HEAD 2>/dev/null || echo "")
+    sync_ok=false
     if git fetch --quiet origin main 2>/dev/null && git reset --mixed --quiet origin/main 2>/dev/null; then
+        sync_ok=true
         echo "$(date -Iseconds) Synced local main to origin/main ($(git rev-parse --short HEAD))."
         [[ -n "$old_head" ]] && materialize_pr_content "$old_head"
     else
         echo "$(date -Iseconds) WARNING: could not sync local main to origin/main (fetch or reset failed) — leaving HEAD as-is." >&2
     fi
-    check_persistent_dirt
+    track_sync_failure "$sync_ok"
+    check_persistent_dirt "$sync_ok"
     exit 0
 fi
 
