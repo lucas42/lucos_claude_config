@@ -1,16 +1,35 @@
 # Docker & Docker Compose Conventions
 
-## Container naming
+> **Enforced rules are linked here, never restated.** Any rule with an automated check in `lucos_repos` is defined in `lucos_repos/conventions/*.go` and rendered into the generated [convention catalogue](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md). That catalogue is the single source of truth; this page links it. Everything below the enforced-conventions table is hand-written guidance with **no** enforcement counterpart — gotchas, templates, wiring narrative, runbooks, incident history.
+>
+> **Editing this page?** If the rule has (or gains) a convention check, link its catalogue entry — do not paraphrase it. If it has no check, write it in the guidance half. Rationale: `lucos_repos` ADR-0007 — a hand-written copy of an enforced rule drifts silently from the check, and agents trust the doc over the source.
 
-- `container_name` must be set on every container
-- **Multi-container services:** use `lucos_<project>_<role>` for every container (e.g. `lucos_photos_api`, `lucos_photos_postgres`, `lucos_arachne_web`)
-- **Single-container services:** use `lucos_<project>` with **no `_<role>` suffix** (e.g. `lucos_aithne`, `lucos_notes`). The suffix is a discriminator between containers in the same stack; a single-container stack has nothing to discriminate.
+## Enforced conventions — link, don't restate
+
+| Topic | Catalogue entry |
+|---|---|
+| `container_name` values in `docker-compose.yml` | [`container-naming`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#container-naming) |
+| A `healthcheck:` on every service with a `build:` key | [`docker-healthcheck-on-built-services`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#docker-healthcheck-on-built-services) |
+| Env vars read by code are passed through in compose | [`env-var-passthrough`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#env-var-passthrough), [`standard-env-vars-in-compose`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#standard-env-vars-in-compose) |
+| `ARG`/`ENV VERSION` in the Dockerfile + `${VERSION:-latest}` image tag | [`dockerfile-exposes-version`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#dockerfile-exposes-version) |
+| `COPY --from=<external-image>` must be backed by a named `FROM` stage | [`dockerfile-copy-from-dependabot-blind`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#dockerfile-copy-from-dependabot-blind) |
+| A Dependabot `docker` updater entry per built-service Dockerfile directory | [`docker-dependabot-updater-present`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#docker-dependabot-updater-present) |
+
+Each entry carries the rule, its rationale and the suggested fix, generated from the check itself. Read the entry — and `lucos_repos/conventions/<id>.go` behind it — before acting on a naming or compose change; the check is what actually gates the audit, not any prose on this page.
+
+Two things you might expect to be enforced and are **not**, so they live in the guidance half below: **explicit volume declaration** (including `lucos_configy/config/volumes.yaml` registration) and **image naming**. There is no volume-related convention in the registry, and `container-naming` inspects `container_name` only — it never looks at `image:`.
+
+---
+
+The rest of this page is guidance. None of it has an automated check.
 
 ## Image naming (built containers only)
 
 - Set `image:` on any container built from a Dockerfile
 - **Multi-container services:** `lucas42/lucos_<project>_<role>` (e.g. `lucas42/lucos_photos_api`)
 - **Single-container services:** `lucas42/lucos_<project>` with no suffix (e.g. `lucas42/lucos_aithne`)
+
+The tag on that image *is* enforced — see [`dockerfile-exposes-version`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#dockerfile-exposes-version).
 
 ## Environment variables in compose
 
@@ -29,6 +48,8 @@ environment:
 Dictionary syntax cannot express pass-through vars without a value, so always use array syntax in `environment`.
 
 Note: Docker Compose still reads `.env` for **compose-level** variable substitution (e.g. `${PORT}` in `ports:`) even without `env_file` — this is a separate mechanism and is fine to use.
+
+*Which* variables must appear in that block is enforced — see [`env-var-passthrough`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#env-var-passthrough) and [`standard-env-vars-in-compose`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#standard-env-vars-in-compose).
 
 ## Build context
 
@@ -119,10 +140,12 @@ Always set `restart: always` on persistent service containers. Without it, conta
 
 > **`Healthy` ≠ end-to-end working.** Docker's status only proves the healthcheck command returned 0 — not that the service is reachable or its dependencies are up. See [`references/healthcheck-depth.md`](healthcheck-depth.md) for the two failure modes, author-side guidance (probe real dependencies, not just loopback), and verifier-side rules (external `curl /_info`).
 
-- Every service with a `build:` key in `docker-compose.yml` should have a `healthcheck:` defined (the `lucos_repos` convention check enforces this)
+Whether a healthcheck must be *present* is enforced — see [`docker-healthcheck-on-built-services`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#docker-healthcheck-on-built-services). How to write one that works is not checked by anything:
+
 - **Always use `CMD-SHELL`** for healthchecks that need env var expansion (e.g. `${PORT}`). `CMD` array form skips the shell — `${PORT}` stays as a literal string.
 - **Never use `localhost` in healthcheck probe URLs — always use `127.0.0.1`.** Alpine's musl libc resolves `localhost` to `::1` (IPv6) first. Services typically bind only `0.0.0.0:PORT` (IPv4), so the healthcheck gets "Connection refused" on `::1` and reports `(unhealthy)` even though the service is externally functional. This is a silent false-negative — the container stays "Up" but shows unhealthy, accumulating thousands of consecutive failures. Seen in production: [lucos_arachne#91](https://github.com/lucas42/lucos_arachne/issues/91), [lucos_contacts#534](https://github.com/lucas42/lucos_contacts/issues/534).
 - Correct form: `test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT}/_info"]`
+- The probe binary (`wget`, `curl`, …) must actually exist in the image — the healthcheck runs inside the container, not on the host.
 
 ## `FROM scratch` runtime images — CA bundle requirement
 
@@ -160,7 +183,7 @@ Every new environment variable requires three steps. Missing any one causes sile
 
 Doing only stage 1 is the failure mode from the 2026-05-13 scheduled-jobs monitoring blackout: inside the container the value was empty, the fetcher logged `{no_scheme}` warnings once per minute, and all monitoring went dark for ~7h 20m.
 
-Until the CI convention check in `lucos_repos` ships, there is no automated guard — it is on the implementer to verify all three stages before pushing. **Before opening a PR that introduces a new env var:** (a) confirm it's in the `environment:` block in docker-compose.yml, (b) confirm a value has been written to lucos_creds for `development` at minimum, (c) update `.env.example` if present.
+Stage 2 is now audited by [`env-var-passthrough`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#env-var-passthrough) (that entry also documents the `# lucos_repos: noenv MY_VAR` escape hatch for a variable that genuinely isn't a compose concern). **Stages 1→3 have no automated guard**, and the audit is a sweep, not a pre-merge gate — so before opening a PR that introduces a new env var: (a) confirm it's in the `environment:` block in docker-compose.yml, (b) confirm a value has been written to lucos_creds for `development` at minimum, (c) update `.env.example` if present.
 
 **Beware empty-string defaults masking wiring failures.** A `getenv("X", "")` followed by an HTTP call fails quietly (e.g. `{no_scheme}` warnings) rather than crashing at startup. Prefer a startup crash over silent degradation when config is missing — quiet warnings delay detection.
 
