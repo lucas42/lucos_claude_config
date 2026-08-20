@@ -20,6 +20,17 @@
 #    misleading "hundreds of files modified" shape that invites someone to
 #    reach for `git reset --hard` — which CLAUDE.md correctly forbids here,
 #    because it WOULD discard those in-flight edits.
+#
+#    A mixed reset moves HEAD/index but that's a separate thing from getting
+#    a PR's actual bytes onto disk — content that only ever existed on a
+#    merged PR branch has no path onto disk otherwise (lucos_claude_config#134:
+#    #127 fixed ref-state convergence, not file-content convergence, and this
+#    silently ate #130's own shipped fix for about an hour). So immediately
+#    after the reset, materialize_pr_content walks the resulting diff and
+#    overwrites on-disk content with origin/main's for every path nobody has
+#    locally touched since the *previous* sync — see that function for the
+#    discriminator, and why it writes via temp-file + atomic rename rather
+#    than `git checkout -- <path>` in place.
 # 3. After syncing on main, check whether the tree is still dirty — and if
 #    so, whether it has been dirty for longer than one sweep cycle. A dirty
 #    moment is normal (an in-flight memory write mid-commit, or a scratch
@@ -114,6 +125,103 @@ check_persistent_dirt() {
     return 0
 }
 
+# materialize_pr_content — job 2b, called only from the main-branch path,
+# only after a successful sync, before check_persistent_dirt. lucos_claude_config#134.
+#
+# The mixed reset above deliberately never touches working-tree files — that
+# safety property is why #127 is safe. But it also means content that only
+# ever existed on a merged PR branch has no path onto disk: HEAD/index
+# converge to origin/main, the bytes agents actually execute do not.
+#
+# Discriminator: compare each differing path's on-disk content against
+# $old_head (HEAD *before* this run's fetch+reset), not against the new
+# index. `disk == old_head` means nobody has touched this file locally since
+# the last sync, so overwriting it destroys nothing. Anything else —
+# including a path the PR *and* a local edit both touched — is left
+# strictly alone. This is indifferent to how origin/main advanced (a PR
+# merge, a fast-forward, a force-push), needs no commit-graph walk, and
+# fails safe by construction: any state it doesn't recognise, it leaves.
+#
+# Materialisation writes via a temp file in the same directory plus an
+# atomic `mv -f` — never `git checkout -- <path>` in place. `checkout`
+# writes through the existing inode, and this script is itself exactly the
+# kind of file a PR is likely to touch (lucos_claude_config#130 changed it):
+# replacing a running bash script's bytes in place mid-execution corrupts it
+# non-deterministically and can still exit 0. An atomic rename allocates a
+# new inode, so a process already reading the old bytes keeps reading them
+# to completion. The temp-file name matches the `*.tmp.[0-9]*.*` pattern
+# .gitignore already carries for atomic-write scratch files, so a leftover
+# from an interrupted rename is invisible to git status, not new dirt.
+materialize_pr_content() {
+    local old_head="$1"
+    local porcelain
+    porcelain=$(git status --porcelain 2>/dev/null) || return 0
+    [[ -z "$porcelain" ]] && return 0
+
+    local line status path mode tmp disk_hash old_hash
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && continue
+        status="${line:0:2}"
+        path="${line:3}"
+
+        case "$status" in
+        " M"|" D")
+            # Tracked in origin/main (the new HEAD/index). Skip symlinks —
+            # materialising one via cat-file+mv would replace it with a
+            # regular file, which is wrong regardless of the comparison below.
+            mode=$(git ls-tree origin/main -- "$path" 2>/dev/null | awk '{print $1}') || true
+            [[ "$mode" == "120000" ]] && continue
+
+            if [[ "$status" == " M" ]]; then
+                # Present on disk and tracked, but content differs from the
+                # index. Only materialise if disk is byte-identical to the
+                # pre-sync HEAD — i.e. untouched locally since the last
+                # sync. Anything else (a genuine local edit, including one
+                # that also happens to be PR-touched) is left alone.
+                disk_hash=$(git hash-object "$path" 2>/dev/null) || continue
+                old_hash=$(git rev-parse "$old_head:$path" 2>/dev/null) || continue
+                [[ "$disk_hash" == "$old_hash" ]] || continue
+            fi
+            # " D": present in origin/main, absent from disk — no local
+            # content to lose, materialise unconditionally. This is also
+            # the only branch where the parent directory can be genuinely
+            # new (a PR added a file under a directory this checkout never
+            # had) — mkdir -p first or the write below fails with a raw,
+            # unlabelled error that leaks past 2>/dev/null (that redirect
+            # only takes effect once the command execs; failure here is in
+            # setting up the redirection itself) and silently no-ops.
+            mkdir -p "$(dirname "$path")" 2>/dev/null
+
+            tmp="${path}.tmp.$$.$RANDOM"
+            if git cat-file blob "origin/main:$path" > "$tmp" 2>/dev/null; then
+                [[ -n "$mode" ]] && chmod "0${mode: -3}" "$tmp" 2>/dev/null
+                if mv -f "$tmp" "$path" 2>/dev/null; then
+                    echo "$(date -Iseconds) Materialised PR content onto disk: $path"
+                else
+                    echo "$(date -Iseconds) WARNING: could not materialise '$path' (rename failed)." >&2
+                    rm -f "$tmp" 2>/dev/null
+                fi
+            else
+                rm -f "$tmp" 2>/dev/null
+            fi
+            ;;
+        "??")
+            # Not tracked in origin/main. If it WAS present at old_head, a
+            # merged PR deleted it upstream and disk still has the old
+            # content, now untracked. Deletion is the destructive direction
+            # — v1 warns and leaves it, it does not delete (known non-goal,
+            # no observed instance yet). If it wasn't at old_head either,
+            # it's an ordinary new local untracked file, unrelated to any
+            # PR — say nothing.
+            if git cat-file -e "$old_head:$path" 2>/dev/null; then
+                echo "$(date -Iseconds) WARNING: '$path' was removed from origin/main by a merged PR but still exists on disk — not deleted, manual cleanup if intended." >&2
+            fi
+            ;;
+        esac
+    done <<< "$porcelain"
+    return 0
+}
+
 cd "$CLAUDE_DIR"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
@@ -122,8 +230,10 @@ current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
 # why this must be exactly "main" (not detached HEAD) and must stay a plain
 # mixed reset forever.
 if [[ "$current_branch" == "main" ]]; then
+    old_head=$(git rev-parse HEAD 2>/dev/null || echo "")
     if git fetch --quiet origin main 2>/dev/null && git reset --mixed --quiet origin/main 2>/dev/null; then
         echo "$(date -Iseconds) Synced local main to origin/main ($(git rev-parse --short HEAD))."
+        [[ -n "$old_head" ]] && materialize_pr_content "$old_head"
     else
         echo "$(date -Iseconds) WARNING: could not sync local main to origin/main (fetch or reset failed) — leaving HEAD as-is." >&2
     fi
