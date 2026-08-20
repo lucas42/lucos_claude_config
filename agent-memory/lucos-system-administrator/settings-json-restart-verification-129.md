@@ -1,18 +1,14 @@
 ---
 name: settings-json-restart-verification-129
-description: lucos_claude_config#129 item 2 pending check — does settings.json stay byte-identical across a fresh Claude Code session start?
+description: RESOLVED 2026-08-20 — settings.json's mtime/hash are stable across genuine fresh Claude Code process launches; lucos_claude_config#129 item 2 confirmed, no code change needed
 metadata:
   type: project
 ---
 
-`settings.json` is now tracked directly (lucas42's decision, `3f2478d`, lucos_claude_config#127 §7 correction) rather than a canonical/materialise split. Whether that keeps `git status` clean depends on whether Claude Code rewrites the file identically at every session start (a "fixed point") or re-dirties it each time.
+**RESOLVED 2026-08-20, CONFIRMED branch.** `settings.json` stays byte-identical across a real fresh Claude Code session start — no re-dirtying, no sweep extension needed, the dormant security note in #127/#129 about auto-committing `settings.json` never activates.
 
-**Baseline recorded 2026-08-18** (before any session restart since `3f2478d`): `git hash-object settings.json` = `bda9406b0bfe21d103768b14a1070ebbbe47bb6d`, mtime `2026-08-18T20:21:21+01:00` (matches origin/main).
+**Evidence, direct not inferred:** baseline recorded 2026-08-18 — hash `bda9406b…`, mtime `2026-08-18T20:21:21.902717864+01:00`. Checked again 2026-08-20 from inside my own freshly-launched process (`ps -p $$ -o lstart=` → `Wed Aug 19 22:53:48 2026`, ~26.5h after baseline) plus six sibling teammate processes launched in the same window (`ps -eo pid,lstart,cmd | grep claude.exe`): hash and mtime on both `settings.json` and `origin/main`'s copy are still exactly the baseline values, to the nanosecond. A rewrite producing identical bytes would still move the mtime via `write()` — it hasn't, across ≥7 independent launches spanning >24h. So Claude Code either doesn't rewrite the file at session start, or writes it idempotently without touching mtime; either way the observable the ticket cares about (byte-stability across restarts) holds.
 
-**Why unverified:** the test needs a genuine fresh Claude Code session start, which can't be triggered or observed from inside a running session — I looked for a way (spawning a subagent, etc.) and concluded none of them reproduce the actual "new session launch" event the mtime evidence pointed at.
+**Method note for future similar questions:** "was this genuinely fresh-launched" is answerable from inside a session via `ps -p $$ -o lstart=` compared against the harness's own process-start time — no need to spawn anything or wait for an external restart event. This unblocks what the original memory entry called unverifiable from inside a running session.
 
-**How to apply:** whoever next starts a fresh session (new `/team` invocation, VM restart, etc.) should run `git hash-object settings.json` before touching anything and compare to the baseline above. Two branches:
-- Byte-identical → lucos_claude_config#129 item 2 is finished, nothing further.
-- Different → the sweep needs extending to cover `settings.json`, which reopens the dormant security note in #127's assessment (a `Stop` hook + `permissions.defaultMode` going into an auto-committed path needs deliberate review before that ships).
-
-See also [[project_head_drift_fix_127]].
+See also [[project_head_drift_fix_129]] if created, [[project_head_drift_fix_127]].
