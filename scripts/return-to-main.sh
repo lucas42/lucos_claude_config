@@ -183,7 +183,14 @@ materialize_pr_content() {
                 [[ "$disk_hash" == "$old_hash" ]] || continue
             fi
             # " D": present in origin/main, absent from disk — no local
-            # content to lose, materialise unconditionally.
+            # content to lose, materialise unconditionally. This is also
+            # the only branch where the parent directory can be genuinely
+            # new (a PR added a file under a directory this checkout never
+            # had) — mkdir -p first or the write below fails with a raw,
+            # unlabelled error that leaks past 2>/dev/null (that redirect
+            # only takes effect once the command execs; failure here is in
+            # setting up the redirection itself) and silently no-ops.
+            mkdir -p "$(dirname "$path")" 2>/dev/null
 
             tmp="${path}.tmp.$$.$RANDOM"
             if git cat-file blob "origin/main:$path" > "$tmp" 2>/dev/null; then
