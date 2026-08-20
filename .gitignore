@@ -43,8 +43,11 @@
 !scripts/**
 # ...but not log files generated at runtime
 scripts/*.log
-# ...and not return-to-main.sh's persistent-dirt tracking state (lucos_claude_config#129)
-scripts/.return-to-main-dirty-since
+# ...and not return-to-main.sh's local bookkeeping state (lucos_claude_config#129/#131):
+# first-seen timestamps and "already alerted" markers for the stalled-dirt
+# and sync-failure persistence tracks. Glob rather than enumerate so a new
+# tracked condition doesn't need a matching .gitignore edit.
+scripts/.return-to-main-*
 
 # GitHub Actions workflows and other repo config
 !.github/
