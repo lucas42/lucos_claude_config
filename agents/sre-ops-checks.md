@@ -78,7 +78,7 @@ source ~/sandboxes/lucos_agent/.env && KEY=$(grep KEY_LUCOS_LOGANNE ~/sandboxes/
 
 **`since=YYYY-MM-DD` is the only query parameter Loganne's `/events` honours.** `limit`, `offset`, `page`, `before`, `from`, `start`, `days` and `system` are all silently ignored — they return the same fixed ~470-event (~7-day) page regardless of value, which looks like a complete answer. `type=` works. Always print the actual min/max `date` of what you fetched and confirm it spans your intended lookback before drawing conclusions; never infer the window from the parameter you asked for.
 
-Filter the results to events where `source == "lucos_monitoring"`. Look back over the last 24 hours (or since the last ops check run).
+Filter the results to events where `source` is `lucos_monitoring` **or `lucos_agent`**. Look back over the last 24 hours (or since the last ops check run).
 
 #### What to look for
 
@@ -91,6 +91,10 @@ Flappy systems may indicate:
 - A check that fires during a known-acceptable window (e.g. a dependency's deploy) without using the suppression tools provided
 
 **Persistent alerts** — a system with a `monitoringAlert` event and no subsequent `monitoringRecovery`. These may represent an ongoing failure that Check 1 (Monitoring API) should already surface, but the Loganne history provides context on how long the system has been failing.
+
+**`lucos_agent` events — the agent host's working tree.** These report a condition on `~/.claude` itself rather than on a deployed service, so Check 1 will never surface them: the agent host has no configy entry, no domain and no `/_info` endpoint. They are edge-triggered — one event when the condition becomes persistent, one when it clears — so an unrecovered event means the condition is still live now.
+
+Disposition: treat an unrecovered `lucos_agent` event as you would a persistent alert. Identify which paths are dirty and why, and distinguish the two causes the event itself attributes — a forgotten local edit outside the memory sweep's scope (someone must commit it via `commit-claude-main`) versus drift from a failing sync (the sync is the fault; the dirt is a symptom). Report it in your ops-check summary either way. Do not treat "the log already said so" as a disposition — the whole reason these reach Loganne is that nothing reads that log.
 
 #### Do not accept flaps as "expected" or "known pattern"
 
