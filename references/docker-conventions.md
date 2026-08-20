@@ -8,7 +8,7 @@
 
 | Topic | Catalogue entry |
 |---|---|
-| `container_name` values in `docker-compose.yml` | [`container-naming`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#container-naming) |
+| The *pattern* of a `container_name`, where one is set | [`container-naming`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#container-naming) |
 | A `healthcheck:` on every service with a `build:` key | [`docker-healthcheck-on-built-services`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#docker-healthcheck-on-built-services) |
 | Env vars read by code are passed through in compose | [`env-var-passthrough`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#env-var-passthrough), [`standard-env-vars-in-compose`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#standard-env-vars-in-compose) |
 | `ARG`/`ENV VERSION` in the Dockerfile + `${VERSION:-latest}` image tag | [`dockerfile-exposes-version`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#dockerfile-exposes-version) |
@@ -22,6 +22,10 @@ Two things you might expect to be enforced and are **not**, so they live in the 
 ---
 
 The rest of this page is guidance. None of it has an automated check.
+
+## Container naming
+
+`container_name` must be set on every container. Its *pattern* is enforced ([`container-naming`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#container-naming)) and so is not restated here — but that check skips a service with no `container_name` at all, treating the Compose-generated name as out of scope. Setting it explicitly is what makes `docker ps` output correlate with the source repo, and nothing audits it.
 
 ## Image naming (built containers only)
 
