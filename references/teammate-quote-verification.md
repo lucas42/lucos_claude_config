@@ -14,6 +14,14 @@ If the script exits non-zero, the quote is **unverified**. Do not publish it ver
 - Drop the attribution entirely ("an earlier analysis concluded…"), or
 - Flag the discrepancy explicitly before proceeding.
 
+### A NOT VERIFIED result is a claim about your probe, not only about the quote
+
+The match is a **literal substring** over the raw message text, so it is sensitive to characters you never think of as content. Markdown emphasis (`*nouns*`, `**bold**`), backticks, smart vs. straight quotes, en-dashes, and line wrapping are all *in* the stored text — strip or normalise any of them while transcribing and a genuinely verbatim quote returns NOT VERIFIED. Re-typing from memory does the same thing more obviously.
+
+So before treating a negative as evidence, **copy the candidate text by selection from the message block, formatting characters included, and re-probe.** If the full sentence fails, shorten to the longest fragment that still verifies and compare the two: the difference tells you what your transcription changed. Only when a genuinely byte-faithful probe fails is the quote unverified.
+
+This matters most in the direction that feels like diligence: a NOT VERIFIED on a real quote invites you to tell someone they relayed a paraphrase as a quotation. That is an accusation about a colleague's honesty built on your own transcription error, and it is the one conclusion this tool's negatives are least able to support. Deciding not to publish an unverified quote is always safe; deciding *why* it did not verify requires the re-probe first.
+
 ## When this rule fires
 
 | Situation | Rule fires? |
