@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-19
+container_status: 2026-08-22
 resource_checks: 2026-08-17
 syslog_review: 2026-08-17
 software_updates: 2026-08-17
 sandbox_drift: 2026-08-17
-repos_dashboard: 2026-08-19
+repos_dashboard: 2026-08-22
 docker_image_staleness: 2026-07-31
 backup_verification: 2026-07-31
 certificate_expiry: 2026-07-31
@@ -1690,3 +1690,16 @@ All three already auto-tracked by the audit tool (issues #1, #2, #3) — no new 
 **Pending follow-up (lucos_agent#72, disk trend)**: not re-checked this run — tied to the weekly resource check, which wasn't due today. Will re-verify on next resource-check run.
 
 **No new issues raised.**
+
+### 2026-08-22 (checks 1 + 6 due; checks 2–5 weekly last ran 2026-08-17 — not due until ~2026-08-24; checks 7–9 monthly last ran 2026-07-31 — not due until ~2026-08-30)
+
+**Container status**:
+- avalon: clean — no crashed, stopped, or unhealthy containers
+- xwing: clean — no crashed, stopped, or unhealthy containers
+- salvare (via xwing jump host): clean — no crashed, stopped, or unhealthy containers
+
+**Repos dashboard**: 63 repos checked, 1 failing convention: `lucos_worlds_atlas` `in-lucos-configy` — re-verified again (API: size 2, created 2026-07-09, pushed 2026-07-13, unchanged since 2026-07-14). Same deliberate deferral standing since 2026-07-13. No new action.
+
+**Pending follow-up (lucos_agent#72, disk trend)**: not re-checked this run — tied to the weekly resource check, which wasn't due today. Will re-verify on next resource-check run (~2026-08-24).
+
+**Issues raised**: None. **Issues closed**: None. No change from the 2026-08-19 run.
