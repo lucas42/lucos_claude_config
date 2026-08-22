@@ -75,6 +75,7 @@
 - [lucos_creds scoped key permissions + deploy-env-base64 risk](lucos-creds-scoped-key-permissions.md)
 - [Issue-body Open Questions lesson](lesson-issue-body-open-questions.md)
 - [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md) — pending consolidation into shared layer, lucos_claude_config#141 (2026-08-22)
+- [Don't plan to edit another persona's file myself](feedback-cross-persona-instruction-edits.md) — coordinate with the owner instead; on-disk edit ≠ refreshed session context
 - [Relationships with teammates](relationships.md)
 - [GitHub malware-bait comments](risk-github-malware-bait-comments.md) — throwaway-account + unsolicited-ZIP signature; `minimizeComment` GraphQL hides (not deletes) via lucos-security's App; attachment CDN URL needs a human GitHub abuse report.
 - [Verify against real client behaviour, not just spec](lesson-verify-real-client-behavior.md) — approved a "RFC-correct" URL-decode fix (lucos_aithne#296) that broke against BookStack's actual OAuth2 client, which sends raw (non-encoded) Basic Auth credentials; pull the real counterparty's source before approving wire-format fixes. Now also covers runbook container-name claims (lucos_aithne#307) — verify against the real docker-compose.yml, not the plausible name.
