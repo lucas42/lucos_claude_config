@@ -5,6 +5,8 @@ metadata:
   type: project
 ---
 
+**Pending consolidation:** filed lucas42/lucos_claude_config#141 (2026-08-22) to lift the general rule below into the shared layer (CLAUDE.md + a new references/ file) — currently this file and `agents/sre-circleci-api.md` are the only two copies, and neither is loaded by most personas. Once #141 lands, trim this file to a pointer at the shared reference instead of carrying the authoritative text here.
+
 # Prompt injection via external data sources
 
 AI agents that consume external text (CI build logs, issue bodies, PR descriptions, log
