@@ -38,7 +38,7 @@ lucos_photos_api: 2026-07-19
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
-lucos_mail_docs: 2026-08-09
+lucos_mail_docs: 2026-08-22
 lucos_photos_postgres: 2026-07-27
 lucos_photos_redis: 2026-08-17
 lucos_scenes: 2026-08-17
@@ -55,15 +55,15 @@ lucos_root_app: 2026-07-19
 lucos_router: 2026-08-19
 semweb: 2026-08-19
 lucos_time: 2026-08-09
-lucos_aithne: 2026-07-31
+lucos_aithne: 2026-08-22
 lucos_arachne_mcp: 2026-07-19
 lukeblaney_blog: 2026-07-23
-lucos_docker_health_app: 2026-07-18
+lucos_docker_health_app: 2026-08-22
 
 lucos_docker_mirror_web: 2026-07-13
 lucos_docker_mirror_registry: 2026-07-09
-lucos_worlds_web: 2026-07-09
-lucos_worlds_db: 2026-07-31
+lucos_worlds_web: 2026-08-22
+lucos_worlds_db: 2026-08-22
 lucos_docker_mirror_info: 2026-07-13
 lucos_firewall: 2026-08-19
 
@@ -180,3 +180,12 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-19 ⚠️**The AGENT copy of `info-endpoint-spec.md` (`~/.claude/references/`) omits `failThreshold` entirely; the CANONICAL copy (`lucos/docs/`) documents it fully.** Live on ≥4 systems (metadata_manager 3, media_manager 3/2, backups 5). Divergence runs the OPPOSITE way to lucas42/lucos#283's three listed items — commented there as a 4th instance + an argument for link-not-duplicate. **Habit: when hunting a monitoring mechanism, read the CANONICAL spec in `lucos/docs/`, not my references copy.**
 - 2026-08-19 **`sasl_username=monitoring@l42.eu` auth failures in lucos_mail_smtp were OUR OWN xwing, not an attack.** `152.37.104.10` = `xwing.s.l42.eu`; a container (`helo=<74dca13a09df>`) retried ~1/min sending to `new.email.test@l42.eu` with creds that don't authenticate → 36 SASL failures + `554 Relay access denied`, 08-16→08-18, now stopped (0 today). External spray against those usernames is `213.176.26.0/24` hitting **`@s.l42.eu`** (the MX hostname's domain, not `l42.eu`) — generic enumeration, 93 distinct IPs total. Commented on lucas42/lucos_mail#76 so nobody cites the log as evidence of exploitation. ⚠️**I nearly published the opposite** — always resolve the client IP before calling a failed-auth pattern an attack ([[feedback_check_user_agent_first]]).
 - 2026-08-19 xwing→avalon:25 shows ~105/day `connect` → `lost connection after CONNECT` → `commands=0/0`. That is a **port-reachability probe**, not a mailer. Don't chase it.
+- 2026-08-22 Check 1: 55/55 systems, **213/213 individual checks** healthy, 0 unknown (per-check derivation reconciles with `summary`).
+- 2026-08-22 ⚠️**`failThreshold` counts SOURCE UPDATES, not failing polls — filed lucas42/lucos_monitoring#303.** `applyFailThreshold/2` (monitoring_state_server.erl L386) increments `consecutiveFailsCount` for every check with `ok:false` in the MERGED map on EVERY `updateSystem` cast; `mergeSourceChecks/1` carries non-reporting sources' last payload verbatim, so one `info` failure is re-counted when `circleci`/`ports`/`scheduled_jobs` next reports. ⇒ `failThreshold: 2` fires on ONE bad reading. **Exact precedent: #155 fixed this for `unknown_count` via `CountableKeys` (L98); the FailsGate never got the guard.** Note `CountableKeys` is narrowed to `ok=unknown` keys, so the fix needs a SECOND, wider set (`maps:keys(SourceChecks)`).
+- 2026-08-22 **Proof pattern for #303 (reuse it):** seinn alerted 00:32:02 but monitoring polls `/_info` at `:39` — so the alert landed BETWEEN polls, and seinn's container logged exactly ONE `probe failed` (819ms, in-band `AbortSignal.timeout(800)` to ceol). Bonus free control: the router logs the failing `/_info` as **367 bytes** and the healthy one as **315** (the extra `debug` field) — response size alone distinguishes them.
+- 2026-08-22 **`lucos_backups` looks like a #303 counter-example but ISN'T — it's poll phase.** Its `/_info` blacks out ~20s hourly at `:07:12`-`:07:24` (lucas42/lucos_backups#374) with `fetch-info` `failThreshold: 2`, yet **0 fetch-info alerts in 28d**. Reason: monitoring polls backups at `:40`/`:47`; the torn-down requests are `lucos_root`'s at `:07:13`/`:07:20`. Phase coincidence between two independent 60s loops, not a guard. ⚠️All 4 fetchers are `timer:sleep(timer:seconds(60))` started at boot ⇒ per-system phase offsets are arbitrary and drift.
+- 2026-08-22 ⚠️**I sampled 09:07 for the backups blackout and got clean 200s — 09:07 was the ONE hour that day with no blackout** (11 of 24 hours affected). Nearly published "not reproducible". **Habit: confirm the specific instance is bad from the app's own log BEFORE reading the router log for it.** Same family as the known-positive-control rule.
+- 2026-08-22 Check 2: only **4 monitoring events since the 08-19 run** (2 flaps, both cross-service probes that ALREADY declare `dependsOn` + `failThreshold` — i.e. they fired THROUGH both tools, which is what led to #303). metadata_manager 07:19:43 on 08-21 came out of the `pending_verification` branch 49s after `lucos_media_metadata_api`'s window closed; deliberately hedged in #303 rather than asserted, since I did not count its failing readings. **0 `lucos_agent` events in 7d** (working tree clean).
+- 2026-08-22 **`lucos_backups` prune-backups race recurred 08-20 04:49Z on `aurora.lan`** (lucas42/lucos_backups#365, filed 46d earlier on xwing ⇒ NOT host-specific). The files `find` can't stat are the `2026-08-13` tarballs **this same run just deleted** — the job races itself, so a retry would re-enter the race. **Did not alert**: the check needs "last 2 runs errored", so an isolated failure is absorbed ⇒ impact is a silently-skipped prune cycle, not a red dashboard.
+- 2026-08-22 Check 4: 5 containers (mail_docs 644,686 lines/**0**; worlds_db 51/0 — only benign MariaDB `Aborted connection … unauthenticated` healthcheck probes; aithne 502/0; docker_health_app 17,942/0; worlds_web 125/0). ⚠️**All five clean, so I ran the control** — `lucos_photos_worker` returned 0 too (restarted 08-21, errors were 08-17) and was NOT a valid positive; the estate sweep since 08-19 was, returning 16 containers with hits. Deferred ~14 containers whose `last_reviewed` is older (07-09 → 07-15) because the 08-21 deploy burst restarted them — no log history over the review gap. **0 overdue @60d** (oldest last_reviewed = worlds_web 07-09 = 44d, now reviewed).
+- 2026-08-22 mosquitto 7,257 error lines = internet scanners on the MQTT TLS port (4,095 `unexpected eof while reading`, 3,089 `Protocol error`, 148 `wrong version number`). Benign, consistent with baseline. Don't chase.
