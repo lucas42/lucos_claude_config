@@ -110,6 +110,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Don't infer a FIX's mechanism from the BUG's](feedback_dont_infer_fix_mechanism_from_bug_mechanism.md) — read the diff before claiming coverage limits.
 - [flat-or-shrink targets DUPLICATE rules, not wrong ones](feedback_consolidation_rule_scope.md) — a misleading rule may GROW.
 - [Diagnose through to root cause when next step is more diagnostics](feedback_diagnose_through_to_root_cause.md) — park only for genuine developer-side work.
+- [Optimistic cache of a REMOTE process's state](pattern_optimistic_cache_of_remote_process_state.md) — "wrong at start, fixed by adjusting"; mplayer drops slave cmds for ~2s after loadfile.
 - [Check user-agent first when hunting a misbehaving HTTP client](feedback_check_user_agent_first.md) — read receiver access-log UA before…
 - [Check file reachability from entry point before "deployed code misbehaves"](feedback_check_reachability_first.md) — bundlers drop unreachable code.
 - [Narrow the event window before counting categories](feedback_narrow_event_window_before_categorising.md) — filter to burst [start,end] first.
