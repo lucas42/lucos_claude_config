@@ -93,7 +93,7 @@
 - **lucos_claude_config#127** (HEAD drift fix): COMPLETE 2026-08-18, PR #128 merged, verified live (721 behind→0). `project_head_drift_fix_127.md`.
 - **lucos_claude_config#129**: RESOLVED 2026-08-20 — all 4 items done (1/3 via #130; item 2 confirmed stable via `ps -p $$ -o lstart=` across ≥7 fresh launches). `settings-json-restart-verification-129.md`.
 - **lucos_claude_config#131** (persistent-dirt → Loganne): SHIPPED 2026-08-20, PR #136. `"${arr[*]}"` multi-char-`IFS` join gotcha; distinct type names vs `monitoringAlert` to avoid Check 3 pairing. `lucos-claude-config-131-loganne-events.md`.
-- **lucos_claude_config#138** (open, Low): drift-attribution cross-ref can be premature — two fix directions, undecided. `lucos-claude-config-138-drift-attribution-timing.md`.
+- **lucos_claude_config#138**: RESOLVED 2026-08-23, PR #146 — gate `syncFailurePersisted` wording on its own alerted-marker file, not the shared window. Reusable pattern noted. `lucos-claude-config-138-drift-attribution-timing.md`.
 - **PR merged on a stale commit despite a later push landing on the branch** — `merged:true` isn't proof your push's content shipped; verify review `commit_id`/`merge_commit_sha` match what you pushed. `pr-merged-stale-commit-despite-later-push.md`.
 - **Rehearsal validates intent, not soundness** — a passing disposable-repo test proves the code does what you built it to, not that the design was right; ask "would this look different if the design were wrong?" `feedback_rehearsal_validates_intent_not_soundness.md`.
 - **PR merges reaching `~/.claude`'s working tree**: RESOLVED 2026-08-20, `return-to-main.sh` now self-materialises (lucos_claude_config#134/#135). `pr-merge-never-reaches-working-tree.md`.
