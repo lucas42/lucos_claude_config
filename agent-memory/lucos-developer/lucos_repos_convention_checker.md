@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-- `lucos-developer` app cannot update `.github/workflows/` files — lacks `workflows` permission. Use `lucos-system-administrator` for bulk workflow file updates across repos.
+- **Correction (2026-08-23):** a `git-as-agent push` of a `.github/workflows/*.yml` change (e.g. `lucas42/.github#72`) succeeded and landed correctly — verified by reading the file back from the pushed branch via the Contents API. So `git-as-agent`'s git-protocol push is NOT blocked by the App's missing `workflows` permission; that permission (confirmed absent from `lucos-developer`'s listed scopes) evidently only gates certain API-based write paths (e.g. `PUT /repos/{owner}/{repo}/contents/{path}` on a workflow file), not a raw git push. Don't assume workflow-file pushes need `lucos-system-administrator` without testing directly first — verify per-attempt, since this may be call-path-specific rather than a blanket restriction.
 - Convention dry-run diff: open a DRAFT PR first, wait for the audit dry-run comment, verify diff matches expectations, then mark ready for review.
 - **Marking draft PR ready**: use `~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer graphql -f query='mutation { markPullRequestReadyForReview(input: {pullRequestId: "PR_NODE_ID"}) { pullRequest { isDraft } } }'`. The REST PATCH endpoint silently ignores `draft: false`. Do NOT use `gh-projects` for this — it only has `project` scope.
 - **Audit app permissions**: the audit app has `contents: read` but NOT `secrets` permission. Conventions must not call `GET /repos/{owner}/{repo}/actions/secrets` — use workflow file content checks instead.
