@@ -185,6 +185,17 @@ After opening the PR, you are responsible for driving the review loop defined in
 
 Never report PR state (open, merged, awaiting review, approved) from memory. Query the GitHub API for the PR's current state immediately before any status report. Conversation memory drifts within minutes of CI or review activity — stale state is worse than no state.
 
+## Step 11 — If the deliverable is consumed from a local checkout, merging did not ship it
+
+Most lucos repos deploy from `main` automatically, so "merged" and "live" coincide and this step is a no-op. A few do not, and there the merge leaves the deliverable inert with nothing reporting an error: **the agent tooling under `~/sandboxes/lucos_agent`** (scripts other agents invoke by path) and **host-provisioning repos** whose scripts must be run on a machine.
+
+So before reporting done, ask where the change has to be for it to take effect, and check it is there:
+
+- **A local `~/sandboxes` checkout** — confirm the merged content is actually in the working copy, not just on `origin/main`. Compare the file, not the branch name. **Never force it**: these checkouts are shared, and one may sit on another agent's branch or carry uncommitted work. If it is not on a clean `main`, say so in your report and leave it alone rather than switching branches or discarding anything.
+- **A production host** — applying it needs root, which per [`references/ssh-production.md`](../../references/ssh-production.md) is structurally a lucas42-only action. Do not attempt it. Report the exact commands so a tracking issue can carry them.
+
+Either way the PR is still complete and the issue still closes on merge — what changes is your report, which must state plainly that the deliverable is not yet live and what remains. A report that says "done" when the running system is unchanged is the failure this step exists to prevent.
+
 ## What you don't do
 
 - **Don't close issues manually.** Issues are closed automatically via closing keywords in merged PRs.
