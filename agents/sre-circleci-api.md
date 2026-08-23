@@ -46,6 +46,14 @@ curl -s -H "Circle-Token: $CIRCLECI_API_TOKEN" \
   "https://circleci.com/api/v2/project/gh/lucas42/<repo>/pipeline?per-page=10"
 ```
 
+### ⚠️ Do NOT use the insights endpoint to answer "how often does this fail?"
+
+`/insights/gh/lucas42/<repo>/workflows/<wf>/jobs/<job>` looks like the right tool for failure-rate questions and is not. **It reports the default branch only, and passing `all-branches=true` changes its output not at all** — same item count, same failures, no error. Failures on PR/Dependabot branches are simply absent, so its silence reads as "this has never failed" when the truth is "this has never failed *on main*".
+
+That is a false-negative generator for exactly the question flakes get asked: on 2026-08-23 it reported 58 success / 1 failed over 90 days for `lucos_repos`' `test` job, omitting job 2708 — a real red that had blocked a Dependabot PR for 38h48m five days earlier.
+
+To answer failure-rate questions, enumerate pipelines per branch (below) and read each job's `status`, or check the specific job directly. If you do quote insights, say "on main" explicitly. And treat *agreement between two queries that should differ* as a symptom, not as confirmation — identical output with and without `all-branches=true` was the tell.
+
 ### Get workflows for a pipeline
 
 ```bash
