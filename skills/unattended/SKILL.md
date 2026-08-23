@@ -46,7 +46,7 @@ Evaluate the gates in tier order — Tier 1 is free, Tier 2 is one call per dist
 
 | # | Gate | Hold when |
 |---|---|---|
-| 6 | `~/sandboxes/lucos_agent/check-unsupervised {repo}` — **exit 0 required** | Exit 1 (supervised: lucas42's approval is what merges the PR) or exit 2 (repo not in configy — **fail closed**, a repo the registry doesn't know cannot be shown to be unsupervised). Quote the result; never infer supervision from the repo name, memory, or an adjacent fact. |
+| 6 | `~/sandboxes/lucos_agent/check-unsupervised {repo}` — **exit 0 required for every repo the work lands in** | Exit 1 (supervised: lucas42's approval is what merges the PR) or exit 2 (repo not in configy — **fail closed**, a repo the registry doesn't know cannot be shown to be unsupervised). Quote the result; never infer supervision from the repo name, memory, or an adjacent fact. **Check the repos the PRs will open against, not the repo the ticket lives on** — they routinely differ. A ticket on `lucos` (unsupervised) whose remaining work is a compose change across six *other* services is gated by those six, most of which are supervised. The tell is a ticket that names target repos in its scope, or whose deliverable is a change to other systems rather than to its own. |
 
 Supervision is per-repo and varies within a single sweep. Roughly two-thirds of the estate is supervised, so this gate will hold the majority of the column — that is the control working, not a fault.
 
