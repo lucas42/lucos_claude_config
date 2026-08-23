@@ -46,6 +46,9 @@ Always manually review generated migration files before committing. Autogenerate
 ## lucos_repos Convention Checker
 - [Draft-PR dry-run workflow, marking ready via GraphQL, audit app permissions](lucos_repos_convention_checker.md)
 
+## lucos_aithne
+- [Always-review by lucos-security, static-file pattern, scopes.yaml fetch, min env vars](lucos_aithne.md)
+
 ## lucos_loganne
 - Node/Express app. Routes in `src/routes/`. Tests in `__tests__/routes.js` and `__tests__/auth.js` (Jest, `npm test`). `getEvents(since=null)` defaults to 7-day window. `src/auth.js` has the aithne JWKS serve-stale wrapper (lucos_loganne#555 / lucos_media_seinn#543 sibling).
 
