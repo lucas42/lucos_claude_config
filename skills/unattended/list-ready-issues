@@ -19,6 +19,14 @@
 # get-next-implementation-issue, which silently skips them: a sweep needs to
 # report the mis-triage, not hide it.
 #
+# PAGINATES. The GraphQL items connection caps at 100 per page and the board
+# passed 100 items some time before 2026-08-23 (147 that day). A single
+# first:100 page silently drops everything past position 100 — and because
+# addProjectV2ItemById appends to the BOTTOM, the dropped items are exactly the
+# newly-filed ones. Nothing errors; the result just quietly answers a narrower
+# question than the one asked. Every page is fetched and the total is asserted
+# against the connection's own totalCount before any output is produced.
+#
 # Authentication: uses gh-projects (GITHUB_PROJECTS_PAT) — GitHub Apps cannot
 # access v2 user projects.
 
@@ -28,21 +36,33 @@ FORMAT="table"
 if [ $# -gt 0 ]; then
     case "$1" in
         --json) FORMAT="json" ;;
-        --help|-h) sed -n '2,25p' "$0"; exit 0 ;;
+        --help|-h) sed -n '2,30p' "$0"; exit 0 ;;
         *) echo "Usage: list-ready-issues [--json]" >&2; exit 2 ;;
     esac
 fi
 
 SCRIPT_DIR="$HOME/sandboxes/lucos_agent"
 
-TMPFILE=$(mktemp)
-trap 'rm -f "$TMPFILE"' EXIT
+TMPDIR_PAGES=$(mktemp -d)
+trap 'rm -rf "$TMPDIR_PAGES"' EXIT
 
-"$SCRIPT_DIR/gh-projects" graphql -f query='
+CURSOR=""
+PAGE=0
+while :; do
+    PAGE=$((PAGE + 1))
+    if [ -z "$CURSOR" ]; then
+        AFTER="null"
+    else
+        AFTER="\"$CURSOR\""
+    fi
+
+    "$SCRIPT_DIR/gh-projects" graphql -f query="
 {
-  node(id: "PVT_kwHOAAaLL84BRh5d") {
+  node(id: \"PVT_kwHOAAaLL84BRh5d\") {
     ... on ProjectV2 {
-      items(first: 100, orderBy: {field: POSITION, direction: ASC}) {
+      items(first: 100, after: $AFTER, orderBy: {field: POSITION, direction: ASC}) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
         nodes {
           content {
             ... on Issue {
@@ -65,15 +85,44 @@ trap 'rm -f "$TMPFILE"' EXIT
       }
     }
   }
-}' > "$TMPFILE"
+}" > "$TMPDIR_PAGES/page-$(printf '%03d' "$PAGE").json"
 
-_TMPFILE="$TMPFILE" _FORMAT="$FORMAT" python3 << 'PYEOF'
-import json, os, re, sys
+    HAS_NEXT=$(python3 -c "
+import json,sys
+d=json.load(open(sys.argv[1]))['data']['node']['items']['pageInfo']
+print('yes' if d['hasNextPage'] else 'no')
+print(d['endCursor'] or '')
+" "$TMPDIR_PAGES/page-$(printf '%03d' "$PAGE").json")
 
-with open(os.environ["_TMPFILE"]) as f:
-    data = json.load(f)
+    CURSOR=$(printf '%s' "$HAS_NEXT" | sed -n '2p')
+    if [ "$(printf '%s' "$HAS_NEXT" | sed -n '1p')" != "yes" ]; then
+        break
+    fi
+    if [ "$PAGE" -ge 50 ]; then
+        echo "ERROR: pagination exceeded 50 pages — aborting rather than truncating" >&2
+        exit 2
+    fi
+done
 
-nodes = data["data"]["node"]["items"]["nodes"]
+_PAGEDIR="$TMPDIR_PAGES" _FORMAT="$FORMAT" python3 << 'PYEOF'
+import glob, json, os, re, sys
+
+nodes = []
+total_count = None
+for path in sorted(glob.glob(os.path.join(os.environ["_PAGEDIR"], "page-*.json"))):
+    with open(path) as f:
+        conn = json.load(f)["data"]["node"]["items"]
+    if total_count is None:
+        total_count = conn["totalCount"]
+    nodes.extend(conn["nodes"])
+
+# Assert we actually got everything. A short read here is the exact failure this
+# script exists to prevent, so fail loudly rather than emit a partial list.
+if total_count is not None and len(nodes) != total_count:
+    sys.exit(
+        f"ERROR: fetched {len(nodes)} board items but totalCount is {total_count} — "
+        "refusing to emit a truncated list"
+    )
 
 
 def fields_of(node):
@@ -120,6 +169,7 @@ else:
     if not items:
         print("No issues in the Ready column.")
         sys.exit(0)
+    print(f"# {len(items)} Ready of {total_count} board items", file=sys.stderr)
     for i in items:
         print(f"{i['position']:>3}. {i['repo']}#{i['number']}  "
               f"[owner: {i['owner'] or 'UNSET'}] [priority: {i['priority'] or 'unset'}]  {i['title']}")
