@@ -30,6 +30,8 @@ Board position order is authoritative — the same order `/next` walks. Work the
 
 Evaluate the gates in tier order — Tier 1 is free, Tier 2 is one call per distinct repo (cache the result), Tier 3 costs a body-and-comments fetch, so let the cheap tiers shrink the set first. **A single failed gate is a hold**; record which one, and move to the next candidate.
 
+**Tier 4 is applied before Tier 3, as a slot assignment.** After Tier 1–2, walk the survivors in board order and provisionally claim one slot per teammate and one per repo (Tier 4); only the slot-holders get a Tier 3 fetch. When a slot-holder fails Tier 3, it releases its slot and the next survivor in board order claims it — re-run Tier 3 on the new claimant. This avoids paying three API calls each for items that cannot be dispatched this wave regardless. **The consequence must be reported honestly: an item held at Tier 4 has *not* been content-checked, so its status next wave is unknown, not "eligible".** Never carry a Tier-4 hold forward as a verdict.
+
 ### Tier 1 — from the board scan (no extra calls)
 
 | # | Gate | Hold when |
