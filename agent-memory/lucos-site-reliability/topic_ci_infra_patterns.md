@@ -65,6 +65,12 @@ Consolidated from MEMORY.md 2026-07-03 (index compaction). Verify open/closed ti
 - CI monthly check: `curl -s "https://circleci.com/api/v1.1/project/github/lucas42/{repo}?limit=3&filter=completed"` (no auth). v2 rerun: `POST https://circleci.com/api/v2/workflow/{id}/rerun -d '{"from_failed":true}'`.
 - _info spec: `~/.claude/references/info-endpoint-spec.md` + lucos/docs (lucos#35 closed).
 
+## CircleCI API gotchas
+- ⚠️ **Insights endpoint is main-only and `all-branches=true` is a no-op.** `/insights/.../workflows/build-deploy/jobs/test` silently omits PR/Dependabot-branch failures; identical output with and without `all-branches=true` is the tell, not corroboration. Burned me 2026-08-23 (published "not failed in CI once in 90 days"; it had red'd 5 days earlier and blocked a PR 38h48m). Rule now in `agents/sre-circleci-api.md`.
+- **CircleCI caches are shared across branches within a project.** A `save_cache` on a feature branch restores on `main` — verified 2026-08-23, lucos_repos job 2723 (branch) → 2728 (main). So a PR branch warms main's cache; don't assume the first post-merge pipeline is a cold miss.
+- `save_cache` with an existing key is a genuine no-op ("Skipping cache generation, cache already exists"), so no conditional guard is needed around it.
+- `monitoring` status `pending_verification` (not `unknown`/`failing`) is the normal post-deploy state and counts as `unknown` in `summary`. All child checks healthy + `pending_verification` = settling, not broken.
+
 ## Monitoring /api/status structure
 `systems` = dict keyed by URL/name (not list); `checks` per system = dict keyed by check name. Failure = `c.get('ok') == False` (missing `ok` = passing):
 ```python
