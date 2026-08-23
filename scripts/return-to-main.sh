@@ -272,8 +272,16 @@ check_persistent_dirt() {
             local attribution
             if [[ "$sync_ok" == "true" ]]; then
                 attribution="forgotten local edit — a file outside commit-agent-memory.sh's scope, edited and never committed via commit-claude-main"
-            else
+            elif [[ -f "$SYNC_FAIL_ALERTED_FILE" ]]; then
+                # track_sync_failure runs its own independent clock off the same
+                # DIRTY_QUIESCENCE_SECONDS window; only point at its event name
+                # once that event has actually fired (lucas42/lucos_claude_config#138)
+                # — otherwise this reference can be premature, since a sync
+                # failure only a few seconds old might self-heal before its own
+                # threshold and the pointed-to event may never happen.
                 attribution="drift — the sync to origin/main has itself been failing (see syncFailurePersisted)"
+            else
+                attribution="drift — the sync to origin/main has itself been failing"
             fi
             emit_loganne_event "persistentDirtDetected" \
                 "~/.claude working tree: ${#stalled_paths[@]} path(s) stalled >$((DIRTY_QUIESCENCE_SECONDS/60))m (${attribution}): $capped"
