@@ -42,6 +42,7 @@
 - **`lucos-agent` lacks `adm`/`systemd-journal` group on avalon/xwing/salvare** — `journalctl` returns nothing for any unit; can't distinguish "never ran" from "no read access." Don't assert service history from journalctl on these hosts.
 - [lucos_firewall is inbound-only; egress is deliberately unfiltered (v4 and v6)](risk-lucos-firewall-inbound-only-egress-unfiltered.md) — ADR-0007 scopes `OUTPUT ACCEPT` out; a container gaining a new address family for egress (e.g. lucos#278) is not a posture change since no egress path was ever filtered. Verified 2026-08-08.
 
+- **Prompt injection via external text** (CI logs, issue/PR bodies) + **secrets leaking through CircleCI log masking**. Detail: `risk-prompt-injection-and-ci-logs.md`.
 - **OS command injection via `os:cmd`** with unsanitised input — found in `lucos_monitoring/src/fetcher.erl` `checkTlsExpiry/1`; low exploitability today but fragile pattern to check for elsewhere.
 - **Unauthenticated state-mutation endpoints** on internal services — `lucos_monitoring` `/suppress/*` (PUT/DELETE/POST) has no auth; network isolation is not a substitute for endpoint auth.
 - **XSS via unescaped external data in manual HTML rendering** — `lucos_monitoring/src/server.erl` interpolates `techDetail`/`debug` unescaped; check any lucos service doing manual string-concat HTML.
@@ -73,7 +74,7 @@
 - [aithne OIDC url-redirect false positive](lucos-aithne-oidc-url-redirect-fp.md)
 - [lucos_creds scoped key permissions + deploy-env-base64 risk](lucos-creds-scoped-key-permissions.md)
 - [Issue-body Open Questions lesson](lesson-issue-body-open-questions.md)
-- [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md) — general rule lifted to `references/untrusted-external-content.md` (lucos_claude_config#141); this file now holds specific flagged instances only
+- [Prompt injection & CI log secrets](risk-prompt-injection-and-ci-logs.md) — pending consolidation into shared layer, lucos_claude_config#141 (2026-08-22)
 - [Don't plan to edit another persona's file myself](feedback-cross-persona-instruction-edits.md) — coordinate with the owner instead; on-disk edit ≠ refreshed session context
 - [Relationships with teammates](relationships.md)
 - [GitHub malware-bait comments](risk-github-malware-bait-comments.md) — throwaway-account + unsolicited-ZIP signature; `minimizeComment` GraphQL hides (not deletes) via lucos-security's App; attachment CDN URL needs a human GitHub abuse report.
