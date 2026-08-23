@@ -36,7 +36,7 @@ Evaluate the gates in tier order — Tier 1 is free, Tier 2 is one call per dist
 |---|---|---|
 | 1 | **Status = Ready** | Anything else. Awaiting Decision is lucas42's queue by definition; Ideation, Needs Analysis and Blocked are not dispatchable at all. |
 | 2 | **Owner is set** | Owner empty — the item is untriaged. Report the gap. |
-| 3 | **Owner ≠ lucas42** | Owner = lucas42 — the work *is* his manual action; there is no teammate to dispatch. |
+| 3 | **Owner is a dispatchable teammate** | Owner = `lucas42` (the work *is* his manual action) or `lucos-issue-manager` (that is the coordinator — its work is done directly, not dispatched). Neither is a SendMessage target, and neither is a missing teammate: do **not** reach for `/team add` for `lucos-issue-manager`. Report coordinator-owned items so lucas42 can ask for them directly. |
 | 4 | **Owner ≠ lucos-code-reviewer** | `lucos-code-reviewer` has no `implement issue` trigger and is never an implementation owner. Report the mis-triage. |
 | 5 | **Owner's teammate is live and free** | Pane absent, or the teammate already holds an in-flight issue from this run (see Tier 4). |
 
