@@ -105,6 +105,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Access-log first for webhook-error-rate bursts](pattern_access_log_first_for_webhook_bursts.md) — pull router nginx log before theorising.
 - [Router gap analysis: stalled vs slow vs host](pattern_router_log_gap_analysis.md) — ⚠️avalon's router only logs ITS vhosts; run a positive control.
 - Causation discipline: [coincidence is not the default framing](feedback_avoid_coincidence_default.md) · [correlation is not "confirmed"](feedback_correlation_is_not_confirmed.md) — add distinguishing instrumentation · [reproduce before publishing a root cause](feedback_verify_root_cause_by_reproduction.md).
+- [⏳ Establish a source's SCOPE before concluding "it never happened"](feedback_establish_source_scope_before_never_happened.md) — scoped sources answer confidently, not with an error. Has a pending action.
 - [Verify claims; write falsifiably](feedback_verify_check_claim_against_underlying_store.md) — read the artefact, not its name; scrutinise agreement.
 - [A working-state file is NOT a history](feedback_verify_state_file_semantics_before_reading_history.md) — checkpoints self-delete on success; use schedule-tracker.
 - [Don't infer a FIX's mechanism from the BUG's](feedback_dont_infer_fix_mechanism_from_bug_mechanism.md) — read the diff before claiming coverage limits.
