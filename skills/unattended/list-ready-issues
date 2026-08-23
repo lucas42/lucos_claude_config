@@ -1,0 +1,127 @@
+#!/bin/bash
+# Lists EVERY issue in the "Ready" column of the "lucOS Issue Prioritisation"
+# project board, in board position order (top of the column first).
+#
+# Companion to get-next-implementation-issue, which returns only the first one.
+# Used by the /unattended skill to enumerate dispatch candidates.
+#
+# Usage: list-ready-issues [--json]
+#
+#   (default)  human-readable table, one line per item, board order
+#   --json     JSON array, board order, one object per item
+#
+# Fields per item: position (1-based board order within Ready), repo, number,
+# title, url, owner, priority.
+#
+# Items with Status = Ready but NO owner are still listed, with owner "" —
+# the caller must treat an unowned item as not dispatchable (untriaged) rather
+# than guessing an owner. This is deliberately different from
+# get-next-implementation-issue, which silently skips them: a sweep needs to
+# report the mis-triage, not hide it.
+#
+# Authentication: uses gh-projects (GITHUB_PROJECTS_PAT) — GitHub Apps cannot
+# access v2 user projects.
+
+set -euo pipefail
+
+FORMAT="table"
+if [ $# -gt 0 ]; then
+    case "$1" in
+        --json) FORMAT="json" ;;
+        --help|-h) sed -n '2,25p' "$0"; exit 0 ;;
+        *) echo "Usage: list-ready-issues [--json]" >&2; exit 2 ;;
+    esac
+fi
+
+SCRIPT_DIR="$HOME/sandboxes/lucos_agent"
+
+TMPFILE=$(mktemp)
+trap 'rm -f "$TMPFILE"' EXIT
+
+"$SCRIPT_DIR/gh-projects" graphql -f query='
+{
+  node(id: "PVT_kwHOAAaLL84BRh5d") {
+    ... on ProjectV2 {
+      items(first: 100, orderBy: {field: POSITION, direction: ASC}) {
+        nodes {
+          content {
+            ... on Issue {
+              number
+              title
+              url
+              state
+              labels(first: 20) { nodes { name } }
+            }
+          }
+          fieldValues(first: 20) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field { ... on ProjectV2SingleSelectField { name } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}' > "$TMPFILE"
+
+_TMPFILE="$TMPFILE" _FORMAT="$FORMAT" python3 << 'PYEOF'
+import json, os, re, sys
+
+with open(os.environ["_TMPFILE"]) as f:
+    data = json.load(f)
+
+nodes = data["data"]["node"]["items"]["nodes"]
+
+
+def fields_of(node):
+    out = {}
+    for fv in node.get("fieldValues", {}).get("nodes", []):
+        if fv and "field" in fv and "name" in fv:
+            out[fv["field"]["name"]] = fv["name"]
+    return out
+
+
+items = []
+for node in nodes:
+    content = node.get("content")
+    if not content or "url" not in content:
+        continue  # draft issues / PRs
+    fields = fields_of(node)
+    if fields.get("Status") != "Ready":
+        continue
+    if content.get("state") == "CLOSED":
+        continue
+
+    owner = fields.get("Owner", "")
+    if not owner:
+        labels = [l["name"] for l in content.get("labels", {}).get("nodes", [])]
+        owner_labels = [l for l in labels if l.startswith("owner:")]
+        if owner_labels:
+            owner = owner_labels[0].removeprefix("owner:")
+
+    m = re.match(r"https://github\.com/([^/]+)/([^/]+)/issues/(\d+)", content["url"])
+    items.append({
+        "position": len(items) + 1,
+        "repo":     m.group(2) if m else "",
+        "number":   content["number"],
+        "title":    content["title"],
+        "url":      content["url"],
+        "owner":    owner,
+        "priority": fields.get("Priority", ""),
+        "labels":   [l["name"] for l in content.get("labels", {}).get("nodes", [])],
+    })
+
+if os.environ["_FORMAT"] == "json":
+    print(json.dumps(items, indent=2))
+else:
+    if not items:
+        print("No issues in the Ready column.")
+        sys.exit(0)
+    for i in items:
+        print(f"{i['position']:>3}. {i['repo']}#{i['number']}  "
+              f"[owner: {i['owner'] or 'UNSET'}] [priority: {i['priority'] or 'unset'}]  {i['title']}")
+        print(f"     {i['url']}")
+PYEOF
