@@ -83,6 +83,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Docker Healthy ≠ reachability — recurring estate pattern](reference_docker_healthy_not_reachability.md) — incl. dependency-only `/_info` can't report self-failure
 - [/_info observability inversion](reference_info_endpoint_observability_inversion.md) — cost scaling with own workload; 4 instances; lucos#288; unstaggered poller herds; monitoring self-polls
 - [Base-image bump incident class (lucos#273)](reference_base_image_bump_incident_class.md) — CI tests an artifact we don't ship; tests-in-image is coverage-dependent
+- [pipenv hash skew: `sync` vs `--deploy`](reference_pipenv_hash_skew_sync_vs_deploy.md) — 2026.4.0 canonicalises names; sync keeps artifact-hash verification, loses only freshness
 - [Frozen-install build integrity](reference_frozen_install_build_integrity.md) — pipenv silently re-locks; `--deploy` not a drop-in; full estate sweep by package manager
 - [Reconcile empty-source guard](reference_reconcile_empty_source_guard.md)
 - [auth_scopes vocabulary design](reference_auth_scopes_vocabulary.md)
