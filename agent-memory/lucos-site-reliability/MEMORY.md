@@ -81,6 +81,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [locations /map 500, /_info green = oauth2_proxy crash-loop](pattern_locations_oauth2proxy_sidecar_crashloop.md) — fix is lucas42-only.
 
 ## CI / build / deploy
+- [Stuck-PR taxonomy: 4 mechanisms, only 2 are red CI](pattern_stuck_pr_taxonomy_and_rate.md) — p98 merge latency 19min; 48h threshold catches 2 of 7.
 - [pipenv hash algorithm changed in 2026.4.0 → Dependabot locks fail `--deploy`](pattern_pipenv_hash_algorithm_skew.md) — looks like drift, ISN'T; blocks lucos_repos#488.
 - [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
 - [Auto-merged base-image bump breaks at runtime not build](pattern_baseimage_bump_runtime_break.md) — ⚠️4x; can lie LATENT 11d; `rc` safer than `a`/`b`; rerun≠rollback. lucos#273.
