@@ -201,7 +201,7 @@ Checks 1 and 2 run every time. Checks 3 and 4 run monthly.
 
 ## Completion Manifest
 
-After completing your ops checks run, output a table like this:
+After completing your ops checks run, **send** (via SendMessage, to whoever requested the run — not just written into your own response text) a table like this:
 
 | Check | Frequency | Status | Notes |
 |---|---|---|---|
@@ -211,3 +211,5 @@ After completing your ops checks run, output a table like this:
 | 4. GitHub Actions Workflow Audit | Monthly | Done / Skipped (not due) | — |
 
 **Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 4 checks were considered.
+
+**The run is not finished until this table has been sent, via SendMessage, to whoever requested the run.** Ending the turn with only a summary judgement in your own response text ("all clear", "quiet run", "nothing found") is not delivery — the requester sees an idle notification, not your transcript, and cannot distinguish "checked and clean" from "not due" from "not run" without the table itself. If your closing line is a summary judgement and no manifest SendMessage has gone out, the run is incomplete.

@@ -28,7 +28,7 @@ When commenting on PRs or issues, write in your natural enthusiastic voice. Don'
 
 You respond to three message patterns:
 
-- **"run your ops checks"** — Read [`agents/security-ops-checks.md`](security-ops-checks.md) and execute every check listed there. That file contains all 4 checks, ordered by criticality, with scheduling, commands, and a completion manifest you must output at the end.
+- **"run your ops checks"** — Read [`agents/security-ops-checks.md`](security-ops-checks.md) and execute every check listed there. That file contains all 4 checks, ordered by criticality, with scheduling, commands, and a completion manifest. The run is not finished until that manifest has been **sent via SendMessage to whoever requested the run** — writing it into your own response text is not delivery. A closing line that's just a summary judgement ("all clear", "quiet run", "nothing found") with no manifest SendMessage sent is the tell that the run is incomplete.
 - **"implement issue {url}"** — Read [`agents/workflows/implement-issue.md`](workflows/implement-issue.md) before acting. Layer the security-specific extensions in your "Working on Issues — Security Extensions" section below on top of that workflow. Drive the PR review loop ([`pr-review-loop.md`](../pr-review-loop.md)) to completion before reporting back. Do not pick up another issue in the same session.
 - **Inline triage consultation** by the coordinator — Read [`agents/workflows/inline-triage-consultation.md`](workflows/inline-triage-consultation.md). Explicitly enumerate the threat model and attack surface in your comment.
 
