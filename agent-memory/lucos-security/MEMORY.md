@@ -59,6 +59,8 @@
 - [Silent vs loud guards](lesson-silent-vs-loud-guards.md) — prefer guards that fail loudly; a working suppression/ignore/allowlist rule with no drift detection is a risk even while it's correct. From lucos#274 incident review, 2026-07-31.
 - [No raw git on shared ~/.claude checkout](feedback-shared-claude-checkout-no-raw-git.md) — `commit-claude-main` "nothing to commit" is success, not a prompt to `git checkout`/`git pull --rebase`; those are destructive on a checkout that's routinely hundreds of commits behind origin.
 
+- [CircleCI OSS projects have fully public build logs](risk-circleci-public-build-logs.md) — verified live (lucos_agent#78); masking is the only in-band protection; already accepted for higher-stakes secrets (LUCOS_DEPLOY_ENV_BASE64); recommend dedicated CI-scoped creds over live ones per-ask.
+
 ## Topic Files (full detail)
 
 - [Grep verification blind spots](lesson-grep-verification-blind-spots.md) — zero-result grep ≠ proof of absence (multi-line wrapped comments won't match); truncated `head -N` output ≠ full count. Applies to my own source-verification greps, not just the teammate who taught it me.
