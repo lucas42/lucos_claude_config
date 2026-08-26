@@ -52,6 +52,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Commit the tool's own serialisation](feedback_commit_the_tools_own_serialisation.md) — check a rewritten file's order history before proposing a canonical/generated split
 - [Measure the section before editing the persona](feedback_measure_the_section_before_editing.md) — Self-Verification grew +429 in one "consolidation" evening
 - [Absolute-then-hedge detector](feedback_absolute_then_hedge_detector.md) — the hedge is the true claim; never claim "no-op" without instantiating a number
+- [An option list is an absence claim](feedback_option_list_is_an_absence_claim.md) — "A or B" asserts "not C"; look for the decision-neutral third path
 - [Scope-folding crosses ownership boundary](feedback_scope_folding_crosses_ownership_boundary.md) — order the halves instead of synchronising; convention ≠ permission
 
 ## Reference memories
