@@ -19,7 +19,7 @@ lucos_dns_bind: 2026-07-27
 lucos_loganne: 2026-07-23
 lucos_configy: 2026-07-23
 lucos_contacts_app: 2026-08-08
-lucos_contacts_db: 2026-08-06
+lucos_contacts_db: 2026-08-26
 lucos_contacts_googlesync_import: 2026-08-09
 lucos_contacts_web: 2026-08-17
 lucos_creds: 2026-07-14
@@ -39,7 +39,7 @@ lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-07-13
 lucos_mail_docs: 2026-08-22
-lucos_photos_postgres: 2026-07-27
+lucos_photos_postgres: 2026-08-26
 lucos_photos_redis: 2026-08-17
 lucos_scenes: 2026-08-17
 lukeblaney_co_uk: 2026-08-06
@@ -60,11 +60,11 @@ lucos_arachne_mcp: 2026-07-19
 lukeblaney_blog: 2026-07-23
 lucos_docker_health_app: 2026-08-22
 
-lucos_docker_mirror_web: 2026-07-13
-lucos_docker_mirror_registry: 2026-07-09
+lucos_docker_mirror_web: 2026-08-26
+lucos_docker_mirror_registry: 2026-08-26
 lucos_worlds_web: 2026-08-22
 lucos_worlds_db: 2026-08-22
-lucos_docker_mirror_info: 2026-07-13
+lucos_docker_mirror_info: 2026-08-26
 lucos_firewall: 2026-08-19
 
 ## SSH Hostname Note
@@ -189,3 +189,16 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-22 **`lucos_backups` prune-backups race recurred 08-20 04:49Z on `aurora.lan`** (lucas42/lucos_backups#365, filed 46d earlier on xwing ⇒ NOT host-specific). The files `find` can't stat are the `2026-08-13` tarballs **this same run just deleted** — the job races itself, so a retry would re-enter the race. **Did not alert**: the check needs "last 2 runs errored", so an isolated failure is absorbed ⇒ impact is a silently-skipped prune cycle, not a red dashboard.
 - 2026-08-22 Check 4: 5 containers (mail_docs 644,686 lines/**0**; worlds_db 51/0 — only benign MariaDB `Aborted connection … unauthenticated` healthcheck probes; aithne 502/0; docker_health_app 17,942/0; worlds_web 125/0). ⚠️**All five clean, so I ran the control** — `lucos_photos_worker` returned 0 too (restarted 08-21, errors were 08-17) and was NOT a valid positive; the estate sweep since 08-19 was, returning 16 containers with hits. Deferred ~14 containers whose `last_reviewed` is older (07-09 → 07-15) because the 08-21 deploy burst restarted them — no log history over the review gap. **0 overdue @60d** (oldest last_reviewed = worlds_web 07-09 = 44d, now reviewed).
 - 2026-08-22 mosquitto 7,257 error lines = internet scanners on the MQTT TLS port (4,095 `unexpected eof while reading`, 3,089 `Protocol error`, 148 `wrong version number`). Benign, consistent with baseline. Don't chase.
+- 2026-08-26 Check 1: 55 systems, **212/213 checks healthy** (per-check derivation reconciles with `summary`: 54 healthy / 1 failing / 0 unknown). ⚠️**My first probe read `ok` and got an impossible 0/213 — `/api/status` uses `status`, not `ok`** ([[pattern_monitoring_api_status_field]]). Sole red: `lucos_repos/stale-dependabot-prs`.
+- 2026-08-26 ⚠️**`/api/status` NEVER renders `failThreshold`** — control: `lucos_backups/host-tracking-failures` declares `failThreshold: 5` in `/_info` and `/api/status` shows no such field. Per-check keys emitted are only `debug|link|status|statusText|techDetail`. So you CANNOT read threshold config from `/api/status`; read the service's `/_info`, or the fetcher source for synthesised checks.
+- 2026-08-26 ⚠️**`fetch-info` AND `tls-certificate` are stamped `failThreshold: 2` + `dependsOn: [lucos_router, lucos_dns]` by `fetcher_info.erl` `make_direct_probe_check/1` (L~77-83)** — they are NOT declared in the service's own `/_info`. I had assumed they carried no threshold. This makes lucas42/lucos_monitoring#303 estate-wide: it defeats the blip absorber on the two checks EVERY system has, not just services that opt in. Commented on #303.
+- 2026-08-26 **#303 proof from timestamps alone (reuse this):** all 4 fetchers `timer:sleep(timer:seconds(60))`, so reaching `consecutiveFailsCount=2` on genuine consecutive polls needs ≥60s. `lucos_worlds` alerted 02:00:54 and recovered 02:01:03 on 08-23 — **9 seconds**. No pair of polls is 9s apart ⇒ the counter was incremented by another source's `updateSystem` cast, not a second failing poll. Four flaps in 4 days, all through a threshold ≥2: metadata_manager 60s / seinn 37s / worlds 9s / monitoring 53s.
+- 2026-08-26 **pipenv changed its Pipfile-hash algorithm between 2026.2.2 and 2026.4.0.** Same unmodified Pipfile: 2026.2.1/2026.2.2 → `15e6bab1…`; 2026.4.0/2026.6.2/2026.7.1/2026.8.0 → `9319c363…`. Dependabot's vendored pipenv is on the OLD side, so every lock it writes fails `pipenv install --deploy` against our pinned 2026.7.1. **Not drift — a checksum-definition change.** Estate: 6 of 8 python repos match the new hash, `lucos_contacts` + `lucos_eolas` match the old, **0 match neither** ⇒ the architect's 08-17 "3 mismatched" was entirely version skew. Confirmed on lucas42/lucos_backups#403 (filed by code-reviewer), flagged as a blocker for lucas42/lucos_repos#488's estate-wide `--deploy` rollout. ⚠️2026.8.0 renamed the API: `project.pipfile.calculate_hash()`, not `project.calculate_pipfile_hash()` — my first 2026.8.0 run returned blank because of that, NOT because it disagreed.
+- 2026-08-26 **`lucos_docker_mirror` cache has NEVER evicted — filed lucas42/lucos_docker_mirror#88.** `storage.delete.enabled` unset ⇒ every pull-through TTL `OnExpire` fails `operation unsupported` and logs at error level. Proof it's real, not just noisy: volume `lucos_docker_mirror_cache` created 2026-04-17T15:01:07Z, oldest blob mtime 2026-04-17T16:23:17Z ⇒ nothing ever expired in 130 days. 2607 blobs / 52.8 GB ≈ **0.40 GB/day**. ⚠️**Filed as P3 on OBSERVABILITY grounds, explicitly NOT disk** — 1001 GB free ⇒ ~7 years' headroom; say so in the ticket so it isn't mis-prioritised as capacity.
+- 2026-08-26 **docker_mirror disk figures reconcile — don't chase this again.** `/_info` `disk` = "49% used (898.8 GB)" vs `df -h` "47% / 806G". Both right: the check reports **(total − available) in GiB** (965.0 GB = 898.8 GiB = 49.1%), `df` reports used/(used+avail) and prints GiB. Exact bytes: 1,966,255,407,104 / 865,091,903,488 used / 1,001,207,631,872 avail.
+- 2026-08-26 ⚠️**`docker exec … cat config.yml` on the registry prints `REGISTRY_PROXY_PASSWORD=dckr_pat_…` if you also dump env — a live Docker Hub PAT.** Don't paste registry env into any issue/PR. Read the config file alone (`cat /etc/docker/registry/config.yml`); the env dump adds nothing.
+- 2026-08-26 Check 4: 5 containers (docker_mirror_registry 78,719 lines — the OnExpire finding + one 08-24 `library/rust` blob 500 after **10m6s / 150 MB written** to `buildkit/v0.32` from an external AWS IP; docker_mirror_web **0** lines; docker_mirror_info 6/0; photos_postgres 246 lines/10 `duplicate key … person_contact_id_key` **immediately before successful `peopleMerged` loganne events** ⇒ caught + handled, benign per [[pattern_db_error_line_is_not_app_failure]]; contacts_db 43/0). Estate sweep since today's 07:14 burst = known-positive control, 8 containers with hits.
+- 2026-08-26 **Deferred from Check 4 rotation, with reason:** `lucos_eolas_web` (48d overdue), `lucos_creds` + `lucos_schedule_tracker` (43d), `lucos_media_weightings` (44d), `lucos_arachne_*` (42-44d) — ALL restarted in today's 07:14-07:55 estate deploy burst, so `docker logs` covers only ~14h and cannot speak to the gap. Not recorded as reviewed.
+- 2026-08-26 **`lucos_media_manager` `ERROR: Unknown Error (Class:LongPollControllerV3)` + `SocketException: Broken pipe` ×18/15h is BENIGN — decided NOT to file.** Stack ends at `sendHeaders` in `LongPollControllerV3.processRequest`: the long-poll client is already gone before the response write starts, which is what long-polling does on every client reconnect. Misclassified as "Unknown", but nothing degraded. Do NOT creep this onto lucas42/lucos_media_manager#283 — that ticket is deliberately scoped to the `-Xlog` line only.
+- 2026-08-26 **`lucos_repos` PR sweep = `time.NewTicker(6h)` anchored to container start** (`src/pr_dashboard.go:110,123,131`), `staleDependabotThreshold = 48h` (L56). Manual trigger: `POST /api/pr-sweep` (no auth, 202/409). Audit sweep is the same 6h ticker shape in `src/audit.go:180`. Derive next-sweep from `seconds_since_last_pr_sweep` in `/_info`, never from a wall-clock slot.
+- 2026-08-26 ⚠️**A positive control that FAILS may mean the world moved, not that the probe is broken.** `repos/…/pulls?state=open` returned `[]` for lucos_backups while I "knew" #401 was open — I'd fetched it minutes earlier. It had been closed at 21:59:27Z, 17s after code-reviewer filed #403. Re-fetch the control's premise before concluding the tool is at fault.

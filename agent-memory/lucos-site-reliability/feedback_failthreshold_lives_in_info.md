@@ -46,12 +46,12 @@ The `ok` field is evaluated by the service's `/_info` handler against whatever l
 
 **Exception — monitoring-synthesised checks:** Three checks are NOT declared by services; lucos_monitoring stamps them onto every system itself: `fetch-info` and `tls-certificate` (in `src/fetcher_info.erl` lines 43-46) and `circleci` (in `src/fetcher_circleci.erl`). For these three names, `failThreshold` IS configured inside lucos_monitoring — the in-file precedent is the existing `maps:put(<<"failThreshold">>, 2, ...)` pattern. PR lucos_monitoring#195 added it for fetch-info/tls-certificate; the same shape applies to circleci (issue #226 2026-05-12).
 
-**Exception — monitoring-generated synthetic checks:** Three checks are NOT declared by services; lucos_monitoring stamps them onto every system itself: `fetch-info` and `tls-certificate` (in `src/fetcher_info.erl` lines 43-46) and `circleci` (in `src/fetcher_circleci.erl`). For these three names, `failThreshold` IS configured inside lucos_monitoring — the in-file precedent is the existing `maps:put(<<"failThreshold">>, 2, ...)` pattern. PR lucos_monitoring#195 added it for fetch-info/tls-certificate; the same shape applies to circleci (issue #226 2026-05-12).
-
 **The pre-filing check — DO NOT SKIP:** Before drafting any "raise failThreshold on `X-check`" issue, run both of these:
 
 1. `curl -s https://<service>.l42.eu/_info | jq '.checks | keys'` — does the service declare it?
 2. `grep -n '<<\"X-check\">>' ~/sandboxes/lucos_monitoring/src/fetcher_*.erl` — does monitoring synthesise it?
+
+⚠️ **Do NOT try to read a threshold from `/api/status` — it never renders `failThreshold`.** The only per-check keys it emits are `debug`, `link`, `status`, `statusText`, `techDetail`. Control (2026-08-26): `lucos_backups/host-tracking-failures` declares `failThreshold: 5` in `/_info` and `/api/status` shows no such field. A check that looks threshold-less there may well be stamped `failThreshold: 2` — `make_direct_probe_check/1` in `fetcher_info.erl` does exactly that to **every** system's `fetch-info` and `tls-certificate`, along with `dependsOn: [lucos_router, lucos_dns]`. Reading `/api/status` and concluding "no threshold" is how I mis-scoped lucas42/lucos_monitoring#303 as an opt-in problem when it is estate-wide.
 
 If (1) is yes → file on the service repo. If (2) is yes and (1) is no → file on `lucos_monitoring` and cite the existing `fetcher_info.erl` precedent. If both are no, you've misnamed something. Skipping this on 2026-05-12 led to lucos_monitoring#226 getting rejected with "completely misunderstands the model" — the original body conflated the two populations and falsely implied services could override the circleci check.
 
