@@ -27,12 +27,12 @@ lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-08-17
 lucos_dns_sync: 2026-08-17
 lucos_eolas_app: 2026-08-08
-lucos_eolas_db: 2026-08-06
+lucos_eolas_db: 2026-08-27
 lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-08-17
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-07-27
-lucos_locations_oauth2_proxy: 2026-08-19
+lucos_locations_oauth2_proxy: 2026-08-27
 lucos_mail_smtp: 2026-08-19
 lucos_photos_api: 2026-07-19
 lucos_arachne_ingestor: 2026-07-15
@@ -42,10 +42,10 @@ lucos_mail_docs: 2026-08-22
 lucos_photos_postgres: 2026-08-26
 lucos_photos_redis: 2026-08-17
 lucos_scenes: 2026-08-17
-lukeblaney_co_uk: 2026-08-06
+lukeblaney_co_uk: 2026-08-27
 lucos_media_manager: 2026-08-17
 lucos_media_metadata_api: 2026-07-23
-lucos_monitoring: 2026-08-08
+lucos_monitoring: 2026-08-27
 lucos_media_seinn: 2026-08-02
 tfluke: 2026-08-02
 lucos_media_metadata_api_exporter: 2026-07-15
@@ -53,7 +53,7 @@ lucos_media_metadata_manager: 2026-07-15
 lucos_notes: 2026-07-15
 lucos_root_app: 2026-07-19
 lucos_router: 2026-08-19
-semweb: 2026-08-19
+semweb: 2026-08-27
 lucos_time: 2026-08-09
 lucos_aithne: 2026-08-22
 lucos_arachne_mcp: 2026-07-19
@@ -202,3 +202,9 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-26 **`lucos_media_manager` `ERROR: Unknown Error (Class:LongPollControllerV3)` + `SocketException: Broken pipe` ×18/15h is BENIGN — decided NOT to file.** Stack ends at `sendHeaders` in `LongPollControllerV3.processRequest`: the long-poll client is already gone before the response write starts, which is what long-polling does on every client reconnect. Misclassified as "Unknown", but nothing degraded. Do NOT creep this onto lucas42/lucos_media_manager#283 — that ticket is deliberately scoped to the `-Xlog` line only.
 - 2026-08-26 **`lucos_repos` PR sweep = `time.NewTicker(6h)` anchored to container start** (`src/pr_dashboard.go:110,123,131`), `staleDependabotThreshold = 48h` (L56). Manual trigger: `POST /api/pr-sweep` (no auth, 202/409). Audit sweep is the same 6h ticker shape in `src/audit.go:180`. Derive next-sweep from `seconds_since_last_pr_sweep` in `/_info`, never from a wall-clock slot.
 - 2026-08-26 ⚠️**A positive control that FAILS may mean the world moved, not that the probe is broken.** `repos/…/pulls?state=open` returned `[]` for lucos_backups while I "knew" #401 was open — I'd fetched it minutes earlier. It had been closed at 21:59:27Z, 17s after code-reviewer filed #403. Re-fetch the control's premise before concluding the tool is at fault.
+- 2026-08-27 Check 1: 55 systems, **212/213 checks healthy** (per-check derivation reconciles with `summary`: 54 healthy / 1 failing / 0 unknown). Sole red = `lucos_repos/stale-dependabot-prs`, and it is a **stale reading, not a live condition**: debug names lucas42/lucos_backups#401, which `lucos-code-reviewer[bot]` **closed 2026-08-26T21:59:27Z**, whereas `seconds_since_last_pr_sweep` puts the producing sweep at **19:35:06Z — 2h24m BEFORE the close**. Independent confirmation: `search/issues?q=org:lucas42+is:pr+is:open+author:app/dependabot` → **total_count 0** estate-wide. Underlying cause of the stuck PR is tracked (lucas42/lucos_backups#403 pipenv hash skew, lucas42/lucos_repos#488) — both open. ⚠️**Reconcile the check's debug timestamp against the sweep age before treating a hygiene-check red as live** — `/_info` gives you both numbers in one fetch.
+- 2026-08-27 Check 2 (7d, 470 events, range 08-20T00:15Z→08-27T01:13Z): **12 `lucos_monitoring` events, 0 `lucos_agent`**. Direct probe of the agent tree (not just event absence): 1 modified file = another agent's in-flight `agent-memory/lucos-system-administrator/ops-checks.md`, i.e. transient, not the persistent dirt the edge-triggered alert watches. `lucos_repos/audit` 08-23 11:30→12:22 (52min, *"sweep incomplete: **240** convention check(s) skipped due to API errors"* — vs 54 in the original) = lucas42/lucos_repos#465, **already closed**: I commented the recurrence 11:15, developer shipped PR #499 (`auditSweepMaxWaitDefault = 30m`) merged **11:29:37Z**, and there has been no audit red since. Remaining 4 flaps (metadata_manager 08-21 / seinn 08-22 / worlds 08-23 / monitoring 08-24) = the lucas42/lucos_monitoring#303 evidence set, triaged 08-26.
+- 2026-08-27 Check 4: 5 containers chosen on **both** axes (`last_reviewed` AND `StartedAt` predating it), because the 08-26 07:14-07:55 deploy burst restarted 40 of 57 containers. `lucos_eolas_db` 16 lines/0 err (⚠️nothing logged since 08-19 21:59 — Postgres `checkpoint starting: time` only fires on WAL activity, so eolas has taken **no writes in 7d**; plausible for a manually-edited metadata store, monitoring green, NOT filed); `lukeblaney_co_uk` 261,892/3 (all scanner 404s matching only because the URL paths contain *error*/*exceptions* — a grep artefact, not errors); `semweb` 260,704/1 (one `wp-includes/theme-previews-exception.php` scanner 404); `lucos_locations_oauth2_proxy` 216/0; `lucos_monitoring` 2,879/22 (20 = the known CircleCI-timeout baseline, 1 = benign boot `ESOCK ... libsctp.so.1`). **0 overdue @60d** (oldest = `lucos_eolas_web` 07-09 = 49d).
+- 2026-08-27 **NEW monitoring diagnostic line: `Poll burst: 3 checks failed within 30000ms — timing dump: [{"lucos_creds",1044},{"lucos_docker_mirror",1035},{"lucos_photos",1038}]`.** One occurrence in 21 days, at 2026-08-26T07:16:29Z — i.e. *inside* the 07:14-07:55 estate deploy burst. Three `/_info` probes at ~1.04s against monitoring's ~1s poll timeout; no alert fired for any of the three. This is `lucos_monitoring` self-instrumenting the [[pattern_info_inband_dependency_probe_exceeds_poll_timeout]] family and it **prints the elapsed ms**, which is exactly what lucas42/lucos_arachne#735 complains is missing elsewhere. Benign as observed; useful as a citation that the estate already has a working example of latency-in-the-debug-string.
+- 2026-08-27 **lucas42/lucos_backups#374 still hourly — and I deliberately filed NO third comment.** Estate sweep put backups at 57 error lines/18h; `docker logs -t` shows 19 `Exception occurred during processing` + 19 `BrokenPipeError`, **every one at `HH:07:1x`** (08:07→23:07 and 01:07, two doubles). That is identical in kind to what I already posted on 2026-07-18 (body), 2026-08-09 and 2026-08-22. ⚠️**Repetition is not corroboration** — the ticket is already Ready / Priority Medium with a one-line `ThreadingHTTPServer` fix and a resolved thread-safety audit; a 4th "still happening" comment adds noise to a ticket whose gap is **dispatch, not evidence**. Also correctly did NOT escalate priority: my escalation rule needs the issue to be causing a *current alert*, and backups is green (the UnknownsGate absorbs isolated hourly misses).
+- 2026-08-27 Checks 5/6/7 **not due** — last run 2026-08-06 (21d); next due ~2026-09-06.
