@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-26
+container_status: 2026-08-27
 resource_checks: 2026-08-26
 syslog_review: 2026-08-26
 software_updates: 2026-08-26
 sandbox_drift: 2026-08-26
-repos_dashboard: 2026-08-26
+repos_dashboard: 2026-08-27
 docker_image_staleness: 2026-08-26
 backup_verification: 2026-08-26
 certificate_expiry: 2026-08-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-08-27 run**: checks 1 (container status) + 6 (repos dashboard) due, all others last ran 2026-08-26 — not due (weekly/monthly). Container status clean on all 3 hosts (avalon, xwing, salvare). Repos dashboard: one failing convention, `lucos_worlds_atlas` `in-lucos-configy` — already tracked (issue #3, open since 2026-07-09, `audit-finding` label), still genuinely failing (repo not registered in configy). No new action — per `configy-undeployed-system-entry-pattern.md`, pre-scaffolding registration into configy is unsafe (cascades into ~20 gated conventions), so this stays open pending a deliberate decision, not something to fix as a drive-by. No new issues raised this run.
 
 - **lucos_backups#390 — RESOLVED, corrected root cause** (raised 2026-08-17, fixed same day ~22:45 UTC via lucos_backups#391): my original #390 diagnosis blamed PR #389 (`charset-normalizer` bump) and proposed reverting it — SRE's investigation (incident report `docs/incidents/2026-08-17-backups-python-alpha-charset-normalizer.md`, lucas42/lucos#289) found that was a reasonable-but-wrong read: the actual trigger was PR #388 (an unrelated `github/codeql-action` bump), because the Dockerfile's `RUN pipenv install` re-resolves at build time and ignores `Pipfile.lock` — so *any* commit that triggers a rebuild can ship a new transitive dependency. True root cause: base image `python:3.15.0a2-alpine` (a CPython **alpha**, auto-merged 2026-08-06 as a "minor" bump) couldn't load `charset_normalizer` 3.5.1's `cp315` wheel. Onset was ≈07:21 UTC, not 07:37:42 (the timestamp I read was the *last* restart, not the first). **Lesson for future ops-check diagnosis: read the lockfile/installed versions out of the built image, don't infer root cause from the commit log alone** — added to `references/docker-conventions.md` ("Reproducible builds" section) and see `feedback_read_before_theorising.md`. Follow-ups: lucos_backups#392 (`pipenv install --deploy`, open), lucos#273 (estate pre-release convention, evidence added), lucos_monitoring#302 (alert coalescing). No further tracking needed here — resolved and understood.
 - **lucos_agent#72** (raised 2026-08-06): scheduled `prune-images` CircleCI workflow on `lucos_agent` has never run (zero pipelines ever recorded, stale `default_branch: master` vs GitHub's actual `main`) — xwing 83% reclaimable docker images, salvare same root cause. Blocked on CircleCI admin/human access to fix project sync. Not urgent (both hosts well under 80% disk threshold) but keep tracking disk trend on xwing/salvare each weekly resource check until fixed. 2026-08-17: xwing disk 49% (54G/117G, up from 44%), salvare disk 68% (38G/58G, up from 67%) — both still well under threshold, trend continuing gradually. 2026-08-26: xwing disk 56% (62G/117G), salvare disk 73% (40G/58G) — both climbing steadily, still under 80% threshold. Salvare in particular has grown 51%→68%→73% since April; worth a harder look if it crosses ~80%.
