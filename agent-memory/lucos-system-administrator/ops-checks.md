@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-08-27
+container_status: 2026-08-28
 resource_checks: 2026-08-26
 syslog_review: 2026-08-26
 software_updates: 2026-08-26
 sandbox_drift: 2026-08-26
-repos_dashboard: 2026-08-27
+repos_dashboard: 2026-08-28
 docker_image_staleness: 2026-08-26
 backup_verification: 2026-08-26
 certificate_expiry: 2026-08-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-08-28 run**: checks 1 (container status) + 6 (repos dashboard) due, all others last ran 2026-08-26 — not due (weekly/monthly). Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy containers. Repos dashboard: one failing convention, `lucos_worlds_atlas` `in-lucos-configy` — already tracked (issue #3, open since 2026-07-09, `audit-finding` label), still genuinely failing (repo not registered in configy). No new action — per `configy-undeployed-system-entry-pattern.md`, pre-scaffolding registration into configy is unsafe (cascades into ~20 gated conventions), so this stays open pending a deliberate decision, not something to fix as a drive-by. No new issues raised this run.
 
 - **2026-08-27 run**: checks 1 (container status) + 6 (repos dashboard) due, all others last ran 2026-08-26 — not due (weekly/monthly). Container status clean on all 3 hosts (avalon, xwing, salvare). Repos dashboard: one failing convention, `lucos_worlds_atlas` `in-lucos-configy` — already tracked (issue #3, open since 2026-07-09, `audit-finding` label), still genuinely failing (repo not registered in configy). No new action — per `configy-undeployed-system-entry-pattern.md`, pre-scaffolding registration into configy is unsafe (cascades into ~20 gated conventions), so this stays open pending a deliberate decision, not something to fix as a drive-by. No new issues raised this run.
 
