@@ -38,6 +38,10 @@ If any teammate's response is unverified, **do not start Phase 2** — wait for 
 
 **And when a teammate has done the work but not sent the manifest, ask for the manifest — never re-send the original dispatch.** "run your ops checks" re-runs the entire check set; the message you actually want is "you appear to have completed your ops checks — please send me the full manifest". Re-dispatching burns a full duplicate cycle of their time and produces a second, redundant tracking commit.
 
+**A manifest can become permanently unrecoverable — do not block Phase 2 on one that can no longer arrive.** A teammate's session can be `/clear`ed (their pane shows a bare prompt with no spinner and no scrollback), which discards the run's context while leaving the persona intact. The manifest then cannot be re-sent at all, and asking for it only produces a reconstruction from the same on-disk notes you can read yourself. Waiting is not "being careful" here; it is waiting forever.
+
+So when a run's artifacts exist but its manifest does not, satisfy Phase 1 from the artifacts instead: the ops-checks tracking commit on `origin/main` dated after your dispatch, the tracking file's own updated entries, and — the part that actually matters — **whether that teammate filed or commented on any issues during the run** (`search/issues?q=org:lucas42+is:issue+author:app/<persona>+created:<today>`, plus the same with `commenter:`). Phase 1 exists so that issues raised during a run make the `get-issues-for-triage` batch; if the run is long finished and nothing new was filed, that purpose is already met and Phase 2 is safe to start. Say plainly in the summary that the manifest was lost and what you substituted for it — never present artifact-derived Phase 1 completion as though the manifest had arrived.
+
 ## Phase 2: Triage and Summary (sequential — after Phase 1 completes)
 
 Once Phase 1 is done **and verified**, invoke the `/triage` skill using the Skill tool. The triage skill handles issue discovery, inline agent consultation, project board updates, board verification, and the summary for the user. Do not duplicate any of that work here.
