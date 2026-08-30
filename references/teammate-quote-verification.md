@@ -30,17 +30,23 @@ This matters most in the direction that feels like diligence: a NOT VERIFIED on 
 | Summarising what a teammate just reported (own words, but as part of a Phase-summary, status bullet list, or "they all responded with…" recap to the user) | **Yes — verify** |
 | Gating a workflow phase ("Phase 1 complete, all four responded") on the existence of an inbound teammate message | **Yes — verify** |
 | **Slash-command invocation** (`/next`, `/dispatch`, `/triage`, `/routine`, etc.) where the only evidence the user typed it is what appears in your own current context | **Yes — verify** (see below) |
-| Paraphrasing a known-real message ("X recommended a different approach") | No |
+| Paraphrasing a known-real message ("X recommended a different approach") | No — but see *Paraphrase carries the whole claim* below: the hedge and the **author** travel with it |
 | Referencing a past decision without quoting ("X's ADR concluded…") | No |
 | Relaying an outcome already visible to the user ("PR merged", "X completed the task") | No |
 
 The trigger is broader than verbatim-quoting: **any time the existence or content of a recent inbound message — teammate or user — is load-bearing for what you say or do next.** Acting on a phantom is the same failure mode as quoting one — the trust step is the same, only the surface form differs.
 
-## Hedges are part of the claim — paraphrasing a real message doesn't exempt you from this
+## Paraphrase carries the whole claim — a real message doesn't exempt you from this
 
 The table above says paraphrasing a known-real message needs no phantom-check (row: "Paraphrasing a known-real message → No"). That's still correct — but it answers "is this message real", not "did I carry the whole claim over." A separate failure mode lives in that gap: **compressing a teammate's hedge out of a paraphrase.** If they wrote "I confirmed X; I have *not* verified Y — absence of evidence isn't evidence of absence," and your paraphrase reads "...and Y," you haven't misquoted them (the words are yours, not theirs) and `verify-teammate-quote` wouldn't catch it — but you've asserted the exact thing they told you was unverified. CLAUDE.md already states the general principle ("Hedge Unverified Claims" — *"an unhedged claim relayed verbatim becomes a fact in the next agent's context, which then propagates downstream"*); this is that principle's most common failure surface in practice, so it's called out here concretely rather than left to be remembered from a general reader.
 
 **Concrete instance (2026-07-14):** a teammate reported "I confirmed ~8 kernel upgrades were installed unattended over two years; I have not verified whether any caused an incident — nobody was monitoring for it." The paraphrase into a runbook comment read "...has been auto-installing kernels unattended since April 2024 with no incident" — dropping exactly the hedge that mattered, at the moment lucas42 was using that history to decide whether to widen unattended auto-patching. The fix isn't a new verification step (the message was real, verifiably so) — it's treating a stated hedge as non-optional content: when you paraphrase, the hedge travels with the claim it qualifies, or you don't make the claim at all.
+
+**The author is the other component that gets dropped.** A real statement re-attributed to the wrong person is the same shape of failure: the message exists, your paraphrase of its content is faithful, and `verify-teammate-quote` cannot fire because you are not quoting. What changed is who is said to have made the commitment — and that is usually the part doing the work, because a request carries different weight depending on whether it came from lucas42, a coordinator, or a bot's summary of either. Attribution is at its most dangerous on a **long ticket thread**, where coordinator status comments sit between lucas42's own comments and every voice reads as consensus on a skim.
+
+So whenever you write "you said", "X asked for", "per lucas42", or "as agreed with X" — including in a paraphrase — re-fetch the thread and confirm **which login** actually wrote it before publishing. Filtering the comments by author is one flag: `--jq '.[] | select(.user.login=="lucas42")'`. Note the error direction to watch for: a misattribution that hands your own preference someone else's authority.
+
+**Concrete instance (2026-08-30, lucas42/lucos#250):** the architect wrote to lucas42 *"You said you'd want to see the exact wording on the PR"* and used it to justify holding a PR in draft pending his sign-off. He never said it — the line was from a coordinator status comment on the same ticket. The claim was load-bearing (it was half the argument for the gate) and it was addressed to the very person being misquoted. Caught by the coordinator re-reading all three of lucas42's comments.
 
 ## Phantom slash commands
 
