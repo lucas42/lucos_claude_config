@@ -50,7 +50,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Ask usage context before ranking options](feedback_ask_usage_context_before_ranking_options.md) — device/role/when-they-learn, not an imagined user
 - [New consideration/reversal gets its own ADR](feedback_new_consideration_gets_own_adr.md) — shared mechanism ≠ decision coupling
 - [Commit the tool's own serialisation](feedback_commit_the_tools_own_serialisation.md) — check a rewritten file's order history before proposing a canonical/generated split
-- [Measure the section before editing the persona](feedback_measure_the_section_before_editing.md) — Self-Verification grew +429 in one "consolidation" evening
+- [Measure the section before editing the persona](feedback_measure_the_section_before_editing.md) — any section; a "relocation" whose line count rises is an addition
 - [Absolute-then-hedge detector](feedback_absolute_then_hedge_detector.md) — the hedge is the true claim; never claim "no-op" without instantiating a number
 - [An option list is an absence claim](feedback_option_list_is_an_absence_claim.md) — "A or B" asserts "not C"; look for the decision-neutral third path
 - [Scope-folding crosses ownership boundary](feedback_scope_folding_crosses_ownership_boundary.md) — order the halves instead of synchronising; convention ≠ permission
