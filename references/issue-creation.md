@@ -72,6 +72,20 @@ When asked to create a new issue:
 
    The same rule applies to `PATCH` calls that update an existing issue body (`repos/.../issues/{number}` with `--method PATCH`) and to comments (`repos/.../issues/{number}/comments`).
 
+   **Before you POST, grep the body for backticked references.** The rules in step 3 are widely known and still get broken, because backticks are *correct* formatting for filenames, env vars and function names — the habit is right everywhere except here, and it misfires specifically while authoring a structured body, not while writing prose in a comment. So check mechanically rather than relying on recall:
+
+   ```bash
+   grep -nE '`[^`]*#[0-9]+[^`]*`' "$BODY_FILE"   # any hit: inspect it before posting
+   ```
+
+   **This is a warning to eyeball, never a gate — do not "fix" it into a hard block.** It has known, legitimate hits: a six-digit hex colour (`#123456`) in a UX ticket, and any fenced block that deliberately shows a backticked reference while documenting this very rule (this file would trip it). Blocking on those would stop correct bodies being filed.
+
+   On a real hit, there are two remedies and the right one depends on intent: if it *is* a reference, strip the backticks (`lucas42/lucos#292` → lucas42/lucos#292); if you meant to name a number **without** linking it, drop the `#` instead ("issue 292 in lucos") — never reach for backticks to suppress a link.
+
+   Note the check covers **one** of the four failure modes in step 3. A clean grep says nothing about short-form cross-repo references, sequence labels, or a `## Dependencies` section with no autolinkable reference in it at all — those still need reading the body. Treat a pass as "not this bug", not "body is fine".
+
+   **Why it earns a check when a prose rule already exists:** the failure is silent and machine-only. A backticked blocker leaves the ticket stranded in Blocked with its prerequisite already merged — `skills/dispatch/check-dependent` strips code spans before matching, deliberately, to mirror the autolinker — while the body reads perfectly to a human and states its dependency unambiguously. Nothing errors and nothing alerts; the ticket simply never becomes Ready. (2026-08-30: both lucas42/lucos#250 follow-ups filed this way. The unblock sweep returned "not dependent" for both, and it was caught only because the coordinator had read the bodies earlier that session and remembered — luck, not a control.)
+
 5. **Add the issue to the project board** immediately after creation, using **`~/sandboxes/lucos_agent/gh-projects`** — *not* `gh-as-agent`. GitHub Apps cannot access v2 user projects, so `gh-as-agent graphql … addProjectV2ItemById` returns `FORBIDDEN: Resource not accessible by integration`; `gh-projects` authenticates with a PAT that has project scope. Read `~/.claude/references/triage-reference-data.md` for field IDs and further API patterns.
 
    ```bash
