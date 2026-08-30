@@ -54,6 +54,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Absolute-then-hedge detector](feedback_absolute_then_hedge_detector.md) — the hedge is the true claim; never claim "no-op" without instantiating a number
 - [An option list is an absence claim](feedback_option_list_is_an_absence_claim.md) — "A or B" asserts "not C"; look for the decision-neutral third path
 - [Scope-folding crosses ownership boundary](feedback_scope_folding_crosses_ownership_boundary.md) — order the halves instead of synchronising; convention ≠ permission
+- [Spec text is interface-only](feedback_spec_text_is_interface_only.md) — no derivation, no consumer behaviour; name an external standard
 
 ## Reference memories
 
