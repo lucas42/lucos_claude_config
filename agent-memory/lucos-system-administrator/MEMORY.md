@@ -47,7 +47,7 @@
 - **Volume removal pre-check**: verify image content before removing volumes that might mask it. `volume-removal-image-verify.md`.
 - **`Load key … error in libcrypto`**: class of error (CRLF/tilde/BOM); `Healthy` ≠ end-to-end proof; check for snapshot-based deploys (`DEPLOY_ENV_BASE64`). `incident-2026-05-09-libcrypto.md`.
 - **Close verified-passing audit-findings myself, promptly** (2026-07-13 correction) — comment+close+board Done; auto-close is a backstop. `in-lucos-configy`-style checks need full `/api/sweep`, not `/api/rerun`. `feedback_audit_finding_no_autoclose.md`.
-- **lucos#271** (fb_import decommission): Ready, mine, Low, awaiting `/next` — verify ticket's own claims first, follow archival checklist. `project_fb_import_decommission.md`.
+- **lucos#271** (fb_import decommission): RESOLVED 2026-08-30 — configy#279 merged, dev linked cred removed, repo archived; prod creds surfaced to lucas42. `project_fb_import_decommission.md`.
 - **Teammate quote verification**: run `verify-teammate-quote --sender <name> --quote <text>` before quoting verbatim. `feedback_verify_teammate_quotes.md`.
 - **Security tooling changes**: confirm lucos-security sign-off before applying. `feedback_security_tooling_check.md`.
 - **hosts.yaml `ipv4_nat` ≠ host's own IP** — shared NAT gateway; only bare `ipv4` is direct. `hosts-ipv4-nat.md`.

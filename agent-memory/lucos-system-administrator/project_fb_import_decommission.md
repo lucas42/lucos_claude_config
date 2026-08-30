@@ -1,12 +1,16 @@
 ---
 name: project-fb-import-decommission
-description: lucos#271 — decommission lucos_contacts_fb_import, boarded Ready/Low, awaiting /next
+description: lucos#271 — decommission of lucos_contacts_fb_import, RESOLVED 2026-08-30
 metadata:
   type: project
 ---
 
-`lucas42/lucos#271` — "Decommission lucos_contacts_fb_import (archival walk)". Boarded Ready / Owner = lucos-system-administrator / Priority = Low (as of 2026-07-15, per team-lead FYI — not a direct dispatch, flows through normal `/next` queue order).
+`lucas42/lucos#271` — "Decommission lucos_contacts_fb_import (archival walk)". **RESOLVED 2026-08-30.**
 
-**Why**: lucas42 decided on `lucos_contacts_fb_import#52` to decommission rather than migrate the importer's auth off the legacy `Authorization: key` scheme — "I doubt this script even works after so long." #52 closed, points at #271. Filed on `lucas42/lucos` (not the repo itself) because the archival checklist closes the repo's own issues as one of its steps — same pattern as the lucos_comhra decommission (lucos#171).
+Confirmed script-only repo (no `systems.yaml`/`volumes.yaml` entry, no CircleCI project, not in arachne `live_systems`). Work done: `lucos_configy` scripts.yaml entry removed (lucas42/lucos_configy#279, merged+deployed), development credential `KEY_LUCOS_CONTACTS` (linked to `lucos_contacts`) deleted via `ssh -p 2202 creds.l42.eu "rm lucos_contacts_fb_import/development => lucos_contacts/development"`, repo archived. No open issues, no project-board items existed to clean up.
 
-**How to apply**: When picked up via `/next`, use `lucos/docs/repo-archival.md` (per [[feedback_follow_archival_checklist]] if that memory exists, or the standing "follow archival checklist" convention). The ticket's own text names what it *believes* applies (script-type repo, no `systems.yaml` entry, no domain/volumes → Phase 2 service-teardown mostly inapplicable; creds cleanup is the substantive part) but explicitly flags this as unverified — a starting point from ticket history, not a survey. **Verify independently before acting on it** — check `lucos_configy/config/systems.yaml` and `volumes.yaml` for actual entries, check `lucos_creds` for any credentials tied to this service, don't assume the ticket's characterisation is complete.
+**Residuals, both non-sensitive, surfaced rather than actioned:**
+- Dev `SYSTEM`/`ENVIRONMENT` keys are reserved and rejected the delete-via-empty-value form (`Validation Error: SYSTEM is a reserved key`) — orphaned, harmless (no secret content), left in place.
+- Production credentials (almost certainly the same `KEY_LUCOS_CONTACTS` + `SYSTEM`/`ENVIRONMENT` shape as dev) are read/write-denied to the agent key — surfaced to lucas42 for his own cleanup rather than attempted.
+
+No durable lesson beyond what's already captured in [[feedback_follow_archival_checklist]] and the lucos_comhra precedent (lucos#171) — this repo's archival matched that shape closely. Keeping this note only until Phase 6 notification lands; safe to delete after.
