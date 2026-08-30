@@ -22,6 +22,8 @@ Large overlap, but **not identity, and divergence runs both ways** — so **neve
 - **5 absent from all three, all legitimate**: `external_calendar` (third-party inbound consumer — holds only `KEY_LUCOS_CONTACTS`), `local_testing`, `lucos_test`, `test_app` (test identities, client keys only), `lucos_scheduled_scripts`.
 - Reverse direction: `lucos_deploy_orb`, `lucos_photos_android` are configy systems with **no** dev credentials.
 
+**Snapshot has since drifted (2026-08-30):** `lucos_contacts_fb_import` was decommissioned (lucas42/lucos#271) — removed from `scripts.yaml` and its dev credential deleted — so the counts above no longer hold. Left as the dated 2026-08-06 figures deliberately: per the warning below, re-derive by parsing rather than adjusting a remembered total by hand. The point the example makes is unaffected — `gphotos_import` and `search_component` still show that a `systems.yaml`-only diff produces a false "absent from configy" set.
+
 Both `lucos_creds` ADR-0005 (PR #472) and #473's body state a "seven systems absent from configy" list that is wrong on both counts. **Re-derive by parsing; never quote that list.**
 
 ## The precedent chain (cite these, don't re-argue them)
