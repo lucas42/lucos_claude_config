@@ -15,10 +15,11 @@
 - [Positive-control verification](feedback_positive_control_verification.md) — for "A+B must ship together or Z breaks" claims, force Z, confirm A alone doesn't fix it, then confirm A+B does (worlds#61/#75)
 - [Stacked PR on unprotected branch hazard](feedback_stacked_pr_unprotected_branch_hazard.md) — stacking is fine, but the child can auto-merge into the parent's branch before the parent merges, discarding in-flight approvals (worlds#73/#75)
 - [Verify CSS on a running instance](feedback_verify_css_on_running_instance.md) — specificity/cascade/dark-mode claims need `docker compose up` + `document.styleSheets`/`element.matches()`, not a CSS read or grep (worlds#70/#76/#79/#80)
+- [Screenshot catches ordering bugs unit tests miss](feedback_screenshot_catches_ordering_bugs_unit_tests_miss.md) — for grouping/adjacency features, render a real snapshot; per-item eunit tests all passed while a dependent rendered above its own root cause (monitoring#296/PR#306)
 
 ## Project
 
-- [Monitoring dependent-failure grouping trap](project_monitoring_dependent_failure_grouping.md) — lucos_monitoring#296/#297: key grouping on system-level `dependsOn`, not the failing check's (`fetch-info` has none)
+- [Monitoring dependent-failure grouping — SHIPPED](project_monitoring_dependent_failure_grouping.md) — lucos_monitoring#296 via PR #306: keyed grouping on system-level `dependsOn` scanned across all checks, not the failing check's
 
 - [SW health pattern](project_sw_health_pattern.md) — SW-backed UIs (seinn) can degrade silently; pattern for surfacing SW health + guided recovery in UIs
 - [CSP data: URI img-src](project_csp_data_uri_img_src.md) — CSS background-image data: URIs need `img-src data:` explicitly; style-src alone isn't enough
