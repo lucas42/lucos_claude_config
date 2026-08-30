@@ -14,6 +14,11 @@ When asked to create a new issue:
    - Acceptance criteria (what does "done" look like?).
    - Any known constraints or context.
    - Open questions, if any exist.
+   - **Provenance, when the issue did not originate with you.** If lucas42 (or anyone else) asked for this ticket to be raised, reported the symptom, or otherwise originated it, record that on its own line directly under the title heading, in exactly this form:
+
+     `Originated by: lucas42`
+
+     Use the fixed wording — it exists to be greppable, so a later question like "show me every open ticket that came from me" has a reliable answer. **This is about who the ticket came FROM, not who supplied facts or decisions during its life.** A ticket an agent found itself does not become lucas42-originated because he later answered a design question on it, picked an option at triage, or is quoted in the body; those are ordinary participation and must not carry this line. Conversely, a ticket he reported in chat and asked you to file IS his in origin even though the GitHub author is a bot — and without this line there is no way to tell, because the author field says otherwise and nothing else in the ticket records it.
 
    **Issue references in bodies and comments must use GitHub's autolinkable forms.** Two reasons: (i) the references then render as proper links in the GitHub UI, with hover-preview info that's useful when reviewing on the web; (ii) the `/dispatch` auto-unblock check finds dependencies by matching the same forms — a reference that doesn't autolink is also unlikely to be matchable. The autolinkable forms are:
 
