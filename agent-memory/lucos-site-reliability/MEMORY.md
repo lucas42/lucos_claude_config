@@ -84,6 +84,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Stuck-PR taxonomy: 4 mechanisms, only 2 are red CI](pattern_stuck_pr_taxonomy_and_rate.md) — p98 merge latency 19min; 48h threshold catches 2 of 7.
 - [pipenv hash algorithm changed in 2026.4.0 → Dependabot locks fail `--deploy`](pattern_pipenv_hash_algorithm_skew.md) — looks like drift, ISN'T; blocks lucos_repos#488.
 - [python:3.15.0b2-alpine bump breaks psycopg/libpq](pattern_python_beta_alpine_libpq_break.md) — fix `apk add libpq`; not a flake.
+- [Repo-owned `test` job bypasses the docker.l42.eu mirror](pattern_repo_test_job_bypasses_docker_mirror.md) — Hub blip reds `test`, blocks deploy, while `lucos/build` survives; 5 repos.
 - [Auto-merged base-image bump breaks at runtime not build](pattern_baseimage_bump_runtime_break.md) — ⚠️4x; can lie LATENT 11d; `rc` safer than `a`/`b`; rerun≠rollback. lucos#273.
 - [exit 127 after pip install = machine image rolled BACK](pattern_rolling_machine_image_tag_moves_backwards.md) — fix w/ venv not a pin.
 - [lucos_repos deploy auto-triggers an audit sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — recovery ~17-18min.

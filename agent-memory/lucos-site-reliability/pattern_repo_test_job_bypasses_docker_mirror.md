@@ -1,0 +1,23 @@
+---
+name: pattern-repo-test-job-bypasses-docker-mirror
+description: Repo-owned CircleCI `test` jobs using bare setup_remote_docker pull direct from Docker Hub with no docker.l42.eu mirror, so a transient Hub error reds the job and blocks deploy — while lucos/build in the same pipeline survives via the orb's mirror
+metadata:
+  type: project
+---
+
+A red `ci/circleci: test` on a lucos repo whose config hand-rolls its own `test` job is **often not a test failure at all** — check whether the job even reached the tests before reading the diff.
+
+The shape: `test` uses a bare `setup_remote_docker` + `docker compose --build`, which pulls straight from Docker Hub. The orb's `publish-docker` command (used by `lucos/build`) probes `docker.l42.eu`, configures BuildKit to use it as a registry mirror, and falls back to direct Hub if unreachable. **`test` gets none of that.** So a Docker Hub blip fails `test` while `lucos/build` in the same pipeline, at the same minute, pulling the same base image, succeeds — and because `lucos/deploy-avalon` requires `test`, the merged change silently stops deploying.
+
+**Fingerprint** (2026-08-31, lucos_contacts pipeline 1769, job 5284):
+`=> ERROR [test internal] load metadata for docker.io/library/python:3.14-alpine` →
+`failed to solve: ... failed open: unexpected status from GET request to docker-images-prod.s3...amazonaws.com ... 400 Bad Request` → `Exited with code exit status 17`.
+Died 10s in, zero tests run. Bare re-run of the identical commit passed.
+
+**Diagnostic shortcut:** if the failing step is base-image metadata resolution, compare against the `lucos/build` job's `Configure BuildKit registry mirror` step in the same workflow. `Mirror is reachable (HTTP 401), configuring BuildKit to use it` there + a direct-Hub error in `test` is the tell. A 401 probe response is *success* (the mirror requires auth), not a failure.
+
+**Affected repos** (own job + `setup_remote_docker`, no mirror), surveyed 2026-08-31: `lucos_contacts`, `lucos_backups`, `lucos_media_import`, `lucos_media_metadata_manager`, `lucos_aithne`. Not affected (plain docker executor): `lucos_arachne`, `lucos_repos`, `lucos_creds`, `lucos_monitoring`.
+
+**Why:** the estate already owns the insulation via the orb; it just isn't wired into jobs repos write themselves. Tracked as lucas42/lucos_deploy_orb#197 (extract the mirror-config block into a reusable `configure-docker-mirror` command). Adjacent but distinct: lucas42/lucos_deploy_orb#188 (mirror *login* should fail open).
+
+**How to apply:** on any red `test` in these repos, read the failing step's log before assuming code. If it's a registry error, re-run the workflow (`POST /api/v2/workflow/{id}/rerun` with `{"from_failed": true}`) to restore the deploy, then check whether #197 has landed. Caveat: the mirror is a pull-through cache, not a shield — a cold layer still proxies to Hub. Related: [[feedback-keep-docker-mirror]], [[pattern-baseimage-bump-runtime-break]].
