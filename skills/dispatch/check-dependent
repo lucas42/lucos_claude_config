@@ -22,6 +22,9 @@
 #
 #   Same-repo (closed_repo == blocked_repo):
 #     - Bare #N not preceded by an alphanumeric/underscore/slash character
+#     - {owner}/{closed_repo}#N  (the fully-qualified form CLAUDE.md mandates
+#       for cross-repo references, but a same-repo reference may legitimately
+#       be written this way too — it must match here as well)
 #     - URL: github.com/{owner}/{closed_repo}/issues/{N}  or  .../pull/{N}
 #
 #   Cross-repo (closed_repo != blocked_repo):
@@ -78,11 +81,20 @@ if [ "${1-}" = "--test" ]; then
         1 "lucas42/lucos_photos#42" "lucos_photos" "other_repo#42"
     run_test "same-repo: no match for empty body" \
         1 "lucas42/lucos_photos#42" "lucos_photos" ""
+    # lucos_claude_config#153: fully-qualified form must match same-repo too
+    run_test "same-repo: fully-qualified form matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "Status set to Blocked on lucas42/lucos_photos#42."
+    run_test "same-repo: fully-qualified form with wrong N does not match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "Status set to Blocked on lucas42/lucos_photos#43."
+    run_test "same-repo: fully-qualified form with wrong repo does not match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "Status set to Blocked on lucas42/lucos_contacts#42."
     # Backtick exclusions — same-repo
     run_test "same-repo: bare #N inside backticks does NOT match" \
         1 "lucas42/lucos_photos#42" "lucos_photos" "see \`#42\` for details"
     run_test "same-repo: URL inside backticks does NOT match" \
         1 "lucas42/lucos_photos#42" "lucos_photos" "see \`https://github.com/lucas42/lucos_photos/issues/42\` for details"
+    run_test "same-repo: fully-qualified form inside backticks does NOT match" \
+        1 "lucas42/lucos_photos#42" "lucos_photos" "see \`lucas42/lucos_photos#42\` for details"
 
     # --- Cross-repo cases ---
     run_test "cross-repo: fully-qualified form matches" \
@@ -157,8 +169,11 @@ match_url() {
 }
 
 if [ "$CLOSED_REPO" = "$BLOCKED_REPO" ]; then
-    # Same-repo: bare #N (not preceded by alphanumeric/underscore/slash) or URL
+    # Same-repo: bare #N (not preceded by alphanumeric/underscore/slash), the
+    # fully-qualified owner/repo#N form (CLAUDE.md's mandated style — a
+    # same-repo reference may legitimately be written this way too), or URL.
     printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" 2>/dev/null && exit 0
+    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
     match_url && exit 0
 else
     # Cross-repo: fully-qualified {owner}/{closed_repo}#N or URL only.
