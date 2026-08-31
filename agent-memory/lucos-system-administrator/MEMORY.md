@@ -45,6 +45,7 @@
 - **Investigations**: read source before theorising about internals. `feedback_read_before_theorising.md`.
 - **Trigger workflow_dispatch**: `gh-as-agent repos/lucas42/{repo}/actions/workflows/{id}/dispatches --method POST -f ref=main` → 204.
 - **Volume removal pre-check**: verify image content before removing volumes that might mask it. `volume-removal-image-verify.md`.
+- **mosquitto "owner is not root" warning**: checks match to the reading process's own `getuid()`, not literally root — only root-run `mosquitto_passwd` in startup.sh mismatches; broker already drops privileges first. Fix: `su -s /bin/sh mosquitto -c ...` (image has `su`, not `su-exec`/`gosu`). `mosquitto-password-file-ownership-check.md`.
 - **`Load key … error in libcrypto`**: class of error (CRLF/tilde/BOM); `Healthy` ≠ end-to-end proof; check for snapshot-based deploys (`DEPLOY_ENV_BASE64`). `incident-2026-05-09-libcrypto.md`.
 - **Close verified-passing audit-findings myself, promptly** (2026-07-13 correction) — comment+close+board Done; auto-close is a backstop. `in-lucos-configy`-style checks need full `/api/sweep`, not `/api/rerun`. `feedback_audit_finding_no_autoclose.md`.
 - **lucos#271** (fb_import decommission): RESOLVED 2026-08-30 — configy#279 merged, dev linked cred removed, repo archived; prod creds surfaced to lucas42. `project_fb_import_decommission.md`.
@@ -83,7 +84,6 @@
 - **Match poll frequency to what it unblocks** — don't tight-poll cosmetic/non-gating waits. `feedback_no_every_turn_polling.md`.
 - **Docker network recreate rollback needs compose labels** — bare `docker network create` fails compose adoption. `docker-network-recreate-rollback-needs-compose-labels.md`.
 - **`commit-agent-memory.sh` sweep mode fixed 2026-08-09**: per-persona commits, no cross-attribution. Never `env | grep` a secret-shaped pattern — grep specific var names only.
-- **mosquitto "owner is not root" warning**: checks match to the reading process's own `getuid()`, not literally root — only root-run `mosquitto_passwd` in startup.sh mismatches; broker already drops privileges first. Fix: `su -s /bin/sh mosquitto -c ...` (image has `su`, not `su-exec`/`gosu`). `mosquitto-password-file-ownership-check.md`.
 - **Google `ghs.google.com`/`ghs.googlehosted.com` custom URLs are HTTP-only by design** — never a DNS issue; verify via `openssl s_client` TLS handshake before assuming DNS fault. `google-ghs-custom-url-http-only.md`.
 - **Local transcript/session store is redaction-capable**: 7 plaintext stores under `~/.claude/`, all rw, none git-tracked — capability, not a harness limitation.
 - **lucos_router**: certbot (`--nginx`, HTTP-01) has no l42.eu restriction — precedent `tfluke.uk` proves non-l42.eu domains work today. `https.conf`=proxy_pass only; `router.conf`'s `return 301` is the precedent for external-URL redirects. Domain-set entries for non-configy domains are hardcoded in `fetch-domainsets.sh`. `lucos-router-mechanism.md`.
