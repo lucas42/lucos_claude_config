@@ -73,7 +73,10 @@
 
 set -euo pipefail
 
-CLAUDE_DIR="/home/lucas.linux/.claude"
+# Overridable (default unchanged) so this can be pointed at a disposable
+# fixture repo instead of the live shared checkout — see
+# lucas42/lucos_claude_config#147 and scripts/tests/return-to-main-fixture-test.sh.
+CLAUDE_DIR="${CLAUDE_DIR:-/home/lucas.linux/.claude}"
 
 # State files for the persistence tracks (job 3 and job 2c). Each pairs a
 # "-since" file (epoch timestamp the condition was FIRST observed in the
@@ -114,8 +117,12 @@ STALL_SECONDS=300
 PATH_LIST_CAP=10
 
 # The sanctioned way to write a Loganne event (see references/monitoring-loganne.md)
-# — source is hardcoded to lucos_agent by the wrapper itself.
-LOGANNE_EVENT_SCRIPT="/home/lucas.linux/sandboxes/lucos_agent/loganne-event"
+# — source is hardcoded to lucos_agent by the wrapper itself. Overridable
+# (default unchanged) so a fixture test can point this at a no-op stub
+# instead of firing real production Loganne events when it deliberately
+# exercises the alerting paths — see lucas42/lucos_claude_config#147 and
+# scripts/tests/return-to-main-fixture-test.sh.
+LOGANNE_EVENT_SCRIPT="${LOGANNE_EVENT_SCRIPT:-/home/lucas.linux/sandboxes/lucos_agent/loganne-event}"
 
 export GIT_SSH_COMMAND="ssh -i /home/lucas.linux/.ssh/id_ed25519_lucos_agent \
     -o IdentitiesOnly=yes \
