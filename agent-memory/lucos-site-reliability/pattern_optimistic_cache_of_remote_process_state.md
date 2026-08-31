@@ -24,6 +24,14 @@ have been. lucos_media_linuxplayer: 2 `Volume at …%` lines in a 35,927-line, 5
 
 - After `loadfile`, mplayer has **no audio output** for a median 2.14 s (min 0.74 s, max 5.58 s,
   measured over 46 track starts) — it's opening the stream and filling the 16 MB cache to 80% first.
+- **The 16 MB cache did NOT create that dead window** (checked 2026-08-31 when lucas42 asked whether
+  the volume bug was a regression from 5e01626, 2026-05-13). Without the cache flags, audio output is
+  still ~0.92 s away — dominated by the **TLS handshake to private.l42.eu, measured at 253/292/333 ms
+  from xwing**. The code writes `volume` at +0.12 s, so it missed by ~800 ms before the cache change
+  too. The cache widened the miss from ~0.9 s to ~2.3 s; it didn't cause it. `setVolume()` is
+  byte-identical since 2024-09-04; the poisoning short-circuit dates from 2022-06-26.
+- mplayer wants the audio chain up **before** the command, with margin: sending level with audio init
+  (+1.0 s vs AO at 1.01 s) is still dropped; +1.5 s applies.
 - A `volume N 1` written into that window is **silently discarded**: no error, no warning, no
   non-zero anything. Reproduced 2026-08-22 in `debian:bookworm` + mplayer: same command at
   +0.12 s → `ANS_volume=90.909088` (ignored), at +5 s → `ANS_volume=42.000000` (applied).
