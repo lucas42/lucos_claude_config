@@ -106,6 +106,10 @@ Consolidated from MEMORY.md 2026-07-03 (index compaction). Verify open/closed st
 - Runs: lucos_router, lucos_media_import, lucos_media_linuxplayer, lucos_private, lucos_static_media. pici retired (archived 2026-03-17).
 - `build-multiplatform` is standard for arm builds.
 
+## lucos_deploy_orb (2026-08-31)
+- `test-publish-docker`/`-with-mirror` red on `main` since 2026-08-31: BuildKit's default manifest media type drifted Docker-v2 → OCI-v1 for `platform: ""` pushes. Still a **bare manifest, not an index**, so #186's actual guard holds — verified `COPY --from` from amd64/arm64/s390x/riscv64, all four OK. Tracked lucas42/lucos_deploy_orb#195 (fix = assert *not an index*), root cause lucas42/lucos_deploy_orb#196 (unpinned `moby/buildkit`). Don't rerun — deterministic.
+- `main` branch protection has `required_status_checks.contexts: []` — **nothing** gates merges, so `gh pr merge --auto` merges Dependabot PRs seconds after opening, red CI and all. Outlier: all siblings require their CircleCI contexts. Tracked lucas42/lucos_deploy_orb#202.
+
 ## Hostname → Repo Mappings (non-obvious)
 - `media-api.l42.eu` → `lucos_media_metadata_api` (Go API)
 - `media-metadata.l42.eu` → `lucos_media_metadata_manager` (PHP web UI)
