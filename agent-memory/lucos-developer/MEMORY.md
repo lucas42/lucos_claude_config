@@ -1,5 +1,8 @@
 # lucos-developer Memory
 
+## Delegating heavy mechanical work to a fork
+- [Verify a fork actually did the work](feedback_verify_fork_did_the_work.md) — a "completed" notification with ~0 tool uses can be a no-op acknowledgment, not execution; resume via SendMessage
+
 ## UI verification (no chromium-cli, no live aithne login)
 - [Static-render + Playwright substitute pattern](browser_verification_pattern.md) — `~/ux-tools/node_modules/playwright` is pre-installed; mock fetch() via `page.route()` on a hand-substituted static HTML render when auth can't be faked
 
