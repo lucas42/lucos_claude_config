@@ -23,17 +23,13 @@ metadata:
 Same discipline, opposite sign. A nearby commit that plausibly *worsens* a symptom is not a commit
 that *caused* it. The decisive test is to **run the pre-change config under production-realistic
 conditions and see whether it actually passed** — not to note that a suspicious commit exists near
-the right date. What made this work on lucos_media_linuxplayer#139 (2026-08-31):
+the right date.
 
-- **Calibrate the rig before varying the factor.** Tune the repro until the *current* config
-  reproduces a number measured on production (there: 2.35 s vs production's 2.14 s median). Only
-  then flip the one variable. An uncalibrated repro can't distinguish "pre-change was fine" from
-  "my sandbox is faster than production" — my first, loopback-only run showed a 22 ms margin and
-  looked like a coin flip; adding the *measured* TLS handshake turned it into a decisive 800 ms miss.
-- **Always run the positive control.** Show the rig can report SUCCESS (send the command late →
-  applied). Two "FAILED" rows with no control is a plausible broken rig, not a result.
-- Diff the *specific functions* in the suspect path across the period, not a keyword grep of the
-  diff. My grep said "only 2 lines changed"; the real diff was 139 lines, of which 3 were in the
-  path and none behavioural. The grep happened to be right and was still bad evidence.
-- A negative result is a real answer. Report it flat; don't inflate a "made it worse" finding into
-  the "caused it" answer the asker was hoping for.
+The method (calibrate the rig against a production measurement before flipping the variable; always
+run a positive control; read the path's real diff rather than grepping it) is now carried as a rule
+in `agents/lucos-site-reliability.md` § "Making Code Changes" — follow it from there, this is just
+the pointer. Grounding for both: lucos_media_linuxplayer#139, 2026-08-31.
+
+The one part that isn't a method rule: **a negative result is a real answer.** Report it flat.
+Don't inflate a "this change made it worse" finding into the "this change caused it" answer the
+asker was hoping for — team-lead explicitly asked for the negative if that's what it was, and it was.
