@@ -5,7 +5,7 @@ Every lucos HTTP service must expose a `/_info` endpoint with no authentication.
 Fields are divided into three tiers:
 
 - **Tier 1 (required):** `system`, `checks`, `metrics` -- must always be present. `checks` and `metrics` may be empty `{}` but must not be omitted.
-- **Tier 2 (recommended):** `ci`, `title` -- strongly encouraged; consumers handle their absence gracefully.
+- **Tier 2 (recommended):** `ci`, `title`, `version` -- strongly encouraged; consumers handle their absence gracefully.
 - **Tier 3 (frontend only):** `icon`, `show_on_homepage`, `network_only`, `start_url` -- only relevant for services with a web UI. API-only services should omit these.
 
 ## Quick reference
@@ -17,6 +17,7 @@ Fields are divided into three tiers:
 | `metrics` | object | 1 | Metrics: each value has `value` (number), `techDetail` (string) |
 | `ci` | object | 2 | CI metadata, e.g. `{"circle": "gh/lucas42/<repo_name>"}` |
 | `title` | string | 2 | Human-readable name (falls back to `system` if absent) |
+| `version` | string | 2 | The version of the service currently running, as a [semver 2.0.0](https://semver.org) string |
 | `icon` | string | 3 | Path to the service icon |
 | `show_on_homepage` | bool | 3 | Whether to show on the homepage (default `false`) |
 | `network_only` | bool | 3 | Whether a network connection is required (default `true`) |
