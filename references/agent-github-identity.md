@@ -50,7 +50,7 @@ ENDBODY
 )"
 ```
 
-`$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. **Do not use `--field "body=@$BODY_FILE"` (passes the literal path string, not file contents)** and **do not use `--field body-file=$FILE`** (silently creates an ignored field). Both patterns fail silently — the body ends up as a path string or null with no error from the wrapper.
+`$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. **Use `--field "body=@$BODY_FILE"` — the long form — for a file-backed body; `-f "body=@$BODY_FILE"` posts the literal string `@/tmp/...`.** The two flags are not interchangeable here: `gh api`'s own help gives `-F, --field key=value` as "use `@<path>` or `@-` to read value from file or stdin", while `-f, --raw-field key=value` adds a *string* parameter and never expands the `@`. The trap is that `-f title="..."` for a plain string value is correct and sits right beside it, so the short form reads as natural. Also **do not use `--field body-file=$FILE`** (silently creates an ignored field). The `-f`-with-`@` and `body-file` mistakes both fail silently — a 200, an `html_url`, and a body that is a path string or null. See [`issue-creation.md`](issue-creation.md) Pattern B, which is canonical for this; keep the two files in agreement.
 
 **If the body contains curly-brace placeholders** (e.g. `{owner}/{repo}` in prose): `gh api` performs template substitution on these tokens inside field values regardless of shell quoting. When the braces are your own prose, reword to avoid the syntax — use the docs title instead.
 
