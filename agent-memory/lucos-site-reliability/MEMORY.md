@@ -49,6 +49,8 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Three-stage env-var wiring required](pattern_three_stage_env_var_wiring.md) — code read + compose passthrough + creds value.
 - [Walk the env-var chain before naming the gap](feedback_walk_env_chain_before_concluding.md) — usually link 3 (compose).
 
+- [lucos_creds SSH auth = per-key ENVIRONMENT restriction only](reference_lucos_creds_ssh_auth_model.md) — no per-path ACL; docker-deploy unrestricted ⇒ new creds path needs NO server change.
+
 ## Monitoring
 - [New service: monitoring REBUILD vs root RUNTIME](pattern_surfacing_new_service_monitoring_vs_root.md) — monitoring bakes at build.
 - [monitoring API uses `status` field not `ok`](pattern_monitoring_api_status_field.md) — use `summary` for counts.

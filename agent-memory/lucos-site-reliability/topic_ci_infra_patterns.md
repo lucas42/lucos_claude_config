@@ -103,3 +103,8 @@ for url, s in data['systems'].items():
 ## Production host structure / creds self-deploy
 - No persistent per-service dirs on hosts; compose deploys transiently to `/home/circleci/project` during CI only. Use container names directly (`docker logs lucos_monitoring`). Names match docker-compose service names.
 - **lucos_creds reads `.env` from CircleCI `LUCOS_DEPLOY_ENV_BASE64` snapshot, not creds.l42.eu** (see reference_lucos_creds_self_deploy.md). Live store changes don't propagate until snapshot refreshed. On "fix didn't take after redeploy" for creds, check snapshot first (2026-05-09 CRLF incident).
+
+## CircleCI project exposure settings (checked 2026-08-31, all lucos projects sampled)
+`GET /api/v2/project/gh/lucas42/{repo}/settings` → `advanced`. Estate-wide: `build_fork_prs: false`, `forks_receive_secret_env_vars: false` (forked PRs are neither built nor given secrets — so "untrusted code in CI" is NOT a live threat model here), but **`oss: true`** ⇒ **build output is publicly viewable**.
+⚠️ Therefore the real risk of putting high-value creds in a job is a **public log dump** (`env`, a failing test printing config, `docker compose config`), not branch-pushed malice. Use this to argue least-privilege on CI credential scope — and check it before asserting either threat model.
+
