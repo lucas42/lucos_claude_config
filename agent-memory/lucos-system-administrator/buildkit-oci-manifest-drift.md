@@ -1,9 +1,11 @@
 ---
 name: buildkit-oci-manifest-drift
-description: lucos_deploy_orb#195 investigation — BuildKit's default single-manifest media type flipped Docker v2 -> OCI v1, estate-wide, not a #186 recurrence
+description: lucos_deploy_orb#195 — BuildKit's default single-manifest media type flipped Docker v2 -> OCI v1, estate-wide, not a #186 recurrence — RESOLVED
 metadata:
   type: project
 ---
+
+**RESOLVED 2026-09-01, PR #201.** Narrowed the assertion to a structural check — `jq -e '.manifests == null and .config != null'` — instead of matching a second hardcoded media-type string, since an index always carries a top-level `manifests` array and a single manifest never does; this survives future vocabulary drift rather than just relocating today's failure mode. Verified against 3 real artifacts (a live production image, a real index, the exact failing CI artifact) before pushing. lucas42 requested changes on an over-verbose in-YAML comment (rationale belongs in the commit message — see [[feedback_concise_code_comments_self_check]]); trimmed and merged. Confirmed recovered post-merge: `test-deploy` workflow green including the previously-blocked `orb-tools/pack → increment → deploy-log` chain (a new orb version published successfully), GitHub combined status green, `monitoring.l42.eu` back to healthy (checked twice, 90s apart, to rule out a premature read).
 
 **lucos_deploy_orb#195** (2026-08-28, analysis posted, Needs Analysis — investigation only, no fix chosen yet): `moby/buildkit:buildx-stable-1` is an unpinned floating tag, re-pulled fresh on every CI run with no local persistence across CircleCI's ephemeral VMs — so a routine upstream BuildKit release silently changes push behaviour for every consumer with zero commits to `lucos_deploy_orb`. Confirmed via direct before/after CI log diff (same command, same Dockerfile, six weeks apart): pushed manifest `MediaType` flipped `application/vnd.docker.distribution.manifest.v2+json` → `application/vnd.oci.image.manifest.v1+json`. Matches a documented industry-wide BuildKit/buildx default shift (moby/buildkit#5466).
 
