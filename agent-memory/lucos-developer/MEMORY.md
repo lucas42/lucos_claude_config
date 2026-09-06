@@ -6,6 +6,9 @@
 ## UI verification (no chromium-cli, no live aithne login)
 - [Static-render + Playwright substitute pattern](browser_verification_pattern.md) — `~/ux-tools/node_modules/playwright` is pre-installed; mock fetch() via `page.route()` on a hand-substituted static HTML render when auth can't be faked
 
+## Node dependency-bump root causes
+- [mocha 12 bin rename + stale minimatch override](node_dependency_bump_root_causes.md) — mocha 11→12 renamed bin/mocha→bin/mocha.js and flipped CJS→ESM (breaks --input-type=module); minimatch override staleness fix via GHSA advisory API lookup
+
 ## lucos_creds
 - [Structure, SSH command syntax, deploy-snapshot gotcha](lucos_creds.md) — CRITICAL: `LUCOS_DEPLOY_ENV_BASE64` silently overwrites live store on redeploy
 
