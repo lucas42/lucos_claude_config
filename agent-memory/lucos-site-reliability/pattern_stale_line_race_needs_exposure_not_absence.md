@@ -17,4 +17,8 @@ metadata:
 
 **xwing log noise (drive-by, unfiled):** 4127 of 5238 lines are one repeated `[tls @ ...] The specified session has been invalidated` warning (79%), and `live-position regression` fires 253×/6d on benign sub-second jitter (median 0.10s) — drowning the one signal that would have caught this race in production.
 
+**Instruction landed (don't rely on this memory alone):** the rule is now the **fifth tell** in `agents/sre-ops-checks.md`'s "A probe that finds nothing has not proven nothing" paragraph — tightened in place, not added alongside. Also proposed for the global `CLAUDE.md` on lucas42/lucos_claude_config#157 (architect's estate-sweep relocation), as a sibling rule under a shared "Null results and counts" heading. **If #157 lands, the SRE copy must become a pointer, not a duplicate.**
+
+**The unifying frame worth carrying:** a lossy index (#157's code search), an empty denominator (this), a misconfigured probe (the `-quiet` rig) and an un-enabled channel (the missing `[DEBUG]` lines) are one failure wearing four coats — *the method was never capable of showing a positive*. Recognise by shape, not domain.
+
 See [[pattern_optimistic_cache_of_remote_process_state]] (#139), [[feedback_verify_check_claim_against_underlying_store]].
