@@ -2,9 +2,9 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-08-06
-info_endpoint_quality: 2026-08-06
-external_deps: 2026-08-06
+ci_status: 2026-09-06
+info_endpoint_quality: 2026-09-06
+external_deps: 2026-09-06
 
 ## Container Log Review History
 
@@ -14,12 +14,12 @@ lucos_photos_worker: 2026-08-17
 lucos_arachne_explore: 2026-08-02
 lucos_arachne_web: 2026-08-08
 lucos_backups: 2026-08-17
-lucos_repos_app: 2026-08-08
+lucos_repos_app: 2026-09-06
 lucos_dns_bind: 2026-07-27
 lucos_loganne: 2026-07-23
 lucos_configy: 2026-08-28
 lucos_contacts_app: 2026-08-08
-lucos_contacts_db: 2026-08-26
+lucos_contacts_db: 2026-09-06
 lucos_contacts_googlesync_import: 2026-08-09
 lucos_contacts_web: 2026-08-17
 lucos_creds: 2026-07-14
@@ -27,19 +27,19 @@ lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-08-17
 lucos_dns_sync: 2026-08-17
 lucos_eolas_app: 2026-08-08
-lucos_eolas_db: 2026-08-27
+lucos_eolas_db: 2026-09-06
 lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-08-28
 lucos_locations_otfrontend: 2026-07-23
 lucos_locations_otrecorder: 2026-08-28
-lucos_locations_oauth2_proxy: 2026-08-27
+lucos_locations_oauth2_proxy: 2026-09-06
 lucos_mail_smtp: 2026-08-19
 lucos_photos_api: 2026-08-28
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
-lucos_arachne_triplestore: 2026-07-13
+lucos_arachne_triplestore: 2026-09-06
 lucos_mail_docs: 2026-08-22
-lucos_photos_postgres: 2026-08-26
+lucos_photos_postgres: 2026-09-06
 lucos_photos_redis: 2026-08-17
 lucos_scenes: 2026-08-17
 lukeblaney_co_uk: 2026-08-27
@@ -194,3 +194,14 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-08-28 **`lucos_locations_mosquitto` 560 error lines in 7.5h is BENIGN internet scanning — decided NOT to file.** All TLS handshake failures on port **8883, which is published to `0.0.0.0` *and* `::`** (`docker inspect` Ports), i.e. deliberately internet-facing for OwnTracks. 274 appear to come from `192.168.176.1` = the **docker bridge gateway**, which is docker-proxy masking the real source IP for the IPv6-published port — not an internal client. Signature is unmistakably scanners: `unexpected eof while reading` plus `no shared cipher`, `unsupported protocol`, `version too low`, `bad key share`, `http request`. Legitimate clients are fine (`192.168.176.5` = otrecorder and `127.0.0.1` = the `nc -z 127.0.0.1 1883` healthcheck both connect successfully) and `lucos_locations` is green. Rate is a flat ~40/h baseline back to the log buffer start (08-26), **not** new and **not** accelerating. ⚠️It does dominate the estate error sweep, so expect to re-see it — that is the reason to remember it, not to ticket it. No existing issue on lucos_locations covers it (searched mosquitto/TLS/10-most-recent).
 - 2026-08-28 Checks 5/6/7 **not due** — last run 2026-08-06 (22d); next due ~2026-09-06.
 - 2026-08-28 **Housekeeping: `ops-checks.md` was 120KB/211 lines.** Archived the 25 pre-2026-07-18 notes to [[ops-checks-archive-pre-2026-07-18]] (durable lessons already promoted to the `pattern_*`/`feedback_*` files). Live file now ~94KB. Re-archive on roughly the same cadence rather than letting it grow unbounded.
+- 2026-09-06 Check 1: 55 systems, **211/213 checks healthy** (reconciles with `summary`: 53 healthy / 1 failing / 1 unknown). ⚠️`summary.unknown` counts a system whose status is **`buffering`** — `lucos_arachne` was `buffering` on `triplestore` (2/7, "operation was aborted due to timeout") and that is what the `unknown:1` meant. Don't read `unknown` as "unreachable" (lucas42/lucos_monitoring#295 is about exactly this being uncounted/unrecorded).
+- 2026-09-06 **`stale-dependabot-prs` red was a LIVE condition, not a stale reading** (contrast 08-27). 3 PRs stuck since 09-04T07:0x, all **red CI, all three repos green on `main`, three DIFFERENT root causes** — a good reminder not to generalise from the first one. (a) lucas42/lucos_arachne#822 `lucos/build`: `scripts/generate-category-css.js` fetches `https://eolas.l42.eu/metadata/categories.json` **at image-build time**, got HTTP 502, `&&` chain exits 1; loganne shows `Deployed lucos_eolas v1.1.39` at 07:19:46Z, i.e. the build raced the eolas deploy. Filed lucas42/lucos_arachne#824. **My `from_failed` rerun went green and auto-merge merged the PR 6s later** — rerun IS the right tool when the failure is a remote blip. (b) lucas42/lucos_notes#515 `test`: `test-exclude` 6→7 (pulled by jest 30.4.2→30.5.0) declares `minimatch: ^10.2.2`, lock placed **no matching copy anywhere**, so it resolved the hoisted root `minimatch@5.1.9` → `minimatch is not a function`, 6/6 suites failed. (c) lucas42/lucos_media_seinn#617 `test`: **mocha 12.0.0 flipped `"type"` from `commonjs` to `module`** (verified on registry.npmjs.org) and dropped the `_mocha` bin, so `node --input-type=module … bin/mocha` now routes through the ESM resolver → `ERR_INPUT_TYPE_NOT_ALLOWED`.
+- 2026-09-06 ⚠️**THE WORLD MOVED MID-RUN — twice, and it nearly cost me two wrong artifacts.** While I was diagnosing, another agent fixed notes (`6acef086`, minimatch override →10.2.6, merged 10:59:06Z) and seinn (`3dd66cef` "Fix test script for mocha 12's renamed bin entry point", merged 11:03:44Z). I filed lucas42/lucos_notes#516 **before** re-checking and had to close it within the hour; I caught seinn only because I fetched `main`'s `package.json` to quote the test script and noticed it no longer matched the failing command. **Habit: on any multi-hour investigation, re-fetch PR/issue state IMMEDIATELY before filing, not at the start** — and treat "the artifact I'm about to quote doesn't match what I observed" as the world having moved, not as my having misread. See [[feedback_refetch_state_before_writing_final_artifact]].
+- 2026-09-06 Check 2 (7d, 419 events, range 08-30T03:30Z→09-06T10:39Z): **20 `lucos_monitoring` + 1 `lucos_agent`**. 8 flaps, all dispositioned to EXISTING open tickets, none new: 2× `lucos_monitoring/fetch-info` 50s each ~4m15s after a self-restart (→ commented lucas42/lucos_monitoring#298, also instances of #303); `lucos_time/media` 4s (#303); `lucos_locations/location-freshness` 10h40m overnight (#105); `lucos_backups/startup` 29s + `lucos_contacts/circleci` 3m08s in the deploy burst; `lucos_deploy_orb/circleci` 1h27m = a genuine red on `84a9904` fixed by a **different commit** `082cf38` 87min later (two revisions, so NOT a rerun — check `vcs.revision` before calling something a flake).
+- 2026-09-06 **`lucos_agent` `persistentDirtDetected` (08-30T19:17:41Z) still UNRECOVERED after 7 days** — event names the path: `settings.json`. Confirmed live: `git status --porcelain` in `~/.claude` = ` M settings.json`, a 1-line add of `"agentPushNotifEnabled": true` on `main`. Reads as lucas42's own `/config` toggle, so I did NOT commit it (never hand-run git on the shared `~/.claude` tree; `commit-claude-main` is the tool, and it's the coordinator who owns direct `~/.claude` edits). Flagged to team-lead instead.
+- 2026-09-06 Check 4: 6 containers. `lucos_locations_oauth2_proxy` 352 lines/0; `lucos_contacts_db` 8/0; `lucos_eolas_db` **16 lines TOTAL since 08-17 start, nothing since 08-19 21:59** (Postgres skips a checkpoint entirely when there's no WAL ⇒ genuinely no writes; same as my 08-27 note — **don't chase this a third time**); `lucos_photos_postgres` 228/2 (`duplicate key … person_contact_id_key`, an upsert race, 2 in 11d vs 10 on 08-26 — noted, not filed); `lucos_arachne_triplestore` 241,201 lines/**0** matches (partial: restarted 09-04); `lucos_repos_app` 17 → the soft-404 finding below. Estate sweep since 09-04T07:00 returned 8 containers (positive control passed).
+- 2026-09-06 **`lucos_repos` serves 200 + the full 208KB audit JSON for EVERY unrouted path — filed lucas42/lucos_repos#512.** Found from repos_app's log, not by looking for it: 16 `ERROR Failed to encode JSON response … broken pipe` in 150ms at 09-05T23:07:52Z. Router log named the cause — `crusader-worker/1.0` from 34.52.238.171, a secrets scanner, 3× 200/208KB then 13× 499. Probed with **both controls**: `/definitely-not-a-real-path-12345` and `/` return byte-identical 208425B, `/_info` returns 993B (so routing works; it's a catch-all). Deliberately did NOT sell this as a security finding — payload is convention results for 62 already-public repos, 115-175ms, so it's log-noise + scanner-invitation, i.e. P3 hygiene.
+- 2026-09-06 Check 5 ⚠️**the doc's prescribed `orgs/lucas42/repos` is a HARD 404 — lucas42 is a USER, not an org.** Fixed the instruction to use `installation/repositories` (which also carries `archived`/`fork`). 98 repos, 28 archived, **64 active non-fork**. One red: **`lucos_agent` `main` — `lucos/prune-images-1` (avalon) has timed out on 6 CONSECUTIVE nightly runs 09-01→09-06**, always exactly 600.5s with zero output. Already tracked as lucas42/lucos_deploy_orb#203 (duplicate check earned its keep) → commented with the recurrence table + new state evidence: avalon images **3800→1906**, dangling 0, disk **44%→28%**, i.e. the prunes ARE completing server-side after CircleCI kills the client end. `docker system df` on avalon blew my own 120s timeout — use `docker images -q | wc -l` instead.
+- 2026-09-06 Check 6 ⚠️**the doc's field list conflated the spec's TIERS and would have had me file 9 false positives.** Canonical `lucos/docs/info-endpoint-spec.md`: Tier 1 = `system`/`checks`/`metrics` ONLY; `ci`/`title`/`version` are Tier 2 recommended, absence handled gracefully (`title` falls back to `system`). 8 systems lack `title`, 1 (`lucos_worlds`) lacks `ci` — **none is a defect**. Fixed the instruction. Real result: **31/31 HTTP services Tier-1 compliant**, 0 malformed. Enumerate domains from `lucos_configy` `config/systems.yaml` (`/api/status` has no hostname); `lucos_dns`/`lucos_dns_secondary` have a `domain` but **no `http_port`** ⇒ `curl` returns `000` correctly, not a finding.
+- 2026-09-06 Check 7: all 4 external deps nominal (LE 200, Hub 401, CircleCI 401, GitHub 200).
+- 2026-09-06 Check 3 (30d, **3089 events, full range 08-07T11:21Z→09-06T10:39Z** — no event-cap truncation this time, unlike 08-28's 7.4d): 14 outages >30min, only 2 new since the 08-28 run, neither warranting a report (`lucos_deploy_orb` 08-31 1h27m = real red fixed by a follow-up commit, ordinary dev flow; `lucos_locations` 09-02 10h40m = the #105 check whose semantics are still under dispute). Latest report on `origin/main` remains 2026-08-17.

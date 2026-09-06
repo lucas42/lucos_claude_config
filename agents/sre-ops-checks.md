@@ -275,12 +275,17 @@ Scan for repos where CI has been red for an extended period (more than a few day
 
 Check `ops-checks.md` for `ci_status` last_run date; skip if less than a month ago.
 
+**`lucas42` is a user, not an org — `orgs/lucas42/repos` returns a hard 404.** Enumerate via the App installation, which also carries the `archived`/`fork` fields the repo-sweep rule above requires you to filter on explicitly:
+
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
-  "orgs/lucas42/repos?per_page=50"
+for p in 1 2; do ~/sandboxes/lucos_agent/gh-as-agent --app lucos-site-reliability \
+  "installation/repositories?per_page=100&page=$p" \
+  --jq '.repositories[]|"\(.name)|\(.archived)|\(.fork)|\(.default_branch)"'; done
 ```
 
-Then check recent CircleCI status for repos that look active. Raise a P3 issue for any repo with CI red for more than a week.
+Then read each active repo's default-branch CI in one call — `repos/lucas42/<name>/commits/<branch>/status` returns the combined CircleCI state. `pending` with `total_count` 0 means the repo has no CI at all (doc/config repos) and is not a finding; `failure` is.
+
+Raise a P3 issue for any repo with CI red for more than a week — but check the repo for an existing open ticket first: repos outside `lucos_monitoring`'s system list (e.g. `lucos_agent`) have no alerting surface, so a long-running red there is exactly the kind of thing someone has already filed and nothing has since re-surfaced.
 
 After completing, update `ci_status` in `ops-checks.md` with today's date.
 
@@ -288,13 +293,15 @@ After completing, update `ci_status` in `ops-checks.md` with today's date.
 
 ### Check 6: `/_info` Endpoint Quality
 
-Hit `/_info` directly on each monitored service to verify the response is well-formed and contains the expected fields (`system`, `checks`, `metrics`, `ci`, `title`, etc.).
+Hit `/_info` directly on each HTTP service to verify the response is well-formed.
 
 Check `ops-checks.md` for `info_endpoint_quality` last_run date; skip if less than a month ago.
 
-Services to check are listed in the monitoring API response (`monitoring.l42.eu/api/status`). For each system hostname, fetch `https://<hostname>/_info` and verify the JSON structure matches the expected schema.
+**Validate against the spec's tiers, or you will file a wave of false positives.** The canonical spec (`lucos/docs/info-endpoint-spec.md` on `origin/main` — not the agent copy, which is known to diverge) makes only **`system`, `checks`, `metrics`** Tier 1 / required; `ci`, `title` and `version` are Tier 2 / *recommended*, and consumers must handle their absence (`title` falls back to `system`). A missing Tier-2 field is **not** a defect and must not be reported as one. Within each check object, `ok` and `techDetail` are required; `debug`, `dependsOn` and `failThreshold` are optional.
 
-Raise a P3 issue for any service with a malformed or missing `/_info` response.
+**Enumerate from configy, not from `/api/status`** — the monitoring API carries no hostname. Read `config/systems.yaml` from `origin/main` of `lucos_configy` and take each system's `domain`. A system with a `domain` but **no `http_port`** serves no HTTP at all (`lucos_dns`, `lucos_dns_secondary`): `curl` returns `000` there and that is correct, not a finding — confirm by checking `http_port` in the same file rather than by assuming, and use a system that *has* one as the positive control.
+
+Raise a P3 issue only for a service that is missing a Tier-1 field, returns unparseable JSON, or 5xxs.
 
 After completing, update `info_endpoint_quality` in `ops-checks.md` with today's date.
 
