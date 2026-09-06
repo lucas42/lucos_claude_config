@@ -10,13 +10,14 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-08-28 |
-| codeql-secret-scanning | 2026-08-28 |
-<!-- last updated: 2026-08-28 — 0 dependabot alerts; same 3 codeql alerts, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all confirmed open), 0 secret-scanning -->
+| dependabot-alerts | 2026-09-06 |
+| codeql-secret-scanning | 2026-09-06 |
+<!-- last updated: 2026-09-06 — 1 dependabot alert (lucos_arachne#25, decode-uri-component DoS, GHSA-vcc3-ghjq-m6fr): transitive dev dep via query-string/@zazuko/yasgui, Dependabot couldn't auto-PR past query-string's ^0.2.0 range; fixed myself via npm override (arachne PR #823), verified npm install + Docker build + full test suite all pass. Same 3 codeql alerts as last run, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all confirmed open), 0 secret-scanning -->
 
 ## Monthly checks
 
 | Check | Last run |
 |---|---|
-| codeql-coverage | 2026-08-06 |
-| github-actions-audit | 2026-08-06 |
+| codeql-coverage | 2026-09-06 |
+| github-actions-audit | 2026-09-06 |
+<!-- last updated: 2026-09-06 — Check 3: every non-fork active repo with a CodeQL-supported primary language already has a CodeQL workflow (checked all Go/Python/JS-TS/Java/Kotlin/Ruby repos); no gaps. Check 4: audited all 217 workflow files across 60 non-fork active repos (via raw.githubusercontent) — zero genuinely third-party `uses:` refs (only self-referencing lucas42/.github reusable workflows, org-owned not third-party); every workflow declares a `permissions:` key (top-level or job-level); no pull_request_target triggers except the well-designed reusable-dependabot-auto-merge.yml (secrets only flow to a GitHub-owned, SHA-pinned action, never to PR-head code). No findings, no issues raised. -->
