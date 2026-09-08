@@ -238,9 +238,10 @@ SSH into production hosts and review logs for a rotating selection of containers
    ```
 2. Compare against tracking data in `ops-checks.md`
 3. Prioritise containers with the oldest `last_reviewed` date **whose `StartedAt` predates that date**. A container restarted since its last review has no logs covering the gap — `docker logs` starts at `StartedAt`, so reviewing it yields a clean-looking result that proves nothing ([[pattern_container_restart_log_buffer_artifact]]). Deploy bursts routinely restart most of the estate at once; on those days, deliberately skip the oldest containers in favour of ones that still have history, and say in your output which you deferred and why. Do not silently record a deferred container as reviewed.
-4. Any container not reviewed in 60+ days: flag explicitly in your output as **overdue**
-5. Any container not reviewed in 30+ days: prioritise in this run's selection
-6. New containers (not yet in tracking data): review on their first or second rotation
+4. ⚠️ **Deferral must not become starvation — cap it at two.** Rule 3 defers a container until it has history, which never arrives for one that redeploys most days: it is restarted again before its turn comes round, so it is deferred again, forever. **On the third consecutive deferral, review it on whatever window it has** and record it as `name: YYYY-MM-DD (short window, Nh since StartedAt)`. The reframe that makes this correct rather than a concession: for a container that restarts on most deploys, *the log since `StartedAt` is the complete history of the running instance* — reviewing it is a full review of that instance, not a partial one. Rule 3's "proves nothing" warning is aimed at a container that restarted **unusually** recently, where a gap exists that you could plausibly see on a later run. Where no later run will ever have more, the real choice is a short window versus never. (2026-09-08: `lucos_eolas_web` reached 61 days unreviewed, deferred on 08-26, 09-06 and 09-08, every time for the same reason.)
+5. Any container not reviewed in 60+ days: flag explicitly in your output as **overdue**
+6. Any container not reviewed in 30+ days: prioritise in this run's selection
+7. New containers (not yet in tracking data): review on their first or second rotation
 
 Aim to review **3-5 containers per run**.
 
