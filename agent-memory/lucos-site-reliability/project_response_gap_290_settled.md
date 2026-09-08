@@ -16,6 +16,12 @@ metadata:
 
 ⚠️ **One correction to that correction, verified on the live board 2026-09-08:** the narrow remedy is *not* unqueued. **#290 is Status = Ready, Priority = Low, Owner = `lucos-site-reliability`** — i.e. mine to implement when dispatched. "Nothing is queued" is true of the *broad* remedy only.
 
+⚠️ **The narrowed remedy does NOT cover the default-branch shape — verified from source 2026-09-08.** `lucos_repos/src/pr_dashboard.go:248` fetches `pulls?state=open` only, and L287 gates on `pr.CreatedAt`, so `stale-dependabot-prs` can only see a **still-open** PR. The 09-08 event was red on `main` *after* both PRs merged ⇒ **no threshold value would have fired**. This was deliberate, not an oversight: my own analysis headed the two sections *"For the six PR-level events: one constant"* and *"For the two default-branch events: I'd leave it, for now"*. The constant addresses **everything except gap 1** (gap 1 = red on default branch; gap 2 = red off it; plus 3 non-CI mechanisms). Gap 1 now carries 3 of the recorded occurrences.
+
+⚠️ **Both revisit conditions are DORMANT, not armed — they are gated on a dispatch nothing schedules.** Mine ("if the threshold change lands and default-branch reds are still sitting in a month") and team-lead's trigger 3 both presuppose the constant ships; it is Ready/Low and unstarted, so neither clock has started. **Treat triggers 1 and 2 as the only live ones.** This is the shape where a revisit condition becomes a way of never revisiting.
+
+**Rate check to reuse (gap 1 only):** 2 events in 28.7d at analysis (07-30 `lucos_repos`, 08-13 `lucos_arachne`) → 3 events in 40d incl. 09-08 `lucos_creds` = **2.15 per 28.7d vs 2.00. Unchanged.** So trigger 1 is NOT met; don't mistake a third occurrence for a rising rate.
+
 **Escalate only if one of these is met** (testable, so it isn't a judgement call each run):
 1. A **materially higher sustained rate** than ~7 per 29 days.
 2. An occurrence whose cost is **qualitatively worse than a delayed deploy** — data loss, a real outage, or a stale credential store *actually serving*.
