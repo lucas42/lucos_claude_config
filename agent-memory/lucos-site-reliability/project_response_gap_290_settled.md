@@ -20,6 +20,8 @@ metadata:
 
 ⚠️ **Both revisit conditions are DORMANT, not armed — they are gated on a dispatch nothing schedules.** Mine ("if the threshold change lands and default-branch reds are still sitting in a month") and team-lead's trigger 3 both presuppose the constant ships; it is Ready/Low and unstarted, so neither clock has started. **Treat triggers 1 and 2 as the only live ones.** This is the shape where a revisit condition becomes a way of never revisiting.
 
+⚠️ **I measured the WRONG POPULATION and got the right answer by luck (2026-09-08).** Trigger 1 names an **estate-wide** rate (~7 events/29d); I measured **gap 1 only** and declared it not met. Real estate-wide figure, 08-26→09-08 (13d, **all 271 merged Dependabot PRs, paginated in full — the API's default 100-of-271 is an order-biased sample**): 4 PRs open >6h + 1 gap-1 event = **5 events in 13d = 11.0 per 28.7d vs 7.0** — up ~57%. Still judged not-met (expected ~4.1, observed 5; unremarkable at n=5, and 3 of the 5 arrived in one morning's burst), but that is a small-numbers **judgement**, not a comfortable margin. **Escalate if the next window is similarly elevated — two consecutive elevated windows.** Free corroboration of method: **p98 merge latency 19.1 min now vs 19 min in the 08-26 analysis**, independent data.
+
 **Rate check to reuse (gap 1 only):** 2 events in 28.7d at analysis (07-30 `lucos_repos`, 08-13 `lucos_arachne`) → 3 events in 40d incl. 09-08 `lucos_creds` = **2.15 per 28.7d vs 2.00. Unchanged.** So trigger 1 is NOT met; don't mistake a third occurrence for a rising rate.
 
 **Escalate only if one of these is met** (testable, so it isn't a judgement call each run):
