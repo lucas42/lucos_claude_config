@@ -10,9 +10,9 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-09-06 |
-| codeql-secret-scanning | 2026-09-06 |
-<!-- last updated: 2026-09-06 — 1 dependabot alert (lucos_arachne#25, decode-uri-component DoS, GHSA-vcc3-ghjq-m6fr): transitive dev dep via query-string/@zazuko/yasgui, Dependabot couldn't auto-PR past query-string's ^0.2.0 range; fixed myself via npm override (arachne PR #823), verified npm install + Docker build + full test suite all pass. Same 3 codeql alerts as last run, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all confirmed open), 0 secret-scanning -->
+| dependabot-alerts | 2026-09-08 |
+| codeql-secret-scanning | 2026-09-08 |
+<!-- last updated: 2026-09-08 — same lucos_arachne#25 (decode-uri-component DoS) alert, already fixed via open PR #823 (npm override) from 2026-09-06 run; belatedly sent lucos-code-reviewer the review request this run (missed doing so on 2026-09-06 — pr-review-loop.md requires it regardless of trigger), now in the review loop. Same 3 codeql alerts as last run, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all confirmed open), 0 secret-scanning -->
 
 ## Monthly checks
 
