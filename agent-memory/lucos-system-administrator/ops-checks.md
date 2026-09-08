@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-09-06
+container_status: 2026-09-08
 resource_checks: 2026-09-06
 syslog_review: 2026-09-06
 software_updates: 2026-09-06
 sandbox_drift: 2026-09-06
-repos_dashboard: 2026-09-06
+repos_dashboard: 2026-09-08
 docker_image_staleness: 2026-08-26
 backup_verification: 2026-08-26
 certificate_expiry: 2026-08-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-09-08 run**: only checks 1 (container status, every run) and 6 (repos dashboard, daily) due — 2–5 weekly, last ran 2026-09-06, not due; 7/8/9 monthly, last ran 2026-08-26, not due. Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change. No new issues raised. Separately, mid-session an lucos-code-reviewer request to rerun a CircleCI build on lucos_arachne#822 turned out to be already-moot by the time I checked (PR had auto-merged, rebuild had already gone green) — no ops-check action, handled inline via SendMessage, not logged as a check.
 
 - **2026-09-06 run**: checks 1–6 due (1/6 daily+every-run, 2–5 weekly last ran 2026-08-26 — 11 days elapsed). 7/8/9 not due (monthly, last ran 2026-08-26). Container status + syslog clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy, no err..emerg entries. Note: journalctl on all 3 hosts warns "not seeing messages from other users and the system" (lucos-agent not in adm/systemd-journal group) — this is a known, already-tracked visibility gap (lucos_agent_coding_sandbox#99, Awaiting Decision), not a new finding; flagging here only so a future run doesn't waste time rediscovering it. Resource checks: avalon load 1.73/1.54/1.52 on 4 cores, no single process pinned near 100% (checked `ps aux --sort=-%cpu`) — normal. xwing disk now 20% (23G/117G, down from 56%) and salvare 55% (30G/58G, down from 73%) — both dropped sharply, consistent with the `lucos_agent`#72 prune-images fix (2026-09-01) finally running; **not a new finding, trend reversal from a previously-shipped fix**. Software updates: no `-security`-tagged packages on any host; posted updated package-version snapshot to lucos_agent_coding_sandbox#95 (already-open tracking issue) — kernel gap on xwing widened further (6.12.47→6.18.39). Sandbox drift: local checkout was 2 commits behind origin/main (dependabot-auto-merge.yml workflow bump, unrelated to VM provisioning) — fast-forwarded with `git pull --ff-only` (clean, no local commits, trivial fix). Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change. No new issues raised this run.
 
