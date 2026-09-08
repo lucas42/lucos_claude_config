@@ -22,6 +22,8 @@ If you find an existing issue that covers the same root cause, comment on that i
 
 **Any PR opened during ops checks must use `create-pr`** (e.g. the "implement a workaround yourself" path in Check 1, or a trivial-fix push in the stalled-PR path) — never `gh-as-agent ... pulls` directly, never `gh pr create`. This is the same rule as `agents/workflows/implement-issue.md` Step 6, and it exists for exactly the same reason: `create-pr` is what automatically requests `lucas42` as reviewer on supervised repos, so skipping it is how a PR silently misses his review queue (see lucas42/tfluke#488, caught 2026-07-31). After `create-pr` returns, run its supervised-repo verification (confirm `lucas42` in `requested_reviewers`) before moving on.
 
+**Immediately after `create-pr` returns, send `lucos-code-reviewer` the review request** (`pr-review-loop.md` Step 1) — do this in the same turn, before moving to the next alert or check. `create-pr` only opens the PR; it does not engage a reviewer. `pr-review-loop.md` applies "the instant a PR exists... regardless of which trigger phrase" produced it, including an ops-check workaround PR — treating "PR opened" as the finish line for an ops-check fix is exactly the gap that leaves it silently un-reviewed (caught 2026-09-08: a `create-pr`'d fix from a 2026-09-06 run sat 2 days with nobody messaged). Drive the loop to completion (or at least to "reviewer messaged, awaiting response") before reporting the run's completion manifest.
+
 ---
 
 ## Every Run (2 checks)
