@@ -144,6 +144,8 @@ Index only — detail in linked file. Verify ticket state before citing.
 - Proposal hygiene: [tests must be deterministic AND actionable](feedback_test_proposals_must_be_actionable.md) · [enumerate existing surfaces first](feedback_enumerate_existing_mechanisms.md) · [loganne is cross-estate events only](feedback_loganne_scope.md) · [verify "alternatives" are equivalent](feedback_verify_alternatives_are_equivalent.md).
 - Fix at source: [silent fallbacks are a security risk](feedback_silent_fallbacks_are_a_security_risk.md) · [don't game API contracts](feedback_dont_game_api_contracts.md) · [keep the docker.l42.eu mirror in the orb](feedback_keep_docker_mirror.md).
 
+- [Alert→action response gap is SETTLED, not unqueued](project_response_gap_290_settled.md) — lucos#290: broad remedy declined on cost; 3 named escalation triggers.
+
 ## Mail
 - [Relay 2xx is NOT delivery](pattern_relay_accepted_mail_still_silently_lost.md) — Gmail bounces after, DSN quarantined; check lucos_mail_smtp per queue-id.
 
