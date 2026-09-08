@@ -8,7 +8,7 @@ external_deps: 2026-09-06
 
 ## Container Log Review History
 
-lucos_schedule_tracker: 2026-07-14
+lucos_schedule_tracker: 2026-09-08
 lucos_media_weightings: 2026-07-13
 lucos_photos_worker: 2026-08-17
 lucos_arachne_explore: 2026-08-02
@@ -30,18 +30,18 @@ lucos_eolas_app: 2026-08-08
 lucos_eolas_db: 2026-09-06
 lucos_eolas_web: 2026-07-09
 lucos_locations_mosquitto: 2026-08-28
-lucos_locations_otfrontend: 2026-07-23
+lucos_locations_otfrontend: 2026-09-08
 lucos_locations_otrecorder: 2026-08-28
 lucos_locations_oauth2_proxy: 2026-09-06
-lucos_mail_smtp: 2026-08-19
+lucos_mail_smtp: 2026-09-08
 lucos_photos_api: 2026-08-28
 lucos_arachne_ingestor: 2026-07-15
 lucos_arachne_search: 2026-07-15
 lucos_arachne_triplestore: 2026-09-06
 lucos_mail_docs: 2026-08-22
 lucos_photos_postgres: 2026-09-06
-lucos_photos_redis: 2026-08-17
-lucos_scenes: 2026-08-17
+lucos_photos_redis: 2026-09-08
+lucos_scenes: 2026-09-08
 lukeblaney_co_uk: 2026-08-27
 lucos_media_manager: 2026-08-17
 lucos_media_metadata_api: 2026-07-23
@@ -57,7 +57,7 @@ semweb: 2026-08-27
 lucos_time: 2026-08-09
 lucos_aithne: 2026-08-22
 lucos_arachne_mcp: 2026-07-19
-lukeblaney_blog: 2026-07-23
+lukeblaney_blog: 2026-09-08
 lucos_docker_health_app: 2026-08-22
 
 lucos_docker_mirror_web: 2026-08-26
@@ -206,3 +206,16 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-09-06 Check 7: all 4 external deps nominal (LE 200, Hub 401, CircleCI 401, GitHub 200).
 - 2026-09-06 Check 3 (30d, **3089 events, full range 08-07T11:21Z→09-06T10:39Z** — no event-cap truncation this time, unlike 08-28's 7.4d): 14 outages >30min, only 2 new since the 08-28 run, neither warranting a report (`lucos_deploy_orb` 08-31 1h27m = real red fixed by a follow-up commit, ordinary dev flow; `lucos_locations` 09-02 10h40m = the #105 check whose semantics are still under dispute). Latest report on `origin/main` remains 2026-08-17.
 - 2026-09-06 Check 1 verification: after all 3 PRs merged I triggered `POST https://repos.l42.eu/api/pr-sweep` (202) rather than waiting ~5h for the 6h ticker; `/_info` flipped to `ok=true` "No stale Dependabot PRs found" within ~65s, and the **dashboard followed a few minutes later: 55/55 systems, 213/213 checks, 0 failing, 0 unknown** (verified by live re-read, not predicted). `unknown` returned to 0 on its own when arachne's `triplestore` stopped buffering — it never reached its `failThreshold: 7`, so it never alerted. ⚠️`/_info` going green does NOT mean the dashboard has: allow ~1-2 poll cycles and re-read, same lag as 08-27 (~78s).
+- 2026-09-08 Check 1: 55 systems, **212/213 checks** at start (54 healthy / 1 failing / 0 unknown; reconciles with `summary`). Sole red = `lucos_creds/circleci` "Workflow build-deploy failed", **alerted 07:22:41Z and still red 15h later** — nothing re-runs CI on its own. Ended green 55/55, 213/213 after my rerun (verified by live re-read, not predicted; a transient `unknown:1` right after the redeploy cleared on its own).
+- 2026-09-08 **lucos_creds flaky test — filed lucas42/lucos_creds#555.** `test` died at **0.730s** emitting only `exit status 3 / FAIL lucos_creds/src`. The tell was duration: the same step on the 3 preceding green runs took **62.8s / 64.2s / 72.4s**, so the binary died before starting rather than failing an assertion. `server/src/server.go:625` is the **only `os.Exit(3)` in repo source**, on the `lc.Listen` failure path. Three things combine: tests bind a **fixed `TEST_PORT = "2222"`** from ~6 call sites; the listener closes **asynchronously** in a goroutine while the returned `cancel` returns immediately, so the next test's bind races it; and `os.Exit(3)` kills the whole binary rather than failing one test. **Silent by construction** — `TestMain` sets `slog` to `io.Discard`, so the `slog.Error` naming the cause is thrown away. Rerun with no code change → green + `deploy-avalon` ran. Second flake in `server_test.go` to gate deploy-avalon (lucas42/lucos_creds#358, closed 06-06, different mechanism, identical consequence).
+- 2026-09-08 ⚠️**I nearly published "creds undeployed for 15h" — loganne disproved it.** The workflow view showed `deploy-avalon` `not_run`, which reads as "no deploy". But **two** Dependabot PRs merged a minute apart: the first (`0c242a53`, 07:15:12) went green and **deployed v1.3.146 at 07:26:33Z**; only the second (#554, a `ui/package-lock.json` bump) was blocked. Real cost = 15h of red `main` + one undeployed lockfile bump, NOT a stale credential store. **Habit: a blocked deploy job is not proof nothing deployed — check loganne `deploySystem` for the preceding commit.**
+- 2026-09-08 **Local repro of the creds flake failed 6/6 — and that is NOT evidence of rarity.** My sandbox runs that suite in ~1.2s where CI takes 62-72s (~8x faster), which is precisely the direction that hides a bind race. Said so in the ticket rather than reporting "couldn't reproduce". Also: local Go is 1.26/arm64 vs CI `cimg/go:1.25`.
+- 2026-09-08 Check 2 (7d, 360 events, range 09-01T01:12Z→09-08T15:47Z): **12 `lucos_monitoring`, 0 `lucos_agent`**. Only 2 events since the 09-06 run — the `lucos_repos` flap I caused and cleared myself (09-06 10:39→11:11, 32m), and the creds red. All older flaps already dispositioned on 09-06.
+- 2026-09-08 ⚠️**`~/.claude/settings.json` STILL uncommitted — 9+ days** (event 08-30T19:17Z; direct probe today still ` M settings.json` on `main`, the one-line `"agentPushNotifEnabled": true`). Flagged to team-lead on 09-06 and nothing happened, so re-flagged with the age. 0 `lucos_agent` events in the window because the event is **edge-triggered** and already fired outside it — absence of the event is NOT absence of the condition; probe the tree directly every run.
+- 2026-09-08 Check 3 (30d, 3044 events, full range 08-09T15:44Z→09-08T22:39Z): 13 outages >30min, only 2 new since 09-06 (creds 15h09m; the repos 32m I caused). **Decided NOT to write a report for the creds one** and said why: no user-visible degradation (the SSH server never went down, v1.3.146 was serving throughout), and the whole analysis is already in #555 in more detail than a report would carry. The June precedent (#358) also went unreported. Latest report on `origin/main` is still 2026-08-17.
+- 2026-09-08 ⚠️**"Detection worked; response didn't" — SECOND time, same 15-hour shape** (first: 2026-08-17). The `lucos_creds/circleci` alert fired correctly at 07:22:41Z; the gap was 15h of nobody acting until an ops check ran. Flagged to team-lead as an observation rather than ticketing it — alert-response is a process question for them and lucas42, and email alerting already exists.
+- 2026-09-08 Check 4: 6 reviewed — `lucos_schedule_tracker` 167,866 lines/1 (one "Failed to send error page"), `lukeblaney_blog` 102,338/**0**, `lucos_locations_otfrontend` 188,198/14 (5 "Error fetching location data: timed out" + 3 BrokenPipe over 8d), `lucos_mail_smtp` 297,458/9,459, `lucos_scenes` 62/0, `lucos_photos_redis` 12,835/0. Estate sweep gave the positive control (10 containers with hits).
+- 2026-09-08 **mail_smtp 8,942 SASL LOGIN failures/8d is EXTERNAL brute force, benign — and NOT the 08-19 self-inflicted case.** Usernames are generic (`admin@s.l42.eu` 110, `test@tfluke.uk` 99, `administrator` 61), spread over many IPs (158.94.210.216 alone 4,165). `monitoring@l42.eu` from our own xwing is **absent** from the top, i.e. that 08-19 bug appears resolved. ~1,118/day is the same order as the 08-19 baseline. Don't chase.
+- 2026-09-08 **tfluke "TFL API Rate Limited" ×226 — reviewed, decided NOT to file; numbers recorded so a future run can compare.** Ran 07:53→18:25 then stopped (daytime-shaped, self-limiting). **Denominator: 39,410 requests to `app.tfluke.uk` through the router in the same window ⇒ ≤0.57%.** Cannot establish whether it's new: tfluke redeploys daily (v1.0.130→136 over 8 days) so `docker logs` never reaches past the morning's restart — [[pattern_container_restart_log_buffer_artifact]] again. Third-party rate limit on a non-critical personal app; nothing actionable on our side.
+- 2026-09-08 ⚠️**`lucos_eolas_web` is now 61 days since review — OVERDUE — and structurally un-reviewable.** Deferred again: StartedAt 09-07, so only ~1d of logs. It has been deferred on 08-26, 09-06 and now, always for the same reason — the daily deploy burst restarts it before its turn comes round. **The rotation's oldest-first rule cannot converge on frequently-redeployed containers; consider reviewing them on a short window deliberately rather than waiting for history that never accumulates.**
+- 2026-09-08 Checks 5/6/7 **not due** — last run 2026-09-06 (2d); next due ~2026-10-06.
