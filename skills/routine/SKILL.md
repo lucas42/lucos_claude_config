@@ -42,6 +42,22 @@ If any teammate's response is unverified, **do not start Phase 2** — wait for 
 
 So when a run's artifacts exist but its manifest does not, satisfy Phase 1 from the artifacts instead: the ops-checks tracking commit on `origin/main` dated after your dispatch, the tracking file's own updated entries, and — the part that actually matters — **whether that teammate filed or commented on any issues during the run** (`search/issues?q=org:lucas42+is:issue+author:app/<persona>+created:<today>`, plus the same with `commenter:`). Phase 1 exists so that issues raised during a run make the `get-issues-for-triage` batch; if the run is long finished and nothing new was filed, that purpose is already met and Phase 2 is safe to start. Say plainly in the summary that the manifest was lost and what you substituted for it — never present artifact-derived Phase 1 completion as though the manifest had arrived.
 
+### Sweep for PRs opened *during* Phase 1 before moving on
+
+The code-reviewer's PR discovery is a snapshot taken near the start of its run, and the other three teammates open PRs while fixing what their checks find — so a PR created minutes into Phase 1 misses that same run's PR audit entirely and nothing looks wrong anywhere. If its author also forgets to request review, it is invisible until the *next* routine, however many days away that is.
+
+So once all four manifests are in, list open PRs authored by the ops-check personas and check each has a review:
+
+```bash
+for P in lucos-security lucos-system-administrator lucos-site-reliability lucos-code-reviewer; do
+  ~/sandboxes/lucos_agent/gh-as-agent --app lucos-issue-manager \
+    "search/issues?q=org:lucas42+is:pr+is:open+author:app/$P" \
+    --jq ".items[] | \"$P \(.html_url) created:\(.created_at)\""
+done
+```
+
+For any hit, fetch `/pulls/{n}/reviews`. If there is no review, SendMessage `lucos-code-reviewer` with the PR URL — the author is expected to drive their own review loop, so this is a backstop for when they didn't, not a replacement for it. Do **not** infer from an unsupervised repo that no review is needed: unsupervised means the code-reviewer's approval is what merges the PR instead of lucas42's, so review is *more* load-bearing there, not less.
+
 ## Phase 2: Triage and Summary (sequential — after Phase 1 completes)
 
 Once Phase 1 is done **and verified**, invoke the `/triage` skill using the Skill tool. The triage skill handles issue discovery, inline agent consultation, project board updates, board verification, and the summary for the user. Do not duplicate any of that work here.
