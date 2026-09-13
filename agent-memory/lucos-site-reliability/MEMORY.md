@@ -21,7 +21,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 ## lucos-search / eolas / arachne
 - [lucos-search option value = eolas person URI even in contact mode](pattern_lucos_search_emits_eolas_uri_not_contacts.md) — reverse-map.
 - [arachne has TWO eolas ingest paths; hyphenated pks fail webhook path](pattern_arachne_eolas_dual_ingest_hyphen_pk.md) — pk regex `\w+` excludes hyphens.
-- [media_metadata → /v2/export → arachne pipeline landmines](pattern_media_metadata_arachne_pipeline.md) — torn export wipes tracks.
+- [media_metadata → /v2/export → arachne pipeline landmines](pattern_media_metadata_arachne_pipeline.md) — torn export wipes tracks; hash-SKIPPED source wiped from search (#834).
 - [arachne multi-component CI dep-skew + #633 regression](project_arachne_multicomponent_ci_depskew.md) — one pip resolve across components.
 - [Misleading "502 could not reach X" = DECODE failure of a 200 upstream](pattern_misleading_502_decode_not_unreachable.md) — test upstream directly.
 

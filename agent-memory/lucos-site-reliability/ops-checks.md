@@ -9,7 +9,7 @@ external_deps: 2026-09-06
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-09-08
-lucos_media_weightings: 2026-07-13
+lucos_media_weightings: 2026-09-13
 lucos_photos_worker: 2026-08-17
 lucos_arachne_explore: 2026-08-02
 lucos_arachne_web: 2026-08-08
@@ -22,7 +22,7 @@ lucos_contacts_app: 2026-08-08
 lucos_contacts_db: 2026-09-06
 lucos_contacts_googlesync_import: 2026-08-09
 lucos_contacts_web: 2026-08-17
-lucos_creds: 2026-07-14
+lucos_creds: 2026-09-13 (short window, 53h since StartedAt)
 lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-08-17
 lucos_dns_sync: 2026-08-17
@@ -35,8 +35,8 @@ lucos_locations_otrecorder: 2026-08-28
 lucos_locations_oauth2_proxy: 2026-09-06
 lucos_mail_smtp: 2026-09-08
 lucos_photos_api: 2026-08-28
-lucos_arachne_ingestor: 2026-07-15
-lucos_arachne_search: 2026-07-15
+lucos_arachne_ingestor: 2026-09-13 (short window, 53h since StartedAt)
+lucos_arachne_search: 2026-09-13 (short window, 53h since StartedAt)
 lucos_arachne_triplestore: 2026-09-06
 lucos_mail_docs: 2026-08-22
 lucos_photos_postgres: 2026-09-06
@@ -49,8 +49,8 @@ lucos_monitoring: 2026-08-27
 lucos_media_seinn: 2026-08-02
 tfluke: 2026-08-02
 lucos_media_metadata_api_exporter: 2026-08-28
-lucos_media_metadata_manager: 2026-07-15
-lucos_notes: 2026-07-15
+lucos_media_metadata_manager: 2026-09-13 (short window, 53h since StartedAt)
+lucos_notes: 2026-09-13 (short window, 53h since StartedAt)
 lucos_root_app: 2026-08-28
 lucos_router: 2026-08-19
 semweb: 2026-08-27
@@ -222,3 +222,9 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-09-08 **Fixed the rotation-starvation defect instead of deferring a fourth time** (team-lead pushed, correctly: I had a diagnosed structural defect, not a suspicion, so a fourth data point bought nothing). `agents/sre-ops-checks.md` Check 4 now caps deferral at two — **on the third consecutive deferral, review on whatever window exists** and record as `name: DATE (short window, Nh since StartedAt)`. The reframe that makes it correct: for a container redeployed most days, **the log since `StartedAt` IS the complete history of the running instance**, so it's a full review of that instance, not a partial one; rule 3's "proves nothing" warning only applies where a gap exists that a *later* run could plausibly see. Applied it immediately: `lucos_eolas_web` reviewed at 61 days — 19,848 lines/39.5h, **15 warns, all benign nginx buffering** (`client request body is buffered to a temporary file` ×11, `upstream response is buffered` ×4), same class as contacts_web on 08-17. Clean.
 - 2026-09-08 **lucas42/lucos_creds#555 scope questions — my fix ordering was WRONG and reading the test file inverted it.** I filed with ephemeral ports as fix 1 and the synchronous close unranked/absent from criteria. Truth: `startTestServer` (L231) binds `TEST_PORT` and its deferred cleanup calls the async `closeServer()`; **17 tests use `defer startTestServer(test)()` + 4 direct `startSftpServer(TEST_PORT,...)` calls ⇒ ~21 close-then-rebind boundaries per run**, and `TestStatePersistsRestart` (L339) rebinds with *no intervening statement*. So the **synchronous close is the cheapest complete fix** — one function's return value, zero test changes, closes all ~21 windows; ephemeral ports became optional hardening (touches the signature + 18 hard-coded `-p/-P TEST_PORT` sites). **Lesson: I asserted a fix ordering from the bug's shape without reading the test file** — the same error as [[feedback_dont_infer_fix_mechanism_from_bug_mechanism]], in the ordering rather than the mechanism.
 - 2026-09-08 **Dropped my own acceptance criterion rather than dressing it up.** Criterion 4 asked the `Unit Tests` step runtime to be "a usable signal" — untestable as written. Resolved as a *consequence* of the other fixes, explicitly NOT converted into a CI step-duration check: that's a monitoring tax for something a named failing test + a visible error line already deliver, and a duration threshold on variable runners drifts into false positives then gets ignored. The stopwatch was only diagnostic here *because* both of those were missing.
+- 2026-09-13 Check 1: **55/55 systems, 213/213 checks healthy** at the start. ⚠️My first count read `ok` and returned 0/213. The API uses `status`, not `ok` ([[pattern_monitoring_api_status_field]]); the 0/213 matched `summary` nowhere, which is what exposed the probe.
+- 2026-09-13 Check 2 (7d, 323 events, 09-06T02:35Z→09-13T11:07Z): 3 flaps since the 09-08 run, **all three are lucas42/lucos_monitoring#303**, each proven as ONE failing `/_info` reading via router response size: locations `location-freshness` 09-09 (fT 2, 855B vs 782; the debug was a recorder-fetch timeout, NOT the #105 staleness question), arachne `search` 09-12 (**fT 3**, 1178B vs 1158: first *observed* threshold-3 defeat, since 08-26 only had the argument from fetcher cadence), seinn `media-manager` 09-12 (fT 2, 367B vs 315). Commented #303 and asked team-lead for High. #303 is Ready/Medium, owned by me, no PR, untouched since 08-26. 0 `lucos_agent` events, but a direct probe shows `settings.json` STILL dirty (event 08-30, now 14d; third flag).
+- 2026-09-13 Check 3 (30d, 2439 events, full range 08-14→09-13): no new >30min outage since 09-08. 0 reports needed. Latest on `origin/main` still 2026-08-17.
+- 2026-09-13 Check 4: reviewed the 6 containers that were 60d+ overdue. `media_weightings` got a full 9d window. The other 5 were restarted 09-11, deferred ≥2×, so reviewed on short windows under the deferral cap. **Real finding → filed lucas42/lucos_arachne#834** (see [[pattern_media_metadata_arachne_pipeline]] Landmine 3): the 09-11 post-deploy startup ingest hash-skipped media and then deleted 20,760 media items from Typesense `items` for 20h30m. Rest benign: creds = SSH scanners with no common host-key algorithm; metadata_manager = phpinfo scanner probes, plus 2 `metadata-api probe failed` at 09-13 03:04:42-44 = a ~3s media-api stall (router 499×3 then 200 at :45, no alert); weightings = 1 traceback (502 from metadata during the 09-08 burst, lost one weighting update) + 35 SLOW `/_info` in 9d (p50 1065ms, clustered in deploy bursts; in-band dep probes); arachne_search 21 lines/0; notes 6/0.
+- 2026-09-13 Checks 5/6/7 not due (last 09-06; next ~10-06).
+- 2026-09-13 Triage outcomes: lucas42/lucos_arachne#834 → Ready/Medium/owner lucos-developer. lucas42/lucos_monitoring#303 → **High**, still Ready and owned by me, but NOT dispatched, so don't start it until it arrives via /next or /dispatch. `settings.json`: team-lead took it to lucas42 on 09-13, so **stop re-flagging it**. Next run, probe the tree but only mention it if it has changed or a different path is dirty.
