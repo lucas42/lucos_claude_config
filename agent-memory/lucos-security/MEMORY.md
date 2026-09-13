@@ -19,6 +19,8 @@
 - **Ops check schedule** tracked in `ops-checks.md`.
 - **Dev environments never hold a working prod credential**, in any form — hand-minted separate client, or a scoped/allowlisted creds link. Verified: creds-link scope is inert for OIDC client secrets (aithne authenticates by secret-hash, not link scope) — a "governed" exception can be worse than an honest bypass since it looks safe on review. Exception: lucos_contacts genuinely enforces link scope per-request, so a narrow compiled-code allowlist WAS approved there (creds#420). Detail: `policy-dev-prod-credential-containment.md`, `policy-creds420-write-exception.md`.
 
+- [Self-check alert refs before posting](feedback-alert-ref-self-check.md) — even `owner/repo#N` for an alert number can silently cross-link a real unrelated issue/PR; grep drafts and swap for GHSA/CVE id before posting. Caught on tfluke#528 (2026-09-13).
+
 ## Accepted Risks / Closed Findings (do not re-raise)
 
 - **SASL auth-failure background noise on lucos_mail public MX** (93 IPs/11 days) — decided against a volume detector: only 2 non-guessable accounts exist, no rate-limiting to bypass anyway, real exploit path is the already-public leaked hashes (lucos_mail#75/#76), not brute force (lucos_mail#77, 2026-08-19). Deferred idea if revisited post-rotation: successful-login-from-unexpected-IP detector, not a volume/count one.
@@ -36,6 +38,7 @@
 ## Open Risk Patterns (watch for recurrence across repos)
 
 - [Build-time dependency re-resolution bypasses Dependabot review](risk-build-time-dependency-reresolution.md) — `pipenv install` (no `--deploy`) etc. lets any commit silently pull unreviewed PyPI releases into prod. Found on lucos_backups (2026-08-18, lucos_backups#392), caused/contributed-to 15h24m outage (lucos#289). Not yet checked estate-wide.
+- [npm lockfile-version drift when fixing transitive-dep overrides](risk-npm-lockfile-version-drift.md) — incremental `npm install` won't re-resolve an existing lockfile for a new override; full regen on npm 10 silently bumps v2→v3, inflating the diff. Force `--lockfile-version=<N>` to match. Hit on tfluke#528 (2026-09-13).
 
 - **unattended-upgrades `Allowed-Origins` + stock `Origins-Pattern` union, not override** — a "security-only" custom restriction layered on top of the stock file doesn't actually restrict anything, since `get_allowed_origins()` concatenates both (verified against source on xwing). Check for this on any host with a customized unattended-upgrades scope. Detail: `risk-unattended-upgrades-origin-scope.md`.
 - **`lucos-agent` lacks `adm`/`systemd-journal` group on avalon/xwing/salvare** — `journalctl` returns nothing for any unit; can't distinguish "never ran" from "no read access." Don't assert service history from journalctl on these hosts.
