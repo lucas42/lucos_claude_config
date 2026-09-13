@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-09-08
-resource_checks: 2026-09-06
-syslog_review: 2026-09-06
-software_updates: 2026-09-06
-sandbox_drift: 2026-09-06
-repos_dashboard: 2026-09-08
+container_status: 2026-09-13
+resource_checks: 2026-09-13
+syslog_review: 2026-09-13
+software_updates: 2026-09-13
+sandbox_drift: 2026-09-13
+repos_dashboard: 2026-09-13
 docker_image_staleness: 2026-08-26
 backup_verification: 2026-08-26
 certificate_expiry: 2026-08-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-09-13 run**: checks 1–6 due (1/6 every-run/daily; 2–5 weekly, last ran 2026-09-06, exactly 7 days elapsed). 7/8/9 monthly not due (last ran 2026-08-26, 18 days elapsed). Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. Syslog: avalon clean (no err..emerg in 7 days); xwing/salvare journal still inaccessible without sudo (known gap, lucos_agent_coding_sandbox#99, Awaiting Decision — not re-flagged). Software updates: no `-security`-tagged packages on any host; all three hosts show routine Docker CE/containerd/buildx/compose bumps, xwing also has a large batch of RPi firmware/camera/kernel packages (kernel gap unchanged at 6.12.47→6.18.39, same as last week) and salvare a kernel 6.12.25→6.12.96 bump — all already tracked in lucos_agent_coding_sandbox#95 (open, last updated 2026-09-06); situation unchanged from last week so no new comment posted (avoiding noise). Resource checks: avalon mem 2.8Gi avail/swap 16%/disk 9%/load 1.87 — normal; xwing mem 397Mi avail/swap 16%/disk 21% (23G/117G, stable vs last week)/load 0.88 — normal, no single-core pin; salvare mem 3.3Gi avail/swap 0%/disk 56% (31G/58G, up slightly from 55%)/load ~0 — normal. Local sandbox VM: disk 47% (45G/96G), mem 4.2Gi avail/7.7Gi, load 0.21 — all fine; `docker system df` showed 83% of image space reclaimable (6.16GB) — ran `docker image prune -a -f` + `docker builder prune -f` as routine hygiene (safe, dev sandbox, no prod workload), reclaimed ~720MB combined. Did NOT touch the 76 unused Docker volumes (1.757GB reclaimable) — volume contents aren't verified safe-to-delete by this routine, left alone. Sandbox drift: clean, no local unpushed commits, no remote commits pending. Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change. No new issues raised this run.
 
 - **2026-09-08 run**: only checks 1 (container status, every run) and 6 (repos dashboard, daily) due — 2–5 weekly, last ran 2026-09-06, not due; 7/8/9 monthly, last ran 2026-08-26, not due. Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change. No new issues raised. Separately, mid-session an lucos-code-reviewer request to rerun a CircleCI build on lucos_arachne#822 turned out to be already-moot by the time I checked (PR had auto-merged, rebuild had already gone green) — no ops-check action, handled inline via SendMessage, not logged as a check.
 
