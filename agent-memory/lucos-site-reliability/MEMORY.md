@@ -99,6 +99,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [Repo name ≠ container name (_ui/_mcp/_explore)](pattern_repo_name_not_container_name.md) — creds_ui not creds.
 - [live-restore:true skips network init](pattern_docker_live_restore_skips_network_init.md) — stop all containers → restart daemon →…
 - [named volume shadows image contents at mount path](pattern_named_volume_shadows_image.md) — first-init-only semantics.
+- [`docker pause` ⇒ health "unhealthy" (streak 0) until one interval AFTER unpause](pattern_docker_pause_reports_unhealthy.md) — trips docker_health; docker_health#117.
 
 ## Diagnostic methodology
 - [`UND_ERR_CONNECT_TIMEOUT` @~510ms = Happy Eyeballs, not a dead server](pattern_happy_eyeballs_amplifies_syn_loss.md) — 8x amplifier; SYN loss fingerprint 1.03s/3.06s; ICMP filtered to xwing.
