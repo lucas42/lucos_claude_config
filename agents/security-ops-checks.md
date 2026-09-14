@@ -216,4 +216,6 @@ After completing your ops checks run, **send** (via SendMessage, to whoever requ
 
 **Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 4 checks were considered.
 
+**Before sending: grep your own draft `Notes` text for any alert number** (e.g. `#61`, `repo#61`) and swap it for the CVE/GHSA id or full alert URL — the no-`#N`-for-alerts rule (see the preamble above) applies here too, and this is a distinct point in time from when you drafted the fix PR/issue, so don't assume getting it right there carries through to the manifest. (Recurred here specifically, tfluke#528, 2026-09-14 — the preamble fix landed the day before and did not survive to this later, separate piece of prose.)
+
 **The run is not finished until this table has been sent, via SendMessage, to whoever requested the run.** Ending the turn with only a summary judgement in your own response text ("all clear", "quiet run", "nothing found") is not delivery — the requester sees an idle notification, not your transcript, and cannot distinguish "checked and clean" from "not due" from "not run" without the table itself. If your closing line is a summary judgement and no manifest SendMessage has gone out, the run is incomplete.
