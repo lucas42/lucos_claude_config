@@ -36,7 +36,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 ## Router / DNS / firewall
 - [New service TLS check failing = router hasn't issued cert yet](pattern_router_newdomain_cert_latency.md) — startup + daily 22:16.
 - [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md) — configy certonly + stock certbot renew…
-- [All l42.eu SERVFAIL = apex zone failed to load on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon.
+- [All l42.eu SERVFAIL = apex zone failed to load on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon; ⚠️secondary expires 21–28d after primary loss.
 - [avalon enable_ipv6 bridges reach global IPv6 via NAT66; monitoring/time IPv4-only](reference_avalon_ipv6_bridging.md) — enable_ipv6 per-network.
 - [Duplicate `fd00:*::/64` blocks network recreate → service left with NO container](pattern_duplicate_ula_subnet_blocks_network_recreate.md) — "Pool overlaps"; check before deleting any net.
 - [Compose silently REUSES a stale network](compose-reuses-stale-network.md) — inspect live net, not compose; network…
