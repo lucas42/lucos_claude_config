@@ -77,6 +77,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [RQ `with_scheduler=False` silently loses retries](pattern_rq_scheduler_disabled_silently_drops_retries.md) — `ZCARD rq:scheduled:*`.
 - [loganne client `level` now REQUIRED positional arg](pattern_loganne_client_level_required_arg.md) — missing → TypeError.
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) — reports success on total eolas-fetch…
+- [Piped copy: receiver can't detect a dead sender](pattern_piped_copy_receiver_cannot_detect_truncation.md) — `.part && mv` published a 0-byte "final" file.
 - [uri-integrity flaps = intentional requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md) — not a bug.
 - [⚠️locations `location-freshness` UNTRUSTWORTHY (#105)](pattern_locations_silent_data_gap.md) — verify vs `.rec` created_at (#105).
 - [Python stdout block-buffered → print() lost](pattern_python_stdout_buffered_swallows_diagnostics.md) — stderr fine.
