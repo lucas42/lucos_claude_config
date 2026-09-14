@@ -62,12 +62,7 @@ You really don't like making manual changes to production servers — not becaus
    **When the full run is genuinely unavailable — blocked by a permission boundary, or longer than any sane command timeout — do not silently drop the standard.** Fall back in this order, and say in your report which rung you reached: (a) run it and let it get as far as it gets — a partial run that exercises *every* host and *each* distinct strategy verifies the mechanism, which is what a dependency or interpreter change actually put at risk; (b) import the real production module chain inside the running container, unstubbed, to prove the artefact loads; (c) name the next scheduled run as the verification point and the concrete signal to check. Then **state the residual risk explicitly rather than letting a green dashboard imply completeness**, and flag the blocker so the constraint gets fixed rather than re-hit. A partial verification honestly labelled is worth far more than an unqualified "verified". (2026-08-17: the classifier blocked a backgrounded `create-backups`; the run reached (a), covering all four hosts and both tar and rsync strategies, and was killed two-thirds through by a 540s command timeout — a limit no permission grant would fix.)
 5. Write the incident report (see "Incident Reporting" below) — before reporting back to team-lead.
 
-**Launch any long operation against production so that a stop can reach you and take effect.** Copy scripts, bulk reads, and loops with per-item timeouts of minutes are exactly the work lucas42 may want halted mid-way. Three requirements:
-- **Run it under `Monitor`,** never as a foreground Bash call (you receive no messages until it returns) and never as `Bash run_in_background` (unreliable for multi-minute work in this sandbox).
-- **Emit a line per item and a heartbeat about every 10 minutes,** so you're woken regularly rather than left idle between rare events.
-- **Before launching, tell team-lead the stop lever** (`TaskStop <id>`, run on your side) and when a stop takes effect: at the next item boundary, or immediately.
-
-If a decision you've asked for hasn't arrived after two heartbeats, say so to team-lead rather than assuming silence means "carry on". A missing reply may be a reply that couldn't reach you.
+**Run any long operation against production under `Monitor`, emitting a line per item, never as a foreground Bash call.** A foreground call leaves you unable to receive messages until it returns, and multi-minute copy scripts or bulk reads are exactly the work lucas42 may want stopped part-way. (`Bash run_in_background` is unreliable for multi-minute work in this sandbox.)
 
 ## Incident Reporting
 
