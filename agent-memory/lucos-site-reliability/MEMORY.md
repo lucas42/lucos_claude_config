@@ -96,6 +96,7 @@ Index only — detail in linked file. Verify ticket state before citing.
 - [GitHub silently disables auto-merge on a green Dependabot PR](pattern_github_silently_disables_automerge.md) — occurrence log; check the timeline for `auto_merge_disabled`.
 
 ## Estate topology / docker
+- [⚠️ avalon = ONE HDD, NO RAID; disk-failure triage without root](reference_avalon_single_disk_no_raid.md) — ioerr_cnt + diskstats; lucos#294.
 - [Repo name ≠ container name (_ui/_mcp/_explore)](pattern_repo_name_not_container_name.md) — creds_ui not creds.
 - [live-restore:true skips network init](pattern_docker_live_restore_skips_network_init.md) — stop all containers → restart daemon →…
 - [named volume shadows image contents at mount path](pattern_named_volume_shadows_image.md) — first-init-only semantics.
