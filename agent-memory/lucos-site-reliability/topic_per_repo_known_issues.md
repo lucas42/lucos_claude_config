@@ -87,6 +87,7 @@ Consolidated from MEMORY.md 2026-07-03 (index compaction). Verify open/closed st
 - #215 (open, low): unhandled `java.util.NoSuchElementException` from scanner bots sending non-standard HTTP methods (STATS etc). Noisy, non-fatal.
 
 ## lucos_backups — Known Issues
+- **The REAL daily `create-backups` run is 15:25Z, not 03:25Z** (verified 2026-09-14 from xwing archive timestamps, 08-30→09-13, all 15:25–15:30Z). The 20h skip-if-fresh rule (`FRESH_THRESHOLD_SECONDS`) makes the real run follow whichever slot last succeeded, so one past overnight failure moved it to the afternoon for good. **lucas42 believes overnight is the primary run and afternoon the catch-up.** ⏳ **TO FILE after the lucos#294 incident** as a latent design flaw. Also: `last_success` lives in `/var/run` (no volume), so a container restart forgets it.
 - #57/PR #56: PyPI clients call `sys.exit()` at import if `SYSTEM` env missing. Audit import-time env requirements when switching to PyPI clients.
 - Before raising an issue during ops checks, search recently closed — red alert doesn't guarantee no issue exists.
 - #157 (closed): SSH command 3s timeout too tight during heavy deploy waves (avalon timeouts, self-healing).
