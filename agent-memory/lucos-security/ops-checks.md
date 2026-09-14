@@ -10,9 +10,9 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-09-13 |
-| codeql-secret-scanning | 2026-09-13 |
-<!-- last updated: 2026-09-13 — tfluke#61 (js-yaml maxTotalMergeKeys CPU-DoS, CVE-2026-84375/GHSA-2883-xcg3-v3hh, high, transitive devDependency via supertap+tap-xunit→tap-parser, both resolving to vulnerable 3.15.1): no PR from Dependabot since it needed a manual override for a nested transitive dep (same pattern as the repo's existing webpack-cli override) — added overrides pinning both paths to js-yaml >=3.15.2 <4.0.0, verified 0 npm-audit vulns + 51/51 tests pass, opened tfluke#528 (lockfileVersion kept at 2 to avoid npm10-default-v3 format churn — see risk-npm-lockfile-version-drift.md); PR body initially misused bare-but-qualified `lucas42/tfluke#61` for the alert number (see feedback-alert-ref-self-check.md), code-reviewer caught it, fixed body-only, re-reviewed and APPROVED; lucas42 still in requested_reviewers (supervised, no CHANGES_REQUESTED), awaiting his review to merge. Same 3 codeql alerts as last run, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all re-confirmed open), 0 secret-scanning -->
+| dependabot-alerts | 2026-09-14 |
+| codeql-secret-scanning | 2026-09-14 |
+<!-- last updated: 2026-09-14 — 0 open dependabot alerts (tfluke#528 merged 2026-09-13T11:49:48Z, cleared the js-yaml CVE-2026-84375/GHSA-2883-xcg3-v3hh alert with it). Same 3 codeql alerts as prior runs, still tracked by open issues (contacts#771, googlesync_import#218, media_metadata_api#325, all re-confirmed open), 0 secret-scanning -->
 
 ## Monthly checks
 

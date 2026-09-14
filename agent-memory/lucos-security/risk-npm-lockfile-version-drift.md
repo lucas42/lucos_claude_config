@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Fixing tfluke#61 (js-yaml CVE-2026-84375, transitive via supertap/tap-xunit) needed a new `package.json` override. Two gotchas hit in sequence:
+Fixing the tfluke js-yaml alert (CVE-2026-84375/GHSA-2883-xcg3-v3hh, transitive via supertap/tap-xunit, fixed in tfluke#528) needed a new `package.json` override. Two gotchas hit in sequence:
 
 1. **Incremental `npm install` on top of an existing lockfile does NOT re-resolve already-resolved transitive packages to satisfy a newly-added override.** A `rm -rf node_modules package-lock.json` (full regen) is required before the override actually takes effect — an in-place `npm install` left the vulnerable nested version untouched even with the override present in `package.json`.
 
