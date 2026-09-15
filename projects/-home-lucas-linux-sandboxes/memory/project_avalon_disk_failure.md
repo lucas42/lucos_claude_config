@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bbebe53-ef86-40fb-8a57-6a86d4578b63
-  modified: 2026-09-15T15:31:34.028Z
+  modified: 2026-09-15T15:33:30.083Z
 ---
 
 **Incident:** lucas42/lucos#294 (Critical, Owner lucas42). avalon (OVH/Kimsufi, 178.32.218.44) runs on ONE spinning disk, no RAID: HGST HUS726020ALA610, serial K5H8E1BA. It started failing ~07:55Z on 2026-09-14 (SMART: 29 pending, 109 offline-uncorrectable, 15,558 ATA errors). avalon services were down/degraded all day, and monitoring (which runs on avalon) went blind with it.

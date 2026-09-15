@@ -58,6 +58,7 @@ When you fix a recurring problem or hit an unexpected behaviour, ask whether it 
 - **Anything already documented in CLAUDE.md files** — duplication risks drift.
 - **Ephemeral task details** — in-progress work, temporary state, current conversation context.
 - **Speculative or unverified conclusions from reading a single file**.
+- **Details of an unremediated security exposure** (which credential is exposed, where, how, or that its risk was accepted). All memory files are committed to `lucos_claude_config`, which is a **public** repo. A risk accepted in private becomes a published target once it's written to memory. Record only a pointer to the private place the details live, e.g. "see the private README in <path>", and never describe the details themselves.
 
 These exclusions apply even when the user explicitly asks you to save something. If they ask you to save a PR list or activity summary, ask what was *surprising* or *non-obvious* about it — that is the part worth keeping.
 
