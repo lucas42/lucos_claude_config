@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bbebe53-ef86-40fb-8a57-6a86d4578b63
-  modified: 2026-09-15T01:05:07.472Z
+  modified: 2026-09-15T10:50:02.703Z
 ---
 
 **Incident:** lucas42/lucos#294 (Critical, Owner lucas42). avalon (OVH/Kimsufi, 178.32.218.44) runs on ONE spinning disk, no RAID: HGST HUS726020ALA610, serial K5H8E1BA. It started failing ~07:55Z on 2026-09-14 (SMART: 29 pending, 109 offline-uncorrectable, 15,558 ATA errors). avalon services were down/degraded all day, and monitoring (which runs on avalon) went blind with it.
@@ -19,12 +19,12 @@ metadata:
 **Rebuild runbook: lucas42/lucos#296** (Awaiting Decision, Critical, Owner lucas42). lucas42 answered on 2026-09-15:
 - **No RAID or second disk.** He's in a year-long Kimsufi contract, so the rebuild stays single-disk; revisit at renewal. That makes lucos_docker_health#118 (disk-health check) more valuable.
 - **The IP is whatever Kimsufi gives**, which only affects the DNS step.
-- **The hostname is still his to decide:** keep `avalon` (Step 3) or pick a new one (Step 3a migration). lucos-architect recommends keeping `avalon`.
-- **Also still his to decide (deferred to the ticket on 2026-09-15):** does the old disk count as exposed once OVH takes it?
-  - lucos-architect says no: it's within OVH trust, so reuse the old SSH host keys.
-  - lucos-security says yes: rotate the host keys, creds' `server_key` and aithne's store; accept the creds `data_key` risk with a tooling follow-up; optionally wipe before the swap.
-  - The wipe option lapses once OVH swaps the disk.
-- **Old SSH host keys** (ed25519/ecdsa/rsa; not DSA) are saved in `rescue/avalon-ssh-host-keys/` on xwing and salvare, verified against known_hosts. Delete that folder on both hosts if the decision is fresh keys.
+- **DECIDED 2026-09-15, going with lucos-architect's advice:**
+  - Keep the hostname `avalon` (the Step 3 path).
+  - Assume Kimsufi gives the same IP.
+  - Treat the old disk as within OVH trust, so reinstall the old SSH host keys. There's no wipe.
+- **Security's rotation plan** (creds `server_key`, aithne's store, `data_key` tooling) is a follow-up, off the rebuild's critical path. lucos-security is filing it.
+- **Old SSH host keys** (ed25519/ecdsa/rsa; not DSA) are saved in `rescue/avalon-ssh-host-keys/` on xwing and salvare, verified against known_hosts. Install them on the rebuilt host, then delete that folder on both hosts.
 
 Step 1 was trimmed after comparing it with his own `~/docker-host-setup.md` and with Debian defaults.
 
