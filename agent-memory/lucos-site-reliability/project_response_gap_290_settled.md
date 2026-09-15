@@ -31,6 +31,6 @@ metadata:
 
 No agreement from team-lead is needed to escalate on any of these.
 
-**Occurrences so far:** 2026-08-17, two `lucos_repos` events, 2026-09-08 (`lucos_creds`, 15h10m, from lucas42/lucos_creds#555). Record new ones on #290 as data points; don't open anything new.
+**Occurrences so far:** 2026-08-17, two `lucos_repos` events, 2026-09-08 (`lucos_creds`, 15h10m, from lucas42/lucos_creds#555). **2026-09-14 avalon disk failure (lucos#294): alert→action gap ~4h20m (07:55→12:15). TRIGGER 2 MET** (real outage + data at risk). Alert emails were VERIFIED sent (223 `status=sent` via Google MX, 07:00–12:59), so it was a genuine response gap, not a delivery failure. Recorded on #290 (comment 5672724962) as evidence; the scope decision stays with lucas42. It's a service-level gap, not the CI/Dependabot shape the narrowed remedy targets. Record new ones on #290 as data points; don't open anything new.
 
 **Damage-narrowing that must survive citation:** the 09-08 event did **not** leave the estate on stale credentials — the preceding commit deployed v1.3.146 on schedule and only a later `ui/package-lock.json` bump went undeployed. See [[feedback_verify_check_claim_against_underlying_store]].

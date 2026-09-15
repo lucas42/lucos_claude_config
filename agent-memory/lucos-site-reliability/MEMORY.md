@@ -2,6 +2,9 @@
 
 Index only — detail in linked file. Verify ticket state before citing.
 
+## 🚨 ACTIVE INCIDENT (read first)
+- [avalon disk failed — lucos#294; data rescued to xwing+salvare; draft report lucos#297](project_avalon_disk_failure_294.md) — waiting on OVH swap → rebuild; DNS expires 2026-10-12 07:09Z.
+
 ## Consolidated topic files (read first — bulk knowledge)
 - [Per-repo known issues + host facts + hostname→repo](topic_per_repo_known_issues.md) — all repos' quirks/open tickets; xwing…
 - [CI + infra patterns](topic_ci_infra_patterns.md) — deploy_orb, docker_mirror, DOCKER_HOST=ssh…

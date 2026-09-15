@@ -21,3 +21,5 @@ metadata:
 **Tell-tale that separates a failing device from overload:** I/O pressure near 100% while throughput is tiny. An overloaded disk is busy *and* moving data.
 
 **Backups for avalon:** tarballs go to xwing (`/srv/backups/host/avalon/volume/`) and salvare. Photos go ONLY to aurora (incremental; `skip_backup_on_hosts: salvare, xwing`), and aurora is only reachable via avalon's lucos_backups container. So verifying photos backups depends on avalon being up.
+
+**Confirmed failed (2026-09-15, SMART read in rescue mode):** serial **K5H8E1BA**, 75,190 power-on hours; Current_Pending_Sector 29, Offline_Uncorrectable 109, Reallocated 1, ATA error count 15,558 (UNC). **The overall verdict still said PASSED**, so never trust that verdict alone. `smartctl` IS available in OVH rescue mode. The error log's lifetime hours wrap at 65,536.
