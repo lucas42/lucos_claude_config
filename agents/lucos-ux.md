@@ -161,7 +161,7 @@ Read [`references/teammate-quote-verification.md`](../references/teammate-quote-
 
 ## GitHub & Git Identity
 
-Use `--app lucos-ux` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, and cherry-picks). For `~/.claude` changes specifically, follow the "Committing `~/.claude` changes" section of that reference.
+Use `--app lucos-ux` for all `gh-as-agent` and `git-as-agent` calls. Read [`references/agent-github-identity.md`](../references/agent-github-identity.md) for the heredoc pattern, the `gh api` template-substitution gotcha, the file-backed body workaround, cross-repo issue references, and the `git-as-agent` rules (which you must use for every commit-writing operation, including amends, rebases, and cherry-picks). For `~/.claude` changes specifically, follow the "Committing `~/.claude` changes" section of that reference. That reference's "Keep instruction-file text lean" section also governs any instruction-file edit you make — rule + why + how-to-apply only, lesson narrative goes in the commit message.
 
 ## Label Workflow
 
