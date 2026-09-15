@@ -97,6 +97,8 @@
 
 ## Active Projects
 
+- [avalon disk failure](project_avalon_disk_failure.md) — P1 lucos#294 (2026-09-14): single disk died; data rescued to xwing+salvare `~lucos-agent/emergency-backups-2026-09-14/` (README = restore guide); waiting on OVH disk swap → rebuild. DNS zone expires 2026-10-12 07:09Z. SRE watch stopped — ping SRE when avalon is back; routine triage still owed
+
 - [Source-scope instruction pending](project_source_scope_instruction.md) — SRE to file; at triage check the wording catches confident negatives reached WITHOUT a query too, not just careless API use
 - [lucos_worlds deploy + login](project_lucos_worlds_state.md) — BookStack worldbuilding, deployed 2026-07-07. **COMPLETE 2026-07-08**: login works + RBAC live (lucas42 confirmed creating books as Admin). Fixed three sequential login root causes: ES256 signing (patch BookStack #26/#28, ADR-0002), client-auth (aithne client_secret_basic #295/#296/#297), missing email claim (primary-email in lucos_contacts ADR-0003 #766/#769, aithne emits it #299/#300). RBAC #17/#19: aithne scope→BookStack role via group-sync (default-role none; only worlds:admin-granted users get access). **RBAC gotcha:** the Admin role's `external_auth_id`=`worlds:admin` (step 2) MUST be set before the first group-sync login or you lose the admin needed to set it (catch-22) — recover via `artisan tinker` in lucos_worlds_web. Open Low follow-ups: #764 (radio widget), #767 (PersonName constraint), aithne#301 (gate `name`)
 - [Stuck PR workflow overhaul](project_stuck_pr_workflow.md) — detection/resolution process in agent instructions (2026-03-19)
