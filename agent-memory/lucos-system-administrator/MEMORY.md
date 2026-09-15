@@ -1,5 +1,6 @@
 # lucos-system-administrator Memory
 
+- **avalon disk failure (2026-09-14, ONGOING)**: single-disk hardware failure, waiting on OVH replacement, no ETA. Rebuild runbook = lucos#296, data = xwing/salvare `~lucos-agent/emergency-backups-2026-09-14/README.md`, DNS deadline 2026-10-12 07:09:51 UTC. `project_avalon_disk_failure_2026-09.md`.
 - **lucos_creds quoted values**: bash `source` strips `"` wrapper; direct file reads keep it (off-by-2 length). `lucos-creds-quoted-values.md`.
 - **lucos_repos#456**: dev `GITHUB_APP_PEM` newline-flattened, not stale — reconstruct+verify-live, don't regenerate. `lucos-repos-456-pem-flattening.md`.
 - **Docker live-restore** skips ALL network init (incl. built-ins) while containers run — stop all containers first. `docker-live-restore-network-init-skip.md`.
