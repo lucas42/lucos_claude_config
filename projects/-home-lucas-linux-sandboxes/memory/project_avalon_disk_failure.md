@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bbebe53-ef86-40fb-8a57-6a86d4578b63
-  modified: 2026-09-15T15:33:30.083Z
+  modified: 2026-09-15T22:03:49.897Z
 ---
 
 **Incident:** lucas42/lucos#294 (Critical, Owner lucas42). avalon (OVH/Kimsufi, 178.32.218.44) runs on ONE spinning disk, no RAID: HGST HUS726020ALA610, serial K5H8E1BA. It started failing ~07:55Z on 2026-09-14 (SMART: 29 pending, 109 offline-uncorrectable, 15,558 ATA errors). avalon services were down/degraded all day, and monitoring (which runs on avalon) went blind with it.
@@ -32,6 +32,8 @@ metadata:
 Step 1 was trimmed after comparing it with his own `~/docker-host-setup.md` and with Debian defaults.
 
 **Handover commissioned 2026-09-15:** SRE drafts the incident report as a DRAFT PR (to finish after the rebuild) and files follow-ups. Sysadmin files a rebuild/restore runbook issue. Check both landed and are boarded.
+
+**2026-09-15 ~22:10Z:** Kimsufi replaced the disk, and lucas42 did a fresh **Debian Trixie** install (the runbook says bookworm; sysadmin asked to check Step 1 against Trixie). The old IPv4 address now presents a new ED25519 key (SHA256:leXCgUnY…), so it's probably the same IP. #296 is Ready, Owner lucas42, for the rest of Step 1; the sysadmin takes Steps 2–4 after that.
 
 **When avalon, or its replacement, is back:**
 - SRE's avalon watch is STOPPED, so nobody will notice automatically. Ping lucos-site-reliability for the end-to-end verification (including a real triggered backup run), then finishing the incident report, then their deferred ops checks 3 & 4.
