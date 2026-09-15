@@ -1,6 +1,8 @@
 # lucos-system-administrator Memory
 
-- **avalon disk failure (2026-09-14, ONGOING)**: single-disk hardware failure, waiting on OVH replacement, no ETA. Rebuild runbook = lucos#296, data = xwing/salvare `~lucos-agent/emergency-backups-2026-09-14/README.md`, DNS deadline 2026-10-12 07:09:51 UTC. `project_avalon_disk_failure_2026-09.md`.
+- **avalon disk failure (2026-09-14, ONGOING)**: disk replaced, trixie installed 2026-09-15, Step1 done, pipeline smoke test (lucos_root) passed 2026-09-16. Rebuild runbook = lucos#296, DNS deadline 2026-10-12 07:09:51 UTC. `project_avalon_disk_failure_2026-09.md`.
+- **lucos_deploy_orb has TWO creds.l42.eu dependencies** (deploy-side .env fetch has a bypass; build-side publish-creds fetch has none) — blocks any fresh build/deploy sequencing until lucos_creds is up. `deploy-orb-creds-l42-eu-dual-dependency.md`.
+- **Debian trixie vs bookworm** (Docker install, DSA removal, sudo-rs, cloud-init) checked for avalon rebuild — no host-provisioning changes needed. `trixie-vs-bookworm-avalon-rebuild.md`.
 - **lucos_creds quoted values**: bash `source` strips `"` wrapper; direct file reads keep it (off-by-2 length). `lucos-creds-quoted-values.md`.
 - **lucos_repos#456**: dev `GITHUB_APP_PEM` newline-flattened, not stale — reconstruct+verify-live, don't regenerate. `lucos-repos-456-pem-flattening.md`.
 - **Docker live-restore** skips ALL network init (incl. built-ins) while containers run — stop all containers first. `docker-live-restore-network-init-skip.md`.

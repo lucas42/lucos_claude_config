@@ -22,4 +22,6 @@ avalon (OVH/Kimsufi, 178.32.218.44, single HGST spinning disk, no RAID) started 
 
 **Ops-checks note**: SRE's live-monitoring watch on avalon was stopped once rescue work paused for the disk-replacement wait — ping lucos-site-reliability when avalon is confirmed back before resuming normal ops checks against it. Routine ops-check coverage of avalon is effectively suspended until then.
 
-**Status as of 2026-09-15**: waiting on OVH. Runbook (#296) and data (emergency-backups dir) are the two things a resuming session needs; both are cross-referenced from lucos#294.
+**Status as of 2026-09-16**: disk replaced, fresh Debian **trixie** (not bookworm) installed 2026-09-15 — see [[trixie-vs-bookworm-avalon-rebuild]]. Step 1 (host provisioning) done by lucas42; #296 Owner moved to sysadmin for Steps 2–4. **2026-09-16: ran the one-service pipeline smoke test lucas42 asked for (lucos_root, not lucos_dns — see [[deploy-orb-creds-l42-eu-dual-dependency]] for why and how) — deploy pipeline confirmed working end-to-end.** Two Step 1 gaps found (not blocking): `/srv/backups` doesn't exist (`init-host.sh` not run yet), swap only ~512MB vs. historical ~4.5GB. Full detail on lucas42/lucos#296's comments, not restated here. Still not started: Steps 2–4 proper (DNS, full CI redeploy in priority order, volume restore) — and Step 3's documented priority order needs revisiting first, per [[deploy-orb-creds-l42-eu-dual-dependency]].
+
+Runbook (#296) and data (emergency-backups dir) are the two things a resuming session needs; both are cross-referenced from lucos#294.
