@@ -34,7 +34,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 mismatch](pattern_backups_sshadd_gates_server_start.md) — test v4, localhost and [::1].
 - [aurora access + rsync](reference_aurora_access_and_rsync.md) — no direct SSH; go via the container.
 - [host-tracking "<host>: 'low'" = bad recreate_effort](pattern_backups_invalid_effort_crashes_host_tracking.md) — fix it in configy.
-- [rsync runs on the SOURCE HOST](pattern_backups_rsync_binary_missing_from_image.md) — `which rsync` on the host; fresh hosts too.
+- [Backups needs NO rsync on hosts](pattern_backups_rsync_binary_missing_from_image.md) — copyTo=scp; incremental rsync runs in the image (#315 reverted #311).
 
 ## Router / DNS / firewall
 - [New-service TLS failing = cert not issued yet](pattern_router_newdomain_cert_latency.md) — issued at startup and daily at 22:16.

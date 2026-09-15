@@ -1,56 +1,29 @@
 ---
 name: pattern-backups-rsync-binary-missing-from-image
-description: lucos_backups scp→rsync swap (#311) needs rsync on the SOURCE HOST (runs via Fabric SSH), not the container — `rsync: not found` because avalon has no rsync; #313's Dockerfile fix was the wrong layer
+description: lucos_backups needs NO rsync on any host. copyTo() is scp (openssh-client); the photos incremental path runs rsync inside the lucos_backups image via `docker run`. This is the history of the 40-minute host-side rsync episode (#311 → reverted by #315) and its debugging lesson.
 metadata:
   type: project
 ---
 
-# lucos_backups: rsync runs on the source HOST (Fabric), not in the container
+# lucos_backups: no source host needs rsync (current design, checked 2026-09-15)
 
-On 2026-06-08, lucos_backups#311 switched the off-host volume copy from `scp` to
-`rsync -az --partial --timeout=300` (to fix the `lucos_photos_photos` 600s-timeout
-in #309). After deploy it failed with `sh: 1: rsync: not found`.
+**Current state on lucos_backups main, read from `src/classes/host.py` on 2026-09-15:**
+- **Regular off-host copy:** `copyTo()` uses **`scp`** from the source host (host.py ~L262–269). It needs only openssh-client on the host.
+- **Incremental strategy** (`lucos_photos_photos` only, ADR-0002): `rsyncVolumeSnapshot()` runs rsync **inside a container** on the source host, via `docker run` against the versioned lucos_backups image. That image's Dockerfile has `apk add … rsync`. The docstring says so: "so nothing is installed on the host". ADR-0002 §C1 records it as the deliberate response to #311.
+- **Host prerequisites for backups:** Docker, plus `lucos_backups/init-host.sh`, which creates the `lucos-backups` user and its known_hosts, bind-mounted read-only for the incremental path. **No rsync binary on any host.**
 
-**CRITICAL ARCHITECTURE POINT — where rsync actually runs:** `classes/host.py:copyTo()`
-runs the rsync via `self.connection.run("rsync …")`, where `self.connection` is a
-**Fabric SSH connection to the SOURCE host** (`fabric.Connection(host=self.domain,
-user="lucos-backups")`). So for an avalon volume the rsync executes **on avalon's host
-shell**, NOT in the lucos_backups container. The container's PATH/binaries are
-irrelevant to the copy step.
+⚠️ **This note's old title and description ("rsync runs on the SOURCE HOST") described the design as it stood before #315, in the present tense.** The body already recorded the revert, but the headline didn't. On 2026-09-15 I relayed that headline to team-lead as a live rebuild risk for avalon (lucos#296). The sysadmin had to disprove it: lucas42/lucos#296 comment 5688773150. **Before relaying a note as current fact, read the body, then check the code on origin/main.**
 
-**Root cause:** **avalon (the busiest source host) has no rsync installed.** Old scp
-worked because avalon has scp (openssh-client). Source-host rsync status (2026-06-08):
-avalon = NONE (the gap), xwing 3.4.1, salvare 3.2.7, aurora 3.0.7. Volumes on
-xwing/salvare/aurora copy fine; only **avalon-source** volumes fail (most services).
+## History: 2026-06-08, a 40-minute episode
 
-**The wrong fix (#313):** added `rsync` to the Alpine Dockerfile
-(`apk add … rsync`). Container then HAD rsync 3.4.3 and the run STILL failed — proving
-the copy never runs in the container. Harmless dead weight; not the fix.
+- lucos_backups#311 (merged 19:14:51Z) switched `copyTo()` from scp to host-side rsync over Fabric (`self.connection.run("rsync …")`). avalon had no rsync, so every avalon-source copy failed with `sh: 1: rsync: not found`.
+- #313 added rsync to the container Dockerfile. That was the wrong layer: the copy ran on the host, so the fix changed nothing.
+- **#315 (merged 19:54:25Z) reverted to scp**, raised the per-copy cap for large volumes instead, and removed rsync from the image. lucas42's policy: **don't provision extra binaries on hosts.** It was verified green on build 1.1.4 with a full ad-hoc create-backups run. rsync later came back in the image for the incremental path only, and it runs in a container (above).
 
-**The right fix (considered):** install rsync on avalon (host-level, sysadmin). No
-redeploy needed — running container picks it up on the next Fabric `run`.
+## Durable lessons
 
-**ACTUAL RESOLUTION (lucas42, 2026-06-08):** **rolled back to scp entirely** — NOT
-installing rsync on avalon. Policy: don't provision extra binaries on hosts; the copy
-runs host-side so rsync would mean provisioning every source host, whereas scp is
-already everywhere. Developer reverted `copyTo()` to scp, removed rsync from the
-Dockerfile, and solved the photos 600s-timeout the scp-compatible way (raise/parameterise
-the per-copy wall-clock cap for large volumes). So #309's final fix is scp-based, not
-rsync. avalon never got rsync. **VERIFIED green 2026-06-08** on scp build `1.1.4` (#315): full ad-hoc create-backups completed clean (~2730s, NO ERRORS), photos_photos 6.6 GB scp to aurora finished well under the new 7200s cap, media_manager_stateFile tar clean, off-host copy worked across all source hosts; schedule_tracker create-backups check `ok:true, errors:0`.
+1. **For a binary missing in code that runs commands over Fabric/SSH, find where the command executes** before you pick a layer. `self.connection.run` means the remote host; `docker run` means the image. Read the invocation, and don't trust `which` in whichever place is handy. In 2026-06 both the container and avalon lacked rsync, so the container check looked consistent and was still the wrong answer.
+2. **A `/_info` green would never have caught this.** Backups is a cron path, and only an ad-hoc end-to-end run surfaces it.
+3. **When you append a resolution to a note, update its title, description and index line in the same pass.** Otherwise the headline keeps asserting the superseded state.
 
-**Two debugging traps I hit here:**
-1. `which rsync` **in the container** is the wrong place to check — the copy runs on the
-   source host via Fabric. For lucos_backups copy failures, check `which rsync` **on the
-   source host** (avalon/xwing/salvare/aurora), not the container.
-2. Both the container AND avalon happened to lack rsync initially, so the container check
-   gave a coincidentally-consistent wrong answer. The container-fix changing nothing was
-   the disambiguator — **read the invocation code** (`self.connection.run` = host-side)
-   before fingering a layer.
-
-**Why this matters / how to apply:**
-- **A `/_info` green would never have caught this** — backups is a cron path; only an
-  actual end-to-end ad-hoc run surfaces it. Reinforces ad-hoc-rerun-is-authoritative.
-- For a binary-dependency failure in code that runs commands over Fabric/SSH, the binary
-  must exist **on the host the command targets**, not where the Python runs.
-- See [[pattern_backups_empty_repo_fails_run]] and [[pattern_loganne_client_level_required_arg]]
-  for other deterministic-won't-self-clear create-backups failures.
+See [[pattern_incremental_rsync_container_proxyjump_hostkey]] for the in-container rsync path's own host-key and ProxyJump bugs.
