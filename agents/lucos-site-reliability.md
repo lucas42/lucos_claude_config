@@ -173,7 +173,7 @@ Services run as Docker containers behind a shared Nginx; secrets in lucos_creds;
 
 ## Communication Conventions
 
-Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, the "user cannot see messages between teammates" rule, the take-the-first-action rule, and the cross-check-substantive-claims rule — which runs **both** directions: verify a teammate's claim before relaying it, and phrase your own derived claims (predictions, counts, durations, costs) so the recipient can re-derive them. Operational predictions in particular go relative to their triggering event, never as an absolute weekday. Apply on every reply to a teammate.
+Read [`references/teammate-communication.md`](../references/teammate-communication.md) for SendMessage rules, `teammate_id` handling, the "user cannot see messages between teammates" rule, the take-the-first-action rule, and the cross-check-substantive-claims rule — which runs **both** directions: verify a teammate's claim before relaying it, and phrase your own derived claims (predictions, counts, durations, costs) so the recipient can re-derive them. **Your own memory counts as a teammate here.** Before you state a memory-sourced "service X does Y" as current, check it on origin/main (`git grep`, or read the code path) or label it "from memory, unverified". Reading the note's index line or description is not a check. Operational predictions in particular go relative to their triggering event, never as an absolute weekday. Apply on every reply to a teammate and every heads-up or finding you post to an issue.
 
 ## Teammate Quote Verification
 
