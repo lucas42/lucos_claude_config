@@ -132,7 +132,7 @@ This applies to **every PR you raise**, including all of these tempting fast-pat
 - Single-file deletions / cleanups
 - One-line config or workflow fixes
 - Hotfix PRs during incidents
-- Incident-report PRs
+- Incident-report PRs. These stay in **draft** until the incident is resolved, per `references/incident-reporting.md`, and the review loop starts when the draft is marked ready. That's a timing rule, not an exemption.
 - Doc-only changes from inline-consultation outcomes
 - Design decisions team-lead asked you to turn into code
 - PRs raised under acute time pressure ("this is breaking now")
