@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bbebe53-ef86-40fb-8a57-6a86d4578b63
-  modified: 2026-09-15T10:50:02.703Z
+  modified: 2026-09-15T15:31:34.028Z
 ---
 
 **Incident:** lucas42/lucos#294 (Critical, Owner lucas42). avalon (OVH/Kimsufi, 178.32.218.44) runs on ONE spinning disk, no RAID: HGST HUS726020ALA610, serial K5H8E1BA. It started failing ~07:55Z on 2026-09-14 (SMART: 29 pending, 109 offline-uncorrectable, 15,558 ATA errors). avalon services were down/degraded all day, and monitoring (which runs on avalon) went blind with it.
@@ -23,7 +23,10 @@ metadata:
   - Keep the hostname `avalon` (the Step 3 path).
   - Assume Kimsufi gives the same IP.
   - Treat the old disk as within OVH trust, so reinstall the old SSH host keys. There's no wipe.
-- **Security's rotation plan** (creds `server_key`, aithne's store, `data_key` tooling) is a follow-up, off the rebuild's critical path. lucos-security is filing it.
+- **Security's rotation plan is a follow-up, off the rebuild's critical path:**
+  - lucas42/lucos#298: creds `server_key` and aithne store rotation, Blocked on #296.
+  - lucas42/lucos_creds#565: `data_key` rotation tooling, Needs Analysis.
+- **A credential-exposure disposition was decided by lucas42 on 2026-09-15.** It's recorded ONLY in the private README in the emergency-backups folder ("Deliberately NOT copied" section). Read it there, and don't restate it in any public file. #296's rebuild recreates no private keys.
 - **Old SSH host keys** (ed25519/ecdsa/rsa; not DSA) are saved in `rescue/avalon-ssh-host-keys/` on xwing and salvare, verified against known_hosts. Install them on the rebuilt host, then delete that folder on both hosts.
 
 Step 1 was trimmed after comparing it with his own `~/docker-host-setup.md` and with Debian defaults.
