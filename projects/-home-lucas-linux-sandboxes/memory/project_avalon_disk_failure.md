@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bbebe53-ef86-40fb-8a57-6a86d4578b63
-  modified: 2026-09-15T00:14:27.930Z
+  modified: 2026-09-15T00:46:55.222Z
 ---
 
 **Incident:** lucas42/lucos#294 (Critical, Owner lucas42). avalon (OVH/Kimsufi, 178.32.218.44) runs on ONE spinning disk, no RAID: HGST HUS726020ALA610, serial K5H8E1BA. It started failing ~07:55Z on 2026-09-14 (SMART: 29 pending, 109 offline-uncorrectable, 15,558 ATA errors). avalon services were down/degraded all day, and monitoring (which runs on avalon) went blind with it.
@@ -15,6 +15,13 @@ metadata:
 - **All critical data rescued and verified** into `~lucos-agent/emergency-backups-2026-09-14/` on **xwing** (original) and **salvare** (checksum-verified copy). Dir mode 700, readable only by lucos-agent, so lucas42 needs root to use it. Its **README.md** is the restore guide: which file per volume, what not to restore (the damaged media_metadata tar.gz), the media_metadata recovery (restore `media.final.sqlite`), what was deliberately not copied.
 - lucas42 decided: no full-disk image; lucos_photos_photos recovered via an Android resync instead; worlds images not needed.
 - **DNS deadline:** the secondary (dns2.l42.eu on xwing) serves all 5 avalon-primary zones until **2026-10-12 07:09:51 UTC** and then goes dark. The zone is frozen (no record changes possible) until the lucos_dns primary is back, so bring it up first if the rebuild changes the IP.
+
+**Rebuild runbook: lucas42/lucos#296** (Awaiting Decision, Critical, Owner lucas42). lucas42 answered on 2026-09-15:
+- **No RAID or second disk.** He's in a year-long Kimsufi contract, so the rebuild stays single-disk; revisit at renewal. That makes lucos_docker_health#118 (disk-health check) more valuable.
+- **The IP is whatever Kimsufi gives**, which only affects the DNS step.
+- **His one remaining decision is the hostname:** keep `avalon` (Step 3) or pick a new one (Step 3a migration).
+
+Step 1 was trimmed after comparing it with his own `~/docker-host-setup.md` and with Debian defaults.
 
 **Handover commissioned 2026-09-15:** SRE drafts the incident report as a DRAFT PR (to finish after the rebuild) and files follow-ups. Sysadmin files a rebuild/restore runbook issue. Check both landed and are boarded.
 
