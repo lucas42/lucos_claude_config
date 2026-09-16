@@ -17,11 +17,13 @@ No authentication required. Returns JSON.
   "systems": {
     "example.l42.eu": {
       "name": "lucos_example",
-      "healthy": true,
+      "status": "healthy",
       "checks": {
         "fetch-info": {
-          "ok": true,
-          "techDetail": "Fetches /_info"
+          "status": "healthy",
+          "statusText": "healthy",
+          "techDetail": "Fetches /_info",
+          "link": "https://example.l42.eu/_info"
         }
       },
       "metrics": {}
@@ -30,7 +32,7 @@ No authentication required. Returns JSON.
   "summary": {
     "total_systems": 1,
     "healthy": 1,
-    "erroring": 0,
+    "failing": 0,
     "unknown": 0
   }
 }
@@ -50,8 +52,8 @@ No authentication required. Returns JSON.
 | Field | Type | Description |
 |---|---|---|
 | `name` | string | The system name (e.g. `lucos_photos`). `"unknown"` if the system's `/_info` could not be fetched |
-| `healthy` | bool | `true` if all checks pass, `false` if any check is failing. Neither true nor false if status is unknown |
-| `checks` | object | Health checks for this system, keyed by check name. Each check has `ok` (bool or the string `"unknown"`), `techDetail` (string), and optionally `debug` (string with error details when `ok` is false) |
+| `status` | string | `"healthy"` if all checks pass, `"failing"` if any check is failing; transitional values such as `"buffering"` and `"pending_verification"` also occur, so match on the value rather than assuming two |
+| `checks` | object | Health checks for this system, keyed by check name. Each check has `status` and `statusText` (strings, same vocabulary as the system's), `techDetail` (string), and often `link` (string) |
 | `metrics` | object | Metrics for this system, as reported by its `/_info` endpoint |
 
 **Summary:**
@@ -60,8 +62,10 @@ No authentication required. Returns JSON.
 |---|---|---|
 | `total_systems` | number | Total number of monitored systems |
 | `healthy` | number | Count of systems where all checks pass |
-| `erroring` | number | Count of systems with at least one failing check |
+| `failing` | number | Count of systems with at least one failing check |
 | `unknown` | number | Count of systems whose status could not be determined |
+
+**These are string statuses, not booleans.** A filter written against a `healthy` or `ok` boolean matches nothing and returns an empty result, which looks exactly like "no systems are failing". Treat an empty result from this endpoint as a reason to re-read one system's raw JSON before believing it.
 
 ---
 
