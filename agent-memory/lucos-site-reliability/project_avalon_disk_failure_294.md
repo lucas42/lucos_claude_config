@@ -1,15 +1,17 @@
 ---
 name: project-avalon-disk-failure-294
-description: RESOLVED 2026-09-16 — avalon's single disk failed 2026-09-14; data rescued to xwing+salvare and restored; estate verified end to end. Report lucas42/lucos#297 (draft). What's still out, what the rescue dir holds, and the privacy rule on it.
+description: RESOLVED 2026-09-16 — avalon's single disk failed 2026-09-14; estate rebuilt, restored and verified; report lucas42/lucos#297 MERGED. Photo originals still unrecovered (lucos_photos#525). What the rescue dir holds and the privacy rule on it.
 metadata:
   type: project
 ---
 
-**RESOLVED 2026-09-16 03:39 UTC.** avalon's single non-RAID disk failed 2026-09-14 (~07:55 onset, host unmanageable 19:21). Data was rescued in OVH rescue mode, the host rebuilt on Debian trixie at the same IP, and the estate restored and verified. **Total ~1 day 20 hours.** Incident report: **lucas42/lucos#297**, still a **draft** — lucas42 and team-lead settle ready/review/merge. Source issue lucas42/lucos#294; rebuild runbook lucas42/lucos#296.
+**RESOLVED 2026-09-16 03:39 UTC.** avalon's single non-RAID disk failed 2026-09-14 (~07:55 onset, host unmanageable 19:21). Data was rescued in OVH rescue mode, the host rebuilt on Debian trixie at the same IP, and the estate restored and verified. **Total ~1 day 20 hours.** Incident report: **lucas42/lucos#297 — MERGED** 2026-09-16 08:29Z, live at `docs/incidents/2026-09-14-avalon-disk-failure.md`. Anything material after this goes in a fresh follow-up PR, per `references/incident-reporting.md`. Source issue lucas42/lucos#294; rebuild runbook lucas42/lucos#296.
 
 ## Still out / still open
 
-- **`lucos_mail_smtp` is down** — dovecot `Unsupported dovecot_storage_version 2.4` on an unchanged pre-incident image, so **the estate has no outbound email alerting**. lucas42/lucos_mail#79, Critical, sysadmin's.
+- **Photo originals are NOT recovered** — the one volume excluded from backups. The app-based recovery path **does not work**: the server returns 200 from a DB hash lookup without checking the file exists, so a full resync restores nothing (observed: 619 uploads, all 200, 0 files written). Fix in review lucas42/lucos_photos#526 against lucas42/lucos_photos#525; needs that merged **plus another full resync**. Until then they exist only on lucas42's phone.
+
+- ~~`lucos_mail_smtp` down~~ **FIXED 07:31 2026-09-16** (lucas42/lucos_mail#80). ⚠️ It was **NOT** an unchanged image: lucos_deploy_orb resolves the version from the newest git tag, not the checked-out commit (lucas42/lucos_deploy_orb#193, Critical), so a different image built during the rebuild was deployed, carrying unpinned dovecot with a stricter validator (`2.4` vs `2.4.0`). Pinning: lucas42/lucos_mail#81.
 - **The DNS secondary on xwing holds no zone files on disk** and served all five zones from memory for two days. lucas42/lucos_dns#135 — root cause NOT found; the four obvious explanations are ruled out in the issue.
 - **lucas42/lucos_monitoring#313** — a check whose source disappears reads green, not unknown. Architect writing an ADR.
 - Others: lucas42/lucos#299 (CI bootstrap, documentation-only, **owner me**), lucas42/lucos#301 (aurora recovery path, me), lucas42/lucos#302 (post-rebuild confirmations, me), lucas42/lucos#300/#303/#304 (lucas42), lucas42/lucos_monitoring#312, lucas42/lucos_media_linuxplayer#146, lucas42/lucos_backups#415 (mine, and now also carries the 72h create-backups threshold evidence).
