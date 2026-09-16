@@ -67,7 +67,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [A crash-loop flaps docker_health](pattern_docker_health_crashloop_flapping.md) — compare a monotonic counter.
 - [Don't accept flaps as "expected"](feedback_no_flap_tolerance.md)
 - [/_info 1s dep probe > the 1s poll timeout](pattern_info_inband_dependency_probe_exceeds_poll_timeout.md) — the alert fires on the WRONG service.
-- [monitoring's self-poll blocks on its own mailbox](pattern_monitoring_selfpoll_mailbox_burst.md) — erl_call recipe.
+- [monitoring's state server = head-of-line bottleneck](pattern_monitoring_selfpoll_mailbox_burst.md) — ⚠️loganne/mail down ⇒ in-band alert delivery 500s the WHOLE API; CPU 0.01%=blocked vs ~18%=rendering.
 - [⚠️ failThreshold counts SOURCE UPDATES](pattern_failthreshold_counts_source_updates.md) — =2 fires on one bad reading.
 - [Checks + thresholds live in /_info](feedback_failthreshold_lives_in_info.md) — monitoring only aggregates.
 - [/_info = availability, not correctness](pattern_info_endpoint_boundary.md) — ⚠️ stays green through outages; lucos#273.

@@ -1,6 +1,6 @@
 ---
 name: monitoring-selfpoll-mailbox-burst
-description: lucos_monitoring's own /_info blocks behind its state server's once-per-cycle mailbox burst (depth 10-16, ~3s in 60 at :24-:26) — plus the erl_call recipe, router-vhost attribution, and the sampling-rate trap that nearly killed the diagnosis
+description: "lucos_monitoring's state server is a head-of-line bottleneck: normally its own /_info blocks behind a once-per-cycle mailbox burst, and when loganne/mail are down, in-band alert DELIVERY blocks every read and the whole API 500s. Plus the erl_call recipe, router-vhost attribution, and the sampling-rate trap."
 metadata:
   type: project
 ---
@@ -8,6 +8,16 @@ metadata:
 **`lucos_monitoring`'s self-poll flap = its own `/_info` blocking behind its own state server's mailbox.** Confirmed 2026-08-09 by co-timed measurement (lucas42/lucos_monitoring#298). Hypothesis was `lucos-architect`'s, offered with a falsifier; the falsifier was run and did **not** fire.
 
 **Why:** `server.erl:254-257` serves `/_info` with two synchronous `gen_server:call`s into `StatePid`; every fetcher `cast`s into that same process (2 casts × 55 systems per cycle). `/_info` costs **~1.8ms** for 57 of every 60 seconds and **>1.5s** for the other ~3, when the mailbox bursts to **10-16** at **:24-:26 past the minute** (the poll cycle). Only the self-poll is affected — it is the one endpoint whose response time is a function of monitoring's own workload. `/api/status` is far less affected (shares `{fetch, all}` only; `/_info` also does `{fetch, poll_stats}` + `encodeInfo`). Scaling property: **more systems ⇒ slower self-report.** Never alerts — `CONSECUTIVE_UNKNOWNS_THRESHOLD` = 5, deepest run 4; `buffering` IS that gate holding. Retracted en route: "permanent", "not self-clearing", NAT66 hairpin (real but only in the 4-min post-recreate settling window).
+
+## 🔥 The severe variant: when loganne/mail are down, the WHOLE API 500s (2026-09-16, avalon rebuild)
+
+Same bottleneck, far worse trigger. **Every** endpoint — `/`, `/api/status`, `/_info` — is `gen_server:call(StatePid, {fetch, all})` with Erlang's **default 5s timeout**, and `monitoring_state_server.erl`'s poll-result `handle_cast` calls `alerting:notify_all(...)` **in-band**. So alert *delivery* and alert *reading* share one process.
+
+With loganne down, each `monitoringAlert` POST waits out the router's **60s** `proxy_read_timeout` (`Loganne returned 504 posting "monitoringAlert"`), and each email attempt retries against a refused SMTP port (`retries_exceeded ... {error,econnrefused}`). While that runs, no read is answered, so every request hits its 5s timeout and `server.erl:211`'s catch-all returns **HTTP 500 "An Error occurred whilst generating this page."** The log line is `exit {timeout,{gen_server,call,[<Pid>,{fetch,all}]}}`.
+
+**Diagnostic tell — check CPU FIRST, it splits the two variants in one command:** `docker stats --no-stream lucos_monitoring` showed **0.01%**. Busy-rendering (the burst variant above, ~18% of a core) vs **blocked on outbound IO** look identical from outside — both give slow/failed reads — and the remedies are opposite. A 5.0s time-to-first-byte from outside is the other fingerprint: it's the gen_server default, not a network timeout.
+
+**It self-clears** once loganne and mail answer quickly again; don't restart into the storm. **The design point:** monitoring's read path degrades exactly in proportion to how broken the estate is, because delivery blocks reads — worst when most needed. Fix direction is async delivery (spawn per notification), and it's a bigger change than the render fix below. Raised with team-lead 2026-09-16 during the avalon rebuild; not filed at the time.
 
 ## ⚠️ The sampling-rate trap (generalises well beyond this)
 
