@@ -96,6 +96,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [GitHub Actions outage: check the status page first](pattern_github_actions_outage_diagnosis.md) — never relax branch protection.
 - [Checks never fired = CircleCI 400'd the webhook](pattern_circleci_400_webhook_drops_pr.md)
 - [GitHub silently disables auto-merge](pattern_github_silently_disables_automerge.md) — look for `auto_merge_disabled`.
+- [`curl -w '%{http_code}' … || echo "000"` → `000000`](pattern_curl_httpcode_or_echo_concatenates.md) — probe calls a refused endpoint reachable; orb#188.
 
 ## Estate topology / docker
 - [⚠️ avalon = ONE disk, no RAID](reference_avalon_single_disk_no_raid.md) — ioerr_cnt + diskstats; lucos#294.
