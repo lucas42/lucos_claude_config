@@ -104,6 +104,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Shared ~/.claude checkout ref-state](reference_shared_claude_checkout_ref_state.md) — stale index = phantom diffs + 97% wasted sweep work; `git reset` clobbers the checked-out branch
 - [Dependabot auto-merge carve-out](reference_dependabot_automerge_carveout.md) — required reviews OFF by convention; arming persists, `synchronize` is the fix's vehicle not the bug
 - [Ops checks duplicating running machinery](reference_ops_checks_duplicate_machinery.md) — 3 of SRE's 7 already automated; /routine barrier makes reallocation a no-op
+- [Sweep deadline ≠ refresh interval](reference_sweep_deadline_vs_interval.md) — starved list tail + its failure detection silently off (lucos_root#158)
 - [In-place write vs running script](reference_inplace_write_vs_running_script.md) — git checkout writes in place; a replaced running bash script mixes both versions and exits 0; disk==OLD discriminator
 
 ## Project memories
