@@ -85,13 +85,15 @@ Requires Bearer token authentication using the `KEY_LUCOS_LOGANNE` env var from 
 source ~/sandboxes/lucos_agent/.env && curl -s -H "Authorization: Bearer $KEY_LUCOS_LOGANNE" "https://loganne.l42.eu/events"
 ```
 
-Returns a JSON array of recent events across the lucos ecosystem (deploys, service activity, etc.).
+Returns a JSON array of recent events across the lucos ecosystem (deploys, service activity, etc.), **newest first** — so the most recent event is the first element, not the last.
 
 ### Event payload shape
 
-Each event is a flat JSON object. The fields present vary by `type`, but the **wire format carries only post-event state** — there is no `existingTrack`, `previousTrack`, `oldValue`, or equivalent "before" field, even when the producing service's internal API accepts both.
+Each event's timestamp is `date` (ISO 8601, e.g. `2026-09-16T04:39:46.062Z`). There is no `dateTime` field; asking for one returns null for every event, which reads exactly like a feed carrying no timestamps. Every event also carries a `level` — `detail`, `routine`, `notable` or `headline`.
 
-For example, `lucos_media_metadata_api` calls `Loganne.post(action, humanReadable, storedTrack, existingTrack)` with both arguments, but only `storedTrack` appears in the published event. If you need to diff an event against prior state, you'll have to query the producing service or the event immediately preceding it.
+Events are mostly flat, with one exception worth knowing: `webhooks` is a nested object keyed by consumer, each holding a delivery `status` and an `attempts` array with per-attempt timestamps. That is the place to look when debugging whether an event actually reached its consumers.
+
+**Whether a "before" state is published varies by event type — do not assume either way.** `lucos_media_metadata_api` calls `Loganne.post(action, humanReadable, storedTrack, existingTrack)` with both arguments, but only `storedTrack` appears in the published event, so a track diff needs the producing service or the preceding event. Other types do publish it: `collectionSwitch` from `lucos_media_manager` carries `previousName` and `previousSlug` alongside `name` and `slug`. Check a real payload of the type you care about before concluding the before-state isn't there.
 
 Don't assume a field is present because the internal publisher signature takes it — check an actual event payload.
 
