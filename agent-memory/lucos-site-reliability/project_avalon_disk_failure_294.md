@@ -1,31 +1,30 @@
 ---
 name: project-avalon-disk-failure-294
-description: ACTIVE INCIDENT lucas42/lucos#294 — avalon's single disk failed 2026-09-14; data rescued to xwing+salvare; waiting on OVH swap then rebuild; draft report lucos#297; what to do when avalon returns
+description: RESOLVED 2026-09-16 — avalon's single disk failed 2026-09-14; data rescued to xwing+salvare and restored; estate verified end to end. Report lucas42/lucos#297 (draft). What's still out, what the rescue dir holds, and the privacy rule on it.
 metadata:
   type: project
 ---
 
-**State as of 2026-09-15 (per team-lead, not verified by me): Kimsufi have REPLACED avalon's disk and lucas42 has done a fresh Debian Trixie install. The rebuild is in progress on lucas42/lucos#296: lucas42 is finishing Step 1 by hand, and the sysadmin takes Steps 2–4. MY part is Step 5, the end-to-end verification, and team-lead will ping me when it's due. ⛔ DON'T TOUCH avalon (no SSH, no probes) until that ping.** team-lead has added the swap and reinstall to the #294 timeline for #297. All critical data was rescued and verified before the swap. The canonical current-state summary is the body of lucas42/lucos#294. Re-read it before acting; it will have moved on.
+**RESOLVED 2026-09-16 03:39 UTC.** avalon's single non-RAID disk failed 2026-09-14 (~07:55 onset, host unmanageable 19:21). Data was rescued in OVH rescue mode, the host rebuilt on Debian trixie at the same IP, and the estate restored and verified. **Total ~1 day 20 hours.** Incident report: **lucas42/lucos#297**, still a **draft** — lucas42 and team-lead settle ready/review/merge. Source issue lucas42/lucos#294; rebuild runbook lucas42/lucos#296.
 
-**Where things are:**
-- **Data:** `~lucos-agent/emergency-backups-2026-09-14/` on **xwing (original) and salvare (copy)**, both mode 700, sha256-verified. **`README.md` there is the restore guide:** which file per volume, how each copy was taken and verified, what wasn't copied, and checksums.
-  - media_metadata: restore `rescue/media.final.sqlite` as `media.sqlite` (no -wal/-shm, owner 1001:1001). **Never restore** the damaged `.tar.gz`.
-  - worlds: the rescue copy has lucas42's edits to 00:16:29Z on 09-14. Images come from the 09-13 nightly `web_storage` backup (all references verified present).
-  - **SSH host keys (PRIVATE):** `rescue/avalon-ssh-host-keys/`, copied 2026-09-15. **DECIDED 2026-09-15** (lucas42, on the architect's advice on #296): keep the hostname avalon and the same IP, and **reuse the ed25519/ecdsa/rsa pairs; don't install DSA.** **The host keys are NOT rotated** (per #298). Security's rotation follow-ups are lucas42/lucos#298 (creds server_key + aithne store, Blocked on #296) and lucas42/lucos_creds#565 (data_key tooling), both rows in #297. **Delete the dir on BOTH xwing and salvare once the keys are installed and an existing client connects with no warning.** That's a #297 follow-up row.
-  - **A credential-exposure disposition was decided 2026-09-15.** The details are ONLY in the private README's "Deliberately NOT copied" section in the emergency-backups dir. **Never restate them in memory, commit messages, issues, PRs or #297.** lucos_claude_config and lucos are PUBLIC; see `references/agent-memory-conventions.md` "What NOT to save". At #297 finalisation: at most one generic line, nothing specific.
-- **Host:** ~~OVH rescue mode with the old disk mounted ro~~. That's OBSOLETE: the old disk is gone, so there's nothing left to rescue from it. avalon is now a fresh Trixie install mid-rebuild (#296). The rescue-mode root@IP SSH recipe no longer applies. Once the host keys are reinstalled, a normal connection to `avalon.s.l42.eu` should give no host-key warning, and that's the check for the key-dir deletion row below.
-- **salvare**: reachable **directly** as `lucos-agent@salvare.s.l42.eu` (verified 2026-09-16). The `-J xwing` / IPv6-literal recipe recorded here earlier was my own workaround, not a requirement — agents reach avalon, xwing and salvare each directly, and `~/.ssh/config` has no `ProxyJump` or `ProxyCommand` at all. **aurora is the only host behind a gateway** (xwing). I asserted the opposite in a risk assessment on 2026-09-16 and it was load-bearing for a recommendation; one look at the config would have settled it.
-- **Incident report:** DRAFT PR **lucas42/lucos#297**, branch `incident-report-avalon-disk-failure`, worktree `~/sandboxes/.worktrees/lucos-incident-avalon`. Resolution, end time and verification are TBD. Keep it in draft until resolved, then notify the 6 teammates on the draft, fold in their responses, and only then mark ready → review → merge (`references/incident-reporting.md`).
-- **Rebuild procedure:** **lucas42/lucos#296** (sysadmin's runbook; Awaiting Decision / Critical / owner lucas42; item 2 covers RAID). **Disk layout decided: stays SINGLE-DISK for now (year-long contract, revisit at renewal)**, per lucas42 on #296. Recorded in #297 and commented on docker_health#118. Linked in #294 and #297. Sysadmin will ask SRE for the data-restore specifics.
-- **Follow-ups filed (triaged 2026-09-15):** lucas42/lucos_backups#415 (15:25 vs 03:25): **Needs Analysis / Medium / OWNER ME, deliberately HELD until avalon is back. Don't start early.** Before Ready, its body must settle the fork I left open: a persistent `last_success` marker vs taking the 15:25 decision off the marker entirely. It is NOT a lucas42 decision; #225 plus his own statement already settle 03:25-primary. lucas42/lucos#295 (alert chain on avalon): Awaiting Decision / Low. lucas42/lucos_docker_health#118 (disk health): Awaiting Decision / Medium. a comment on lucas42/lucos#290 (the 4h20m gap; trigger 2 met; alert emails verified sent: 223 `status=sent`).
-- **DNS deadline:** avalon is the primary for 5 zones (l42.eu, s.l42.eu, lukeblaney.co.uk, rowanblaney.co.uk, tfluke.uk). They **expire at 2026-10-12 07:09:51 UTC** unless a primary is back. No issue, by lucas42's decision (he expects the rebuild in days).
-- **Deferred:** ops Checks 3 and 4 from 2026-09-14 (they wait until avalon is back). lucos_backups#344's switch-on also needs the rebuilt avalon (it's Blocked on docker_health#117 anyway).
+## Still out / still open
 
-**When avalon is back** (the sysadmin owns #296 Steps 2–4; my verification is Step 5, which starts on team-lead's ping):
-1. Answer the sysadmin's data-restore questions per the README.
-2. Step 5: verify end to end, including a **triggered `create-backups` run** (a green `/_info` isn't enough). Read #296's Step 5 text first; that's the spec.
-3. Fill in #297's Resolution section and run its review steps.
-4. Update #294.
-5. Re-run the deferred ops checks.
+- **`lucos_mail_smtp` is down** — dovecot `Unsupported dovecot_storage_version 2.4` on an unchanged pre-incident image, so **the estate has no outbound email alerting**. lucas42/lucos_mail#79, Critical, sysadmin's.
+- **The DNS secondary on xwing holds no zone files on disk** and served all five zones from memory for two days. lucas42/lucos_dns#135 — root cause NOT found; the four obvious explanations are ruled out in the issue.
+- **lucas42/lucos_monitoring#313** — a check whose source disappears reads green, not unknown. Architect writing an ADR.
+- Others: lucas42/lucos#299 (CI bootstrap, documentation-only, **owner me**), lucas42/lucos#301 (aurora recovery path, me), lucas42/lucos#302 (post-rebuild confirmations, me), lucas42/lucos#300/#303/#304 (lucas42), lucas42/lucos_monitoring#312, lucas42/lucos_media_linuxplayer#146, lucas42/lucos_backups#415 (mine, and now also carries the 72h create-backups threshold evidence).
 
-Lessons from tonight are in [[reference-avalon-single-disk-no-raid]], [[pattern-piped-copy-receiver-cannot-detect-truncation]] and [[pattern-docker-pause-reports-unhealthy]], plus instruction commits 0406391 and f431318.
+## The rescue directory — ⚠️ privacy rule
+
+`~lucos-agent/emergency-backups-2026-09-14/` on **xwing and salvare**, mode 700. `README.md` there is the restore guide. **Nothing is deleted yet** — lucas42's rule: not until the rebuild has bedded in, and a while beyond (lucas42/lucos#304, revisit from 2026-09-30).
+
+- **A credential-exposure disposition decided 2026-09-15 lives ONLY in that README's "Deliberately NOT copied" section. Never restate it in memory, commits, issues, PRs or #297** — lucos_claude_config and lucos are PUBLIC.
+- **Mode 700 is not the real boundary**: `lucos-agent` already has root-equivalent access on xwing and salvare via `docker` group membership (lucas42/lucos_agent_coding_sandbox#102). Standing access, not new exposure — but don't describe the permission bits as the control.
+- **The rescued SSH host keys were never installed.** The rebuild generated fresh ones (the runbook's documented fallback), so those private keys are now the only copies of a host that no longer exists.
+
+## Facts worth keeping
+
+- **Access topology (verified 2026-09-16):** agents reach **avalon, xwing and salvare each directly** — `~/.ssh/config` has no `ProxyJump`/`ProxyCommand`. **aurora is the only host behind a gateway** (xwing). I asserted otherwise in a risk assessment and it was load-bearing; see [[reference_aurora_access_and_rsync]] for aurora's working recipe.
+- **Verification that mattered** (see [[pattern_verifying_a_create_backups_run]]): the first triggered `create-backups` run **failed** with every one of `lucos_backups`' sixteen checks green; the second succeeded — **124 archives**, matching every pre-incident run. Data checked against the README's figures: contacts 30 tables, eolas 41, photos 7 + `vector`, media 14,755 tracks / 121,274 tags `integrity_check ok`, worlds' activity log to 2026-09-14 00:16:29 (lucas42's last edit, in no backup).
+- **DNS deadline is no longer live**: the secondary re-established contact with the rebuilt primary at 00:37 on 2026-09-16 and all five serials match.
+- **Deferred:** ops Checks 3 and 4 from 2026-09-14 were never run.
