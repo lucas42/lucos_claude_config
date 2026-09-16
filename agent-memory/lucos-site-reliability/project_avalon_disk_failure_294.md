@@ -1,6 +1,6 @@
 ---
 name: project-avalon-disk-failure-294
-description: RESOLVED 2026-09-16 — avalon's single disk failed 2026-09-14; estate rebuilt, restored and verified; report lucas42/lucos#297 MERGED. Photo originals still unrecovered (lucos_photos#525). What the rescue dir holds and the privacy rule on it.
+description: RESOLVED 2026-09-16 — avalon's single disk failed 2026-09-14; estate rebuilt, restored and verified; report lucas42/lucos#297 MERGED. Photo originals recovered (the volume WAS backed up all along — recovery path was the bug). What the rescue dir holds and the privacy rule on it.
 metadata:
   type: project
 ---
@@ -9,7 +9,7 @@ metadata:
 
 ## Still out / still open
 
-- **Photo originals are NOT recovered** — the one volume excluded from backups. The app-based recovery path **does not work**: the server returns 200 from a DB hash lookup without checking the file exists, so a full resync restores nothing (observed: 619 uploads, all 200, 0 files written). Fix in review lucas42/lucos_photos#526 against lucas42/lucos_photos#525; needs that merged **plus another full resync**. Until then they exist only on lucas42's phone.
+- ~~Photo originals are NOT recovered~~ **RECOVERED 2026-09-16.** ⚠️ **I had the premise wrong: `lucos_photos_photos` was NEVER excluded from backups.** configy gives it `backup_strategy: incremental` + `skip_backup_on_hosts: [salvare, xwing]` — it lives on avalon, so it WAS backed up there. aurora's 2026-09-14 snapshot holds **2,250 originals / 5,941 files / 11GB**. What failed was the *recovery path*, not the backup: the server returned 200 from a DB hash lookup without checking the file existed, so the first full resync restored nothing (619 uploads, all 200, 4 files). Fixed by lucas42/lucos_photos#526 (both it and #525 now closed); the post-fix resync landed 2,253 originals. **Lesson: "not recovered" and "not backed up" are different claims — check volumes.yaml before asserting the second.**
 
 - ~~`lucos_mail_smtp` down~~ **FIXED 07:31 2026-09-16** (lucas42/lucos_mail#80). ⚠️ It was **NOT** an unchanged image: lucos_deploy_orb resolves the version from the newest git tag, not the checked-out commit (lucas42/lucos_deploy_orb#193, Critical), so a different image built during the rebuild was deployed, carrying unpinned dovecot with a stricter validator (`2.4` vs `2.4.0`). Pinning: lucas42/lucos_mail#81.
 - **The DNS secondary on xwing holds no zone files on disk** and served all five zones from memory for two days. lucas42/lucos_dns#135 — root cause NOT found; the four obvious explanations are ruled out in the issue.
