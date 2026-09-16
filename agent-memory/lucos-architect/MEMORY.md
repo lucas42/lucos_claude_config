@@ -66,6 +66,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [gh api template-substitutes {owner}/{repo} in body text](reference_gh_api_template_substitution.md)
 - [Named Docker volumes shadow image contents indefinitely](reference_named_volume_shadows_image.md)
 - [Loganne consumer test — name the async consumer first](reference_loganne_consumer_test.md)
+- [Loganne wire-format gotchas](reference_loganne_wire_format_gotchas.md) — `date` not `dateTime`, newest-first, nested `webhooks`, before-state fields exist
 - [Media-ecosystem URI namespace (ADR-0005)](reference_media_ecosystem_uri_namespace.md)
 - [Webhook consumer accept-202-enqueue (ADR-0006)](reference_webhook_consumer_accept_202_enqueue.md)
 - [Service-worker-backed UI is a system component](reference_service_worker_ui_as_system_component.md)
@@ -118,7 +119,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [lucos_worlds](project_lucos_worlds.md) — ADOPT BookStack (2026-07-07), types-as-tags, aithne OIDC; ADR-0001 draft PR lucos_worlds#1; follow-ups #2-#6
 - [Artist modelling](project_artist_modelling_decision.md) — Artist as `mo:MusicArtist` in media_api
 - [Auto-merge approval policy](project_auto_merge_approval_policy.md) — lucos ADR-0013 Accepted; configy `additionalReviewers`, workflow-enforced, fail-closed
-- [loganne event level](project_loganne_event_level.md) — per-event `level` (#506), named ordinal scale, awaiting taxonomy sign-off
+- [loganne event level](project_loganne_event_level.md) — SHIPPED + live; detail<routine<notable<headline, server-side `?level=` filtering
 - [aithne-client library](project_aithne_client_library.md) — lucos#264 proposal; boundary=library verifies+classifies/app presents; ADR-0001 in new repo; 4 JS follow-ups Blocked on it
 - [creds ORIGIN_* envvars](project_creds_origin_envvars.md) — creds ADR-0005 (PR #472); origin from link row's serverenvironment; ~19% zoo-migration ceiling; scope trap already closed by ADR-0003
 - [creds multi-line secrets](project_creds_multiline_secrets.md) — creds ADR-0006 (PR #484, Proposed); base64-at-rest for key-typed secrets; divergent-framing-guards blind to material-invalid values; transport≠content surfaces
