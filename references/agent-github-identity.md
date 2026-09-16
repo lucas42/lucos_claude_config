@@ -185,6 +185,8 @@ Good (rule body, commit message carries the lesson):
 > security persona, not the coordinator. Encoding the rule.
 > ```
 
+The line to draw: a few words naming the **failure mode** earn their place, because they let a reader judge an edge case instead of pattern-matching ("…which reads green while the source is unavailable"). A retelling of who said what, when, and to whom does not. If a cite can't survive being cut to the failure mode, it belongs in the commit message.
+
 Why this matters: instruction files are loaded into every conversation that uses them. Every kilobyte of "Lesson from {date}" narrative costs attention budget on every load, even for readers who don't need the historical context. The commit log is the right home for "what triggered this change" — `git log` and `git blame` surface it on demand, but it doesn't tax the rule's primary readers.
 
 ## Persona-specific extensions
