@@ -3,7 +3,7 @@
 Index only; the detail is in each linked file. Verify ticket state before citing.
 
 ## Recent incident (resolved)
-- [avalon disk failure — RESOLVED 2026-09-16, report lucas42/lucos#297 MERGED](project_avalon_disk_failure_294.md) — ⚠️ photos originals WERE backed up all along; the recovery path was the bug. Still out: lucos_dns#135.
+- [avalon disk failure — ALL data recovered 2026-09-16 22:34](project_avalon_disk_failure_294.md) — report lucas42/lucos#297 merged, follow-up lucas42/lucos#305. ⚠️ photos were NEVER lost; nobody checked configy. Still out: lucos_dns#135.
 
 ## Consolidated topic files (read first)
 - [Per-repo known issues + host facts](topic_per_repo_known_issues.md) · [CI + infra patterns](topic_ci_infra_patterns.md) · [Monitoring mechanics](topic_monitoring_mechanics.md) — poll is 60s · [⛔ RESOLVED/benign](topic_resolved_historical.md).
