@@ -64,6 +64,14 @@ cd /home/lucas/sites/lucos_time     # will not have docker-compose.yml after dep
 
 If you need the current docker-compose configuration for a running service, retrieve it from the GitHub repo, not from the production host filesystem.
 
+## Scratch space: check the target host, not the one you are reading from
+
+**`/tmp` is tmpfs — RAM, not disk — and these hosts have very little of it.** xwing has **906MB of RAM** against a 454MB `/tmp`, so extracting even a modest database dump there consumes memory the running containers need, and a second concurrent extract can stop the host answering SSH.
+
+Before writing anything sizeable to a host, check **that host's** free memory and the filesystem type of the destination (`free -m`, `df -h <path>`, `findmnt -no FSTYPE <path>`). Checking disk on the machine you are copying *from* says nothing about the one you are copying *to*. Prefer a docker volume or a path under `/srv` over `/tmp` for anything larger than a few MB, and never run two such operations at once.
+
+Clean up by **verifying afterwards, not by trusting the command**: files written by a container are owned by that container's uid, so a `rm` as `lucos-agent` can fail silently. List the directory again and confirm it is empty.
+
 ## Sudo access is deliberately near-zero
 
 The `lucos-agent` SSH account's sudo grant is near-zero, but **it is not identical across hosts — check per host, don't generalise from one to another:**
