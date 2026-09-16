@@ -2,8 +2,8 @@
 
 Index only; the detail is in each linked file. Verify ticket state before citing.
 
-## 🚨 ACTIVE INCIDENT (read first)
-- [avalon disk failure: lucos#294, draft report lucos#297](project_avalon_disk_failure_294.md) — disk swapped, Trixie reinstalled; rebuild on lucos#296; my Step 5 waits for team-lead's ping. ⛔ Don't touch avalon until then. DNS expires 2026-10-12 07:09Z.
+## Recent incident (resolved)
+- [avalon disk failure — RESOLVED 2026-09-16, report lucas42/lucos#297 (draft)](project_avalon_disk_failure_294.md) — estate rebuilt, restored and verified end to end. Still out: `lucos_mail_smtp` (lucos_mail#79) so NO email alerting; DNS secondary holds no zone files on disk (lucos_dns#135).
 
 ## Consolidated topic files (read first)
 - [Per-repo known issues + host facts](topic_per_repo_known_issues.md) — quirks, open tickets, hostname→repo.
@@ -35,6 +35,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [aurora access + rsync](reference_aurora_access_and_rsync.md) — no direct SSH; go via the container.
 - [host-tracking "<host>: 'low'" = bad recreate_effort](pattern_backups_invalid_effort_crashes_host_tracking.md) — fix it in configy.
 - [Backups needs NO rsync on hosts](pattern_backups_rsync_binary_missing_from_image.md) — copyTo=scp; incremental rsync runs in the image (#315 reverted #311).
+- [Triggering + verifying an ad-hoc create-backups run](pattern_verifying_a_create_backups_run.md) — no HTTP trigger; log FIFO eats tracebacks; ~15min not 45; ⚠️72h check blind spot, trust loganne.
 
 ## Router / DNS / firewall
 - [New-service TLS failing = cert not issued yet](pattern_router_newdomain_cert_latency.md) — issued at startup and daily at 22:16.
