@@ -232,6 +232,10 @@ Keep it brief — a few lines is enough. The team-lead uses this to decide wheth
 
 The `unsupervisedAgentCode` flag is irrelevant to Dependabot PRs. If an approved Dependabot PR isn't merging, investigate the dependabot-auto-merge workflow (startup failure, missing file, etc.) — do not attribute it to the supervised flag.
 
+**`dependabot-auto-merge.yml` gates on CI only, never on your review state — so `REQUEST_CHANGES` does not stop a Dependabot PR merging.** This is deliberate, not a bug: the overwhelming majority of change-requests on Dependabot PRs are "CI is failing", which CI already gates, and making the review a veto would strand those until a human approved them. It does mean a review is the wrong instrument for a verdict that the PR must not merge **in any form** — a content objection CI cannot see, such as a diff that does not do what its title claims, or a bump to a version we have decided against. A review recommending closure will simply be overtaken the moment CI goes green.
+
+**So when your verdict on a Dependabot PR is "this should not merge at all", close the PR** — submit the review as the explanation, then close it. Closing sticks, is reversible, and is already an established reviewer action on Dependabot PRs. Reserve this for objections CI cannot express; reviews about failing CI stay exactly as they are, and must not be closed.
+
 ## Supervision status — verify before claiming
 
 Before stating a repo's supervision status (e.g. "this needs lucas42's approval", "auto-merge will fire", "supervised", "unsupervised"), run:
