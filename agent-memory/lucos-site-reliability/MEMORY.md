@@ -21,7 +21,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 
 ## Backups
 - [DB-specific → engine-agnostic quiesce](project_backups_db_consistency_walkback.md) — docker pause the owner · [recreate_effort and skip_backup are INDEPENDENT](reference_recreate_effort_vs_skip_backup_semantics.md).
-- [aurora access + rsync](reference_aurora_access_and_rsync.md) — no direct SSH; go via the container · [host-tracking "<host>: 'low'" = bad recreate_effort](pattern_backups_invalid_effort_crashes_host_tracking.md) — fix in configy.
+- [aurora access + rsync](reference_aurora_access_and_rsync.md) — ⛔ NOT via the container key; ask lucas42 (lucos#301) · [host-tracking "<host>: 'low'" = bad recreate_effort](pattern_backups_invalid_effort_crashes_host_tracking.md) — fix in configy.
 - [Backups needs NO rsync on hosts](pattern_backups_rsync_binary_missing_from_image.md) — copyTo=scp; incremental rsync runs in the image (#315 reverted #311).
 - [Triggering + verifying an ad-hoc create-backups run](pattern_verifying_a_create_backups_run.md) — no HTTP trigger; log FIFO eats tracebacks; ~15min; ⚠️72h check blind spot, trust loganne.
 - [localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 mismatch](pattern_backups_sshadd_gates_server_start.md) — test v4, localhost and [::1].
