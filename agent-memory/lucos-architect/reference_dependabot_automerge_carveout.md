@@ -29,3 +29,7 @@ Frame such a bug as a defect in the **classifier**, not the gate. That picks the
 ## jq trap worth reusing
 
 `all` over an **empty** array returns `true`. A failed API call yielding `[]` therefore evaluates as "every commit is Dependabot's" and *arms* auto-merge. Any all-must-match check over an API list needs an explicit empty/error branch. Connects to [[feedback_parse_reference_data_never_handbuild]].
+
+## Reviewer veto on Dependabot PRs — decided against (2026-09-18, tfluke#530)
+
+Do NOT make a `lucos-code-reviewer` CHANGES_REQUESTED disarm Dependabot auto-merge. Of 24 merged Dependabot PRs with a standing bot CR (lossy search), ~21 were "CI failing" CRs — CI already gates those, and a disarm would strand them (onto lucas42 on supervised repos). Only ~3 content vetoes in ~6 months vs ~1,594 Dependabot merges/quarter. Fix is the reviewer *acting* on a terminal verdict (close the PR), not a gate change. **Caller count is 60, not 54** — 6 callers name the file `auto-merge.yml`; enumerate by content (`reusable-dependabot-auto-merge.yml@`), never by filename.

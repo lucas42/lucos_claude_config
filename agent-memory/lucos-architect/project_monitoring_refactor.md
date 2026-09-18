@@ -24,3 +24,8 @@ metadata:
 **How to apply:** if asked to sequence monitoring work — land #307 before `lucos_monitoring` #295/#296/#299/#301/#303; it doesn't touch #294 (`email.erl`), #297 (`fetcher_info.erl`) or #300 (docs), which run in parallel.
 
 Related: [[adr-standard]], [[cross-project-patterns]]
+
+## Fail-open/degradation findings (2026-09-18, avalon aftermath)
+
+- **#312** — `loganne.erl` `httpc:request` has NO timeout (infinity); only in-band notifier. Email is `gen_smtp_client:send/3` = async (but spawn_linked to the state server). Design: per-notifier FIFO worker + 5s timeout. Widen #300's ADR invariant to "state server does state work only — no presentation, no outbound I/O".
+- **#313** — `fetcher_scheduled_jobs` is the only fetcher that casts nothing on upstream failure (aggregate source can't enumerate targets). Observed incident was restart-while-source-dark (never learned), NOT frozen-green. I own the ADR: per-target unknowns + per-source liveness; declared check sets rejected; source-absence doesn't escalate when the source has its own monitored system (circleci keeps escalating — it has none).
