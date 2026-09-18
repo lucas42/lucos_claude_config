@@ -18,7 +18,7 @@ lucos_repos_app: 2026-09-06
 lucos_dns_bind: 2026-07-27
 lucos_loganne: 2026-07-23
 lucos_configy: 2026-08-28
-lucos_contacts_app: 2026-08-08
+lucos_contacts_app: 2026-09-18
 lucos_contacts_db: 2026-09-06
 lucos_contacts_googlesync_import: 2026-08-09
 lucos_contacts_web: 2026-08-17
@@ -26,7 +26,7 @@ lucos_creds: 2026-09-13 (short window, 53h since StartedAt)
 lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-08-17
 lucos_dns_sync: 2026-08-17
-lucos_eolas_app: 2026-08-08
+lucos_eolas_app: 2026-09-18
 lucos_eolas_db: 2026-09-06
 lucos_eolas_web: 2026-09-08 (short window, 39h since StartedAt)
 lucos_locations_mosquitto: 2026-08-28
@@ -44,10 +44,10 @@ lucos_photos_redis: 2026-09-08
 lucos_scenes: 2026-09-08
 lukeblaney_co_uk: 2026-08-27
 lucos_media_manager: 2026-08-17
-lucos_media_metadata_api: 2026-07-23
+lucos_media_metadata_api: 2026-09-18
 lucos_monitoring: 2026-08-27
 lucos_media_seinn: 2026-08-02
-tfluke: 2026-08-02
+tfluke: 2026-09-18
 lucos_media_metadata_api_exporter: 2026-08-28
 lucos_media_metadata_manager: 2026-09-13 (short window, 53h since StartedAt)
 lucos_notes: 2026-09-13 (short window, 53h since StartedAt)
@@ -56,7 +56,7 @@ lucos_router: 2026-08-19
 semweb: 2026-08-27
 lucos_time: 2026-08-09
 lucos_aithne: 2026-08-22
-lucos_arachne_mcp: 2026-07-19
+lucos_arachne_mcp: 2026-09-18 (short window, 2h since StartedAt)
 lukeblaney_blog: 2026-09-08
 lucos_docker_health_app: 2026-08-22
 
@@ -243,3 +243,8 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
   11. **My copy list came from memory and missed lucos_locations_store (huge);** team-lead caught it from configy. Instruction fix in 0406391 (build the list from configy; verify copies as data).
   12. **DNS:** l42.eu's primary NS is on avalon. **Exact deadline 2026-10-12 07:09:51 UTC** (from the secondary BIND's logs: last contact with avalon 2026-09-14 07:09:51Z, plus 28 days), covering 5 zones: l42.eu, s.l42.eu, lukeblaney.co.uk, rowanblaney.co.uk, tfluke.uk (sysadmin, lucos#294 comment 5672532012). lucas42 expects the rebuild in days, so no issue was filed. I saw intermittent resolution failures tonight; sysadmin found resolution unaffected when they checked.
   13. **Correction to item 4:** there was no delayed stop message. lucas42 decided at 15:44:49Z. b76ba11 was trimmed to f431318.
+- 2026-09-18 Check 1: 54/55 healthy. Only `lucos_repos` `stale-dependabot-prs` was red: 10 Dependabot PRs from 09-15, all blocked by reds from the avalon outage. CircleCI `build` failed at "Populate known_hosts" (`getaddrinfo creds.l42.eu`). Four also failed `convention-check` (curl exit 6). I re-ran all 10 CircleCI workflows myself. The GH Actions re-runs got a 403 for my App, so I routed the 4 convention-check re-runs to sysadmin. **Lesson:** after a host outage, sweep for PRs whose CI ran during it; nothing re-runs them.
+- 2026-09-18 Check 2 (7d fetch capped at 6,930 events, 09-12T15:48Z→09-18T07:58Z): the 09-16 01:12→07:56Z burst is the avalon recovery; photos 16:22→16:58Z and 22:14Z are the photos restore. Both are in the lucos#294 report. Outside those, 2 flaps, both lucas42/lucos_monitoring#303, each a single failing reading by router response size: seinn `media-manager` 09-17 11:11Z (367 vs 315 B) and locations `location-freshness` 09-18 07:15Z (855 vs 783 B). Commented on #303. No unrecovered `lucos_agent` event.
+- 2026-09-18 Check 3: 0 reports needed. Every >30min outage is in the 09-16 recovery, covered by `2026-09-14-avalon-disk-failure.md`.
+- 2026-09-18 Check 4: **avalon's rebuild (09-16) wiped all pre-09-16 container logs, so that gap is permanently unreviewable.** Reviewed arachne_mcp (61d overdue, 2h window), media_metadata_api, tfluke, eolas_app and contacts_app (~2.2d each). metadata_api: 348× `cum_weighting inconsistency drift=1738` from 09-16 02:07→07:54Z, the known drift, stopped at its repair. Also **1× `database is locked` 500 at 09-17 02:10:17Z** on the weightings job's `PUT /v3/tracks/5/weighting`, concurrent with media_import fingerprint PUTs; the bulk update rolled back and there was no drift. Not filed: 1 in 2.2d and self-correcting. File if it recurs at >1/day. contacts/eolas: 0 5xx in 396k/46k requests; the 403s and 404s are scanners. tfluke: 201 rate-limited in 2.2d, same pattern as 09-08. **Overdue, deferred (restarted today):** lucos_loganne (57d), lucos_dns_bind (53d), lucos_arachne_explore / lucos_media_seinn (47d). Review these next, on short windows if needed.
+- 2026-09-18 Checks 5/6/7 not due (last 09-06; next ~10-06).
