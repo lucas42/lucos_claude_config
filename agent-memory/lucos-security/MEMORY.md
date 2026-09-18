@@ -38,7 +38,7 @@
 
 ## Open Risk Patterns (watch for recurrence across repos)
 
-- [lucos_creds has no data_key rotation tooling](risk-lucos-creds-no-data-key-rotation.md) — `server_key` is free to rotate (generate-on-absence, no data implications), `data_key` (AES key encrypting every stored credential) is the same pattern but has zero migration tooling — deleting it orphans everything rather than rotating. Surfaced by the avalon disk-failure incident, lucas42/lucos#296 (2026-09-15).
+- [lucos_creds has no data_key rotation tooling — AND it's currently readable via world-readable backups](risk-lucos-creds-no-data-key-rotation.md) — rotation gap: lucas42/lucos_creds#565. Readability: lucas42/lucos_backups#418 (Critical, 2026-09-18) — routine backup archives are 644, data_key ships alongside creds.sqlite, self-decrypting to anyone with a shell on xwing/salvare.
 
 - [Build-time dependency re-resolution bypasses Dependabot review](risk-build-time-dependency-reresolution.md) — `pipenv install` (no `--deploy`) etc. lets any commit silently pull unreviewed PyPI releases into prod. Found on lucos_backups (2026-08-18, lucos_backups#392), caused/contributed-to 15h24m outage (lucos#289). Not yet checked estate-wide.
 - [npm lockfile-version drift when fixing transitive-dep overrides](risk-npm-lockfile-version-drift.md) — incremental `npm install` won't re-resolve an existing lockfile for a new override; full regen on npm 10 silently bumps v2→v3, inflating the diff. Force `--lockfile-version=<N>` to match. Hit on tfluke#528 (2026-09-13).
