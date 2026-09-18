@@ -20,6 +20,7 @@
 - **Dev environments never hold a working prod credential**, in any form — hand-minted separate client, or a scoped/allowlisted creds link. Verified: creds-link scope is inert for OIDC client secrets (aithne authenticates by secret-hash, not link scope) — a "governed" exception can be worse than an honest bypass since it looks safe on review. Exception: lucos_contacts genuinely enforces link scope per-request, so a narrow compiled-code allowlist WAS approved there (creds#420). Detail: `policy-dev-prod-credential-containment.md`, `policy-creds420-write-exception.md`.
 
 - [Self-check alert refs before posting](feedback-alert-ref-self-check.md) — even `owner/repo#N` for an alert number can silently cross-link a real unrelated issue/PR; grep drafts and swap for GHSA/CVE id before posting. Caught on tfluke#528 (2026-09-13).
+- [Use --field not -f for file-backed bodies](feedback-file-backed-body-field-not-f.md) — `-f body=@file` silently posts the literal path string; check the response `body` field, not just the 200. Caught on lucos_aithne#335 (2026-09-18).
 
 ## Accepted Risks / Closed Findings (do not re-raise)
 
