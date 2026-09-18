@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-09-14
+container_status: 2026-09-18
 resource_checks: 2026-09-13
 syslog_review: 2026-09-13
 software_updates: 2026-09-13
 sandbox_drift: 2026-09-13
-repos_dashboard: 2026-09-14
+repos_dashboard: 2026-09-18
 docker_image_staleness: 2026-08-26
 backup_verification: 2026-08-26
 certificate_expiry: 2026-08-26
@@ -18,7 +18,10 @@ certificate_expiry: 2026-08-26
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **STANDING NOTE, avalon (2026-09-14 → ongoing): host is down, single-disk hardware failure, waiting on OVH disk replacement, no ETA.** Do not run Check 1 (container status) or Check 4 (resources) against avalon while this stands — it's a known-down host, not a fresh finding, and probing it wastes time at best. `docker ps -a` on xwing/salvare only until further notice. Full state, runbook (lucos#296), and DNS deadline (2026-10-12 07:09:51 UTC) in `project_avalon_disk_failure_2026-09.md`. Ping lucos-site-reliability to confirm avalon is back before resuming normal 3-host checks — check lucas42/lucos#294 for the latest status first.
+- **2026-09-18 run**: checks 1 (container status, every run) + 6 (repos dashboard, daily) due; 2–5 weekly not due (last ran 2026-09-13, 5 days elapsed); 7–9 monthly not due (last ran 2026-08-26, 23 days elapsed). Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. **Avalon rechecked directly for the first time since the 2026-09-14 disk failure — see the superseded-note entry immediately below for detail.** Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change, no action per `configy-undeployed-system-entry-pattern.md`. No new issues raised this run.
+
+- **AVALON STANDING NOTE SUPERSEDED (2026-09-18)**: directly verified avalon is back up and reachable — SSH succeeds, 57 containers all `Up` (no Exited/Restarting/unhealthy), `lucos_backups` container present and running. This overrides the 2026-09-14 "skip avalon" note below — resume normal 3-host coverage for Checks 1/4 from this run onward. Not yet independently verified: whether Steps 2–4 of the rebuild runbook (lucos#296, closed 2026-09-16) are actually complete — DNS, full CI redeploy priority order, volume restore — or whether this is drift-free vs. the pre-incident state. Incident lucas42/lucos#294 is still **open** (last updated 2026-09-15) — I haven't closed it and won't; that's SRE's/coordinator's call once they confirm the incident is fully resolved, not something an ops-check run should infer from container health alone. Flagged to team-lead in this run's manifest to loop in SRE. DNS zone-expiry hard deadline 2026-10-12 07:09:51 UTC still stands regardless (see `project_avalon_disk_failure_2026-09.md`) — worth an explicit DNS-secondary-sync check next run now avalon is reachable again.
+-~~STANDING NOTE, avalon (2026-09-14 → ongoing): host is down, single-disk hardware failure, waiting on OVH disk replacement, no ETA.~~ Superseded above (2026-09-18) — kept struck through rather than deleted so the reasoning trail survives.
 
 - **2026-09-14 run — ESCALATED, not a routine finding**: checks 1 (container status) + 6 (repos dashboard) due, both performed. xwing/salvare clean. avalon: **critical host-level overload** — load average 43.80/50.62/64.82 on a 4-core host (10–15x), mem 5.8Gi/7.6Gi used, swap 1.2Gi/4.5Gi in use. `ps aux --sort=-%cpu` over SSH timed out twice (20s, then 45s) — could not get a process-level breakdown; stopped probing rather than add more load. Six containers unhealthy simultaneously across unrelated services (`lucos_media_seinn` up 32min, `lucos_media_metadata_api` up 4h, `lucos_media_metadata_api_exporter` up 4h, `lucos_schedule_tracker` up 5h, `lucos_arachne_triplestore` up 3 days, `lucos_aithne` up 5 days) — pattern consistent with a host-level resource problem, not independent app bugs. External spot-checks: seinn.l42.eu → 502 (confirmed broken), schedule-tracker.l42.eu → timeout (confirmed broken), media-metadata.l42.eu → 200 OK, aithne.l42.eu → 200 OK (both still externally fine despite unhealthy status). Escalated to team-lead via SendMessage to invoke lucos-site-reliability — did NOT attempt any restart/fix myself, did NOT raise per-repo GitHub issues (this is one incident, not six). Repos dashboard: unchanged, only `lucos_worlds_atlas` `in-lucos-configy` (issue #3). Weekly checks 2–5 and monthly checks 7–9 not due. **Next run: check whether avalon load has been resolved and whether SRE filed an incident report; don't re-raise this as a fresh finding if already tracked.**
 
