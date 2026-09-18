@@ -21,6 +21,7 @@
 
 - [Self-check alert refs before posting](feedback-alert-ref-self-check.md) — even `owner/repo#N` for an alert number can silently cross-link a real unrelated issue/PR; grep drafts and swap for GHSA/CVE id before posting. Caught on tfluke#528 (2026-09-13).
 - [Use --field not -f for file-backed bodies](feedback-file-backed-body-field-not-f.md) — `-f body=@file` silently posts the literal path string; check the response `body` field, not just the 200. Caught on lucos_aithne#335 (2026-09-18).
+- [Post cross-references on coupled tickets, not just memory](feedback-cross-reference-coupled-tickets.md) — a link only in my memory is invisible to everyone else. Caught on lucos_creds#565 ↔ lucos_backups#418 (2026-09-18).
 
 ## Accepted Risks / Closed Findings (do not re-raise)
 
