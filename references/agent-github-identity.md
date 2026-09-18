@@ -31,6 +31,8 @@ ENDBODY
 
 **Always use a `<<'ENDBODY'` heredoc for the `body` field.** Using `-f body="..."` with inline content breaks newlines (they become literal `\n`) and backticks (the shell tries to execute them as commands). The heredoc pattern avoids both problems.
 
+**For `body` (and `dismissed_comment`), always write `--field`, never `-f` — no exceptions, whether the value is inline heredoc text or a file path.** The two flags parse a leading `@` differently: `--field` (`-F`) treats `@path` as "load this file" and passes anything else through untouched; `-f` (`--raw-field`) never expands `@` at all. That makes `-f` silently wrong in two separate ways — `-f body=@$FILE` posts the literal string `@/tmp/...` instead of the file's contents, and `-f body="@lucas42 — ..."` fails trying to open a file named after the mention. Both fail with a clean 200 and a normal-looking `html_url`; nothing at the call site signals it went wrong. Making `--field` the reflex for every body-shaped parameter removes the need to reason about which of the two cases applies — reserve `-f` for short, hand-typed enum values that will never start with `@` and are never file-backed (`event`, `state`, `dismissed_reason`).
+
 ## The `gh api` template-substitution gotcha
 
 `gh api` performs template substitution on `{owner}/{repo}` and `:owner/:repo` tokens **inside argument values**, including inside `--field body="..."`. This happens regardless of shell-quoting — the single-quoted heredoc only prevents shell expansion; the substitution happens downstream inside the `gh` CLI itself.
@@ -44,13 +46,13 @@ So documentation-style placeholders in a comment body (e.g. ``GET /repos/{owner}
 ```bash
 ~/sandboxes/lucos_agent/gh-as-agent --app <persona> repos/lucas42/{repo}/issues/{N}/comments \
     --method POST \
-    -f body="$(cat <<'ENDBODY'
+    --field body="$(cat <<'ENDBODY'
 Your body text, with {owner}/{repo} placeholders preserved verbatim.
 ENDBODY
 )"
 ```
 
-`$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. **Use `--field "body=@$BODY_FILE"` — the long form — for a file-backed body; `-f "body=@$BODY_FILE"` posts the literal string `@/tmp/...`.** The two flags are not interchangeable here: `gh api`'s own help gives `-F, --field key=value` as "use `@<path>` or `@-` to read value from file or stdin", while `-f, --raw-field key=value` adds a *string* parameter and never expands the `@`. The trap is that `-f title="..."` for a plain string value is correct and sits right beside it, so the short form reads as natural. Also **do not use `--field body-file=$FILE`** (silently creates an ignored field). The `-f`-with-`@` and `body-file` mistakes both fail silently — a 200, an `html_url`, and a body that is a path string or null. See [`issue-creation.md`](issue-creation.md) Pattern B, which is canonical for this; keep the two files in agreement.
+`$(cat <<'ENDBODY' … ENDBODY)` captures the heredoc as a shell variable. The single-quoted delimiter prevents shell expansion of backticks and `$`. Newlines are preserved. For a file-backed body specifically (as opposed to an inline heredoc), the same `--field body=@$BODY_FILE` rule applies — see the callout above. Also **do not use `--field body-file=$FILE`** (silently creates an ignored field, same silent-200 failure shape). See [`issue-creation.md`](issue-creation.md) Pattern B, which is canonical for this; keep the two files in agreement.
 
 **If the body contains curly-brace placeholders** (e.g. `{owner}/{repo}` in prose): `gh api` performs template substitution on these tokens inside field values regardless of shell quoting. When the braces are your own prose, reword to avoid the syntax — use the docs title instead.
 
