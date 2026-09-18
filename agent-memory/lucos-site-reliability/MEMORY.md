@@ -3,7 +3,7 @@
 Index only; the detail is in each linked file. Verify ticket state before citing.
 
 ## Recent incident (resolved)
-- [avalon disk failure — ALL data recovered 2026-09-16 22:34](project_avalon_disk_failure_294.md) — report lucas42/lucos#297 merged, follow-up lucas42/lucos#305. ⚠️ photos were NEVER lost; nobody checked configy. Still out: lucos_dns#135.
+- [avalon disk failure — ALL data recovered 2026-09-16 22:34](project_avalon_disk_failure_294.md) — #294 CLOSED 2026-09-18; report lucas42/lucos#297 merged, follow-up lucas42/lucos#305. ⚠️ photos were NEVER lost; nobody checked configy. Still out: lucos_dns#135.
 
 ## Consolidated topic files (read first)
 - [Per-repo known issues + host facts](topic_per_repo_known_issues.md) · [CI + infra patterns](topic_ci_infra_patterns.md) · [Monitoring mechanics](topic_monitoring_mechanics.md) — poll is 60s · [⛔ RESOLVED/benign](topic_resolved_historical.md).
@@ -64,6 +64,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [GitHub silently disables auto-merge](pattern_github_silently_disables_automerge.md) — look for `auto_merge_disabled` · [`curl -w '%{http_code}' … || echo "000"` → `000000`](pattern_curl_httpcode_or_echo_concatenates.md) — orb#188.
 
 ## Estate topology / docker
+- [Agent is root-equivalent via docker group → sandbox#102](reference_agent_root_equivalence_sandbox_102.md) — "agent can read X on a host" is NOT new; check #102 first.
 - [⚠️ avalon = ONE disk, no RAID](reference_avalon_single_disk_no_raid.md) — ioerr_cnt + diskstats; lucos#294 · [Repo name ≠ container name](pattern_repo_name_not_container_name.md).
 - [live-restore:true skips network init](pattern_docker_live_restore_skips_network_init.md) · [A named volume shadows the image's contents](pattern_named_volume_shadows_image.md) — only on first init.
 - [`docker pause` ⇒ unhealthy until an interval after unpause](pattern_docker_pause_reports_unhealthy.md) — docker_health#117.
