@@ -11,12 +11,12 @@ external_deps: 2026-09-06
 lucos_schedule_tracker: 2026-09-08
 lucos_media_weightings: 2026-09-13
 lucos_photos_worker: 2026-08-17
-lucos_arachne_explore: 2026-08-02
+lucos_arachne_explore: 2026-09-26 (short window, 28h since StartedAt)
 lucos_arachne_web: 2026-08-08
 lucos_backups: 2026-08-17
 lucos_repos_app: 2026-09-06
-lucos_dns_bind: 2026-07-27
-lucos_loganne: 2026-07-23
+lucos_dns_bind: 2026-09-26
+lucos_loganne: 2026-09-26 (short window, 28h since StartedAt)
 lucos_configy: 2026-08-28
 lucos_contacts_app: 2026-09-18
 lucos_contacts_db: 2026-09-06
@@ -46,7 +46,7 @@ lukeblaney_co_uk: 2026-08-27
 lucos_media_manager: 2026-08-17
 lucos_media_metadata_api: 2026-09-18
 lucos_monitoring: 2026-08-27
-lucos_media_seinn: 2026-08-02
+lucos_media_seinn: 2026-09-26
 tfluke: 2026-09-18
 lucos_media_metadata_api_exporter: 2026-08-28
 lucos_media_metadata_manager: 2026-09-13 (short window, 53h since StartedAt)
@@ -65,7 +65,7 @@ lucos_docker_mirror_registry: 2026-08-26
 lucos_worlds_web: 2026-08-22
 lucos_worlds_db: 2026-08-22
 lucos_docker_mirror_info: 2026-08-26
-lucos_firewall: 2026-08-19
+lucos_firewall: 2026-09-26
 
 ## SSH Hostname Note
 
@@ -249,3 +249,9 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-09-18 Check 4: **avalon's rebuild (09-16) wiped all pre-09-16 container logs, so that gap is permanently unreviewable.** Reviewed arachne_mcp (61d overdue, 2h window), media_metadata_api, tfluke, eolas_app and contacts_app (~2.2d each). metadata_api: 348× `cum_weighting inconsistency drift=1738` from 09-16 02:07→07:54Z, the known drift, stopped at its repair. Also **1× `database is locked` 500 at 09-17 02:10:17Z** on the weightings job's `PUT /v3/tracks/5/weighting`, concurrent with media_import fingerprint PUTs; the bulk update rolled back and there was no drift. Not filed: 1 in 2.2d and self-correcting. File if it recurs at >1/day. contacts/eolas: 0 5xx in 396k/46k requests; the 403s and 404s are scanners. tfluke: 201 rate-limited in 2.2d, same pattern as 09-08. **Overdue, deferred (restarted today):** lucos_loganne (57d), lucos_dns_bind (53d), lucos_arachne_explore / lucos_media_seinn (47d). Review these next, on short windows if needed.
 - 2026-09-18 Checks 5/6/7 not due (last 09-06; next ~10-06).
 - 2026-09-18 ⏳**NEXT RUN, verify the lucas42/lucos_backups#415 prediction.** The 07:21Z deploy wiped the marker, so the 09-18 15:25Z `create-backups` should do a full backup and the 09-19 03:25Z run should no-op. Check the xwing archive mtimes (BST: 16:25 = 15:25Z) plus schedule-tracker's message. If it doesn't hold, #415's mechanism is wrong; tell team-lead before it ships. Separately, I told team-lead that `lucos_creds_store` backups (world-readable on xwing and salvare) contain `data_key`, so the agent account can decrypt prod creds. Routed to lucos-security, not filed by me.
+- 2026-09-26 Check 1: 52/55 at start, 0 failing / 3 unknown (single `buffering` readings: media_metadata_manager + creds TLS, xwing fetch-info). The set rotated on every re-read (2, then 6: tfluke/seinn/media_manager/private TLS, avalon/loganne fetch-info), all fast (36–55ms) from outside. monitoring on avalon gets scattered sub-threshold outbound timeouts. It doesn't log per-probe failures, so I CAN'T tell if it stepped up with seinn's. Unproven; not filed.
+- 2026-09-26 Check 2 (fetch capped at 6,936 events, 09-16T11:25Z→09-26T11:07Z): **seinn `media-manager` stepped up ~50× at 09-25 07Z** (15 fails in 4d → ~190 in 29h, 27 alerts). Every fail reads 800–803ms (the budget). Ruled out: seinn/media_manager deploy, host change, load, media_manager GC (jstat), upstream resolvers. Unconfirmed lead: 2/50 in-container dns.lookup at ~1030ms; later samples 0/480, 0/150, 0/≥50, all under-exposed at ~8/h. ⚠️ALIASING TRAP: after 45/75 fails a seinn /v3/poll lands at +10.87s in the router log, but that's a 60s probe phase-locked to a 10s poll cycle, NOT latency. Posted on lucas42/lucos_media_seinn#583 + corrected its body (probeMs can't diagnose timeouts). ⏳NEXT RUN: seinn redeployed 09-26T11:49:30Z; did failures continue at 4–11/h? If yes, in-process state is excluded. lucos_time `media` 4 flaps (cross-host to staticmedia/xwing), lucas42/lucos_time#348 open, not re-dug. Other flaps: locations freshness (#303 shape), repos stale-dependabot, docker_health salvare-v4 ×2 at 09-21 07:3x (deploy burst), monitoring self-restart 09-23, loganne webhook-error-rate 09-24 5min. **`lucos_agent` persistentDirt (skills/synced/, since 09-18) FIXED**: it's Claude Code's harness skill cache, so I added it to .gitignore (436431f). `persistentDirtCleared` 11:46Z.
+- 2026-09-26 ⚠️MY MISTAKE: the phase-timing rig GET'd lucos_time's 19.3MB big_00-00.mp4 (the check uses HEAD) in a loop for ~8 min over xwing's home uplink, probably several hundred MB, before I killed it. Blast-radius rule tightened to cover bytes over a link.
+- 2026-09-26 Check 3: 0 reports. >30min since 09-18: repos stale-dependabot ×2 (hygiene), locations location-freshness 30h (unreliable check), linuxplayer circleci 24h (recovered). None user-visible.
+- 2026-09-26 Check 4: dns_bind (5d), firewall (10d), media_seinn (5d, only probe fails), loganne + arachne_explore (28h short; 2nd deferral). All clean. loganne warns "Event missing level" for every deploy_orb deploySystem; deliberate per lucas42/lucos_loganne#520, not filed.
+- 2026-09-26 Checks 5/6/7 not due (last 09-06; next ~10-06).
