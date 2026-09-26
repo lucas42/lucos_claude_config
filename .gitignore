@@ -20,6 +20,8 @@
 # Custom slash command skills
 !skills/
 !skills/**
+# Harness-managed synced skill cache (third-party, rewritten by Claude Code) — never track
+skills/synced/
 
 # Architecture Decision Records
 !docs/
