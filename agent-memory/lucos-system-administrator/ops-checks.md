@@ -5,20 +5,22 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-09-18
-resource_checks: 2026-09-13
-syslog_review: 2026-09-13
-software_updates: 2026-09-13
-sandbox_drift: 2026-09-13
-repos_dashboard: 2026-09-18
-docker_image_staleness: 2026-08-26
-backup_verification: 2026-08-26
-certificate_expiry: 2026-08-26
+container_status: 2026-09-26
+resource_checks: 2026-09-26
+syslog_review: 2026-09-26
+software_updates: 2026-09-26
+sandbox_drift: 2026-09-26
+repos_dashboard: 2026-09-26
+docker_image_staleness: 2026-09-26
+backup_verification: 2026-09-26
+certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **AVALON CERT RENEWAL WATCH (2026-09-18, team-lead-requested, time-sensitive)**: 15 domains (am.l42.eu, app.tfluke.uk, avalon.s.l42.eu, backups.l42.eu, blog.lukeblaney.co.uk, ceol.l42.eu, contacts.l42.eu, l42.eu, loganne.l42.eu, media-api.l42.eu, media-weighting.l42.eu, monitoring.l42.eu, notes.l42.eu, seinn.l42.eu, tfluke.uk) share a Jul 20–22 2026 issuance restored from backup after the avalon rebuild, expiring Oct 18–20 2026 — today (Sep 18) is the 30-day certbot renewal threshold for the Oct 18 ones. Verified today (before checking again): `lucos_router` container (started 2026-09-16T07:12:44Z, fresh post-rebuild deploy) has crond alive (pid confirmed via /proc), crontab `16 22 * * * /usr/bin/update-domains.sh` present and intact, and `docker logs` shows the script **actually executed** at 22:16 UTC on 2026-09-17 (full domain-list iteration, certbot correctly said "not yet due" for all — expected, since Sep 17 was still 31 days out). Mechanism confirmed alive end-to-end, not just configured. **Next run: check that tonight's 2026-09-18 22:16 UTC run (or the next one) actually renewed the Jul-20-batch certs** — `notBefore` should roll forward from Jul 20/21/22 to a September date; if it's still Jul 20 after 2+ cron cycles past the 30-day mark, that's a real finding (raise on lucas42/lucos_router). Report result to team-lead either way.
+- ~~RESOLVED 2026-09-26 (renewed Sep 19)~~ **AVALON CERT RENEWAL WATCH (2026-09-18, team-lead-requested, time-sensitive)**: 15 domains (am.l42.eu, app.tfluke.uk, avalon.s.l42.eu, backups.l42.eu, blog.lukeblaney.co.uk, ceol.l42.eu, contacts.l42.eu, l42.eu, loganne.l42.eu, media-api.l42.eu, media-weighting.l42.eu, monitoring.l42.eu, notes.l42.eu, seinn.l42.eu, tfluke.uk) share a Jul 20–22 2026 issuance restored from backup after the avalon rebuild, expiring Oct 18–20 2026 — today (Sep 18) is the 30-day certbot renewal threshold for the Oct 18 ones. Verified today (before checking again): `lucos_router` container (started 2026-09-16T07:12:44Z, fresh post-rebuild deploy) has crond alive (pid confirmed via /proc), crontab `16 22 * * * /usr/bin/update-domains.sh` present and intact, and `docker logs` shows the script **actually executed** at 22:16 UTC on 2026-09-17 (full domain-list iteration, certbot correctly said "not yet due" for all — expected, since Sep 17 was still 31 days out). Mechanism confirmed alive end-to-end, not just configured. **Next run: check that tonight's 2026-09-18 22:16 UTC run (or the next one) actually renewed the Jul-20-batch certs** — `notBefore` should roll forward from Jul 20/21/22 to a September date; if it's still Jul 20 after 2+ cron cycles past the 30-day mark, that's a real finding (raise on lucas42/lucos_router). Report result to team-lead either way.
+
+- **2026-09-26 run**: all 9 checks run. Containers clean (avalon 57, xwing 9, salvare 3). CERT WATCH RESOLVED: avalon Jul-20 batch renewed 2026-09-19 (notAfter Dec 18) — closed. Backups: /_info all 9 checks ok, newest volume tarball 2026-09-25; container logs are only /_info BrokenPipe noise. Updates: no security pkgs (xwing 62, salvare 36 routine, avalon 0). Resources normal (avalon load 1.46, one erlang proc ~24% CPU, not pinned; xwing mem avail 411Mi). Drift: none. Repos: only lucos_worlds_atlas in-lucos-configy (#3, known). Images: none stale except lucos_locations_oauth2_proxy v7.15.3 (built 2026-06-09, pinned tag; not upstream-verified). No issues raised.
 
 - **2026-09-18 run**: checks 1 (container status, every run) + 6 (repos dashboard, daily) due; 2–5 weekly not due (last ran 2026-09-13, 5 days elapsed); 7–9 monthly not due (last ran 2026-08-26, 23 days elapsed). Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. **Avalon rechecked directly for the first time since the 2026-09-14 disk failure — see the superseded-note entry immediately below for detail.** Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change, no action per `configy-undeployed-system-entry-pattern.md`. No new issues raised this run.
 
