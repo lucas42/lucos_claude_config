@@ -23,3 +23,5 @@ Note the missing `;`/newlines: `kill %1` and `wait` became *arguments to `sleep`
 **Prevention** is now in `~/.claude/references/ssh-production.md` (§Connecting via SSH): never `&` inside an `ssh host "…"` one-liner; use foreground + `timeout N`, or separate `ssh` invocations.
 
 Killing an orphan like this is safe minimal intervention (PPID 1, no terminal, output pipeline long gone) — but capture a monitoring baseline first and re-check after, per `agents/workflows/production-change-verification.md`.
+
+**Also:** stopping a `Monitor` (TaskStop) that ran `ssh host 'docker exec -i <c> node - …'` kills only the local ssh. **The process inside the container keeps running** (seen 2026-09-27 in seinn). After stopping one, check `/proc/*/cmdline` in the container and kill the stray by PID after confirming its cmdline.

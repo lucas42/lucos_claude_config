@@ -53,7 +53,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [Hung Python: no py-spy/gdb on prod](pattern_hung_python_process_no_pyspy_use_faulthandler.md) — faulthandler+SIGUSR1 · [Python stdout buffered → print() lost](pattern_python_stdout_buffered_swallows_diagnostics.md).
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) · [A piped copy can't detect a dead sender](pattern_piped_copy_receiver_cannot_detect_truncation.md) — a 0-byte "final" file.
 - [⚠️ locations `location-freshness` is untrustworthy](pattern_locations_silent_data_gap.md) — check `.rec` created_at · [/map 500 + /_info green = oauth2_proxy crash-loop](pattern_locations_oauth2proxy_sidecar_crashloop.md) — only lucas42 can fix.
-- [⚠️ avalon DNS: ~1s stalls via 8.8.8.8, no local cache](pattern_avalon_dns_1s_stall_via_public_resolvers.md) — sub-1s probes fail on DNS; seinn#639 + monitoring#303
+- [⚠️ avalon DNS=8.8.8.8 since the rebuild → ~1s stalls](pattern_avalon_dns_1s_stall_via_public_resolvers.md) — old host used OVH only; seinn#639 (revert) + monitoring#303
 - [uri-integrity flaps = requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md)
 
 ## CI / build / deploy
