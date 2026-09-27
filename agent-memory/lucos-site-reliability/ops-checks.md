@@ -10,9 +10,9 @@ external_deps: 2026-09-06
 
 lucos_schedule_tracker: 2026-09-08
 lucos_media_weightings: 2026-09-13
-lucos_photos_worker: 2026-08-17
+lucos_photos_worker: 2026-09-27
 lucos_arachne_explore: 2026-09-26 (short window, 28h since StartedAt)
-lucos_arachne_web: 2026-08-08
+lucos_arachne_web: 2026-09-27 (2d since StartedAt)
 lucos_backups: 2026-08-17
 lucos_repos_app: 2026-09-06
 lucos_dns_bind: 2026-09-26
@@ -43,7 +43,7 @@ lucos_photos_postgres: 2026-09-06
 lucos_photos_redis: 2026-09-08
 lucos_scenes: 2026-09-08
 lukeblaney_co_uk: 2026-08-27
-lucos_media_manager: 2026-08-17
+lucos_media_manager: 2026-09-27
 lucos_media_metadata_api: 2026-09-18
 lucos_monitoring: 2026-08-27
 lucos_media_seinn: 2026-09-26
@@ -52,9 +52,9 @@ lucos_media_metadata_api_exporter: 2026-08-28
 lucos_media_metadata_manager: 2026-09-13 (short window, 53h since StartedAt)
 lucos_notes: 2026-09-13 (short window, 53h since StartedAt)
 lucos_root_app: 2026-08-28
-lucos_router: 2026-08-19
+lucos_router: 2026-09-27 (3d cap)
 semweb: 2026-08-27
-lucos_time: 2026-08-09
+lucos_time: 2026-09-27 (2d since StartedAt)
 lucos_aithne: 2026-08-22
 lucos_arachne_mcp: 2026-09-18 (short window, 2h since StartedAt)
 lukeblaney_blog: 2026-09-08
@@ -256,3 +256,8 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-09-26 Check 4: dns_bind (5d), firewall (10d), media_seinn (5d, only probe fails), loganne + arachne_explore (28h short; 2nd deferral). All clean. loganne warns "Event missing level" for every deploy_orb deploySystem; deliberate per lucas42/lucos_loganne#520, not filed.
 - 2026-09-26 Checks 5/6/7 not due (last 09-06; next ~10-06).
 - 2026-09-27 (relayed by team-lead, not verified by me) **Planned maintenance with NO Loganne planned-maintenance event:** in the ~30min before 2026-09-27 08:55:40Z lucas42 upgraded and rebooted salvare and xwing (xwing ≈08:53Z from uptime at 09:02:49Z; salvare time unknown), and upgraded containerd.io on avalon without a restart. Source: lucas42/lucos_agent_coding_sandbox#95 comment at 08:55:40Z. NEXT RUN: alerts/flaps/restarts on those hosts in that window are expected. Don't raise incident reports for them, and don't count their `StartedAt` resets as unusual in Check 4. Also: monitoring showed rotating single-reading timeouts incl. `lucos_dns_secondary` port-53 on xwing (dns2 answered TCP fine at ~09:03Z per team-lead). That's another avalon-originated one; fold it into the 09-26 "scattered monitoring timeouts" observation, pending #583's phase data.
+- 2026-09-27 Check 1: 53/55 healthy, 0 failing / 2–3 unknown. Every reading had a different set of single-reading `HTTP Request timed out` (seinn, loganne, tfluke, media_metadata_manager fetch-info; mail port-25). All return 200 in <0.12s from outside and from avalon itself (40/40 <0.09s). **SYN loss EXCLUDED:** in-netns `/proc/net/netstat` shows TCPSynRetrans=0 for monitoring (508k ActiveOpens), seinn (17k) and loganne (19k). The host netns reads 7,426 (positive control). Posted on lucas42/lucos_media_seinn#583. What's left: DNS/TLS/response wait, or monitoring's own mailbox stalls (#298/#301).
+- 2026-09-27 Check 2 (fetch 09-19→09-27T11:03Z): seinn `media-manager` 8 alerts since 09-26 11:49Z redeploy (down from 27/29h); #583 still open, instrumentation not shipped. lucos_time `media` ×1 (#348). docker_health xwing-v4 08:47→08:55Z = xwing docker upgrade/reboot (planned maintenance). **lukeblaney_co_uk fetch-info alerted 08:43:01Z on ONE missing probe (08:41), 31s AFTER a successful 08:42:30 probe.** The router log proves it was a single miss. That should be impossible given the UnknownsGate threshold of 5. Commented on lucas42/lucos_monitoring#303: both gates must count polls. No `lucos_agent` events.
+- 2026-09-27 Check 3: 0 reports; no >30min outage since 09-26 11:00Z (fetch reached 09-16).
+- 2026-09-27 Check 4: arachne_web (scanner 404s), lucos_time (clean, 112 lines), photos_worker, media_manager (~10/day `Broken pipe` on LongPollControllerV3 writes = client gone mid-poll, benign), router (3d cap; 5xx: tfluke 188 known, schedule-tracker 27× 500 from one curl scanner's `[bracket]` paths at 09-25 15Z = hygiene). photos_worker: `sweep_contact_display_names` runs every ~60s, 66 contact GETs each, `updated 0` in all 8220 runs (~95k req/day to contacts). Hygiene, no failure, not filed. **OPEN: worlds.l42.eu 16 concurrent `POST /images/gallery` → 500 (159B) at 09-25 23:29:30Z.** lucas42's retry at 23:40 was all 200. The requests never reached worlds_web's inner nginx access log. The router error log shows only "buffered to temp file" warnings. No mechanism found, not filed; raised with team-lead. Watch for recurrence.
+- 2026-09-27 Checks 5/6/7 not due (last 09-06; next ~10-06).
