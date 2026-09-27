@@ -16,6 +16,7 @@
 - [Stacked PR on unprotected branch hazard](feedback_stacked_pr_unprotected_branch_hazard.md) — stacking is fine, but the child can auto-merge into the parent's branch before the parent merges, discarding in-flight approvals (worlds#73/#75)
 - [Verify CSS on a running instance](feedback_verify_css_on_running_instance.md) — specificity/cascade/dark-mode claims need `docker compose up` + `document.styleSheets`/`element.matches()`, not a CSS read or grep (worlds#70/#76/#79/#80)
 - [Screenshot catches ordering bugs unit tests miss](feedback_screenshot_catches_ordering_bugs_unit_tests_miss.md) — for grouping/adjacency features, render a real snapshot; per-item eunit tests all passed while a dependent rendered above its own root cause (monitoring#296/PR#306)
+- [PR loop full cycle on lucas42-requested fixes](feedback_pr_loop_full_cycle_on_lucas42_fixes.md) — every push, even a tiny lucas42-requested tweak, goes fix → code-reviewer → re-request lucas42; don't shortcut (creds#560)
 
 ## Project
 
