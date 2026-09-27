@@ -14,6 +14,8 @@ Production changes routinely surface alerts that look like they were caused by t
 
 2. **Make the change.** Whatever the actual operation is — container restart, volume swap, config push, deploy.
 
+   **A planned manual restart or recreate opens no deploy window, so its churn alerts lucas42 like a real outage.** Before restarting, open one for each system you'll touch *and* for each system whose checks call it: `curl -X PUT -H "Authorization: Bearer $KEY_LUCOS_MONITORING" https://monitoring.l42.eu/suppress/<system>` (the key is in `~/sandboxes/lucos_agent/.env`). The window lasts 10 minutes and suppresses only *new* failures, so anything already red keeps alerting. Restart one system at a time where one's checks depend on another.
+
 3. **Wait 2 minutes** for monitoring to pick up the new state. Don't skip the wait — most checks are not real-time.
 
    A foreground `sleep` is blocked by the harness, so wait one of these two ways instead:
