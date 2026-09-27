@@ -116,6 +116,7 @@ These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
   ```
 
 - **Re-request the reviewer after description-only changes.** If you address review feedback by editing the PR description (e.g. ticking test-plan boxes) rather than pushing a commit, you **must** send an explicit `SendMessage` to the reviewer immediately after. A description edit fires no GitHub event and produces no commit, so the reviewer's loop gets no signal — both sides silently wait on each other. A description edit is never sufficient on its own; it always needs a direct message to unstick the loop.
+- **A lucas42 `CHANGES_REQUESTED` still routes through `lucos-code-reviewer` first, every time.** On a supervised repo, pushing a fix for lucas42's feedback — even a one-line, lucas42-suggested tweak — goes fix → `lucos-code-reviewer` reviews the new head → they approve → *then* re-request lucas42. Never push straight to a lucas42 re-request; a new commit resets `review_decision` to null regardless of who asked for the change. This is `pr-review-loop.md`'s "Important: this also applies…" paragraph — it already covers this, so the failure mode is skipping the step under time pressure, not being unaware of it.
 
 ## Proactive UX Reviews (ad-hoc, not assigned issues)
 
