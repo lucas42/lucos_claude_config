@@ -52,7 +52,7 @@ certificate_expiry: 2026-09-26
 
 ## Known Limitations
 
-- Journal logs on xwing and salvare are inaccessible without sudo (no sudo available in non-interactive SSH). Syslog review only covers avalon fully.
+- Journal logs are inaccessible without sudo on **all three hosts**, including avalon post-rebuild (confirmed 2026-09-28: `lucos-agent`'s groups on avalon are `docker`/`users` only, same as xwing/salvare — no `adm`/`systemd-journal`). Corrects the earlier "syslog review covers avalon fully" note, which predates the 2026-09-16 rebuild and is no longer accurate. Already tracked: lucos_agent_coding_sandbox#99 (Awaiting Decision, privilege-expansion question for lucas42).
 - Docker image staleness query needs single-quoted heredoc style — shell escaping is tricky over SSH.
 - Short hostnames (`avalon`, `salvare`, `xwing`) do not resolve via DNS — always use full domain names (`avalon.s.l42.eu`, `salvare.s.l42.eu`, `xwing.s.l42.eu`) for SSH.
 - `salvare.s.l42.eu` is **IPv6-only** (AAAA record, no A record). The agent VM does not have IPv6 (vzNAT is IPv4-only). Direct SSH to salvare will always fail with "No address associated with hostname" — this is NOT a DNS incident, it is expected. Always use xwing as a jump host: `ssh -J xwing.s.l42.eu salvare.s.l42.eu`. Do not report this as a finding.
