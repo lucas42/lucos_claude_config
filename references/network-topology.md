@@ -27,7 +27,11 @@ Each host runs `lucos_router` — a Dockerised Nginx reverse proxy that:
 
 Each service binds its `$PORT` to the host's network interfaces. The router container reaches those services via the Docker bridge gateway.
 
-**Key consequence:** the router is the intended entry point for all HTTP/HTTPS traffic, but **there is no host-level firewall**. Service ports are directly reachable from the public internet. For example, `http://178.32.218.44:8019/_info` (loganne) returns a 200 response — any internet client can reach it directly without going through nginx. The router provides TLS and domain routing, not access control. **Application-level auth (`CLIENT_KEYS`) is the only real protection for any service endpoint.**
+**Key consequence:** the router is the intended entry point for HTTP/HTTPS traffic, and — since ADR-0007 (`lucas42/lucos/docs/adr/0007-estate-wide-default-deny-port-policy.md`) — it is also enforced as such. `avalon`, `xwing` and `salvare` each run `lucos_firewall`, a default-deny inbound firewall (`firewall_enforce: true` in `lucos_configy` `config/hosts.yaml` for all three) whose allow-list is generated from `lucos_configy`: **a port is reachable from the internet if and only if it's declared as a `public_ports` entry** for a service whose `hosts:` list includes that host. `lucos_router`'s own 80/443 are declared this way, like any other service — they are not special-cased. Everything else defaults closed.
+
+**Concretely:** a service's `http_port` (the port the router proxies to internally) is *not* reachable directly unless it's separately declared in `public_ports` — most services don't declare it, so most backend ports are closed to direct internet traffic. Confirmed 2026-09-28: `http://178.32.218.44:8019/_info` (loganne's backend port, no `public_ports` entry) times out; `https://loganne.l42.eu/_info` (via the router) returns 200. A handful of services declare a non-HTTP port directly as `public_ports` for a specific reason — e.g. `lucos_mail` (25/SMTP), `lucos_dns` (53), `lucos_creds` (2202/SSH), `lucos_locations` (8883/MQTT) — those are reachable by design, not by omission.
+
+The router still provides TLS and domain routing, not application-level access control — that's still `CLIENT_KEYS`/equivalent auth's job. But it's no longer the *only* control: the firewall is a genuine second layer, and non-public backend ports are actually closed now, not just conventionally avoided.
 
 ---
 
@@ -74,7 +78,9 @@ This **is** a meaningful isolation boundary — but it only applies within a sin
 
 ## Special Case: `network_mode: host`
 
-`lucos_monitoring` uses `network_mode: host`, giving it direct access to the host's full network stack. This means it can reach other services via `localhost:<PORT>` without going through the Docker bridge. This is an intentional design choice that lets monitoring poll local services directly — it does not imply those services are "internal" or trusted; they still require their normal auth.
+As of ADR-0007, `network_mode: host` is prohibited by default — it bypasses Docker's per-container port publishing, so the firewall's `public_ports` allow-list can't scope it, and a host-mode container binding to `0.0.0.0` is internet-reachable regardless of configy. `lucos_monitoring` and `lucos_time` previously used it (for host IPv6 access, before Docker Compose supported per-network IPv6) and have since migrated to bridge networking. A new service adding `network_mode: host` needs written justification in its `docker-compose.yml` and an architect review.
+
+Whether or not a service uses host networking, the same rule applies: reachability doesn't imply trust. Anything a container can reach — over the bridge, over `localhost`, or over the public internet — still requires its normal auth.
 
 ---
 
@@ -82,24 +88,26 @@ This **is** a meaningful isolation boundary — but it only applies within a sin
 
 ### ❌ Claims that are FALSE
 
-- "This endpoint is only accessible from the internal network"
-- "The blast radius is limited because it's behind the internal network"
-- "No authentication is needed here since it's an internal service"
-- "Services on the same host can't be reached from outside"
+- "This endpoint is only accessible from the internal network" — there is no internal network between services; see [Inter-Service Communication](#inter-service-communication) above.
+- "The blast radius is limited because it's behind the internal network" — same reason.
+- "No authentication is needed here since it's an internal service" — same reason; the firewall (below) restricts *inbound internet* reachability, it does not create a trusted zone between services.
+- "Services on the same host can't be reached from outside" — each service's own public endpoint (router-routed domain, or an explicit `public_ports` entry) is independently internet-reachable regardless of what else shares the host.
+- "This port isn't declared `public_ports`, so it's safe to skip auth on it" — the firewall is a second layer, not a replacement for Layer 1. Treat every endpoint as if the firewall didn't exist: `public_ports` scoping can drift, and the firewall itself fails safe to dry-run (log-only, not enforcing) if it can't reach `lucos_configy`.
 
-**None of these are true.** There is no internal network between services.
+**None of the first four are true.** There is no internal network between services, regardless of the host-level firewall described below.
 
 ### ✅ What isolation actually exists
 
 | Isolation boundary | Where it applies | What it protects |
 |---|---|---|
 | Docker Compose internal network | Within a single multi-container stack | Unexposed containers (Postgres, Redis, etc.) |
+| Host-level default-deny firewall (ADR-0007, `lucos_firewall`) | Inbound internet traffic to `avalon`/`xwing`/`salvare` | Any port not declared `public_ports` in `lucos_configy` for that host — most backend `http_port`s are closed to direct access |
 | TLS + `CLIENT_KEYS` auth | Each service's public endpoint | All authenticated endpoints on that service |
 | Let's Encrypt TLS on the router | Inbound traffic | Data in transit from clients |
 
 ### What every service must assume
 
-Every HTTP endpoint is potentially reachable by any internet client. **Authentication must be enforced at the application layer for every endpoint that should not be public.** "It's internal" is not a valid alternative.
+Any endpoint reachable via the router, or via an explicit `public_ports` declaration, is reachable by any internet client. **Authentication must still be enforced at the application layer for every endpoint that should not be public** — the firewall reduces the *number* of ports an attacker can reach directly, but it is not a substitute for Layer 1 auth on the ports that remain open (router 80/443 foremost), and "it's internal" is still not a valid alternative for anything served there. Do not assume a backend `http_port` is closed just because it usually is — check `lucos_configy`'s `public_ports` for that service, or verify directly, rather than assuming from this doc's general description.
 
 ---
 
