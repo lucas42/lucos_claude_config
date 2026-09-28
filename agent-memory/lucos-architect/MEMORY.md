@@ -128,7 +128,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Frozen install vs lucos#273](project_frozen_install_vs_lucos273.md) — separate problems, sequence frozen install first; it's a precondition for #273's verification
 - [Weightings festival migration](project_weightings_festival_migration.md) — weightings#266 plan posted, Awaiting Decision; out-of-season penalty is the blocker; 5 Qs open; ADR → lucos/docs/adr; #267 raised
 - [Monitoring refactor](project_monitoring_refactor.md) — monitoring#307 four-concern split; seam = state-tuple confinement below L317; ADR-0001 is interface-not-layout
-- [Kanka for Kaidoho](project_kanka_campaigns.md) — lucos#309; upstream self-host dev-only; sidecar auth; 4 decisions pending; file tickets once repo exists
+- [Kanka for Kaidoho](project_kanka_campaigns.md) — lucos#309 → lucos_campaigns #1-#6; ADR-0001 drafted; crit path #1→#2→#3
 
 ## Per-project pointers (depth in project-details.md)
 
