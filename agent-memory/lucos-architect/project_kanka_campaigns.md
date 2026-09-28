@@ -12,3 +12,5 @@ metadata:
 **Why it differs from July's rejection (worlds ADR-0001):** requirement changed player→DM; auth objection answered by sidecar; licence + upkeep objections stand (upkeep worse).
 
 **How to apply:** new repo's ADR-0001 once lucas42 picks name (suggested `lucos_campaigns`); then file ADR/scaffold/auth/backups/migration tickets there + worlds ticket to set Kaidoho book view-only post-cutover. Recommended session 1 NOT depend on self-host (kanka.io free-tier trial or BookStack).
+
+**2026-09-29 decisions (lucas42 on #309):** self-host, aim for next week, BookStack fallback; name `lucos_campaigns`; double login accepted. **Premium gating = `campaigns.boost_count`** (boosted >0, premium >=4; only kanka.io billing sets it). Checked on develop c700f46: relations ✅ (graph view gated), attributes + LOCAL attribute templates ✅, calendar/timeline ✅; **rendered stat-block sheets ❌** (marketplace plugins need boosted + APP_MARKETPLACE_URL; campaign CSS also boosted-only). Asked lucas42 if key/value attributes suffice before filing build tickets (comment 5880375063). Advised against flipping boost_count.
