@@ -22,6 +22,8 @@ Each entry carries the rule, its rationale and the suggested fix, generated from
 
 **Before removing a `serial-group` as "non-standard", read [`circleci-deploy-serial-group`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-deploy-serial-group) first.** Both the build serial-group and the deploy serial-group are required, and they take different forms; each has previously been dropped by an editor working from a doc rather than the source.
 
+**A PR that adds a `test*` or `build*` job to `.circleci/config.yml` isn't finished until the job is in `main`'s required checks.** Repo settings are sysadmin-only, so once the job has reported green on `main`, the implementer asks `lucos-system-administrator` to add `ci/circleci: <job name>` to the required checks. Skipping it fails [`circleci-jobs-in-required-checks`](https://github.com/lucas42/lucos_repos/blob/main/docs/conventions.md#circleci-jobs-in-required-checks) and raises an `audit-finding` issue on the next sweep. Removing or renaming such a job needs the same request in reverse, because a required check that no longer reports blocks every merge to `main`.
+
 ---
 
 The rest of this page is guidance. None of it has an automated check.
