@@ -88,6 +88,8 @@ If a PR exists that references the issue, is still **open**, and is **not** a dr
 
 If no open PR exists for the issue, continue.
 
+**Same-repo gate:** before dispatching, check whether another issue on the **same repo** is still in flight: an open implementation PR, or an open ticket whose PR merged but whose production step is still pending (e.g. a hand-run migration). If so, don't dispatch; tell the user it waits. On repos where every merge redeploys, a second ticket's merge can break the first one's production step.
+
 **An empty result here means "no PR found *this read*", not "no PR exists" — re-run the query once before trusting it.** The `/timeline` endpoint is eventually-consistent and intermittently returns an incomplete timeline that omits a cross-reference which has existed for hours, so a single empty read can hide a PR that `Closes #{number}`. If the re-run is still empty, continue; if it now shows a PR, handle it per the cases above. (Lesson 2026-07-12: a stale-empty timeline read on lucos_creds#384 hid its open ADR PR #457, causing a redundant dispatch to the author.)
 
 ## Step 4: Check for estate-wide convention changes
