@@ -146,7 +146,7 @@ If `lucas42` is missing, request him immediately with `POST /requested_reviewers
 
 `create-pr` handles the *initial* reviewer request automatically at PR creation: it adds `lucas42` on supervised repos and adds nobody on unsupervised repos.
 
-The one situation where you must manually call `POST /requested_reviewers` yourself is **after pushing a fix in response to a CHANGES_REQUESTED review**. Submitting CHANGES_REQUESTED removes the reviewer from `requested_reviewers`, so without a fresh request the fixed PR falls out of their review queue.
+The one situation where you must manually call `POST /requested_reviewers` yourself is **after pushing a fix in response to a CHANGES_REQUESTED review**. Submitting CHANGES_REQUESTED removes the reviewer from `requested_reviewers`, so without a fresh request the fixed PR falls out of their review queue. Re-requesting is **yours, never the coordinator's** — and when the reviewer is lucas42, do it only after `lucos-code-reviewer` has cleared the new head, per `pr-review-loop.md`.
 
 **Pick the reviewer to re-request from the actual review history — do not hard-code a name.**
 
