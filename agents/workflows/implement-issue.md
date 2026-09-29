@@ -181,7 +181,7 @@ After opening the PR, you are responsible for driving the review loop defined in
 
 **This applies to EVERY PR the issue produces — not just the primary one.** If an issue spans multiple PRs (e.g. a service-code PR *plus* a `lucos_configy` registration PR, or any drive-by doc/convention fix you open during implementation), **each one** follows the same self-driven loop — send a `lucos-code-reviewer` review request for **every** PR before reporting the issue done. A co-primary cross-repo PR (like a configy registration that the issue explicitly requires) is **not** a "minor extra" that can skip the loop, and "I drove the main PR's loop" does not complete the issue while a sibling PR sits unreviewed. Do not ask the coordinator or team-lead to route any of them for you; they are not in the routing path.
 
-**Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval.
+**Never merge PRs yourself** — they are merged either automatically (via the auto-merge workflow) or by a human. Just report the approval. **One exception:** on a brand-new repo that has no auto-merge workflow yet, merge by hand when the coordinator directs you to, provided every required approval (lucas42's included, where his sign-off is needed) is on the current head. Re-check the head and pin the merge to that SHA.
 
 ## Step 10 — Verify state before reporting it
 
