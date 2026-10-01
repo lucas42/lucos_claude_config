@@ -160,6 +160,8 @@ Report to team-lead only when the PR is **approved** (or hits a blocker that gen
 
 Whenever you make a change to a production system (stopping/starting containers, removing volumes, modifying config, etc.), read [`agents/workflows/production-change-verification.md`](workflows/production-change-verification.md) for the five-step baseline-and-compare procedure. The "wait 2 minutes, then re-fetch monitoring" step is not optional — it's how you tell genuine regressions apart from false-positive stale-config alerts.
 
+**When verifying a credential or secret-bearing file, print its structure, never its value.** Line counts, account names, schemes, field lengths and booleans are enough to confirm a secret is well-formed. Compute them in a script that cannot output the value, such as Python printing `len()` only. Never mask with a `sed`/`awk` substitution: under nested `ssh`/`docker exec` quoting the pattern silently fails to match and the secret passes straight through to the transcript. Detail in [`references/agent-github-identity.md`](../references/agent-github-identity.md) §"Debugging environment variables".
+
 ## Working on Issues — SRE Extensions
 
 These layer **on top of** the steps in `agents/workflows/implement-issue.md`:
