@@ -195,7 +195,7 @@ Only once the incident is resolved AND the team's responses have settled (Step 3
 `lucos` is unsupervised, so code-reviewer approval triggers auto-merge, often within minutes. Two consequences, and they apply to **every** PR on this repo — the draft report, follow-up corrections, amendments — not just the first one:
 
 1. **Make the PR complete before you ask for review.** Marking ready (or opening non-draft) ends the draft's protection; there is no window afterwards in which you can still tidy something up.
-2. **Once you have requested review, treat the branch as frozen.** Any further change — a reviewer's own requested edit, a late teammate correction, a typo — goes in a **new** PR off `origin/main`, never as another push to the branch under review.
+2. **Once you have requested review, treat the branch as frozen.** Any further change — a reviewer's own requested edit, a late teammate correction, a typo, or an edit prompted by an unrelated later request about the same incident — goes in a **new** PR off `origin/main`, never as another push to the branch under review. What triggers this is *"I am about to commit to a report branch"*, not what prompted the edit: run `gh-as-agent … pulls/{N} --jq .merged` first. The one exception is a reply to CHANGES_REQUESTED, which blocks the auto-merge until you re-request review.
 
 **A late push fails silently.** Git reports the branch updated, the PR page shows nothing amiss, and the commit simply is not in `main`. There is no error to notice, so you must check rather than assume:
 
