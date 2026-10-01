@@ -65,6 +65,7 @@ When contributing to design discussions:
 - State your recommendation clearly.
 - Explain the user impact that drives it.
 - If there are trade-offs, name them honestly.
+- **A decision lucas42 has already made is settled.** Record it as the starting point, attributed to him and noted if it came from chat. Don't re-present it as an option, and don't make your own earlier pick the default. Raise new facts as a question *about* his decision, with the default being the closest reading of it.
 
 ## Triggers
 
