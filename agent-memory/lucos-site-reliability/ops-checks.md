@@ -24,12 +24,12 @@ lucos_loganne: 2026-09-26 (short window, 28h since StartedAt)
 lucos_configy: 2026-08-28
 lucos_contacts_app: 2026-09-18
 lucos_contacts_db: 2026-09-06
-lucos_contacts_googlesync_import: 2026-08-09
-lucos_contacts_web: 2026-08-17
+lucos_contacts_googlesync_import: 2026-10-02 (short window, 9.5h since StartedAt)
+lucos_contacts_web: 2026-10-02 (4.4d since StartedAt)
 lucos_creds: 2026-09-13 (short window, 53h since StartedAt)
 lucos_creds_configy_sync: 2026-08-09
 lucos_creds_ui: 2026-08-17
-lucos_dns_sync: 2026-08-17
+lucos_dns_sync: 2026-10-02 (4.4d since StartedAt)
 lucos_eolas_app: 2026-09-18
 lucos_eolas_db: 2026-09-06
 lucos_eolas_web: 2026-09-08 (short window, 39h since StartedAt)
@@ -49,7 +49,7 @@ lucos_scenes: 2026-09-08
 lukeblaney_co_uk: 2026-08-27
 lucos_media_manager: 2026-09-27
 lucos_media_metadata_api: 2026-09-18
-lucos_monitoring: 2026-08-27
+lucos_monitoring: 2026-10-02 (3.6d since StartedAt)
 lucos_media_seinn: 2026-09-26
 tfluke: 2026-09-18
 lucos_media_metadata_api_exporter: 2026-08-28
@@ -66,10 +66,11 @@ lucos_docker_health_app: 2026-08-22
 
 lucos_docker_mirror_web: 2026-08-26
 lucos_docker_mirror_registry: 2026-08-26
-lucos_worlds_web: 2026-08-22
+lucos_worlds_web: 2026-10-02 (laravel.log file since 08-22; docker logs is access-only)
 lucos_worlds_db: 2026-08-22
 lucos_docker_mirror_info: 2026-08-26
 lucos_firewall: 2026-09-26
+lucos_campaigns_app: 2026-10-02 (laravel-*.log files since 09-29; docker logs is access-only)
 
 ## SSH Hostname Note
 
@@ -266,3 +267,8 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-09-27 Check 4: arachne_web (scanner 404s), lucos_time (clean, 112 lines), photos_worker, media_manager (~10/day `Broken pipe` on LongPollControllerV3 writes = client gone mid-poll, benign), router (3d cap; 5xx: tfluke 188 known, schedule-tracker 27× 500 from one curl scanner's `[bracket]` paths at 09-25 15Z = hygiene). photos_worker: `sweep_contact_display_names` runs every ~60s, 66 contact GETs each, `updated 0` in all 8220 runs (~95k req/day to contacts). Hygiene, no failure, not filed. **OPEN: worlds.l42.eu 16 concurrent `POST /images/gallery` → 500 (159B) at 09-25 23:29:30Z.** lucas42's retry at 23:40 was all 200. The requests never reached worlds_web's inner nginx access log. The router error log shows only "buffered to temp file" warnings. No mechanism found, not filed; raised with team-lead. Watch for recurrence.
 - 2026-09-27 Checks 5/6/7 not due (last 09-06; next ~10-06).
 - 2026-09-27 (afternoon, lucas42's request) **seinn media-manager flapping ROOT-CAUSED: ~1s DNS stalls** (Docker DNS → 8.8.8.8, no local cache), not media_manager. Filed lucas42/lucos_media_seinn#639 (budget 800→2000ms). Alert amplification = lucas42/lucos_monitoring#303, and I asked team-lead to raise it to High. See [[pattern-avalon-dns-1s-stall-via-public-resolvers]]. NEXT RUN: check #639/#303 progress; seinn alerts should drop once either lands.
+- 2026-10-02 Check 1: 55/56, 1 failing: docker_health xwing-v4, 684 runs blind (~11.4h). docker-ce 29.8.2 unattended-upgrade at 05:28Z left the docker.sock bind stale (3rd host after avalon/salvare 10-01). Restarted 16:53Z, verified green. Commented on lucas42/lucos_docker_health#124 and asked team-lead to raise it to High.
+- 2026-10-02 Check 2 (fetch 09-16→10-02, 5575 events, capped; lookback since the 09-27 run): seinn media-manager 7 flaps 09-27, then 1 after the #639 DNS fix closed 22:00Z = fixed. 09-27 21:02Z time 502 / weightings / monitoring fetch-info = MY OWN #639 container restarts, done without suppressing dependents (lesson). 09-28 docker_health ×17 = the photos crash-loop (report exists). 09-28 locations freshness 17h (#105). 09-29 backups volume-host 1h = campaigns bootstrap (configy 01:01 → deploy 02:04). 09-29 media_manager empty-queue 31min = #302. monitoring fetch-info single timeouts 09-28/09-29 (photos-incident era + own deploy). **NEW: backups `startup` alerts after 2/9 deploys.** The healthcheck goes green before tracking loads (8df10f6/#140; can't gate the healthcheck because of the #137 180s wait-timeout). Filed lucas42/lucos_backups#428. No lucos_agent events.
+- 2026-10-02 Check 3: 0 reports needed. photos 09-28 and worlds/mail 10-01 have reports. Mail outage 22:51–22:56 fell inside avalon's docker_health blind window but wouldn't have alerted in time anyway (~5min threshold). docker_health blindness ×3 hosts: no report (monitoring-only, no user impact, all captured in #124).
+- 2026-10-02 Check 4: dns_sync 0 errors, contacts_web/monitoring scanner noise + 3 CircleCI timeouts, googlesync 1× Google People 429 (13:55Z, isolated), campaigns_app (file log: bootstrap errors 09-29/30 only), worlds_web (file log: 215 ERROR = 07-07 bootstrap + 10-01/02 $pageNav incident; none since the 02:25Z restart). **Found: Laravel apps log to files, docker logs is access-only.** Added to sre-ops-checks.md Check 4. Deferred: campaigns_db/search/auth (new), every container restarted since its last review (the 09-16 rebuild).
+- 2026-10-02 Checks 5/6/7 not due (last 09-06; due 10-06). Check 8 ran earlier today.

@@ -253,6 +253,8 @@ Lookback window: review logs since the last time you reviewed that container (ch
 ssh avalon.s.l42.eu "docker logs --since <last-reviewed-timestamp> <container_name> 2>&1 | tail -200"
 ```
 
+**Laravel apps don't log errors to stdout.** For `lucos_worlds_web` (BookStack: `/config/log/bookstack/laravel.log`) and `lucos_campaigns_app` (`storage/logs/laravel-YYYY-MM-DD.log`), `docker logs` holds only the nginx access log, so a zero error count there means nothing. Grep `production.ERROR` in the file via `docker exec`. Before clearing any container whose `docker logs` is only access lines, find out where its application errors go.
+
 **After an estate-wide deploy or client-library rollout, add a whole-estate error sweep** — it costs one command, and it is the cheapest way to catch a bad rollout while the buffers are still warm. This is complementary to the rotation, not a substitute for it:
 
 ```bash
