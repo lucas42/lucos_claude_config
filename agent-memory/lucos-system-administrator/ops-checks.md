@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-09-27
+container_status: 2026-10-02
 resource_checks: 2026-09-26
 syslog_review: 2026-09-26
 software_updates: 2026-09-26
 sandbox_drift: 2026-09-26
-repos_dashboard: 2026-09-27
+repos_dashboard: 2026-10-02
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
@@ -20,6 +20,8 @@ certificate_expiry: 2026-09-26
 
 - **lucos_agent_coding_sandbox#107 and #95 — CLOSED 2026-09-27T09:03Z (confirmed via API), no further tracking needed on the tickets themselves.** Two substantive reminders survive independent of ticket state: (a) avalon containerd 2.3.6 installed but daemon not yet restarted (`ActiveEnterTimestamp` still 2026-09-16, low urgency, no `-security` tag) — worth checking on if avalon's containerd version ever comes up; (b) a future ops-check should confirm the *next* Docker/RPi-Foundation package release clears the backlog automatically without manual intervention — that's the first real functional proof #107's origin-pattern fix works end-to-end.
 
+
+- **2026-10-02 run**: checks 1+6 only (2–5 last ran 09-26, 6d, due 10-03; 7–9 monthly not due). Containers clean on avalon/xwing/salvare. Dashboard: `lucos_worlds_atlas` in-lucos-configy (tracked #3) + NEW `lucos_photos` circleci-jobs-in-required-checks (needs `ci/circleci: test-db-integration` added to required checks; tracked lucos_photos#551 open since 2026-09-28; not fixed by me — not dispatched).
 
 - **2026-09-27 run**: checks 1 (container status, every run) + 6 (repos dashboard, daily) due; 2–5 weekly not due (last ran 2026-09-26, 1 day elapsed); 7–9 monthly not due (last ran 2026-09-26, 1 day elapsed). Container status clean on all 3 hosts (avalon, xwing, salvare) — no Exited/Restarting/unhealthy. Repos dashboard: still only `lucos_worlds_atlas` `in-lucos-configy` failing, already tracked (issue #3), no change, no action per `configy-undeployed-system-entry-pattern.md`. No new issues raised this run.
 
