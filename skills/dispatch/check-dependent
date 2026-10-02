@@ -131,6 +131,20 @@ if [ "${1-}" = "--test" ]; then
     run_test "same-repo: #N preceded by slash (repo context) is not a bare match" \
         1 "lucas42/lucos_photos#42" "lucos_photos" "otherrepo#42"
 
+    # --- Large inputs (lucos_claude_config#158): grep -q exits at its first match, so with
+    # pipefail a `printf | grep -q` pipeline failed on big bodies with an early match ---
+    FILLER=$(seq 1 40000)
+    run_test "large input: early cross-repo match still matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "Blocked on lucas42/lucos_eolas#254"$'\n'"$FILLER"
+    run_test "large input: early same-repo bare #N still matches" \
+        0 "lucas42/lucos_photos#42" "lucos_photos" "Blocked on #42"$'\n'"$FILLER"
+    run_test "large input: early URL match still matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "https://github.com/lucas42/lucos_eolas/issues/254"$'\n'"$FILLER"
+    run_test "large input: late match still matches" \
+        0 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "$FILLER"$'\n'"Blocked on lucas42/lucos_eolas#254"
+    run_test "large input: no reference does not match" \
+        1 "lucas42/lucos_eolas#254" "lucos_media_metadata_api" "$FILLER"
+
     echo ""
     echo "Results: $PASS passed, $FAIL failed"
     [ "$FAIL" = "0" ] && exit 0 || exit 1
@@ -161,10 +175,13 @@ fi
 # (e.g. `#254` or `lucas42/lucos_eolas#254`) are not treated as dependency links.
 BODY=$(cat | sed 's/`[^`]*`/ /g')
 
+# Match against $BODY with here-strings, not `printf | grep -q`: grep -q exits at its first
+# match, so on a large body printf is killed by SIGPIPE and pipefail reports the pipeline as
+# failed, hiding a real match (lucos_claude_config#158).
 # URL patterns apply to both same-repo and cross-repo cases
 match_url() {
-    printf '%s' "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/issues/${N}" 2>/dev/null && return 0
-    printf '%s' "$BODY" | grep -qF "github.com/${OWNER}/${CLOSED_REPO}/pull/${N}" 2>/dev/null && return 0
+    grep -qF "github.com/${OWNER}/${CLOSED_REPO}/issues/${N}" <<<"$BODY" 2>/dev/null && return 0
+    grep -qF "github.com/${OWNER}/${CLOSED_REPO}/pull/${N}" <<<"$BODY" 2>/dev/null && return 0
     return 1
 }
 
@@ -172,14 +189,14 @@ if [ "$CLOSED_REPO" = "$BLOCKED_REPO" ]; then
     # Same-repo: bare #N (not preceded by alphanumeric/underscore/slash), the
     # fully-qualified owner/repo#N form (CLAUDE.md's mandated style — a
     # same-repo reference may legitimately be written this way too), or URL.
-    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" 2>/dev/null && exit 0
-    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
+    grep -qP "(?<![a-zA-Z0-9_/])#${N}\b" <<<"$BODY" 2>/dev/null && exit 0
+    grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" <<<"$BODY" 2>/dev/null && exit 0
     match_url && exit 0
 else
     # Cross-repo: fully-qualified {owner}/{closed_repo}#N or URL only.
     # Short-form {closed_repo}#N is NOT matched (GitHub does not autolink it).
     # Bare #N is NOT matched.
-    printf '%s' "$BODY" | grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" 2>/dev/null && exit 0
+    grep -qP "(?<![a-zA-Z0-9_/])${OWNER}/${CLOSED_REPO}#${N}\b" <<<"$BODY" 2>/dev/null && exit 0
     match_url && exit 0
 fi
 
