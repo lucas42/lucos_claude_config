@@ -70,6 +70,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 ## Estate topology / docker
 - [Agent root-equivalent via docker → sandbox#102](reference_agent_root_equivalence_sandbox_102.md) — new finding iff fixing #102 would NOT fix it (e.g. lucos_backups#418).
 - [⚠️ avalon = ONE disk, no RAID](reference_avalon_single_disk_no_raid.md) — ioerr_cnt + diskstats; lucos#294 · [Repo name ≠ container name](pattern_repo_name_not_container_name.md).
+- [docker.sock bind goes stale after a dockerd restart](pattern_docker_socket_bind_stale_after_daemon_restart.md) — docker_health "Cannot connect"; restart it; #124
 - [live-restore:true skips network init](pattern_docker_live_restore_skips_network_init.md) · [A named volume shadows the image's contents](pattern_named_volume_shadows_image.md) — only on first init.
 - [`docker pause` ⇒ unhealthy until an interval after unpause](pattern_docker_pause_reports_unhealthy.md) — docker_health#117.
 
