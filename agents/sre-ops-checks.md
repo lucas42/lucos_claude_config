@@ -1,6 +1,6 @@
 # SRE Ops Checks
 
-**7 checks total — you MUST run all 7. See the completion manifest at the bottom.**
+**8 checks total — you MUST run all 8. See the completion manifest at the bottom.**
 
 Check your ops-checks memory file (`ops-checks.md`) at the start of each run to determine which checks are due. Update it after each check. If a check is skipped because it is not yet due, note this explicitly in your output.
 
@@ -270,6 +270,46 @@ After reviewing, update `ops-checks.md` with the date for each container you che
 
 ---
 
+## Weekly (1 check)
+
+### Check 8: Router Default-UA Scan
+
+A runtime backstop for ADR-0001 (inter-system requests must send `User-Agent: <SYSTEM>`), behind the build-time convention check (lucas42/lucos#251). It catches what static analysis can't, such as a worker path that bypasses a system's shared HTTP client. **It produces a review list, never auto-raised issues.**
+
+Check `ops-checks.md` for `router_default_ua` last_run date; skip if less than a week ago.
+
+**Scan every router host, not just avalon.** Take them from the `hosts:` of `lucos_router` in `lucos_configy` `config/systems.yaml` on `origin/main` (as of 2026-10: avalon and xwing). Each router only logs the vhosts it serves. For each host:
+
+```bash
+ssh <host>.s.l42.eu 'docker inspect lucos_router --format "{{.State.StartedAt}}"'   # the real window starts at the later of this and 7 days ago
+ssh <host>.s.l42.eu 'bash -s' <<'EOS'
+since=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+timeout 900 docker logs --since "$since" lucos_router 2>/dev/null | awk -F'"' '
+  { total++ }
+  $6 ~ /^(python-httpx|python-requests|python-urllib|Python-urllib|aiohttp|Go-http-client|node|undici|axios|Java-http-client|Java\/|Apache-HttpClient|okhttp|jose|Wget|GuzzleHttp)/ {
+    split($1,a," "); src=a[1]; host=a[length(a)]
+    if (src !~ /^(172\.|192\.168\.|178\.32\.218\.44$|152\.37\.104\.10$)/) next
+    if (host == "docker.l42.eu") next
+    split($2,r," "); p=r[2]; sub(/\?.*/,"",p); gsub(/\/[0-9]+/,"/N",p); ua=$6; sub(/\/.*/,"",ua)
+    n[ua "\t" host "\t" r[1] " " p "\t" src]++
+  }
+  END { print "TOTAL\t" total; for (k in n) print n[k] "\t" k }'
+EOS
+```
+
+It runs on the host and returns only aggregates (about a minute on avalon), so it needs no scratch space and moves almost nothing over the link. **If `TOTAL` is 0, the probe is broken, not the estate clean.**
+
+The filters are deliberately narrow:
+- **Internal sources only:** the docker bridge (same-host hairpin), the estate hosts' public IPs from `config/hosts.yaml` (cross-host), and the home LAN. Re-derive the IP list from `hosts.yaml` if it has changed. Everything else (scanners such as the `185.177.72.0/24` block, browsers, CircleCI) is external and dropped.
+- **Dropped by design:** `curl` (container healthchecks and human/agent tooling), and `docker.l42.eu` (registry pulls).
+- **Known non-system traffic, from the home NAT `152.37.104.10`** (which xwing/salvare, home devices and agent sandboxes all share): agent tooling, i.e. `python-requests` → arachne `POST /mcp` and aithne `POST /oauth2/token`, and `Python-urllib` → configy. List these as known; don't review them.
+
+**Compare against last week's list in `ops-checks.md`.** The finding is a *new* (UA family, destination, path) entry, or a known one that grew materially. For each, attribute it to a system by reading the candidate repos' call sites on `origin/main`. Don't rely on timing or volume alone. Then post it on lucas42/lucos#251 for the remediation batch, and ask `team-lead` to route any that need a ticket.
+
+After completing, update `router_default_ua` in `ops-checks.md` with today's date and the review list (UA family → destination, with counts).
+
+---
+
 ## Monthly (3 checks)
 
 ### Check 5: CI Status
@@ -349,5 +389,6 @@ After completing your ops checks run, output a table like this:
 | 5. CI Status | Done / Skipped (not due) | — |
 | 6. `/_info` Endpoint Quality | Done / Skipped (not due) | — |
 | 7. External Dependency Health | Done / Skipped (not due) | — |
+| 8. Router Default-UA Scan | Done / Skipped (not due) | Window per host, total lines, N review entries (N new) |
 
-**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 7 checks were considered.
+**Do not skip any row in this table.** If a check was not run, say why ("not due — last run YYYY-MM-DD"). This table is the audit trail that confirms all 8 checks were considered.
