@@ -6,6 +6,10 @@ ci_status: 2026-09-06
 info_endpoint_quality: 2026-09-06
 external_deps: 2026-09-06
 
+## Weekly Check Last Run Dates
+
+router_default_ua: 2026-10-02 (baseline; avalon 7d / xwing ~5d). Review list, UA → destination: python-httpx→contacts /people/N 585k; Wget→l42.eu / 115k (home NAT, unattributed); python-requests→media-api /v3/tracks* 87k; node→staticmedia HEAD /time 79k (lucos_time); Go-http-client→configy /hosts,/public-ports 60k + /components,/scripts,/systems 196 + every vhost /_info 29; Java-http-client→media-api 1.3k; python-requests→media-metadata 715, worlds 1.4k, campaigns ~360; jose→aithne 441 (accepted); GuzzleHttp→aithne 80; Java→loganne 80; node→ceol/seinn 60 each; okhttp→photos 111. Full table: lucas42/lucos#251 (comment 2026-10-02).
+
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-09-08
