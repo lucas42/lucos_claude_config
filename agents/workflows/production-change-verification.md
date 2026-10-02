@@ -24,6 +24,8 @@ Production changes routinely surface alerts that look like they were caused by t
 
    Do not chain shorter foreground sleeps to work around the block, and do not skip step 3 because the wait is awkward to express.
 
+   **A watcher must emit on its own failure, or its silence means nothing.** Find containers by compose project (`docker ps -aq --filter label=com.docker.compose.project=<repo>`), never by `docker inspect <repo>`, because repo and container names often differ (`lucos_docker_health` → `lucos_docker_health_app`). Print a line whenever a lookup errors or returns nothing, so a wrong name shows up as noise rather than as a quiet "not deployed yet".
+
 4. **After:** fetch monitoring again and compare against your baseline.
 
 5. **If new alerts appeared:** investigate immediately — but **do not *conclude* immediately.** Investigating fast is right; publishing a verdict from measurements taken minutes after the change is not. Anything that restarted a container or created a network behaves oddly while it settles (NDP, conntrack, DNS/route learning, caches, and monitoring's own post-restart warm-up — it logs `Warm-up: skipping alert for "<system>" on first poll`, which is your cue, not your finding).
