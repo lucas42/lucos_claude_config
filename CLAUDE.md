@@ -53,6 +53,15 @@ Every `lucas42` repo is public, including this one — any GitHub account can op
 
 ---
 
+## Null results and counts
+
+A negative result is only as strong as the method's ability to have produced a positive. Before publishing one, establish that it could have.
+
+1. **Estate sweeps.** Never use GitHub code search (`search/code?q=org:lucas42+…`) as the authoritative enumeration — it is a lossy index that silently returns a plausible partial answer (one sweep reported 38 repos where 54 existed). Never glob a fixed set of paths — polyglot repos keep files in subdirectories. The safe method: list non-archived, non-fork repos (filter `archived` explicitly), walk each repo's tree (git trees API, or `git ls-tree` on a freshly-fetched `origin/main`), and fetch each file directly. Code search is fine as a cheap cross-check, never as the enumeration.
+2. **Counts.** Before reporting "0 occurrences in N", count how many of the N could actually have triggered it. N is a sample size only if every member was a trial; a large N makes a worthless negative read as an overwhelming one. State the exposure alongside the result, and run a positive control to confirm the probe can see what you are looking for.
+
+---
+
 ## Environment Variables & lucos_creds
 
 Secrets and environment-varying config are managed by a service called **lucos_creds**. To write the local development `.env` file, run:
