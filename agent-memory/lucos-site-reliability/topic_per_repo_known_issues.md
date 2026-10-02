@@ -97,6 +97,11 @@ Consolidated from MEMORY.md 2026-07-03 (index compaction). Verify open/closed st
 - Django `ALLOWED_HOSTS` must include `127.0.0.1` for IP-based Docker healthchecks (`wget http://127.0.0.1:<port>/_info`). General Django pattern.
 - `schedule-tracker.l42.eu` check `lucos_contacts_googlesync_import` lags on recovery — self-heals.
 
+## lucos_worlds — Known Issues (BookStack, avalon)
+- **Whole-file patches (`patches/` COPY'd over BookStack source) drift silently on Dependabot base-image bumps.** 2026-10-01: the 26.09 bump broke every page view (`Undefined variable $pageNav`) via a stale `show.blade.php`; lucos#315 report, guard ticket lucas42/lucos_worlds#98. On a worlds 500, first diff each patch against upstream at the deployed tag (`raw.githubusercontent.com/BookStackApp/BookStack/vX/...`).
+- Errors are in `/app/www/storage/logs/laravel.log` (→ /config/log/bookstack); nginx access log at `/config/log/nginx/`. `/_info` checks deps only, so it stays green through render failures. Low traffic means a broken deploy can sit latent for days.
+- Local render repro: build the image and run it with mariadb, AUTH_METHOD=standard, admin@admin.com/password. Run `artisan tinker` as `-u abc -e HOME=/tmp`, otherwise root creates the purifier cache dir and you get a fake 500.
+
 ## lucos_photos_android — Known Issues
 - #28 (signing): Kotlin DSL variable shadowing — `keyPassword` in `SigningConfig.()->Unit` resolves to receiver member first. Prefix outer vals.
 - #31 (sync re-scans): fix was `WorkManager.enqueueUniqueWork()` named key (was plain enqueue).

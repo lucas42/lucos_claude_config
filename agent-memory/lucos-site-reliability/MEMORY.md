@@ -6,7 +6,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [avalon disk failure — ALL data recovered 2026-09-16 22:34](project_avalon_disk_failure_294.md) — #294 CLOSED 2026-09-18; report lucas42/lucos#297 merged, follow-up lucas42/lucos#305. ⚠️ photos were NEVER lost; nobody checked configy. Still out: lucos_dns#135.
 
 ## Consolidated topic files (read first)
-- [Per-repo known issues + host facts](topic_per_repo_known_issues.md) · [CI + infra patterns](topic_ci_infra_patterns.md) · [Monitoring mechanics](topic_monitoring_mechanics.md) — poll is 60s · [⛔ RESOLVED/benign](topic_resolved_historical.md).
+- [Per-repo known issues + host facts](topic_per_repo_known_issues.md) (incl. worlds patch drift) · [CI + infra patterns](topic_ci_infra_patterns.md) · [Monitoring mechanics](topic_monitoring_mechanics.md) — poll is 60s · [⛔ RESOLVED/benign](topic_resolved_historical.md).
 
 ## aithne / auth
 - [PWA SW render drops aithne_origin → re-login storm](pattern_pwa_sw_render_drops_aithne_origin.md) · [aithne contact id: string vs int](pattern_aithne_contactid_string_vs_int_divergence.md) — String()-coerce in JS.
