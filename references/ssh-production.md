@@ -66,6 +66,8 @@ If you need the current docker-compose configuration for a running service, retr
 
 ## Scratch space: check the target host, not the one you are reading from
 
+**A read-only investigation writes nothing on the host.** Aggregate in the remote pipeline (`docker logs … | awk …`), or bring the output back over ssh's stdout. A `>` or `tee` inside the remote command string is a host write, however small. Before sending a remote command, scan it for one. A host write belongs only in an operation you have planned as one, sized below.
+
 **`/tmp` is tmpfs — RAM, not disk — and these hosts have very little of it.** xwing has **906MB of RAM** against a 454MB `/tmp`, so extracting even a modest database dump there consumes memory the running containers need, and a second concurrent extract can stop the host answering SSH.
 
 Before writing anything sizeable to a host, check **that host's** free memory and the filesystem type of the destination (`free -m`, `df -h <path>`, `findmnt -no FSTYPE <path>`). Checking disk on the machine you are copying *from* says nothing about the one you are copying *to*. Prefer a docker volume or a path under `/srv` over `/tmp` for anything larger than a few MB, and never run two such operations at once.
