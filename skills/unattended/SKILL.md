@@ -76,7 +76,7 @@ Supervision is per-repo and varies within a single sweep. Roughly two-thirds of 
 | # | Gate | Hold when |
 |---|---|---|
 | 15 | **One in-flight issue per teammate** | The owner already has an issue dispatched in this run. They become dispatchable again once the PR is open and they have reported back — not when it merges. |
-| 16 | **One in-flight PR per repo** | Another issue on the same repo is already in flight this run. Concurrent PRs on one repo collide; parallelise across repos only. |
+| 16 | **One in-flight PR per repo** | Another issue on the same repo is already in flight this run. Concurrent PRs on one repo collide; parallelise across repos only. **`lucos_repos` stays in flight until about 25 minutes after its previous PR merges, not just until the merge.** Every non-Dependabot PR there runs a full estate dry-run sweep, and every merge redeploys and starts a full production sweep, all on one shared App quota. Back-to-back merges exhaust that quota, and the deploy restart kills the in-flight sweep without any report (lucas42/lucos_repos#524). |
 
 ### Explicitly NOT exceptions — do not hold on these
 
