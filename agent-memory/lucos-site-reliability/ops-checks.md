@@ -2,9 +2,9 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-09-06
-info_endpoint_quality: 2026-09-06
-external_deps: 2026-09-06
+ci_status: 2026-10-05
+info_endpoint_quality: 2026-10-05
+external_deps: 2026-10-05
 
 ## Weekly Check Last Run Dates
 
@@ -17,7 +17,7 @@ lucos_media_weightings: 2026-09-13
 lucos_photos_worker: 2026-09-27
 lucos_arachne_explore: 2026-09-26 (short window, 28h since StartedAt)
 lucos_arachne_web: 2026-09-27 (2d since StartedAt)
-lucos_backups: 2026-08-17
+lucos_backups: 2026-10-05 (short window, 16h since StartedAt)
 lucos_repos_app: 2026-09-06
 lucos_dns_bind: 2026-09-26
 lucos_loganne: 2026-09-26 (short window, 28h since StartedAt)
@@ -27,7 +27,7 @@ lucos_contacts_db: 2026-09-06
 lucos_contacts_googlesync_import: 2026-10-02 (short window, 9.5h since StartedAt)
 lucos_contacts_web: 2026-10-02 (4.4d since StartedAt)
 lucos_creds: 2026-09-13 (short window, 53h since StartedAt)
-lucos_creds_configy_sync: 2026-08-09
+lucos_creds_configy_sync: 2026-10-05 (short window, 16h since StartedAt; 4th+ deferral)
 lucos_creds_ui: 2026-08-17
 lucos_dns_sync: 2026-10-02 (4.4d since StartedAt)
 lucos_eolas_app: 2026-09-18
@@ -36,7 +36,7 @@ lucos_eolas_web: 2026-09-08 (short window, 39h since StartedAt)
 lucos_locations_mosquitto: 2026-08-28
 lucos_locations_otfrontend: 2026-09-08
 lucos_locations_otrecorder: 2026-08-28
-lucos_locations_oauth2_proxy: 2026-09-06
+lucos_locations_oauth2_proxy: 2026-10-05
 lucos_mail_smtp: 2026-09-08
 lucos_photos_api: 2026-08-28
 lucos_arachne_ingestor: 2026-09-13 (short window, 53h since StartedAt)
@@ -59,7 +59,7 @@ lucos_root_app: 2026-08-28
 lucos_router: 2026-09-27 (3d cap)
 semweb: 2026-08-27
 lucos_time: 2026-09-27 (2d since StartedAt)
-lucos_aithne: 2026-08-22
+lucos_aithne: 2026-10-05 (3.9d since StartedAt)
 lucos_arachne_mcp: 2026-09-18 (short window, 2h since StartedAt)
 lukeblaney_blog: 2026-09-08
 lucos_docker_health_app: 2026-08-22
@@ -67,7 +67,7 @@ lucos_docker_health_app: 2026-08-22
 lucos_docker_mirror_web: 2026-08-26
 lucos_docker_mirror_registry: 2026-08-26
 lucos_worlds_web: 2026-10-02 (laravel.log file since 08-22; docker logs is access-only)
-lucos_worlds_db: 2026-08-22
+lucos_worlds_db: 2026-10-05
 lucos_docker_mirror_info: 2026-08-26
 lucos_firewall: 2026-09-26
 lucos_campaigns_app: 2026-10-02 (laravel-*.log files since 09-29; docker logs is access-only)
@@ -272,3 +272,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-10-02 Check 3: 0 reports needed. photos 09-28 and worlds/mail 10-01 have reports. Mail outage 22:51–22:56 fell inside avalon's docker_health blind window but wouldn't have alerted in time anyway (~5min threshold). docker_health blindness ×3 hosts: no report (monitoring-only, no user impact, all captured in #124).
 - 2026-10-02 Check 4: dns_sync 0 errors, contacts_web/monitoring scanner noise + 3 CircleCI timeouts, googlesync 1× Google People 429 (13:55Z, isolated), campaigns_app (file log: bootstrap errors 09-29/30 only), worlds_web (file log: 215 ERROR = 07-07 bootstrap + 10-01/02 $pageNav incident; none since the 02:25Z restart). **Found: Laravel apps log to files, docker logs is access-only.** Added to sre-ops-checks.md Check 4. Deferred: campaigns_db/search/auth (new), every container restarted since its last review (the 09-16 rebuild).
 - 2026-10-02 Checks 5/6/7 not due (last 09-06; due 10-06). Check 8 ran earlier today.
+- 2026-10-05 ops run (23:39Z): **P1 lucos_campaigns down since 21:23Z.** Dependabot #65 bumped Meilisearch 1.54.1→1.54.3; search refuses the 1.54.1 DB ("database version incompatible") → crash loop; app crash-loops behind it. CI green (fresh volumes), deploy failed, no rollback. Hotfix lucas42/lucos_campaigns#67 (MEILI_UPGRADE_DB=true, repro'd locally), report draft lucas42/lucos#319. Check 2: nothing else since 10-02. Check 3: only campaigns new. Check 4: configy_sync/aithne/oauth2_proxy clean; worlds_db io_uring EPERM warning only; backups :07 BrokenPipe ×14 = #374 (open), moved-aside skips = lucos#306. Estate sweep since 07:15Z burst: mosquitto scanners, mail_smtp SSL_accept scanners, tfluke known, media_manager broken pipes, **googlesync 429 in 5/194 runs (was 1 on 10-02) — WATCH, errors=0, each next run OK**. Monthly 5/6/7 done: CI only campaigns red; /_info 31/32 OK (campaigns); ext deps 200/401/401/200. Check 8 not due (10-02).
