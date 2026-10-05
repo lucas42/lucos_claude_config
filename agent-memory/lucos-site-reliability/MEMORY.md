@@ -60,7 +60,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 
 ## CI / build / deploy
 - [Stuck-PR taxonomy](pattern_stuck_pr_taxonomy_and_rate.md) — 4 mechanisms; p98 merge 19min · [lucos_repos deploy triggers a sweep](pattern_lucos_repos_deploy_triggers_sweep.md) — ~17min.
-- [Base-image bump breaks at runtime](pattern_baseimage_bump_runtime_break.md) — ⚠️ 4 times, latent to 11d; lucos#273 · [Python beta alpine breaks libpq](pattern_python_beta_alpine_libpq_break.md) — `apk add libpq`.
+- [Base-image bump breaks at runtime](pattern_baseimage_bump_runtime_break.md) — ⚠️ 5 times (incl. stateful Meilisearch patch 10-05), latent to 11d; lucos#273 · [Python beta alpine breaks libpq](pattern_python_beta_alpine_libpq_break.md) — `apk add libpq`.
 - [pipenv 2026.4.0 hash change fails `--deploy`](pattern_pipenv_hash_algorithm_skew.md) — not drift · [exit 127 after pip = machine image rolled back](pattern_rolling_machine_image_tag_moves_backwards.md) — use a venv.
 - [⚠️ Host dockerd mirror serves no pulls (auth_basic)](pattern_host_daemon_mirror_never_served.md) — 0/121 avalon+xwing; fallback failed a P1 deploy; lucos#307
 - [Repo `test` job bypasses the docker mirror](pattern_repo_test_job_bypasses_docker_mirror.md) — a Hub blip turns it red · [repos audit discards Retry-After](pattern_ratelimit_maxwait_ceiling_reds_background_jobs.md).
