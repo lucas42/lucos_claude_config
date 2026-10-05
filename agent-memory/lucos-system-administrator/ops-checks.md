@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-02
-resource_checks: 2026-09-26
-syslog_review: 2026-09-26
-software_updates: 2026-09-26
-sandbox_drift: 2026-09-26
-repos_dashboard: 2026-10-02
+container_status: 2026-10-06
+resource_checks: 2026-10-06
+syslog_review: 2026-10-06
+software_updates: 2026-10-06
+sandbox_drift: 2026-10-06
+repos_dashboard: 2026-10-06
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-06 run**: checks 1-6 done (7-9 not due, last 09-26). NEW OUTAGE: lucos_campaigns_search/_app crash-looping on avalon since Dependabot meilisearch 1.54.1->1.54.3 bump (lucos_campaigns#65 merged 10-05); filed lucos_campaigns#66, flagged to team-lead for SRE. Syslog: journals unreadable w/o sudo on all hosts (known) so check 2 not truly observable. apt: nothing upgradable anywhere. Local VM 82%->55% after docker prune (3.6GB images + builder cache). Sandbox drift: none (hooksPath live). Dashboard: photos#551 + worlds_atlas in-lucos-configy unchanged. Avalon load ok (jobrunner/erts top).
 
 - **lucos_agent_coding_sandbox#107 and #95 — CLOSED 2026-09-27T09:03Z (confirmed via API), no further tracking needed on the tickets themselves.** Two substantive reminders survive independent of ticket state: (a) avalon containerd 2.3.6 installed but daemon not yet restarted (`ActiveEnterTimestamp` still 2026-09-16, low urgency, no `-security` tag) — worth checking on if avalon's containerd version ever comes up; (b) a future ops-check should confirm the *next* Docker/RPi-Foundation package release clears the backlog automatically without manual intervention — that's the first real functional proof #107's origin-pattern fix works end-to-end.
 
