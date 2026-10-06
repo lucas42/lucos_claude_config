@@ -1,6 +1,6 @@
 ---
 name: pattern-baseimage-bump-runtime-break
-description: Auto-merged base-image bump breaks at deploy/runtime (not build). 3 prod instances. ⚠️ It does NOT always go red — it can deploy healthy and 500 silently
+description: Auto-merged base-image bump breaks at deploy/runtime (not build). 6+ prod instances (lucos#273 thread count; incl. stateful-volume variant 10-05). ⚠️ It does NOT always go red — it can deploy healthy and 500 silently
 metadata:
   type: project
 ---
