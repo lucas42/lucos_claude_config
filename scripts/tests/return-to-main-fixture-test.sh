@@ -110,7 +110,7 @@ fi
 (
     cd "$CLAUDE_DIR"
     git checkout -q main
-    git merge -q --no-ff feature-fresh -m "merge feature-fresh"
+    git $GIT_AUTHOR merge -q --no-ff feature-fresh -m "merge feature-fresh"
     git push -q origin main
     git checkout -q feature-fresh
 )

@@ -250,7 +250,7 @@ commit_scope() {
             fi
             echo "$(date -Iseconds) [$identity_name] Push rejected (non-fast-forward); re-fetching origin/main and rebasing (attempt $push_attempt of $max_push_retries)..."
             git fetch origin main
-            git rebase origin/main || {
+            git -c user.name="$identity_name" -c user.email="$identity_email" rebase origin/main || {
                 git rebase --abort 2>/dev/null || true
                 echo "$(date -Iseconds) [$identity_name] ERROR: Rebase failed — unexpected conflict during retry. Aborting." >&2
                 exit 1
