@@ -50,6 +50,7 @@ scripts/*.log
 # and sync-failure persistence tracks. Glob rather than enumerate so a new
 # tracked condition doesn't need a matching .gitignore edit.
 scripts/.return-to-main-*
+scripts/.prune-worktrees-*
 
 # GitHub Actions workflows and other repo config
 !.github/
