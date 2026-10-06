@@ -41,7 +41,13 @@ expect() { # <name> <present|absent> <description>
     if [ "$here" = "$2" ]; then echo "ok - $3"; else echo "FAIL - $3"; fails=$((fails+1)); fi
 }
 
-out=$("$SCRIPT" --dry-run 2>&1); grep -q 'WOULD REMOVE merged' <<<"$out" && [ -d "$WORKTREES_DIR/merged" ] && echo "ok - dry-run removes nothing" || { echo "FAIL - dry-run"; fails=$((fails+1)); }
+mkdir -p "$STATE_DIR"; echo 1 > "$STATE_DIR/dirty.first"; echo 1 > "$STATE_DIR/ghost.first"   # ghost = entry that no longer exists
+before=$(cd "$STATE_DIR" && ls -la --time-style=full-iso . && cat *.first)
+out=$("$SCRIPT" --dry-run 2>&1);
+after=$(cd "$STATE_DIR" && ls -la --time-style=full-iso . && cat *.first)
+[ "$before" = "$after" ] && [ ! -s "$W/events.log" ] && echo "ok - dry-run leaves state dir and Loganne untouched" || { echo "FAIL - dry-run had side effects"; fails=$((fails+1)); }
+rm -f "$STATE_DIR/dirty.first" "$STATE_DIR/ghost.first"
+ grep -q 'WOULD REMOVE merged' <<<"$out" && [ -d "$WORKTREES_DIR/merged" ] && echo "ok - dry-run removes nothing" || { echo "FAIL - dry-run"; fails=$((fails+1)); }
 
 "$SCRIPT" > "$W/run1.log" 2>&1
 expect merged absent    "merged + clean + old is removed"
@@ -55,6 +61,14 @@ expect fresh present    "brand-new worktree (HEAD == origin/main) is kept by the
 expect broken present   "broken gitdir is reported, never deleted"
 expect nofetch present  "worktree of a repo whose fetch fails is kept"
 git -C "$W/repo" branch --list merged | grep -q . && { echo "FAIL - merged branch not deleted"; fails=$((fails+1)); } || echo "ok - merged branch deleted"
+
+# Unknown mtime must keep the worktree: shadow find/stat so newest_mtime returns nothing.
+mk nomtime; commit_in nomtime n1; git -C "$WORKTREES_DIR/nomtime" push -q origin nomtime:main; git -C "$W/repo" fetch -q; age nomtime
+mkdir "$W/nobin"; printf '#!/bin/bash\nexit 0\n' > "$W/nobin/find"; cp "$W/nobin/find" "$W/nobin/stat"; chmod +x "$W/nobin/find" "$W/nobin/stat"
+PATH="$W/nobin:$PATH" "$SCRIPT" >/dev/null 2>&1
+expect nomtime present "unknown newest-mtime keeps an otherwise-landed worktree"
+"$SCRIPT" >/dev/null 2>&1
+expect nomtime absent  "...and it is removed once the mtime is readable again"
 
 # Alerting: nothing yet; backdate one marker past the threshold; expect exactly one event across two runs.
 [ ! -s "$W/events.log" ] && echo "ok - no Loganne event before the threshold" || { echo "FAIL - early event"; fails=$((fails+1)); }

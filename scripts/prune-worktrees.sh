@@ -53,6 +53,7 @@ keep() {
     local name="$1" reason="$2" first
     echo "$(date -Iseconds) KEEP $name: $reason"
     seen+=("$name")
+    [ "$DRY_RUN" -eq 1 ] && return 0   # dry-run must not write state or emit events
     [ -f "$STATE_DIR/$name.first" ] || echo "$now" > "$STATE_DIR/$name.first"
     first=$(cat "$STATE_DIR/$name.first")
     if [ $((now - first)) -ge "$ALERT_AFTER_SECS" ] && [ ! -f "$STATE_DIR/$name.alerted" ]; then
@@ -107,7 +108,7 @@ for wt in "$WORKTREES_DIR"/*/; do
 
     # 4. quiescent
     newest=$(newest_mtime "$wt" "$gd")
-    if [ -n "$newest" ] && [ $((now - newest)) -lt "$QUIESCENCE_SECS" ]; then
+    if [ -z "$newest" ] || [ $((now - newest)) -lt "$QUIESCENCE_SECS" ]; then   # unknown mtime keeps it
         recent=$((recent+1)); keep "$name" "landed but modified within the last $((QUIESCENCE_SECS / 3600))h"; continue
     fi
 
@@ -127,7 +128,7 @@ done
 [ "$DRY_RUN" -eq 0 ] && for r in "${!touched[@]}"; do git -C "$r" worktree prune 2>/dev/null; done
 
 # Drop state for entries that are gone or no longer failing.
-for f in "$STATE_DIR"/*.first; do
+[ "$DRY_RUN" -eq 0 ] && for f in "$STATE_DIR"/*.first; do
     [ -e "$f" ] || continue; n=$(basename "$f" .first)
     case " ${seen[*]:-} " in *" $n "*) ;; *) rm -f "$f" "$STATE_DIR/$n.alerted";; esac
 done
