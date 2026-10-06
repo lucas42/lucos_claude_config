@@ -133,6 +133,14 @@ cd ~/sandboxes/lucos_agent_coding_sandbox && git log --oneline origin/main..HEAD
 cd ~/sandboxes/lucos_agent_coding_sandbox && git fetch && git log --oneline HEAD..origin/main
 ```
 
+Those two commands only compare the checkout with origin. For live state, also run the drift script (after `git pull --ff-only` in the checkout, if it is clean and on `main`):
+
+```bash
+~/sandboxes/lucos_agent_coding_sandbox/check-drift.sh
+```
+
+It compares live global git config keys and the user crontab with `lima.yaml` (via `drift-manifest/`) and exits 1 naming each offending item. It covers those two surfaces only; for anything else (packages, shell profile, ssh config), still inspect by hand. Exit 1 is drift to report (each offending item is named). Any other non-zero exit means the script itself failed; investigate that instead.
+
 Raise a GitHub issue on `lucas42/lucos_agent_coding_sandbox` for any drift found. The goal is zero manual snowflakes — if you had to rebuild from scratch at 3am, it should all be in the repo.
 
 ---
