@@ -1,6 +1,6 @@
 ---
 name: project-response-gap-290-settled
-description: lucas42/lucos#290 — the alert→action response gap is DOCUMENTED and its broad remedy DECLINED on cost, not unqueued; the narrow remedy is Ready and owned by me. Escalate only on three named triggers.
+description: lucas42/lucos#290 — the alert→action response gap is DOCUMENTED and its broad remedy DECLINED on cost; the narrow remedy (6h stale-dependabot threshold) SHIPPED 2026-10-07, issue closed. Escalate only on three named triggers.
 metadata:
   type: project
 ---
@@ -18,7 +18,9 @@ metadata:
 
 ⚠️ **The narrowed remedy does NOT cover the default-branch shape — verified from source 2026-09-08.** `lucos_repos/src/pr_dashboard.go:248` fetches `pulls?state=open` only, and L287 gates on `pr.CreatedAt`, so `stale-dependabot-prs` can only see a **still-open** PR. The 09-08 event was red on `main` *after* both PRs merged ⇒ **no threshold value would have fired**. This was deliberate, not an oversight: my own analysis headed the two sections *"For the six PR-level events: one constant"* and *"For the two default-branch events: I'd leave it, for now"*. The constant addresses **everything except gap 1** (gap 1 = red on default branch; gap 2 = red off it; plus 3 non-CI mechanisms). Gap 1 now carries 3 of the recorded occurrences.
 
-⚠️ **Both revisit conditions are DORMANT, not armed — they are gated on a dispatch nothing schedules.** Mine ("if the threshold change lands and default-branch reds are still sitting in a month") and team-lead's trigger 3 both presuppose the constant ships; it is Ready/Low and unstarted, so neither clock has started. **Treat triggers 1 and 2 as the only live ones.** This is the shape where a revisit condition becomes a way of never revisiting.
+✅ **SHIPPED 2026-10-07** (lucas42/lucos_repos#528, 0331c4a; #290 closed): threshold 6h, but the PR sweep is also 6h, so detection is 6–12h. **Trigger 3 and the 08-26 revisit condition are now ARMED, with the clock starting 2026-10-07.** Gap 1 is still invisible to it. The paragraph below is historical.
+
+⚠️ **(Historical, pre-2026-10-07) Both revisit conditions were DORMANT, not armed — they are gated on a dispatch nothing schedules.** Mine ("if the threshold change lands and default-branch reds are still sitting in a month") and team-lead's trigger 3 both presuppose the constant ships; it is Ready/Low and unstarted, so neither clock has started. **Treat triggers 1 and 2 as the only live ones.** This is the shape where a revisit condition becomes a way of never revisiting.
 
 ⚠️ **I measured the WRONG POPULATION and got the right answer by luck (2026-09-08).** Trigger 1 names an **estate-wide** rate (~7 events/29d); I measured **gap 1 only** and declared it not met. Real estate-wide figure, 08-26→09-08 (13d, **all 271 merged Dependabot PRs, paginated in full — the API's default 100-of-271 is an order-biased sample**): 4 PRs open >6h + 1 gap-1 event = **5 events in 13d = 11.0 per 28.7d vs 7.0** — up ~57%. Still judged not-met (expected ~4.1, observed 5; unremarkable at n=5, and 3 of the 5 arrived in one morning's burst), but that is a small-numbers **judgement**, not a comfortable margin. **Escalate if the next window is similarly elevated — two consecutive elevated windows.** Free corroboration of method: **p98 merge latency 19.1 min now vs 19 min in the 08-26 analysis**, independent data.
 

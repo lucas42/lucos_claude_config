@@ -99,7 +99,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - Incident reports: [causation from the PR body](feedback_read_pr_body_for_causation.md) · [no attribution overclaim](feedback_no_attribution_overclaim.md) · [external-verification gate](feedback_parallel_drafting_verification_scope.md) · [recurrence >P3](feedback_priority_active_recurrence.md).
 - Proposals: [tests must be deterministic + actionable](feedback_test_proposals_must_be_actionable.md) · [enumerate existing surfaces](feedback_enumerate_existing_mechanisms.md) · [loganne scope](feedback_loganne_scope.md) · [equivalent alternatives](feedback_verify_alternatives_are_equivalent.md).
 - Fix at source: [silent fallbacks = security risk](feedback_silent_fallbacks_are_a_security_risk.md) · [don't game API contracts](feedback_dont_game_api_contracts.md) · [keep the docker mirror](feedback_keep_docker_mirror.md).
-- [The alert→action gap is SETTLED](project_response_gap_290_settled.md) — lucos#290; 3 named escalation triggers.
+- [The alert→action gap is SETTLED](project_response_gap_290_settled.md) — lucos#290; 6h threshold shipped 2026-10-07 (detects in 6–12h); 3 triggers, all armed.
 
 ## Mail / Loganne
 - [A relay 2xx is NOT delivery](pattern_relay_accepted_mail_still_silently_lost.md) — check lucos_mail_smtp per queue-id.
