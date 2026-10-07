@@ -99,7 +99,9 @@ Always `/dispatch` — never a hand-written `implement issue` SendMessage. It re
 
 **Issue them one at a time and wait for each teammate's acknowledgement before starting the next.** Rapid consecutive sends are processed out of order. Different teammates then work in parallel; the wait is on the handoff, not on the work.
 
-When a wave completes, **re-run Step 1 and re-evaluate the gates from scratch** before dispatching more. A merge can close a blocker and make a held item eligible, and lucas42 may have commented, reordered, or reassigned in the interim. Never carry a first-pass verdict into a later wave. Stop when a full pass produces no eligible items.
+When a wave completes, **re-run Step 1 and re-evaluate the gates from scratch** before dispatching more. A merge can close a blocker and make a held item eligible, and lucas42 may have commented, reordered, or reassigned in the interim. Never carry a first-pass verdict into a later wave. Stop when a full pass produces no eligible items **and** no dispatched work is still in flight. Until then, keep handling teammate reports and `/dispatch` post-completion yourself.
+
+**lucas42 is not reading during the run.** Never block on him, and never hand him a decision in chat. Anything that needs him, including incidents that surface mid-run, goes on a ticket boarded with Owner = lucas42. Keep chat output to the single Step 4 report at the end, not a running commentary per teammate message.
 
 ## Step 4: Report
 
