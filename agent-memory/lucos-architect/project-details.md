@@ -73,7 +73,7 @@ Overflow from MEMORY.md for projects with extensive design history.
 ## lucos_photos_android -- App telemetry (#39)
 
 - Recommended Option A: extend lucos_photos API with `POST /api/telemetry` endpoint (Postgres storage, flexible JSON `data` column).
-- Rejected central telemetry service (one consumer, speculative reuse) and Loganne (in-memory, no persistence).
+- Rejected central telemetry service (one consumer, speculative reuse) and Loganne. (My stated reason, "in-memory, no persistence", was false: events have persisted via a volume since 2021; retention is 90 days / 10,000 events, `GET /events` defaults to a 7-day window. Rejection still stands on retention ceiling, no aggregate-query API, and low-volume system-event design.)
 - OpenTelemetry: massive overkill for one app. Skip.
 - Migration path: if second consumer appears, extract to central service then.
 - Awaiting lucas42 decision.
