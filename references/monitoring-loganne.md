@@ -116,4 +116,4 @@ No authentication required for writes. The `source` is hardcoded to `lucos_agent
 
 ### Loganne as a communication channel
 
-When performing planned maintenance (reboots, migrations, etc.), post a Loganne event so other agents (especially `lucos-site-reliability`) can distinguish planned downtime from incidents. Note: Loganne events survive restarts, but a retention policy removes older ones. For an event that must still be readable after it ages out (e.g. an advance notice weeks ahead), also leave a durable record (e.g. a GitHub comment).
+When performing planned maintenance (reboots, migrations, etc.), post a Loganne event so other agents (especially `lucos-site-reliability`) can distinguish planned downtime from incidents. Note: Loganne events survive restarts, but retention removes older ones: 90 days or 10,000 events across all systems, whichever limit is hit first. That is separate from `GET /events`'s default 7-day view window, so pass `since` to see older events. For an event that must still be readable after it ages out (e.g. an advance notice weeks ahead), also leave a durable record (e.g. a GitHub comment).
