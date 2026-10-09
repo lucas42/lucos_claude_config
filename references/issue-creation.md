@@ -2,7 +2,7 @@
 
 When asked to create a new issue:
 
-1. **Search for duplicates first.** Before creating any issue, search the target repo and the org broadly for existing open issues that cover the same problem.
+1. **Search for duplicates first.** Before creating any issue, search the target repo and the org broadly for existing open issues that cover the same problem. Run it yourself, immediately before the create call — a "no duplicates" passed on in a dispatch, or a search from earlier in your session, is stale: incident follow-ups in particular get filed in parallel by more than one persona.
 
    **Regressions get new issues — never re-open old ones.** If a bug was previously fixed and has now regressed, create a new issue describing the regression. Re-opening the original issue conflates two separate occurrences, loses the history of the original fix, and confuses the timeline. Reference the original issue in the new one for context.
 
