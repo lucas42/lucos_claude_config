@@ -1,11 +1,13 @@
 ---
 name: project-response-gap-290-settled
-description: lucas42/lucos#290 — the alert→action response gap is DOCUMENTED and its broad remedy DECLINED on cost; the narrow remedy (6h stale-dependabot threshold) SHIPPED 2026-10-07, issue closed. Escalate only on three named triggers.
+description: lucas42/lucos#290 (CLOSED 2026-10-07) covered the CI/Dependabot alert→action gap ONLY; narrow remedy shipped. ⚠️ The SERVICE-alert response gap is NOT covered by #290 and has no open home — don't cite #290 as settling it.
 metadata:
   type: project
 ---
 
-**Do not re-raise the "alert fired, nobody acted for N hours" gap as a new finding.** It is lucas42/lucos#290, and the position is settled — not unexamined.
+⚠️ **Scope correction (2026-10-09, caught by lucos-code-reviewer on lucas42/lucos#321):** #290 is about red **CI pipelines**; it explicitly excluded "alerted correctly, nobody acts" and is now CLOSED. I wrote "the alert-to-action gap already settled on #290" in an incident report about a *service* alert (media_manager `empty-queue`) — wrong. Service-alert response gaps (09-14 disk ~4h20m, 10-08 media_manager 2h12m, both alerts verified delivered) have **no open ticket**; I flagged that to team-lead 2026-10-09 and recorded it as considered-not-filed (it's lucas42's notification choice; engineering answer = make failures self-heal). Before citing #290 for any gap, check the gap is the CI shape.
+
+**For the CI/Dependabot shape only:** do not re-raise it as a new finding. It was lucas42/lucos#290, and that position is settled — not unexamined.
 
 **What was decided (2026-08-26, verified against the thread on 2026-09-08):**
 - **Scope narrowed to** the `staleDependabotThreshold` constant in `lucos_repos`, 48h → ~6h, **and nothing else**.
@@ -33,6 +35,6 @@ metadata:
 
 No agreement from team-lead is needed to escalate on any of these.
 
-**Occurrences so far:** 2026-08-17, two `lucos_repos` events, 2026-09-08 (`lucos_creds`, 15h10m, from lucas42/lucos_creds#555). **2026-09-14 avalon disk failure (lucos#294): alert→action gap ~4h20m (07:55→12:15). TRIGGER 2 MET** (real outage + data at risk). Alert emails were VERIFIED sent (223 `status=sent` via Google MX, 07:00–12:59), so it was a genuine response gap, not a delivery failure. Recorded on #290 (comment 5672724962) as evidence; the scope decision stays with lucas42. It's a service-level gap, not the CI/Dependabot shape the narrowed remedy targets. Record new ones on #290 as data points; don't open anything new.
+**Occurrences so far:** 2026-08-17, two `lucos_repos` events, 2026-09-08 (`lucos_creds`, 15h10m, from lucas42/lucos_creds#555). **2026-09-14 avalon disk failure (lucos#294): alert→action gap ~4h20m (07:55→12:15). TRIGGER 2 MET** (real outage + data at risk). Alert emails were VERIFIED sent (223 `status=sent` via Google MX, 07:00–12:59), so it was a genuine response gap, not a delivery failure. Recorded on #290 (comment 5672724962) as evidence; the scope decision stays with lucas42. It's a service-level gap, not the CI/Dependabot shape the narrowed remedy targets. (Pre-closure advice — #290 is CLOSED; a closed ticket tracks nothing.)
 
 **Damage-narrowing that must survive citation:** the 09-08 event did **not** leave the estate on stale credentials — the preceding commit deployed v1.3.146 on schedule and only a later `ui/package-lock.json` bump went undeployed. See [[feedback_verify_check_claim_against_underlying_store]].
