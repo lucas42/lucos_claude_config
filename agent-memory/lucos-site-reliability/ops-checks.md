@@ -10,6 +10,14 @@ external_deps: 2026-10-05
 
 router_default_ua: 2026-10-09 (30.6h window: both routers restarted 10-08 15:19Z; per-day rates match baseline. NEW: Apache-HttpClient→ceol 14 = lucos_scenes clj-http, no UA, posted lucos#251. worlds/campaigns python-requests absent). Previous 2026-10-02 (baseline; avalon 7d / xwing ~5d). Review list, UA → destination: python-httpx→contacts /people/N 585k; Wget→l42.eu / 115k (home NAT, unattributed); python-requests→media-api /v3/tracks* 87k; node→staticmedia HEAD /time 79k (lucos_time); Go-http-client→configy /hosts,/public-ports 60k + /components,/scripts,/systems 196 + every vhost /_info 29; Java-http-client→media-api 1.3k; python-requests→media-metadata 715, worlds 1.4k, campaigns ~360; jose→aithne 441 (accepted); GuzzleHttp→aithne 80; Java→loganne 80; node→ceol/seinn 60 each; okhttp→photos 111. Full table: lucas42/lucos#251 (comment 2026-10-02).
 
+## ⚠️ Upcoming planned maintenance (check on every run until past, then move to Notes)
+
+- **2026-10-15, home ISP maintenance** (relayed by team-lead from lucas42's chat on 2026-10-09; no ticket). ISP notice: "PHAU0428 - Phase 1", 2026-10-15 between 00:00 and 06:00, "loss of connectivity for 1 hour". **No timezone given**: probably BST, i.e. **2026-10-14 23:00Z to 2026-10-15 05:00Z**, but if it's UTC the window is 00:00–06:00Z. Allow for both: **2026-10-14 23:00Z to 2026-10-15 06:00Z**.
+  - **Affected:** everything behind the home connection, i.e. 152.37.104.10 and the 2a01:4b00:8598:5a00::/64 prefix. Hosts: xwing, salvare, aurora (reached via xwing), and virgon-express (inactive). Systems (configy): lucos_dns_secondary (dns2), lucos_static_media, lucos_private, lucos_router@xwing, lucos_media_import, lucos_media_linuxplayer, lucos_docker_health and lucos_firewall @xwing/@salvare. **Also our agent sandboxes**, which use the same home NAT, so agents can't act during that hour.
+  - **Expected side effects:** monitoring alerts on the above for about 1h. **`create-backups` runs at 03:25Z** (lucos_backups cron; the container is in UTC, verified 10-09). It is inside the window, so copies to xwing, salvare and aurora may fail, and the next run is 15:25Z. prune-backups at 04:49Z is also inside. A failure in that window is explained by the maintenance. Still confirm the 15:25Z run went green (loganne/schedule-tracker).
+  - **Not affected:** avalon and everything hosted on it, so alert emails still go out.
+  - Loganne plannedMaintenance advance-notice event posted 2026-10-09T22:22:39Z. Loganne is in-memory, so this note is the durable record. Don't raise an incident report for alerts on the affected hosts in that window if they recover within ~1h of starting. If they last longer, or anything on avalon breaks, investigate as normal.
+
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-09-08
