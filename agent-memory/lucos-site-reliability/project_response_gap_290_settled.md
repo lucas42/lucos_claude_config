@@ -1,11 +1,11 @@
 ---
 name: project-response-gap-290-settled
-description: lucas42/lucos#290 (CLOSED 2026-10-07) covered the CI/Dependabot alert→action gap ONLY; narrow remedy shipped. ⚠️ The SERVICE-alert response gap is NOT covered by #290 and has no open home — don't cite #290 as settling it.
+description: lucas42/lucos#290 (CLOSED 2026-10-07) covered the CI/Dependabot alert→action gap ONLY; narrow remedy shipped. ⚠️ The SERVICE-alert response gap is NOT covered by #290; it is lucas42/lucos#322 (Awaiting Decision).
 metadata:
   type: project
 ---
 
-⚠️ **Scope correction (2026-10-09, caught by lucos-code-reviewer on lucas42/lucos#321):** #290 is about red **CI pipelines**; it explicitly excluded "alerted correctly, nobody acts" and is now CLOSED. I wrote "the alert-to-action gap already settled on #290" in an incident report about a *service* alert (media_manager `empty-queue`) — wrong. Service-alert response gaps (09-14 disk ~4h20m, 10-08 media_manager 2h12m, both alerts verified delivered) have **no open ticket**; I flagged that to team-lead 2026-10-09 and recorded it as considered-not-filed (it's lucas42's notification choice; engineering answer = make failures self-heal). Before citing #290 for any gap, check the gap is the CI shape.
+⚠️ **Scope correction (2026-10-09, caught by lucos-code-reviewer on lucas42/lucos#321):** #290 is about red **CI pipelines**; it explicitly excluded "alerted correctly, nobody acts" and is now CLOSED. I wrote "the alert-to-action gap already settled on #290" in an incident report about a *service* alert (media_manager `empty-queue`) — wrong. Service-alert response gaps (09-14 disk ~4h20m, 10-08 media_manager 2h12m, both alerts verified delivered) are now tracked in **lucas42/lucos#322** (filed 2026-10-09 at team-lead's request, Awaiting Decision for lucas42). I first wrongly parked it as "considered and not filed": a lucas42-owned call gets FILED, whatever the label. Before citing #290 for any gap, check the gap is the CI shape.
 
 **For the CI/Dependabot shape only:** do not re-raise it as a new finding. It was lucas42/lucos#290, and that position is settled — not unexamined.
 
