@@ -15,7 +15,7 @@ If no specific PR was named, run the discovery script first:
 ~/sandboxes/lucos_agent/get-prs-for-review
 ```
 
-This returns every open PR across unarchived `lucas42` repos. Review **every** PR returned, one at a time, applying the full per-PR procedure below. If the script returns no results, send a `SendMessage` to `team-lead` reporting that discovery found no open PRs, then stop. (See Step 8 for the completion-report format.)
+This returns every open PR across unarchived `lucas42` repos. Review **every** PR returned, one at a time, applying the full per-PR procedure below, then run the stuck-PR audit (see end of file) across all of them. If the script returns no results, send a `SendMessage` to `team-lead` reporting that discovery found no open PRs, then stop. (See Step 8 for the completion-report format.)
 
 ## Step 1 — Check for existing reviews
 
@@ -26,7 +26,7 @@ Before reviewing, always check the PR's existing reviews via the API:
   repos/lucas42/{repo}/pulls/{pr_number}/reviews
 ```
 
-If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD commit (compare the review's `commit_id` against the PR's `head.sha`), and no new commits/comments/activity have occurred since, **skip the PR** — note it as "skipped (already reviewed on current HEAD)" in your Step 8 completion SendMessage to `team-lead`.
+If `lucos-code-reviewer[bot]` has already submitted a review on the current HEAD commit (compare the review's `commit_id` against the PR's `head.sha`), and no new commits/comments/activity have occurred since, **skip the review** — note it as "skipped (already reviewed on current HEAD)" in your Step 8 completion SendMessage to `team-lead`. The stuck-PR audit still applies to it.
 
 Do not rely on memory of prior reviews — each agent invocation starts fresh.
 
@@ -207,7 +207,7 @@ The message must cover, briefly:
 - **Discovery result:** what `get-prs-for-review` returned, or the specific PR URL for a `review PR {url}` trigger.
 - **Outcome per PR:** approved / changes requested / specialist consulted / skipped (already reviewed on current HEAD) / none found.
 - **Auto-merge status** for any PR you approved: whether `auto_merge` is non-null (the auto-merge workflow has fired) or null (the gating approval hasn't landed yet — on a supervised repo that means awaiting lucas42, which is the normal healthy state and **not** evidence of stuck-ness).
-- **Stuck-PR escalations:** any stuck PRs found, the category, and the action taken. Omit if none.
+- **Stuck-PR audit (mandatory in every "review any open PRs" report):** state the result per criterion (1–9) for each discovered PR, or explicitly "all 9 criteria checked on {PR list}, none matched". Add category and action for any stuck PR. A report with no audit line means the audit was not run.
 
 Keep it brief — a few lines is enough. The team-lead uses this to decide whether to proceed to triage or wait.
 
@@ -271,9 +271,7 @@ After approving any PR, run these checks before moving on:
 
 ## Stuck PR audit (during "review any open PRs")
 
-As part of every "review any open PRs" pass, audit each open PR for signs it is stuck — cannot make progress without intervention, and no one is actively working on it. Read [`agents/code-reviewer-stuck-pr-guide.md`](../code-reviewer-stuck-pr-guide.md) for the full criteria (7 types), escalation routing table, and post-escalation verification protocol.
-
-When reporting results, include a separate **"Stuck PRs"** section listing any stuck PRs found, the category of stuckness, and the action taken (escalated to whom, or closed). If no stuck PRs were found, omit the section.
+**Required on every "review any open PRs" pass, for every discovered PR — including PRs skipped as "already reviewed on current HEAD" (those are the PRs most likely to be stuck).** Never treat an all-skipped discovery as "nothing to do". Read [`agents/code-reviewer-stuck-pr-guide.md`](../code-reviewer-stuck-pr-guide.md) and work through all 9 criteria, escalation routing, and post-escalation verification. Report per Step 8.
 
 ## What you don't do
 
