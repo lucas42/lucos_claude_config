@@ -108,6 +108,8 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Sweep deadline ≠ refresh interval](reference_sweep_deadline_vs_interval.md) — starved list tail + its failure detection silently off (lucos_root#158)
 - [In-place write vs running script](reference_inplace_write_vs_running_script.md) — git checkout writes in place; a replaced running bash script mixes both versions and exits 0; disk==OLD discriminator
 
+- [JDK HttpClient timeout skips body reads (≤25)](reference_jdk_httpclient_body_timeout.md) — ofString hangs too; sendAsync+get(timeout); fixed in 27
+
 ## Project memories
 
 - [lucos_aithne auth design](project_machine_principal_sessions.md) — ADR-0001 MERGED 2026-06-09; Go, aithne.l42.eu; OIDC OP + passkeys + local-JWKS; mints NO identities; scope-GRANT crown jewel
