@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-06
+container_status: 2026-10-09
 resource_checks: 2026-10-06
 syslog_review: 2026-10-06
 software_updates: 2026-10-06
 sandbox_drift: 2026-10-06
-repos_dashboard: 2026-10-06
+repos_dashboard: 2026-10-09
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-09 run**: checks 1+6 only (2-5 last 10-06, due 10-13; 7-9 last 09-26, due 10-26). Containers clean on avalon/xwing/salvare (no non-Up, none unhealthy) — campaigns crash-loop gone, lucos_campaigns#66 closed 10-05. Dashboard: only worlds_atlas in-lucos-configy (#3, known); photos#551 circleci check now passing. No issues raised.
 
 - **2026-10-06 run**: checks 1-6 done (7-9 not due, last 09-26). NEW OUTAGE: lucos_campaigns_search/_app crash-looping on avalon since Dependabot meilisearch 1.54.1->1.54.3 bump (lucos_campaigns#65 merged 10-05); filed lucos_campaigns#66, flagged to team-lead for SRE. Syslog: journals unreadable w/o sudo on all hosts (known) so check 2 not truly observable. apt: nothing upgradable anywhere. Local VM 82%->55% after docker prune (3.6GB images + builder cache). Sandbox drift: none (hooksPath live). Dashboard: photos#551 + worlds_atlas in-lucos-configy unchanged. Avalon load ok (jobrunner/erts top).
 
