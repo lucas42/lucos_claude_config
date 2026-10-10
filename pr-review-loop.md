@@ -41,7 +41,7 @@ If the code reviewer **approved** the PR:
         --method POST \
         --field 'reviewers[]=lucas42'
     ```
-    Then wait for lucas42's approval before reporting back. If lucas42 has no pending CHANGES_REQUESTED, the PR sits open until he reviews — do not merge.
+    Then wait for lucas42's approval before reporting back. If lucas42 has no pending CHANGES_REQUESTED, the PR sits open until he reviews — do not merge. Once the code reviewer has approved the current head and the PR is only waiting on lucas42, schedule no check (no `ScheduleWakeup`, no polling) — the coordinator relays his review.
 
 **Never call the merge API** — merging is handled by auto-merge (GitHub) or the user. **Before reporting back, re-fetch `pulls/{n}` and check `merged` and `state` — the PR may have already merged between your analysis and the send.** Report the current state accurately: if it's merged, say so; if it's still open, report it as approved and awaiting merge.
 
