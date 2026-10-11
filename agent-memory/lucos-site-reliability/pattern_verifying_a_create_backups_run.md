@@ -16,6 +16,13 @@ docker exec -d lucos_backups sh -c "cd /usr/src/app && . scripts/init-agent.sh &
   pipenv run python -m scripts.create-backups > /tmp/adhoc-backup.log 2>&1"
 ```
 
+**⚠️ That plain command NO-OPS if the last success was <20h ago** (`No-op: recent successful backup (Nh ago), skipping`, exit 0, schedule-tracker success tick). That guard is also why the 03:25 cron rarely posts a loganne event: it is normally skipped by design, not failing. To force a real run, keep the real lock but point the freshness marker elsewhere (`run()` takes it as a param). Then the real marker stays untouched, and the next cron still runs:
+
+```sh
+docker exec -d lucos_backups sh -c "cd /usr/src/app && . scripts/init-agent.sh && pipenv run python -c \"import importlib; importlib.import_module('scripts.create-backups').run(last_success_file='/tmp/adhoc_last_success')\" > /tmp/adhoc-backup.log 2>&1"
+```
+Watch the process with `docker top lucos_backups | grep '[i]mport_module'`.
+
 **Redirect to a file, NOT to `/var/log/cron.log`.** That path is a **FIFO** drained to the container's stdout by `startup.sh`, where it interleaves with the HTTP access log (a `/_info` healthcheck every 10s). A traceback written there loses its body: on 2026-09-16 the first run's exception line survived and every frame after it was gone, so the failure was unexplainable. Second run to a real file: 417 clean lines.
 
 ## Duration
