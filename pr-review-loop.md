@@ -33,7 +33,7 @@ So: get the branch into the state you want merged **before** requesting review. 
 If the code reviewer **approved** the PR:
 
 - **Check supervision status**: run `~/sandboxes/lucos_agent/check-unsupervised {repo}` (exit 0 = unsupervised, exit 1 = supervised).
-  - **Unsupervised repo**: do NOT re-request lucas42. The code-reviewer's approval triggers auto-merge. Never add lucas42 to the reviewer list — it puts a pointless request in his queue for a PR that has already or will auto-merge without him. Your job is done once the PR is approved or merged.
+  - **Unsupervised repo**: do NOT re-request lucas42. The code-reviewer's approval triggers auto-merge. Never add lucas42 to the reviewer list — it puts a pointless request in his queue for a PR that has already or will auto-merge without him. Your job is done once the PR is approved or merged. **Exception — PRs authored by `lucos-code-reviewer`:** it cannot approve its own PR, and the auto-merge workflow fires only on its approval, so no agent route can merge it. Request lucas42 as reviewer (on any repo) and leave it for him to review and merge.
   - **Supervised repo**: check whether lucas42 has a pending CHANGES_REQUESTED (query `pulls/{n}/reviews`). If so, re-request his review now — the code reviewer's approval is the gate before putting the PR back in lucas42's queue. Use the developer app (not the coordinator, which lacks `pull_requests: write`):
     ```bash
     ~/sandboxes/lucos_agent/gh-as-agent --app lucos-developer \
