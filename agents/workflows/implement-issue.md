@@ -71,7 +71,11 @@ git-as-agent --app <persona> -C "$WT" commit -m "…"      # Refs #{number}; see
 git-as-agent --app <persona> -C "$WT" push -u origin "$BRANCH"
 ```
 
-`create-pr` (Step 6) and the review loop are unchanged: `create-pr` acts on the **pushed branch** via `--head "$BRANCH"`, so it is location-independent — run it as in Step 6. Keep the worktree for the life of the issue (commit and push review fixes from it the same way). Once the PR is merged or closed, remove it:
+`create-pr` (Step 6) and the review loop are unchanged: `create-pr` acts on the **pushed branch** via `--head "$BRANCH"`, so it is location-independent — run it as in Step 6. Keep the worktree for the life of the issue (commit and push review fixes from it the same way).
+
+**Every git command that writes a working tree — `checkout`, `switch`, `reset`, `restore`, `clean`, `stash` — takes an explicit `-C "$WT"`; never run one bare or against `$MAIN`.** The shared checkout may hold another agent's uncommitted work, and a destructive command there destroys it silently. This matters most on re-entry (review fixes, a later session), where `$WT` is no longer set: recover it with `git -C "$MAIN" worktree list | grep "\[$BRANCH\]"` rather than checking the branch out in `$MAIN`, which git refuses anyway. Chain with `&&`, never `;`, so a failed step stops what follows.
+
+Once the PR is merged or closed, remove the worktree:
 
 ```bash
 git -C "$MAIN" worktree remove --force "$WT"
