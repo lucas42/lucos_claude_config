@@ -21,7 +21,9 @@ docker exec -d lucos_backups sh -c "cd /usr/src/app && . scripts/init-agent.sh &
 ```sh
 docker exec -d lucos_backups sh -c "cd /usr/src/app && . scripts/init-agent.sh && pipenv run python -c \"import importlib; importlib.import_module('scripts.create-backups').run(last_success_file='/tmp/adhoc_last_success')\" > /tmp/adhoc-backup.log 2>&1"
 ```
-Watch the process with `docker top lucos_backups | grep '[i]mport_module'`.
+Watch the process with `docker top lucos_backups | grep '[i]mport_module'`. **Use a NEW marker path per run.** A successful run writes it, so reusing the path no-ops the next forced run.
+
+**⚠️ The run reads a CACHED `config.yaml`**, refreshed by the hourly `:03` `/refresh-config` cron. A configy change that deployed after the last :03 is invisible to a run until the next refresh. Before verifying a configy-driven change, `curl -X POST localhost:$PORT/refresh-config` inside the container and check `config.yaml`'s mtime (`ls -l --full-time`). (2026-10-11 #344: the first switch-on verification run silently used pre-flag config.)
 
 **Redirect to a file, NOT to `/var/log/cron.log`.** That path is a **FIFO** drained to the container's stdout by `startup.sh`, where it interleaves with the HTTP access log (a `/_info` healthcheck every 10s). A traceback written there loses its body: on 2026-09-16 the first run's exception line survived and every frame after it was gone, so the failure was unexplainable. Second run to a real file: 417 clean lines.
 
