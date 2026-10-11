@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-09
+container_status: 2026-10-11
 resource_checks: 2026-10-06
 syslog_review: 2026-10-06
 software_updates: 2026-10-06
 sandbox_drift: 2026-10-06
-repos_dashboard: 2026-10-09
+repos_dashboard: 2026-10-11
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-11 run**: checks 1+6 only (2-5 last 10-06, due 10-13; 7-9 last 09-26, due 10-26). Containers clean: avalon 61 up, xwing 9, salvare 3 (none non-Up, none unhealthy; virgon-express inactive per configy). Dashboard: only worlds_atlas in-lucos-configy (#3, known). No issues raised. Same day (non-check work): lucos_dns#135 fixed (lucos_dns_secondary#27, `named -u named`, verified on xwing: 5 zone files now on disk); lucos_worlds backups verified (newest 2026-10-10 15:31Z, offsite on xwing+salvare).
 
 - **2026-10-09 run**: checks 1+6 only (2-5 last 10-06, due 10-13; 7-9 last 09-26, due 10-26). Containers clean on avalon/xwing/salvare (no non-Up, none unhealthy) — campaigns crash-loop gone, lucos_campaigns#66 closed 10-05. Dashboard: only worlds_atlas in-lucos-configy (#3, known); photos#551 circleci check now passing. No issues raised.
 
