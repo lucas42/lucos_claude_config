@@ -18,6 +18,8 @@ metadata:
 4. The 3 unique originals (2 taken 09-14 post-snapshot, 1 from July never uploaded) pushed back via `POST /photos` **from inside the API container** — auth is any key in `CLIENT_KEYS` (flat set, not phone-specific), read from the container's own env. EXIF `DateTimeOriginal` is authoritative, so dates were correct without a header; `taken_at` is never defaulted to now.
 5. **Final: 2,253 items, 4 consistency counts all zero, curation intact (127 confirmed faces / 66 named).**
 
+⚠️ **lucos_photos#530's "732 orphans / 1,700 persons" was measured ~16:30Z 09-16 on the all-day DB that the 22:20 restore DISCARDED** (931 + 769 clustered = 1,700). Live has had 0 orphans ever since. On 2026-10-11 I restored the 09-12, 09-18 and 10-11 nightlies and compared each with live by ID: nothing missing; #530 body corrected. Lesson: label any count taken mid-restore with WHICH copy of the DB it came from.
+
 ⚠️ **A resync re-transmits everything**: the SHA is computed from the request body as it streams, so the "already have it" check happens only *after* the whole file arrives. 11GB moves regardless. Measured: 2,253 files over 10.2h wall-clock but only ~32min of active transfer — the phone idles.
 
 - ~~`lucos_mail_smtp` down~~ **FIXED 07:31 2026-09-16** (lucas42/lucos_mail#80). ⚠️ It was **NOT** an unchanged image: lucos_deploy_orb resolves the version from the newest git tag, not the checked-out commit (lucas42/lucos_deploy_orb#193, Critical), so a different image built during the rebuild was deployed, carrying unpinned dovecot with a stricter validator (`2.4` vs `2.4.0`). Pinning: lucas42/lucos_mail#81.
