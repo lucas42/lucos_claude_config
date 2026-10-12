@@ -54,6 +54,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [Hung Python: no py-spy/gdb on prod](pattern_hung_python_process_no_pyspy_use_faulthandler.md) — faulthandler+SIGUSR1 · [Python stdout buffered → print() lost](pattern_python_stdout_buffered_swallows_diagnostics.md).
 - [reconcile_tag_names silent-success masking](pattern_reconcile_silent_success_masking.md) · [A piped copy can't detect a dead sender](pattern_piped_copy_receiver_cannot_detect_truncation.md) — a 0-byte "final" file.
 - [⚠️ locations `location-freshness` is untrustworthy](pattern_locations_silent_data_gap.md) — check `.rec` created_at · [/map 500 + /_info green = oauth2_proxy crash-loop](pattern_locations_oauth2proxy_sidecar_crashloop.md) — only lucas42 can fix.
+- [loganne rewrites 24MB events.json per event (≤1/s)](pattern_loganne_full_file_rewrite_amplification.md) — event streams = ~10MB/s disk writes
 - [avalon disk throttle: ionice no-op, docker --device-*-bps works](pattern_avalon_disk_io_throttle_cgroup.md) — ⚠️ capped job inflates host PSI; gauge OTHER cgroups' io.pressure
 - [Image-pull tail stalls avalon processes](pattern_image_pull_tail_stalls_avalon_processes.md) — photos 3.48GB pull; safepoint log; JDK connectTimeout excludes DNS; media_manager#302
 - [⚠️ avalon DNS=8.8.8.8 since the rebuild → ~1s stalls](pattern_avalon_dns_1s_stall_via_public_resolvers.md) — old host used OVH only; seinn#639 (revert) + monitoring#303
