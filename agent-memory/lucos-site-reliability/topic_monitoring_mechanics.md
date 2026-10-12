@@ -18,3 +18,8 @@ Confirmed 2026-05-06 from `lucos_monitoring/src/fetcher_info.erl:32` (`timer:sle
 - A job that has been failing on a feature branch for weeks does **not** alert. It alerts the moment the first *main* pipeline runs — which is often an unrelated Dependabot merge. **The merge that surfaced it is usually innocent**: check whether the same job already failed on a branch before blaming the commit that appears to have caused it.
 - It does **not** self-clear: only a newer *main* `test-deploy` succeeding clears it. A workflow re-run recreates the same failure; a green feature branch does nothing. So "rerun it and see" is wasted effort on a deterministic failure.
 - Corollary for "what's blocked": orb repos gate `orb-tools/pack`→`increment` on the test jobs with `filters: branches: only: main`, so a red main means **no new orb version can be published** even though branch protection has no required checks. Triage rationales of the form "nothing is blocked, there are no required status checks" expire the moment the failure reaches main — re-derive rather than inherit them.
+
+## Did an alert actually go out? (verified 2026-10-12)
+- **The only reliable signal is a `monitoringAlert` event in loganne.** Its text names the system by title and hostname, e.g. "lucos photos (photos.l42.eu): …".
+- lucos_monitoring's log has **no "Sending alert" line**. It only logs `Not sending alert for <<"check">> as there has only been N recurring failures so far` (`check_normalisation.erl`), and those notices don't name the system.
+- Single unalerted fetch-info failures are background on avalon: several an hour, with a peak at :05–:12 during lucos_media_metadata_api's hourly `rdf-exporter`.
