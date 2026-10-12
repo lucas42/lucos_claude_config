@@ -1,19 +1,22 @@
 ---
 name: project-photos-migration-prep
-description: "State of lucos_photos going into the Google Photos migration (#427) — pre-migration fixes done 2026-10-11, what's still unproven"
+description: "Google Photos → lucos_photos migration (#427/#577): full import RUNNING unattended since 2026-10-12 12:30 UTC, ETA ~2026-10-26; what the next session must do"
 metadata:
   node_type: memory
   type: project
   originSessionId: 612d7504-31f9-4642-9197-51f1fe70c266
-  modified: 2026-10-11T13:52:05.779Z
+  modified: 2026-10-12T16:27:26.223Z
 ---
 
-On 2026-10-11 lucas42 had every Ready lucos_photos ticket except the migration dispatched so known problems were cleared first: #527 (zero-byte uploads), #528 (stuck-count split), #530 (orphan persons), #568 (contact sync hourly + UA), #573 (profile-picture dedupe, two RQ slots per person). All merged. Next step: the migration itself, lucas42/lucos_photos#427, in a fresh session.
+**State at 2026-10-12 ~16:00 UTC:** full import running on avalon in detached container `lucos_photos_migration_import` (`--concurrency 1 --max-pending 10 --max-per-hour 300`, IO caps 5mb/50), started 12:30:56 UTC. media_item 4003; ~95,700 of 97,449 remain → import ETA about **2026-10-26 ~23:00 UTC** if it never stops. Team shut down at lucas42's request, so **no stop-rule watch runs between sessions** — the container keeps going on its own; if it exits, it stays stopped until a session notices.
 
-**Why:** lucas42 wanted lucos_photos clean ahead of the bulk import.
+**Why:** lucas42 accepted ~13½ days at 300/h (SRE) after the unpaced run stalled avalon at 10:48 (worker duty cycle + swap on its single disk).
 
-**How to apply:**
-- #573's dedupe is verified on rq 2.12 locally but has never enqueued in prod — the migration import is its first real test; watch for `enqueue_profile_picture: enqueued profilepic-<uuid>` and one regeneration per person, not one per photo.
-- Live photos DB verified complete against 09-12/09-18/10-11 backups (SRE, 2026-10-11). The "1,700 persons / 732 orphans" figures came from a DB copy discarded on 09-16 — not lost data.
-- lucas42/lucos_photos#469 (pre-name faces) is Blocked and part of the migration; #424 is the epic.
+**How to apply — next session:**
+- Runbook "Long runs" daily check: container `Up`, recent log line, loganne `backups` event (backups run **15:25 UTC**; 03:25 is a retry no-op by design). If exited: check the exit code per the runbook table, `docker rm`, rerun step 6 (ledger skips done files). Refresh `/srv/photos-migration/app/google_takeout_import.py` from origin/main + hash check first if the script changed.
+- Stop rule (#589): loganne `monitoringAlert` for a non-photos service (match hostname; there is NO "Sending alert" log line), or 3+ non-photos services failing fetch-info within 2 min, or pressure clause excluding lucos_photos_*, lucos_loganne and lucos_backups-spawned containers (rsync image + alpine `tar -C /raw-data`). Single :05–:12 blips = hourly rdf-exporter noise.
+- Queued runbook fixes (do in a window, each merge redeploys photos): drop "Sending alert" → loganne monitoringAlert by hostname; exclude backup-spawned containers; script-copy refresh step (partly in #589).
+- After import: step 7 prename, step 8 checks, step 9 (delete import.env, lucas42 revokes `lucos_photos_import/production => lucos_photos/production`), empty /srv/photos-migration; lucas42 sudo-removes root-owned dryrun-skipped.tsv/dryrun2-skipped.tsv, raw-takeout and the dir.
+- #573 dedupe's first prod test is this import; watch for one profile-picture regeneration per person.
+- Open with lucas42: two `lucos_photos_*_moved-aside-2026-09-16` volumes still undecided.
 - Related: [[project-avalon-disk-failure]]
