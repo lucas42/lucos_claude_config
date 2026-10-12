@@ -13,3 +13,8 @@ Verified 2026-10-11 with a positive control: capped direct read 10.2MB/s vs 52MB
 
 **Why:** the 2026-10-11 Takeout extraction storm (lucas42/lucos_photos#577, runbook PR #586).
 **How to apply:** any multi-GB copy, extract or scan on avalon → capped container, never bare; and don't overlap it with a lucos_photos deploy.
+
+**Caps don't cover everything (2026-10-12 full-import stall):**
+- avalon runs about 1.9GB of swap on the same single disk, so memory pressure turns into IO stalls for idle services. lucos_campaigns_db and lucos_worlds_db were mostly swapped out. repos, creds and campaigns `/_info` all timed out while every other container's IO PSI stayed under 10.
+- The photos worker copies uploads into originals with `shutil.move` across volumes, i.e. a full uncapped copy, which bursts on videos.
+- So bound the worker's *duty cycle* (an upload rate limit), not the uploader's reads. Treat multi-service fetch-info failures as the real signal.
