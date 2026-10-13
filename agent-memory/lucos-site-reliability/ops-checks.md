@@ -16,7 +16,7 @@ router_default_ua: 2026-10-09 (30.6h window: both routers restarted 10-08 15:19Z
   - **Affected:** everything behind the home connection, i.e. 152.37.104.10 and the 2a01:4b00:8598:5a00::/64 prefix. Hosts: xwing, salvare, aurora (reached via xwing), and virgon-express (inactive). Systems (configy): lucos_dns_secondary (dns2), lucos_static_media, lucos_private, lucos_router@xwing, lucos_media_import, lucos_media_linuxplayer, lucos_docker_health and lucos_firewall @xwing/@salvare. **Also our agent sandboxes**, which use the same home NAT, so agents can't act during that hour.
   - **Expected side effects:** monitoring alerts on the above for about 1h. **`create-backups` runs at 03:25Z** (lucos_backups cron; the container is in UTC, verified 10-09). It is inside the window, so copies to xwing, salvare and aurora may fail, and the next run is 15:25Z. prune-backups at 04:49Z is also inside. A failure in that window is explained by the maintenance. Still confirm the 15:25Z run went green (loganne/schedule-tracker).
   - **Not affected:** avalon and everything hosted on it, so alert emails still go out.
-  - Loganne plannedMaintenance advance-notice event posted 2026-10-09T22:22:39Z. Loganne prunes older events under its retention policy (it keeps them across restarts), so this note is the record that outlasts that window. Don't raise an incident report for alerts on the affected hosts in that window if they recover within ~1h of starting. If they last longer, or anything on avalon breaks, investigate as normal.
+  - Loganne plannedMaintenance advance-notice event posted 2026-10-09T22:22:39Z — ⚠️ EVICTED from live Loganne by 10-13 (photos import flood, 10k cap); survives only in the lucos_loganne_state 10-12 backup archive. Loganne prunes older events under its retention policy (it keeps them across restarts), so this note is the record that outlasts that window. Don't raise an incident report for alerts on the affected hosts in that window if they recover within ~1h of starting. If they last longer, or anything on avalon breaks, investigate as normal.
 
 ## Container Log Review History
 
@@ -29,7 +29,7 @@ lucos_backups: 2026-10-05 (short window, 16h since StartedAt)
 lucos_repos_app: 2026-09-06
 lucos_dns_bind: 2026-09-26
 lucos_loganne: 2026-09-26 (short window, 28h since StartedAt)
-lucos_configy: 2026-08-28
+lucos_configy: 2026-10-13 (short window, 25h since StartedAt; 3rd+ deferral)
 lucos_contacts_app: 2026-09-18
 lucos_contacts_db: 2026-10-11
 lucos_contacts_googlesync_import: 2026-10-02 (short window, 9.5h since StartedAt)
@@ -41,12 +41,12 @@ lucos_dns_sync: 2026-10-02 (4.4d since StartedAt)
 lucos_eolas_app: 2026-09-18
 lucos_eolas_db: 2026-10-11
 lucos_eolas_web: 2026-09-08 (short window, 39h since StartedAt)
-lucos_locations_mosquitto: 2026-08-28
+lucos_locations_mosquitto: 2026-10-13 (short window, 25h since StartedAt)
 lucos_locations_otfrontend: 2026-09-08
 lucos_locations_otrecorder: 2026-10-09
 lucos_locations_oauth2_proxy: 2026-10-05
 lucos_mail_smtp: 2026-09-08
-lucos_photos_api: 2026-08-28
+lucos_photos_api: 2026-10-13 (short window, 24h since StartedAt; 3rd+ deferral)
 lucos_arachne_ingestor: 2026-09-13 (short window, 53h since StartedAt)
 lucos_arachne_search: 2026-09-13 (short window, 53h since StartedAt)
 lucos_arachne_triplestore: 2026-09-06
@@ -54,7 +54,7 @@ lucos_mail_docs: 2026-10-09
 lucos_photos_postgres: 2026-10-11 (9d since StartedAt)
 lucos_photos_redis: 2026-09-08
 lucos_scenes: 2026-09-08
-lukeblaney_co_uk: 2026-08-27
+lukeblaney_co_uk: 2026-10-13 (short window, 25h since StartedAt)
 lucos_media_manager: 2026-09-27
 lucos_media_metadata_api: 2026-09-18
 lucos_monitoring: 2026-10-02 (3.6d since StartedAt)
@@ -72,11 +72,11 @@ lucos_arachne_mcp: 2026-09-18 (short window, 2h since StartedAt)
 lukeblaney_blog: 2026-09-08
 lucos_docker_health_app: 2026-10-11 (short window, 2d since StartedAt)
 
-lucos_docker_mirror_web: 2026-08-26
+lucos_docker_mirror_web: 2026-10-13 (4.7d since StartedAt; 0 log lines at all)
 lucos_docker_mirror_registry: 2026-10-11 (short window, 2d since StartedAt)
 lucos_worlds_web: 2026-10-02 (laravel.log file since 08-22; docker logs is access-only)
 lucos_worlds_db: 2026-10-05
-lucos_docker_mirror_info: 2026-08-26
+lucos_docker_mirror_info: 2026-10-13 (4.7d since StartedAt)
 lucos_firewall: 2026-09-26
 lucos_campaigns_auth: 2026-10-09
 lucos_campaigns_app: 2026-10-02 (laravel-*.log files since 09-29; docker logs is access-only)
@@ -284,3 +284,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-10-05 ops run (23:39Z): **P1 lucos_campaigns down since 21:23Z.** Dependabot #65 bumped Meilisearch 1.54.1→1.54.3; search refuses the 1.54.1 DB ("database version incompatible") → crash loop; app crash-loops behind it. CI green (fresh volumes), deploy failed, no rollback. Hotfix lucas42/lucos_campaigns#67 (MEILI_UPGRADE_DB=true, repro'd locally), report draft lucas42/lucos#319. RESOLVED 23:53Z (#67 merged 23:47:55, closes sysadmin's #66; 56/56 at 23:54:21; 833 docs migrated). Six teammates notified on draft. Check 2: nothing else since 10-02. Check 3: only campaigns new. Check 4: configy_sync/aithne/oauth2_proxy clean; worlds_db io_uring EPERM warning only; backups :07 BrokenPipe ×14 = #374 (open), moved-aside skips = lucos#306. Estate sweep since 07:15Z burst: mosquitto scanners, mail_smtp SSL_accept scanners, tfluke known, media_manager broken pipes, **googlesync 429 in 5/194 runs (was 1 on 10-02) — WATCH, errors=0, each next run OK**. Monthly 5/6/7 done: CI only campaigns red; /_info 31/32 OK (campaigns); ext deps 200/401/401/200. Check 8 not due (10-02).
 - 2026-10-09 ops run (~22:00Z): Check 1 56/56 healthy. Check 2 (Loganne 09-16→10-09): seinn media-manager ×1 10-06 02:03 (39s, single 800ms reading through failThreshold 2) → commented lucos_monitoring#303. **media_manager empty-queue 10-08 07:56→10:08 (2h12m) = 2nd occurrence of lucos_media_manager#302** (no retry on failed fetch). Trigger: lucos_scenes wake-up PUT current-collection took ~19s, collectionSwitch event 38s late ⇒ media_manager stalled; NO deploy in window (09-29 image-pull theory does not fit); cause unknown, mm+router logs lost to restarts. Commented #302. #302 has no labels and my App cannot see the board (control #303 also 0) ⇒ asked team-lead. Check 3: report draft lucas42/lucos#321 opened, 6 teammates notified — FINISH IT (fold responses, ready, review loop, merge). Check 4: semweb (scanners), mail_docs/exporter/otrecorder 0, creds_ui clean (short), campaigns_auth (Semrush invalid_scope, benign), root_app: campaigns /_info deadline ~1/day since 10-06 — WATCH. Check 8 done. 5/6/7 not due (10-05).
 - 2026-10-11 ops run (~10:45Z, after finishing lucos_backups#344): Check 1 56/56 healthy. Check 2 (10-09→10-11): only flap = lucos_monitoring self fetch-info 10-10 16:13→16:15 after v1.0.97 deploy (+4m14s, gen_server {fetch,all} timeouts in warm-up) = lucos_monitoring#298, commented (4th restart→1 self-alert). Useful fact: a single fetch-info miss never alerts (logs 'only been N recurring failures' up to 4). Check 3: 0 needed (#319, #321 both merged; prior 'FINISH lucos#321' note was stale). Check 4: contacts_db/eolas_db/photos_postgres clean (no log noise around today's pauses); docker_health_app: dockerd restarted 10-09 06:09:08Z → 3 socket fails → exit → recovered 06:11:44, #129 working, no alert; mirror_registry benign. Checks 5/6/7 not due (10-05), 8 not due (10-09). Also today: DNS 10-12 expiry VOID (secondary re-AXFR'd all 5 zones on 10-05 07:18 restart; new earliest ~11-02, only if all refreshes fail); #344 switched on, pauses 3.9–7.6s (lucos_backups#434).
+- 2026-10-13 ops run (~22:00Z): Check 1 55/56, lucos_time `media` buffering 3/5 ('aborted due to timeout' = 900ms budget), recovered in-run; probe from lucos_time: cold HEAD 391–779ms, warm ~55ms ⇒ cold-connection margin is thin; no alert, not filed. **⚠️ Loganne at its 10,000-event cap holds only ~13–17h**: the photos import (#577) emits photoAdded/profilePhotoUpdated/videoAdded at ~350–800/h until ~10-26 ⇒ live Loganne history is useless for Check 2/3. WORKAROUND: stream events.json out of `/srv/backups/local/volume/lucos_loganne_state.<date>.tar.gz` on avalon (`tar -xzOf … ./events.json | python3`), which covered 09-28→10-12 15:30 + 10-13 04:42→15:29; gap 10-12 15:30→10-13 04:42 unrecoverable. Flaps since 10-11: photos db-reachable 10-11 15:31 1min (probable backup pause, commented lucos_backups#434 with pauses up to 29.6s), media_manager empty-queue 10-11 22:49→22:57 (3rd #302, commented; Takeout extraction IO), campaigns auth-gate 10-11 22:55 1min (same IO window). FILED lucos_loganne#655 (non-atomic events.json write → 03:25 tar short read on 10-13; archives verified valid JSON) and lucos_media_manager#308 (topupTracks race → IllegalThreadStateException on double scene press 21:44Z). Check 3: 0 needed. Check 4: estate sweep since 10-12 21:10 burst + 6 rotation containers; mosquitto 750 TLS EOFs from bridge gw 172.16.26.1 (~2min cadence, probably a TCP-only probe — unverified); photos_worker 8× 'image file is truncated' (import); googlesync 429 ×3 (WATCH unchanged). Checks 5/6/7 not due (10-05), 8 not due (10-09, due 10-16). Flagged to team-lead: profilePhotoUpdated 2640 events/13h over 1725 people, one person 258× (vs #573 'one regeneration per person').
