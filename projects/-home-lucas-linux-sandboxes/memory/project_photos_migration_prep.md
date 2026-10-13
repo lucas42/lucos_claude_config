@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 612d7504-31f9-4642-9197-51f1fe70c266
-  modified: 2026-10-12T16:27:26.223Z
+  modified: 2026-10-13T22:27:51.100Z
 ---
 
 **State at 2026-10-12 ~16:00 UTC:** full import running on avalon in detached container `lucos_photos_migration_import` (`--concurrency 1 --max-pending 10 --max-per-hour 300`, IO caps 5mb/50), started 12:30:56 UTC. media_item 4003; ~95,700 of 97,449 remain → import ETA about **2026-10-26 ~23:00 UTC** if it never stops. Team shut down at lucas42's request, so **no stop-rule watch runs between sessions** — the container keeps going on its own; if it exits, it stays stopped until a session notices.
@@ -17,6 +17,7 @@ metadata:
 - Stop rule (#589): loganne `monitoringAlert` for a non-photos service (match hostname; there is NO "Sending alert" log line), or 3+ non-photos services failing fetch-info within 2 min, or pressure clause excluding lucos_photos_*, lucos_loganne and lucos_backups-spawned containers (rsync image + alpine `tar -C /raw-data`). Single :05–:12 blips = hourly rdf-exporter noise.
 - Queued runbook fixes (do in a window, each merge redeploys photos): drop "Sending alert" → loganne monitoringAlert by hostname; exclude backup-spawned containers; script-copy refresh step (partly in #589).
 - After import: step 7 prename, step 8 checks, step 9 (delete import.env, lucas42 revokes `lucos_photos_import/production => lucos_photos/production`), empty /srv/photos-migration; lucas42 sudo-removes root-owned dryrun-skipped.tsv/dryrun2-skipped.tsv, raw-takeout and the dir.
+- **Loganne holds only ~13–17h during the import** (10k-event cap; reported by SRE 2026-10-13). For the `backups` check use schedule-tracker; for stop-rule `monitoringAlert` history older than ~13h use the daily backup archives (fallback documented in `sre-ops-checks.md`).
 - #573 dedupe's first prod test is this import; watch for one profile-picture regeneration per person.
 - Open with lucas42: two `lucos_photos_*_moved-aside-2026-09-16` volumes still undecided.
 - Related: [[project-avalon-disk-failure]]
