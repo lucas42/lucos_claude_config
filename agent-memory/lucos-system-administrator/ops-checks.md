@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-11
-resource_checks: 2026-10-06
-syslog_review: 2026-10-06
-software_updates: 2026-10-06
-sandbox_drift: 2026-10-06
-repos_dashboard: 2026-10-11
+container_status: 2026-10-13
+resource_checks: 2026-10-13
+syslog_review: 2026-10-13
+software_updates: 2026-10-13
+sandbox_drift: 2026-10-13
+repos_dashboard: 2026-10-13
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-13 run**: checks 1-6 done (7-9 not due, last 09-26, due 10-26). Containers clean: avalon 62 up, xwing 9, salvare 3; none unhealthy. apt: nothing upgradable on any host. Syslog unreadable w/o sudo (known). Resources: avalon disk 27%, load 4.84/3.99/3.62 (erlang `prod` ~27% avg since Oct10, not pinned); xwing mem avail 496Mi, load 2.95 (up from baseline, brief); salvare fine; local VM 67% disk. Drift: none (sandbox checkout was 2 dependabot commits behind, pulled). Dashboard: worlds_atlas in-lucos-configy (#3, known) + NEW lucos_photos env_var_passthrough (audit-finding issue should be auto-raised; not checked). No issues raised.
 
 - **2026-10-11 run**: checks 1+6 only (2-5 last 10-06, due 10-13; 7-9 last 09-26, due 10-26). Containers clean: avalon 61 up, xwing 9, salvare 3 (none non-Up, none unhealthy; virgon-express inactive per configy). Dashboard: only worlds_atlas in-lucos-configy (#3, known). No issues raised. Same day (non-check work): lucos_dns#135 fixed (lucos_dns_secondary#27, `named -u named`, verified on xwing: 5 zone files now on disk); lucos_worlds backups verified (newest 2026-10-10 15:31Z, offsite on xwing+salvare).
 
