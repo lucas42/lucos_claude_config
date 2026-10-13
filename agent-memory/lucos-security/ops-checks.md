@@ -10,8 +10,8 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-10-11 |
-| codeql-secret-scanning | 2026-10-11 |
+| dependabot-alerts | 2026-10-13 |
+| codeql-secret-scanning | 2026-10-13 |
 <!-- last updated: 2026-10-02 — 29 dependabot alerts (13 lucos_contacts, 16 lucos_eolas), all PyJWT 2.13.0 batch published 2026-10-01 (+3 stale urllib3 on eolas, lock already 2.8.0). Filed one issue per repo (deviation from one-per-alert; same fix): lucos_contacts#818, lucos_eolas#362. eolas dependabot pip job failing 'Expected Pipfile.lock to change' (certifi). CodeQL: same 3 alerts, no new; 0 secret-scanning. Prior: 2026-09-27 — 0 open dependabot alerts. 3 codeql alerts same as prior runs, still tracked by open issues (lucas42/lucos_contacts#771, lucas42/lucos_contacts_googlesync_import#218, lucas42/lucos_media_metadata_api#325, all re-confirmed open via direct issue fetch). 1 NEW codeql alert: lucos_media_seinn js/stored-xss on tests/web-components.js:82 — investigated, confirmed false positive (document.createElement(tag) fed from local dir listing + regex, test-only file), filed + closed lucas42/lucos_media_seinn#636, dismissed the alert. 0 secret-scanning. -->
 
 ## Monthly checks
@@ -25,3 +25,5 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 <!-- 2026-10-06 run: same 29 dependabot alerts (PyJWT/urllib3 on contacts+eolas), tracked by lucos_contacts#818 / lucos_eolas#362 (open); 3 codeql alerts unchanged, tracked; 0 secret-scanning. Check 3: 63 non-fork repos, all supported-language repos have CodeQL, no gaps. Check 4: 216 workflow files in 61 repos, no third-party uses refs (only lucas42/.github reusables, one pinned by SHA), all declare permissions, only pull_request_target is the reusable auto-merge. No findings. Next monthly due ~2026-11-06. -->
 
 <!-- 2026-10-09 run: 32 dependabot alerts (contacts 14 PyJWT, eolas 13 PyJWT+3 urllib3, tracked by lucos_contacts#818/lucos_eolas#362 open); 2 NEW sprintf-js (GHSA-hp3w-g68c-fv3c, medium, dev-scope, no patch) on lucos_notes + tfluke — auto-resolvable rule, no issue, report only. 3 codeql unchanged/tracked, 0 secret-scanning. Checks 3/4 not due (last 2026-10-06). -->
+
+<!-- 2026-10-13 run: PyJWT alerts all cleared (fixed 2026-10-11). 5 dependabot alerts: eolas 3 urllib3 (develop section of app/Pipfile.lock still 2.7.0, default 2.8.0) -> filed lucas42/lucos_eolas#367; sprintf-js on lucos_notes + tfluke (medium, no patch, auto-resolvable, no issue). 3 codeql unchanged/tracked, 0 secret-scanning. Checks 3/4 not due (last 2026-10-06). -->
