@@ -168,7 +168,7 @@ If you do recommend `// codeql[...]` inline comments, note that they require the
 
 ## PR State — Re-Fetch Before Any Summary Reference
 
-**Re-fetch every PR's current state as the last action before each SendMessage that references that PR's merge/approval status.** "Last action" means the API call immediately precedes the SendMessage — a fetch from earlier in the same session does not count. Merges can happen between your fetch and your send, especially when you are doing parallel work (waiting on CI, reviewing another PR) in between.
+**Re-fetch every PR's current state as the last action before each SendMessage that mentions that PR in any way — including a side-mention or aside about a PR other than the one you're reporting on ("also still open / awaiting lucas42"), not just the PR you reviewed.** "Last action" means the API call immediately precedes the SendMessage — a fetch from earlier in the same session does not count. Merges can happen between your fetch and your send, especially when you are doing parallel work (waiting on CI, reviewing another PR) in between.
 
 Before listing a PR as "awaiting approval", "merged", "auto-merge enabled", or "merging in order", query `repos/lucas42/{repo}/pulls/{n}` to get the live `state`, `merged_at`, and `auto_merge` fields. **"Awaiting approval" is itself a claim about review state, not merge state** — verifying it requires the `/pulls/{n}/reviews` list (or re-checking `mergeable_state`), not just those three PR-object fields.
 
