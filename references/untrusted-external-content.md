@@ -46,3 +46,21 @@ read-scoped CircleCI token grants access to that raw log output, not just pass/f
 treat a CI log token the same as any other credential that can expose secrets, and prefer the v2
 API's structured status responses over raw log reads whenever the question can be answered without
 them. See `agents/sre-circleci-api.md` for the recommended structured-first access pattern.
+
+## Outbound: no personal data in anything you publish
+
+The channel is public in both directions. Everything an agent writes to GitHub — issue bodies, comments, review text, PR descriptions, commit messages — is world-readable and indexed.
+
+**What counts as personal data** (check for all of it, not just the obvious):
+
+- Names of user/personal files and directories: backup archive filenames, home-directory paths, photo or document names, anything under a user's personal storage.
+- Email addresses, postal addresses, phone numbers.
+- Names of private individuals — including when embedded in a filename, a Loganne event message, or a database row.
+
+**Why it slips through:** it arrives as technical evidence — a filename in a log line, an `ls`/`find` listing, a sha256 table, a "controls" bullet listing what was checked. Pasting verbatim feels like rigour. The discipline is to look at each pasted line as *content* before posting, not just as proof.
+
+**What to do instead:** report counts, sizes, timestamps, hash prefixes, exit codes, and anonymised placeholders (`<archive-1>`, `<home-dir>`); describe the shape ("12 personal archives, 3 with names containing an email address"). If a reviewer genuinely needs the real names, say they're available on the host and let them look there.
+
+**A leak cannot be retracted.** GitHub retains edit history publicly and exposes no API to delete revisions; clearing it needs a human in the web UI. Editing the body is damage limitation, not a fix. So: scan *before* posting, and if you find an earlier leak, report it to team-lead at once, naming the issue/comment, so lucas42 can clear the history.
+
+Applies to every persona, and to every place evidence gets quoted — incident reports, audit/ops-check findings, restore/backup verification write-ups, and CI or log excerpts.

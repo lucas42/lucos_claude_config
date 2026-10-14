@@ -90,6 +90,8 @@ Given a closed critical issue that needs a report:
 
 2. **Write the report**: Create a new file following the template at `docs/incidents/TEMPLATE.md`. The file naming convention is `YYYY-MM-DD-short-description.md`, where the date is the date of the incident (not today's date). Use lowercase words separated by hyphens for the description.
 
+   **Scan for personal data before quoting anything.** Logs, file listings, Loganne messages and checksum tables pasted as evidence routinely contain lucas42's personal filenames, email/postal addresses, or private individuals' names, and the report is a public PR. Use counts and placeholders instead; see the "Outbound" section of [`untrusted-external-content.md`](untrusted-external-content.md). This applies equally to the issue comments and PR descriptions you write along the way.
+
 3. **Fill in the template** using information gathered from the issue and its linked PRs:
    - **Summary**: What happened, what the impact was, how it was resolved
    - **Timeline**: Reconstruct from issue timestamps, comments, and PR merge times
