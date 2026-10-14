@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-13
+container_status: 2026-10-14
 resource_checks: 2026-10-13
 syslog_review: 2026-10-13
 software_updates: 2026-10-13
 sandbox_drift: 2026-10-13
-repos_dashboard: 2026-10-13
+repos_dashboard: 2026-10-14
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
@@ -18,7 +18,8 @@ certificate_expiry: 2026-09-26
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **lucos_worlds_atlas archived 2026-10-13 (lucos#327)**: next run confirm it's gone from repos dashboard (`in-lucos-configy` finding should vanish).
+- lucos_worlds_atlas confirmed gone from dashboard 2026-10-14 (done).
+- **2026-10-14 run**: checks 1+6 only (2-5 due 10-20; 7-9 due 10-26). Containers clean: avalon 62 up, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: only lucos_photos env_var_passthrough, tracked as lucos_photos#581 (open). No issues raised.
 
 - **2026-10-13 run**: checks 1-6 done (7-9 not due, last 09-26, due 10-26). Containers clean: avalon 62 up, xwing 9, salvare 3; none unhealthy. apt: nothing upgradable on any host. Syslog unreadable w/o sudo (known). Resources: avalon disk 27%, load 4.84/3.99/3.62 (erlang `prod` ~27% avg since Oct10, not pinned); xwing mem avail 496Mi, load 2.95 (up from baseline, brief); salvare fine; local VM 67% disk. Drift: none (sandbox checkout was 2 dependabot commits behind, pulled). Dashboard: worlds_atlas in-lucos-configy (#3, known) + NEW lucos_photos env_var_passthrough (audit-finding issue should be auto-raised; not checked). No issues raised.
 
