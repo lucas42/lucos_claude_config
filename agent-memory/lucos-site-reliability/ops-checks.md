@@ -27,6 +27,7 @@ router_default_ua: 2026-10-09 (30.6h window: both routers restarted 10-08 15:19Z
   - **ISP window rule:** a run inside the home ISP maintenance window (about **2026-10-14 23:00Z → 2026-10-15 06:00Z**, see the planned-maintenance section) does **not** count for the home hosts (xwing, salvare, aurora). Failures or heals involving them in that run prove nothing either way. Wait for the next real run outside it.
   - **On PASS:** close lucas42/lucos#328 as superseded by lucas42/lucos_backups#437 (comment with the run date and "0 heals, check green"), post the 4b result on #437, then **tell team-lead (the coordinator) so lucas42/lucos_backups#415 can be dispatched**. Move this entry to Notes.
   - **On FAIL** (a heal fires on a run with no new loss, or the check goes red): don't close #328. Post the evidence on #437 and tell team-lead.
+  - ⚠️ Evidence for 4b and #439 goes out as counts, hosts and `<archive-N>` placeholders, never archive filenames: the originals leaked personal data on #437/#439/lucos#328 (2026-10-14). See CLAUDE.md § "Public Repos: Untrusted Content In, No Personal Data Out".
   - Known and expected, not a 4b failure: a spaced-name heal *attempt* from aurora erroring before falling back is lucas42/lucos_backups#439. It only matters if a heal fires at all.
 
 ## Container Log Review History
