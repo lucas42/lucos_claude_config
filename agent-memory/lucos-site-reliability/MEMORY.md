@@ -29,6 +29,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 ## Router / DNS / firewall
 - [New-service TLS failing = cert not issued yet](pattern_router_newdomain_cert_latency.md) — startup + daily 22:16 · [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md).
 - [All l42.eu SERVFAIL = apex zone failed on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon · [⚠️ `*-v4.s.l42.eu` is a deploy route, not a host alias](pattern_s_l42_eu_v4_names_are_not_host_aliases.md) — ssh salvare-v4 → xwing.
+- [salvare is IPv6-only: "Could not resolve" = sandbox lacks global v6](reference_salvare_ipv6_only_reach_via_xwing.md) — use ssh -J xwing
 - [avalon IPv6 bridging via NAT66](reference_avalon_ipv6_bridging.md) — monitoring/time are IPv4-only · [Duplicate `fd00:*::/64` blocks network recreate](pattern_duplicate_ula_subnet_blocks_network_recreate.md) — "Pool overlaps".
 - [Compose silently REUSES a stale network](compose-reuses-stale-network.md) — inspect the live net.
 
