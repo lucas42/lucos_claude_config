@@ -21,7 +21,7 @@ router_default_ua: 2026-10-14 (full 7d both hosts; avalon 2.48M lines, xwing 197
 ## Container Log Review History
 
 lucos_schedule_tracker: 2026-10-14 (short window, 2.1d since StartedAt)
-lucos_media_weightings: 2026-09-13
+lucos_media_weightings: 2026-10-18 (2.6d since StartedAt)
 lucos_photos_worker: 2026-09-27
 lucos_arachne_explore: 2026-09-26 (short window, 28h since StartedAt)
 lucos_arachne_web: 2026-09-27 (2d since StartedAt)
@@ -34,7 +34,7 @@ lucos_contacts_app: 2026-10-17 (4.6d since StartedAt)
 lucos_contacts_db: 2026-10-11
 lucos_contacts_googlesync_import: 2026-10-02 (short window, 9.5h since StartedAt)
 lucos_contacts_web: 2026-10-02 (4.4d since StartedAt)
-lucos_creds: 2026-09-13 (short window, 53h since StartedAt)
+lucos_creds: 2026-10-18 (2.6d since StartedAt)
 lucos_creds_configy_sync: 2026-10-05 (short window, 16h since StartedAt; 4th+ deferral)
 lucos_creds_ui: 2026-10-09 (short window, 14.5h since StartedAt; 53d unreviewed)
 lucos_dns_sync: 2026-10-02 (4.4d since StartedAt)
@@ -47,9 +47,9 @@ lucos_locations_otrecorder: 2026-10-09
 lucos_locations_oauth2_proxy: 2026-10-05
 lucos_mail_smtp: 2026-10-14
 lucos_photos_api: 2026-10-13 (short window, 24h since StartedAt; 3rd+ deferral)
-lucos_arachne_ingestor: 2026-09-13 (short window, 53h since StartedAt)
+lucos_arachne_ingestor: 2026-10-18 (2.6d since StartedAt)
 lucos_arachne_search: 2026-09-13 (short window, 53h since StartedAt)
-lucos_arachne_triplestore: 2026-09-06
+lucos_arachne_triplestore: 2026-10-18 (2.6d since StartedAt)
 lucos_mail_docs: 2026-10-09
 lucos_photos_postgres: 2026-10-11 (9d since StartedAt)
 lucos_photos_redis: 2026-10-14
@@ -61,7 +61,7 @@ lucos_monitoring: 2026-10-02 (3.6d since StartedAt)
 lucos_media_seinn: 2026-09-26
 tfluke: 2026-09-18
 lucos_media_metadata_api_exporter: 2026-10-09
-lucos_media_metadata_manager: 2026-09-13 (short window, 53h since StartedAt)
+lucos_media_metadata_manager: 2026-10-18 (2.6d since StartedAt)
 lucos_notes: 2026-09-13 (short window, 53h since StartedAt)
 lucos_root_app: 2026-10-09
 lucos_router: 2026-09-27 (3d cap)
@@ -288,3 +288,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-10-14 00:00Z: lucas42/lucos_photos#596 deployed 10-13 23:01Z: profilePhotoUpdated fell to 0.08/media (22 in 57min, 22 distinct people). Expect Loganne to hold ~30h of history instead of ~13–17h (arithmetic only), so CONFIRM the fetched range on the next run. #597 steps 2–4 DONE 10-14 (FT copies verified on xwing/salvare, Takeout copy deleted 07:48:35Z); only its post-import script fix remains. lucos#328 restore superseded by the #437 self-heal; see Pending verifications.
 - 2026-10-14 ops run (~23:10–23:30Z): Check 1 55/56: lucos_repos stale-dependabot-prs = lucos_docker_health#130, lucos/build failed at "Generate GitHub App installation token" (curl exit 22, no body logged; one-off). Reran 23:13Z → green, merged 23:22:27Z; alert clears at next 6-hourly PR sweep ~10-15 04:30Z. Check 2: live Loganne only 10-14 09:41Z→ (profilePhotoUpdated still 1920/13.5h; my "~30h" prediction was wrong) + 10-14 archive (10-13 13:39→10-14 03:47); GAP 03:47→09:41 unrecoverable. Flaps: backups backup-without-original 00:15Z = #437 check going live (green now); worlds fetch-info 16:55→16:58 after v1.2.34 deploy: compose --wait returned 0 at its 180s timeout while web still starting (no repro locally on compose 2.27.2 or 5.1.0; ssh transport untested) → FILED lucos_deploy_orb#207. Also 5-min silent gap in worlds init (likely disk contention, not filed). lucos_agent event: stale dir ~/sandboxes/.worktrees/watch-74 = lucos-developer .github#74 watcher, deadline reached 10-14 00:20Z, not running; reported to team-lead. Check 3: 0 reports. Check 4: mail_smtp (scanners only; 172.94.x is PUBLIC, not RFC1918), photos_redis (overcommit warning only), scenes (10-13 21:44 502 = media_manager#308, which I filed), schedule_tracker, eolas_web clean. Deferred repos_app + arachne_triplestore (09-06, restarted 10-14 16:30–16:39): deferral 1. Checks 5/6/7 not due (10-05). Check 8 done.
 - 2026-10-17 ops run (~12:00–13:30Z): **Pending lucos_backups#437 4b PASS** on the 10-16 15:25Z real run (0 heals; 10-15 runs unverifiable, Loganne ~16h + container restarted 10-16 07:18); posted on #437, told team-lead → #415 dispatchable. Check 1 56/56, 220/220 checks healthy. Check 2 (live Loganne 10-16 20:19→; archives 10-15 02:32→15:29 and 10-16 00:14→15:29; gaps filled from lucos_monitoring container log): **backups backup-without-original false red 10-17 10:08→11:07** = invoke 2.2.1 decodes each read chunk separately → non-ASCII one-off filename split mid-UTF-8 → U+FFFD → FILED lucos_backups#441 (+ note on #437). **media_manager #302 ×3: 10-15 06:46→09:25 (2h39m), 10-16 07:37 (39s), 10-16 16:30→23:31 (7h01m)**; all HttpConnectTimeoutException to media-api.l42.eu, 8 connect timeouts since 10-12 (~1.7/day, cause undiagnosed, open question); commented #302. campaigns auth-gate 10-16 07:44 1min = oauth2-proxy answered in 0.324s vs 300ms budget (deliberate, ecdef81); parked on lucos_monitoring#303 (failThreshold:2 once it lands). lucos_repos stale-dependabot recovered 10-15 04:30 as predicted. No lucos_agent events. Check 3: 0 new reports — media_manager outages are the #302 pattern covered by the 2026-10-08 report. Check 4: repos_app (1 sweep fail 10-15 04:49, GitHub 422 'No commit found for SHA: heads/main', one-off, next sweep OK), blog/contacts_app clean, otfrontend 3 location-fetch timeouts 10-15 07:15–07:25, eolas_app fork warning, metadata_api clean (grep hits were fingerprints). Estate sweep since 10-16 07:10 burst: known patterns only; googlesync 1× RefreshError unauthorized_client 10-16 10:00 + 2× 429 in ~346 runs (WATCH). Deferred (restarted since last review): arachne_triplestore (09-06; deferral 2 — REVIEW NEXT RUN regardless), media_weightings/creds/arachne_ingestor+search/metadata_manager/notes (09-13). Checks 5/6/7 not due (10-05). Check 8 not due (10-14).
+- 2026-10-18 ops run (~21:20Z): Check 1 56/56 healthy (lucos_eolas 'buffering' at ~20:40 = its 20:51 deploy, recovered with no alert). Check 2: live Loganne only 10-18 07:08→ (photos import); archives 10-17 00:44→15:29 and 10-18 01:00→15:29; GAP 10-17 15:29→10-18 01:00 covered by the lucos_monitoring container log instead: **0 alerts sent since 10-17 13:00, 0 lucos_agent events**. Sub-threshold clusters of single fetch-info misses: 10-18 16:27 (37 in one minute, plus a poll burst of contacts/root/scenes at ~4–4.7s) = during create-backups archiving worlds_db (pause 28.5s), with the photos import running = lucos_backups#434 class, not filed; 20:37–20:52 (~21 misses) = metadata_api/campaigns/eolas deploys (+ my heavy 144h router-log read ~20:41, can't be separated out; don't repeat it). Check 3: 0 outages >30min → 0 reports. Check 4: arachne_triplestore (290k lines, 0 errors; 2nd deferral cleared), media_weightings (12 SLOW /_info 1–5.4s, all in backup/deploy windows = weightings#209 class), creds (SSH scanner algo-negotiation fails only), media_metadata_manager (php scanner probes only), arachne_ingestor (11 BrokenPipe = its own healthcheck + arachne_explore 172.16.32.6 giving up on a slow /_info, ~4/day, no alert or restart; WATCH, not filed). Checks 5/6/7 not due (10-05), 8 not due (10-14). Also today: #597 closed not planned; filed lucos_photos#599 (22 silently skipped .avi/.m4v); metadata_api#348 deployed + indexes verified; timing comparison owed ~10-21 (p50) and ~10-24 (p95), media_manager log wiped on restart.
