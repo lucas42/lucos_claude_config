@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-17
+container_status: 2026-10-18
 resource_checks: 2026-10-13
 syslog_review: 2026-10-13
 software_updates: 2026-10-13
 sandbox_drift: 2026-10-13
-repos_dashboard: 2026-10-17
+repos_dashboard: 2026-10-18
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-18 run**: checks 1+6 only. Containers clean (avalon 62, xwing 9, salvare 3; none non-Up/unhealthy). Dashboard: only lucos_photos env_var_passthrough (lucos_photos#581, open). No issues raised.
 
 - **2026-10-17 run**: checks 1+6 only (2-5 due 10-20; 7-9 due 10-26). Containers clean: avalon 62 up, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: only lucos_photos env_var_passthrough (detail now lists CONTACT_NAME_SYNC_INTERVAL_SECONDS + PHOTOS_API_KEY/_FILE/BASE_URL), tracked lucos_photos#581 (open). No issues raised.
 
