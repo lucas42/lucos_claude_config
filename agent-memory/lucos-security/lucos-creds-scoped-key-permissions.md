@@ -27,6 +27,8 @@ No other instance across the reachable estate. Production is not covered (see ab
 result is development-only and shouldn't be read as an estate-wide clearance. Re-run rather
 than trust this as a standing fact if asked again after significant time has passed (drift).
 
+**Wall is porous (2026-10-19, lucas42/lucos_creds#603):** the *development* store holds `UI_PRIVATE_SSH_KEY` / `CONFIGY_SYNC_PRIVATE_SSH_KEY` whose public halves (fingerprint-matched) are the committed, unrestricted `lucos_creds_ui` / `lucos_creds_configy_sync` entries — so any agent can read a key that authenticates to the live server with full prod access (login not tested). Fixed by ADR-0007 cutover (lucas42/lucos_creds#600; PR #602 APPROVED by me). Unswept: other prod-authorized creds living in dev entries.
+
 # Design: lucos_creds scoped key permissions (lucos_creds#87, approved 2026-03-13)
 
 `CLIENT_KEYS` format extended with `|` delimiter for optional scopes:
