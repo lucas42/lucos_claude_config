@@ -156,3 +156,4 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - **lucos_locations** — OwnTracks (mosquitto+recorder+frontend). TLS reload inotify+SIGHUP #4.
 - **lucos_docker_mirror** — Pull-through cache docker.l42.eu on avalon. ADR-0001/0002. Incident 2026-04-17.
 - **lucos_docker_health** (lucos#45) — Go distroless, heartbeat healthcheck. Runs as root (socket=root-equiv).
+- [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291: server-generated sidecar keys, grants stay in authorized_keys, committed envfile; ADR pending choice
