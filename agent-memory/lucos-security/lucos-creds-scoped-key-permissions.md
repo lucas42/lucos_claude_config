@@ -56,9 +56,12 @@ take effect.** The deploy writes `.env` from the stale snapshot, not the live st
 the running service never sees the new value, at any point, unless
 `LUCOS_DEPLOY_ENV_BASE64` is also updated. Affected credentials (lucos_creds's own
 `.env`, not creds it stores for others):
-- `UI_PRIVATE_SSH_KEY`, `CONFIGY_SYNC_PRIVATE_SSH_KEY`, `KEY_LUCOS_CREDS` (the most
-  sensitive cryptographic material in the estate — a silently-reverted rotation of
-  `KEY_LUCOS_CREDS` is the worst case)
+- `UI_PRIVATE_SSH_KEY`, `CONFIGY_SYNC_PRIVATE_SSH_KEY` (unrestricted `authorized_keys`
+  entries on main = read/write of every credential in every env).
+- **`KEY_LUCOS_CREDS` does NOT demonstrably exist** (withdrawn 2026-10-19, lucas42/lucos#291):
+  I introduced the name unsourced in lucas42/lucos#138 (commit 3e7ba87, 2026-05-09), then cited
+  my own runbook as evidence. No code/config/human mention; absent from dev store. Never
+  repeat it as fact.
 
 **Status (2026-05-09):** Runbook in lucos_creds#304 should include the explicit
 callout that rotating any credential present in `LUCOS_DEPLOY_ENV_BASE64` without also
