@@ -13,6 +13,7 @@ metadata:
 | red on a PR branch — monitoring cannot see it (`fetcher_circleci.erl` requests `branch=main`) | lucos_repos#491; lucos_arachne#801/802/803 | 24-39h |
 | **no pipeline ever created** — checks never report, nothing is red | lucas42/lucos_aithne#323 | **151.9h** |
 | **auto-merge silently disabled** with CI green | lucas42/lucos_repos#485 | **159.3h** |
+| **auto-merge never armed**: job ran after required checks passed → `enablePullRequestAutoMerge` rejects "Pull request is in unstable status", job exits 1, nothing reruns (found 2026-10-20) | lucas42/lucos_loganne#660; lucas42/.github#77 | 24h (healed by Dependabot's next force-push) |
 
 Seven events, four repos, ~432 cumulative hours. **The two longest are not red-pipeline events at all** (311 of the 432 hours), so any remedy scoped to "re-run red CI" or "show PR-branch CI on the dashboard" misses the worst cases. The common factor is *not progressing*, not *red*. See [[pattern_circleci_400_webhook_drops_pr]] and [[pattern_github_silently_disables_automerge]] for the two non-red mechanisms.
 

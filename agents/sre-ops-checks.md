@@ -290,7 +290,7 @@ timeout 900 docker logs --since "$since" lucos_router 2>/dev/null | awk -F'"' '
   { total++ }
   $6 ~ /^(python-httpx|python-requests|python-urllib|Python-urllib|aiohttp|Go-http-client|node|undici|axios|Java-http-client|Java\/|Apache-HttpClient|okhttp|jose|Wget|GuzzleHttp)/ {
     split($1,a," "); src=a[1]; host=a[length(a)]
-    if (src !~ /^(172\.|192\.168\.|178\.32\.218\.44$|152\.37\.104\.10$)/) next
+    if (src !~ /^(172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|178\.32\.218\.44$|152\.37\.104\.10$)/) next
     if (host == "docker.l42.eu") next
     split($2,r," "); p=r[2]; sub(/\?.*/,"",p); gsub(/\/[0-9]+/,"/N",p); ua=$6; sub(/\/.*/,"",ua)
     n[ua "\t" host "\t" r[1] " " p "\t" src]++
@@ -302,7 +302,7 @@ EOS
 It runs on the host and returns only aggregates (about a minute on avalon), so it needs no scratch space and moves almost nothing over the link. **If `TOTAL` is 0, the probe is broken, not the estate clean.**
 
 The filters are deliberately narrow:
-- **Internal sources only:** the docker bridge (same-host hairpin), the estate hosts' public IPs from `config/hosts.yaml` (cross-host), and the home LAN. Re-derive the IP list from `hosts.yaml` if it has changed. Everything else (scanners such as the `185.177.72.0/24` block, browsers, CircleCI) is external and dropped. ⚠️ On avalon almost everything arrives as `172.16.5.1`, the `lucos_router_default` gateway, including cross-host clients such as xwing's linuxplayer and likely all IPv6 clients. That address proves neither "internal" nor which system sent the request, so scanner-shaped paths (`/sse`, `/mcp` on non-MCP hosts, `HEAD /_next`) get through. List those; don't attribute them.
+- **Internal sources only:** the docker bridge (same-host hairpin; 172.16.0.0/12 only — a bare `172.` admits public scanners), the estate hosts' public IPs from `config/hosts.yaml` (cross-host), and the home LAN. Re-derive the IP list from `hosts.yaml` if it has changed. Everything else (scanners such as the `185.177.72.0/24` block, browsers, CircleCI) is external and dropped. ⚠️ On avalon almost everything arrives as `172.16.5.1`, the `lucos_router_default` gateway, including cross-host clients such as xwing's linuxplayer and likely all IPv6 clients. That address proves neither "internal" nor which system sent the request, so scanner-shaped paths (`/sse`, `/mcp` on non-MCP hosts, `HEAD /_next`) get through. List those; don't attribute them.
 - **Dropped by design:** `curl` (container healthchecks and human/agent tooling), and `docker.l42.eu` (registry pulls).
 - **Known non-system traffic, from the home NAT `152.37.104.10`** (which xwing/salvare, home devices and agent sandboxes all share): agent tooling, i.e. `python-requests` → arachne `POST /mcp` and aithne `POST /oauth2/token`, and `Python-urllib` → configy. List these as known; don't review them.
 
