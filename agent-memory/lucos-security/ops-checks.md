@@ -10,8 +10,8 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 
 | Check | Last run |
 |---|---|
-| dependabot-alerts | 2026-10-21 |
-| codeql-secret-scanning | 2026-10-21 |
+| dependabot-alerts | 2026-10-23 |
+| codeql-secret-scanning | 2026-10-23 |
 <!-- last updated: 2026-10-02 — 29 dependabot alerts (13 lucos_contacts, 16 lucos_eolas), all PyJWT 2.13.0 batch published 2026-10-01 (+3 stale urllib3 on eolas, lock already 2.8.0). Filed one issue per repo (deviation from one-per-alert; same fix): lucos_contacts#818, lucos_eolas#362. eolas dependabot pip job failing 'Expected Pipfile.lock to change' (certifi). CodeQL: same 3 alerts, no new; 0 secret-scanning. Prior: 2026-09-27 — 0 open dependabot alerts. 3 codeql alerts same as prior runs, still tracked by open issues (lucas42/lucos_contacts#771, lucas42/lucos_contacts_googlesync_import#218, lucas42/lucos_media_metadata_api#325, all re-confirmed open via direct issue fetch). 1 NEW codeql alert: lucos_media_seinn js/stored-xss on tests/web-components.js:82 — investigated, confirmed false positive (document.createElement(tag) fed from local dir listing + regex, test-only file), filed + closed lucas42/lucos_media_seinn#636, dismissed the alert. 0 secret-scanning. -->
 
 ## Monthly checks
@@ -33,3 +33,5 @@ A check is due if there is no entry for it, or if elapsed time since last_run >=
 <!-- 2026-10-17 run: identical to 10-15 — 5 dependabot alerts (eolas 3 urllib3 -> lucos_eolas#367; sprintf-js notes+tfluke auto-resolvable, no issue). 3 codeql unchanged, tracked. 0 secret-scanning. Checks 3/4 not due (last 2026-10-06). -->
 
 <!-- 2026-10-18 run: eolas urllib3 cleared (lucos_eolas#367 closed completed). 2 dependabot alerts left: sprintf-js on notes + tfluke (medium, no patch, auto-resolvable, no issue). 3 codeql unchanged, tracked by open issues. 0 secret-scanning. Checks 3/4 not due (last 2026-10-06). -->
+
+<!-- 2026-10-23 run: sprintf-js alerts gone. 1 NEW dependabot alert: lucos_eolas certifi GHSA-6q48-6c7w-9gw2 (critical; develop section of Pipfile.lock still 2026.6.17, default already fixed by merged dependabot PR 372). Opened workaround PR lucas42/lucos_eolas#374 (lucos-code-reviewer messaged, lucas42 requested). 3 codeql unchanged, tracked (contacts#771, googlesync_import#218, media_metadata_api#325). 0 secret-scanning. Checks 3/4 not due (last 2026-10-06). -->
