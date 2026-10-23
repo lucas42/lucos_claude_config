@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-21
+container_status: 2026-10-23
 resource_checks: 2026-10-21
 syslog_review: 2026-10-21
 software_updates: 2026-10-21
 sandbox_drift: 2026-10-21
-repos_dashboard: 2026-10-21
+repos_dashboard: 2026-10-23
 docker_image_staleness: 2026-09-26
 backup_verification: 2026-09-26
 certificate_expiry: 2026-09-26
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-23 run**: checks 1+6 only (2-5 due 10-28; 7-9 due 10-26). Containers clean: avalon 62, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: zero failing conventions (62 repos). No issues raised.
 
 - **2026-10-21 run**: checks 1-6 done (7-9 not due, due 10-26). Containers clean: avalon 62, xwing 9, salvare 3; none non-Up/unhealthy. Journals unreadable w/o sudo on avalon/xwing/salvare (known, #99). apt: nothing upgradable anywhere. Resources: avalon disk 34%, mem avail 2.2Gi, load 2.46/3.23/3.51; xwing disk 36%, mem avail 466Mi, load 1.20; salvare disk 64% (up from 56% on 09-13, watch), load ~0; local VM 67%->53% after image/builder prune. Drift: none. Dashboard: zero failing conventions. No issues raised.
 
