@@ -16,7 +16,7 @@ router_default_ua: 2026-10-20 (full 7d both hosts; avalon 2.60M, xwing 223k). RE
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-(none)
+- **media_manager switch latency after the photos import ends.** Trigger: `lucos_photos_migration_import` on avalon has exited/been removed (check `docker ps -a` each run). Then wait ≥3 days and measure: Loganne `collectionSwitch` `firstBatchLatencyMs` (count >10s and >30s, median, n) and `HttpConnectTimeoutException` count in `docker logs lucos_media_manager` (harvest before deploys wipe it). Baseline (posted lucos_media_manager#302 comment 6376728192, 2026-10-24): post-fix, import running, n=9 median 4.6s, 4 >10s, 2 >30s, max 66.3s; connect timeouts ~1.7/day pre-fix, still occurring. Pre-import pre-fix median 1.5s. If slow switches (>20s) persist ≥2/week without the import → file on lucos_media_manager (process-stall hypothesis: swap/IO pressure; flag sysadmin). Post the result on #302 either way.
 
 ## Container Log Review History
 
