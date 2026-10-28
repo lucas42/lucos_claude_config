@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-10-23
-resource_checks: 2026-10-21
-syslog_review: 2026-10-21
-software_updates: 2026-10-21
-sandbox_drift: 2026-10-21
-repos_dashboard: 2026-10-23
-docker_image_staleness: 2026-09-26
-backup_verification: 2026-09-26
-certificate_expiry: 2026-09-26
+container_status: 2026-10-28
+resource_checks: 2026-10-28
+syslog_review: 2026-10-28
+software_updates: 2026-10-28
+sandbox_drift: 2026-10-28
+repos_dashboard: 2026-10-28
+docker_image_staleness: 2026-10-28
+backup_verification: 2026-10-28
+certificate_expiry: 2026-10-28
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-10-28 run**: all 9 checks done. avalon 61 up (was 62): lucos_photos_migration_import Exited(1) 2026-10-26 02:31Z = one-shot finished, 1 failed upload, log says re-run to retry (expected, photos migration owner). xwing 9, salvare 3 clean. Journals unreadable w/o sudo (known). apt: only tzdata 2026e (non-security) on avalon+xwing. Resources: avalon disk 37% mem avail 2.8Gi load 2.1; xwing disk 38% load 2.12 (transient, ps showed only own ssh/dockerd), salvare disk 68% (56->64->68, watch), local VM 54%. Drift: none; sandbox checkout pulled to origin/main. Dashboard: zero failing (62 repos). Backups: lucos_backups /_info all checks OK, tracking completes. Certs: earliest arachne Dec 1 (34d), xwing Dec 2; none <30d. Images: all current vs upstream. No issues raised. Monitoring shows 8 failing systems (SRE territory).
 
 - **2026-10-23 run**: checks 1+6 only (2-5 due 10-28; 7-9 due 10-26). Containers clean: avalon 62, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: zero failing conventions (62 repos). No issues raised.
 
