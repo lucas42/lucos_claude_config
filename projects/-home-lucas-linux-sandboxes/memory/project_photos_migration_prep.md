@@ -8,7 +8,7 @@ metadata:
   modified: 2026-10-13T22:27:51.100Z
 ---
 
-**UPDATE 2026-10-28:** the import finished uploading on 2026-10-26 at 02:31Z: 96,708 uploaded, 1 FAILED, exit 1. The failure is the expected over-limit #597 video (see SRE comment on #577, 10-18). #577 Owner was moved to lucos-developer, still Ready/High. Next: one step-6 resume (should exit 0), post-import checks, prename (needs lucas42 yes on frozen count), #599 videos decision before step 9. Not yet dispatched.
+**UPDATE 2026-10-28:** the import finished uploading on 2026-10-26 at 02:31Z: 96,708 uploaded, 1 FAILED, exit 1. The failure is the expected over-limit #597 video (see SRE comment on #577, 10-18). #577 Owner was moved to lucos-developer, still Ready/High. Next: one step-6 resume (should exit 0), post-import checks, prename (no lucas42 gate: the 107 pre-cutoff deletion was approved and done on 2026-10-12), #599 videos decision before step 9 clean-up. Dispatched to the developer on 2026-10-28; resume running.
 
 **State at 2026-10-12 ~16:00 UTC:** full import running on avalon in detached container `lucos_photos_migration_import` (`--concurrency 1 --max-pending 10 --max-per-hour 300`, IO caps 5mb/50), started 12:30:56 UTC. media_item 4003; ~95,700 of 97,449 remain → import ETA about **2026-10-26 ~23:00 UTC** if it never stops. Team shut down at lucas42's request, so **no stop-rule watch runs between sessions** — the container keeps going on its own; if it exits, it stays stopped until a session notices.
 
