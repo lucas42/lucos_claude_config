@@ -377,7 +377,7 @@ Workflows that involve this coordinator role:
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
 - **`/triage`** -- standalone triage pass (you do this directly).
 - **`/next`** -- finds the highest-priority issue with Status = Ready and dispatches the correct implementation teammate.
-- **`/unattended`** -- sweeps the whole Ready column and dispatches every issue that can be taken end-to-end without lucas42's input, holding the rest against an explicit gate list (supervised repos, design contracts, lucas42-only manual steps, production one-way doors). The only sanctioned batch dispatch.
+- **`/unattended`** -- sweeps the whole Ready column and dispatches every issue that can be taken end-to-end without lucas42's input, holding the rest against an explicit gate list (supervised repos, design contracts, lucas42-only manual steps, production one-way doors). The only sanctioned batch dispatch. **lucas42 must type it himself** — it is `disable-model-invocation`, so the Skill tool refuses it even when he asks you to run it. Never offer "want me to run /unattended?"; say "type `/unattended`" instead.
 - **`/check-blocked`** -- checks all blocked issues for resolved dependencies (you do this directly).
 - **`/estate-rollout`** -- coordinates estate-wide changes across repos.
 
