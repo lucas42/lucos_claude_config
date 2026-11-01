@@ -40,3 +40,5 @@ set (`maps:keys(SourceChecks)`).
   `:07` `/_info` blackout despite `failThreshold: 2`: monitoring polls it at `:40`/`:47`
   and simply never sees the failure. See [[pattern_dependson_deploy_window_only]] and
   [[feedback_failthreshold_lives_in_info]].
+
+**Dating the bad reading (2026-11-01):** alert time is promotion on another source's update, not the reading. Take recovery minus the 60s poll instead; on two `empty-queue` flaps that landed inside the event-bracketed switch window, while the alert time fell 20-27s after it.
