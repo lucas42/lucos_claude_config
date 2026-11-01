@@ -18,7 +18,7 @@ certificate_expiry: 2026-10-28
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **2026-11-01 photos pre-prenaming backup (lucos_photos#618)**: copied to avalon `/srv/backups/local/one-off/lucos_photos_postgres_data.2026-10-28.pre-prenaming.tar.gz` (sha256 b58c0eaf…62e1). TODO: after 15:25 UTC 2026-11-01 create-backups run, confirm replicas at `host/avalon/one-off/` on xwing + salvare (+aurora via xwing) and say so on lucos_photos#618. Original volume backup prunes 11-04 04:49 UTC (expected).
+- **2026-11-01 photos pre-prenaming backup (lucos_photos#618)**: DONE — replicated to xwing, salvare (sha256-verified) and aurora (size only; no login as lucos-agent, listed via lucos_backups' Host code); reported on #618. Original volume backup prunes 11-04 04:49 UTC (expected).
 
 - **2026-11-01 local VM /run tmpfs 100% full** (793M, 687k inodes): `/run/containerd/io.containerd.runtime.v2.task/moby/<id>/.<execid>.pid` files leak per healthcheck exec (10s interval) in long-running `lucos_creds_ui` + `lucos_loganne` dev containers; docker couldn't start containers (`no space left on device` writing config.json). Fixed by `docker restart` of both (/run 793M->1.3M). Will recur in ~2 months; add `df -h /run` to Check 4 local-VM step and consider an issue on lucos_agent_coding_sandbox if it recurs. Root cause (containerd exec-pid leak) unverified.
 
