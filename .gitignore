@@ -51,6 +51,7 @@ scripts/*.log
 # tracked condition doesn't need a matching .gitignore edit.
 scripts/.return-to-main-*
 scripts/.prune-worktrees-*
+scripts/.refresh-sandboxes.lock
 
 # GitHub Actions workflows and other repo config
 !.github/
