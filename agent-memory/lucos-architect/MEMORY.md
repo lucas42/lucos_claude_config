@@ -107,7 +107,6 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Ops checks duplicating running machinery](reference_ops_checks_duplicate_machinery.md) — 3 of SRE's 7 already automated; /routine barrier makes reallocation a no-op
 - [Sweep deadline ≠ refresh interval](reference_sweep_deadline_vs_interval.md) — starved list tail + its failure detection silently off (lucos_root#158)
 - [In-place write vs running script](reference_inplace_write_vs_running_script.md) — git checkout writes in place; a replaced running bash script mixes both versions and exits 0; disk==OLD discriminator
-
 - [JDK HttpClient timeout skips body reads (≤25)](reference_jdk_httpclient_body_timeout.md) — ofString hangs too; sendAsync+get(timeout); fixed in 27
 
 ## Project memories
@@ -133,9 +132,8 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Kanka for Kaidoho](project_kanka_campaigns.md) — lucos#309 → lucos_campaigns #1-#6; ADR-0001 drafted; crit path #1→#2→#3; 3.15 properties findings
 - [lucos_mail linked creds](project_mail_linked_creds.md) — mail#86 revised 2026-10-18: all clients incl NAS via CLIENT_KEYS (`external_nas` pseudo-system); #85 fail-closed
 - [Photos face clustering](project_photos_face_clustering.md) — #618 gate+eps not min_samples; confirmed 92-98% tier 1; #622 labels design; 10-28 backup prunes 11-04
+- [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
 
 ## Per-project pointers
 
 Quick pointers for each lucos_* repo are in [project-details.md](project-details.md).
-
-- [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
