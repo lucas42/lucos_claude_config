@@ -1,17 +1,21 @@
 ---
 name: project-photos-face-clustering
-description: lucos_photos face-grouping quality (#618/#620/#623, 2026-10-28) — single-linkage chaining + permissive detection; confirmed≠human-verified; measured scoring costs
+description: lucos_photos face-grouping quality (#618/#620/#622/#623) — chaining fixed by gate+eps not min_samples; confirmed is 92-98% prename tier 1; #622 design posted; re-measured on finished table 2026-11-01
 metadata:
   type: project
 ---
 
-Snapshot as of 2026-10-28 (the migration in lucas42/lucos_photos#577 was still running; counts were moving).
+Re-measured 2026-11-01, after the migration in lucas42/lucos_photos#577 closed (10-29). The table is near-static now. Decisions still with lucas42 on #618.
 
-- **Cause (#618):** detection has `det_thresh=0.5` and no minimum face size, so it produces dense junk. BOTH assignment paths are single-linkage: step 2 of detection copies the person of the single nearest face (ML-assigned faces count as anchors), and `cluster_faces` uses DBSCAN with `min_samples=1`, so nothing is ever treated as noise. That gave 37.7k persons for 98.5k faces. The Google import amplified the effect about 70×, but the junk clusters themselves were seeded in March, before the import.
-- **Two failure modes:** junk sinks (small, low-confidence detections) are caught by a quality gate. Chained real strangers are high-quality faces, so only robust matching (a k-NN vote) catches them. The repair adds step 5b: detach a face by its median distance to the rest of its cluster.
-- **Durability of corrections:** move/assign sets `person_confirmed=True` and is durable. Unassign only nulls `person_id`, so the face gets re-clustered and re-attached. There is no negative label ("not this person").
-- **`person_confirmed` mixes human corrections with prename tier-1 confirmations.** 187 confirmed faces in the largest person score >0.75. This undermines "never touch confirmed"; suggested a `confirmed_by` provenance field.
-- **#620:** `photo_person` was a stored copy of a derivation, missing about a third of rows. Decided: replace it with a view over `face` (the homepage query goes from 87ms to 240–333ms).
-- **#623 scoring:** median distance to a seeded sample of 500 cluster faces, computed in numpy in the API (0.05s on 6.4k faces). The pgvector SQL version timed out at 20s. The API image has no numpy. Threshold 0.7, not 0.6, because median-to-cluster distance runs higher than pairwise distance.
+- **Cause (#618):** `det_thresh=0.5` with no gate produces dense junk. BOTH assignment paths are single-linkage: step 2 copies the single nearest face's person, `cluster_faces` is DBSCAN `min_samples=1`. Junk seeded in March, import amplified about 70×.
+- **`min_samples>1` does NOT fix it — I proposed that and measured it wrong.** All 10 junk groupings are one connected component at eps 0.5 (9,009 of 9,022), still 8,790 at min_samples 10. What breaks it: `det_score>=0.7` AND eps 0.4–0.45 (largest 172 / 446). Whole-table sim: eps 0.4 keeps labelled people 82% together with 45% noise; 0.45 gives 89% / 38%. Both 231s at 2 threads; eps 0.5 unmeasured (overran). Dry run shows both; lucas42 picks.
+- **Gate:** `det_score` alone. Pixel threshold adds almost nothing; embedding norm is no better. Pairwise diameter does NOT discriminate (clean people 43–82% of pairs >0.5) — always needed a control.
+- **`person_confirmed` is now 9,963, 92–98% prename tier 1** (not 830). Sources: assign, bulk move, tier 1, `merge_people` (confirms ALL loser faces, reviewed or not), reprocess re-apply. A single face's high score does NOT show it's wrong — likely-human corrections score worst (selection). Person-level coherence is the better signal: 40 of 175 persons have median confirmed distance >0.7. Five sent to lucas42 for a visual check.
+- **Tier 2 isn't robust:** it uses the confirmed centroid, so bad tier 1 steers it. Centroids need a coherence check first.
+- **Provenance:** the ledger never recorded faces and was deleted. Exact source = `lucos_photos_postgres_data.2026-10-28` (15:36, before prename) — pruned from 2026-11-04 per `toKeep()`. Takeout archives on avalon are the last per-photo copy of Google names.
+- **Unassigned faces have no UI route to tagging:** the only assignment call in templates is the bulk move from a person page. `DELETE /faces/.../person` has no caller at all.
+- **#622 design (posted 2026-11-01):** `face.not_a_face_at` column + `face_person_rejection` table (two relations, two shapes). Face ids are NOT stable — `detect_and_save_faces` deletes and reinserts, so labels need snapshot+reapply. `cluster_faces` only creates persons, so it can't violate "not P". Merge must move labels and detach conflicts. Only real #618 interaction: dissolve cascades labels away, so repair first or spec an exemption.
+- **#620:** replace `photo_person` with a view. Gap now 15%, not a third.
+- **#623 scoring:** sampled numpy, threshold 0.7, unconfirmed only (so all of tier 1 is outside it).
 
-**How to apply:** check the decisions lucas42 made on #618 before speccing the matching or repair tickets. The worker's logs are lost on every container restart, so provenance cannot be recovered from logs.
+**How to apply:** check what lucas42 decided on #618 before speccing matching or repair tickets. Worker logs are lost on container restart. Run measurement scripts with `docker exec c timeout N python -`: faster-to-fail guards matter on avalon, and my one overrun left a process running in the worker until I killed it.

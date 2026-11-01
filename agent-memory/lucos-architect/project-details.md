@@ -202,3 +202,27 @@ Awaiting lucas42 decision.
   - Phase 1: Gregorian + DayOfWeek only, skip non-Gregorian calendars
   - Response: `{ items: [{uri, name, type}], evaluated_calendars, timezone, as_of }`
   - Follow-up tickets: lucos_time#74 (non-Gregorian), lucos_eolas#67 (JSON list), lucos_eolas#68 (festival duration)
+
+## Per-project quick pointers
+
+- **lucos_photos** — FastAPI+worker+Postgres+Redis. ADR-0001 pgvector. Face→contact #104 needs contacts #529.
+- **lucos_contacts** — Django. JSON API #529. Relationship deletion #53 → ADR-0001/0002.
+- **lucos_arachne** — nginx+Typesense+Fuseki+Python ingestor. Webhook-driven. Fuseki `raw_arachne`(RW)+`arachne`(RO); inference in ingestor. Merge: search-index #539 done, item-page #567, sameAs #566 open.
+- **lucos_eolas** — Django. Canonical cross-domain metadata; write API shipped. ADR-0001 established `docs/adr/`.
+- **lucos_media_metadata_api** — Go+SQLite. v3 shipped; arrays-everywhere wire format. Album=`mo:Record`. arachne#326 latent bug.
+- **lucos_media_manager** (ceol.l42.eu) — Java long-polling. NOT media_metadata_manager.
+- **lucos_media_metadata_manager** — PHP front-end. Client-side Typesense via arachne (#51).
+- **lucos_media_weightings** — Python cron. Multiplier soft cap 100 (#39).
+- **lucos_media_seinn** — Node.js player. Playback sync #14.
+- **lucos_media_linuxplayer** — Node.js+mplayer on ARM. Stale-position on device switch.
+- **lucos_configy** — Rust API. Single-host-for-domain (#25) Option A.
+- **lucos_monitoring** — Erlang OTP. Flappiness #74 CLOSED; no open warning-tier issue — don't cite #74 for that.
+- **lucos_root** — Static+Apache. /_info 3-tier schema (lucos#35).
+- **lucos_repos** — Go+SQLite convention auditing. ADR-0003 dry-run sweep; ADR-0004 auto-close audit issues.
+- **lucas42/.github** — Reusable workflows. Dependabot SHA pinning #34; tag versioning #35; smoke gate #38.
+- **lucos_creds** — Go AES-GCM. CLIENT_KEYS automated from linked creds. Scoped perms #87.
+- **lucos_loganne** — Node.js, static webhook config. Auth migration #374 (per-consumer linked creds).
+- **lucos_time** — Node.js. `/current-items` #70; `commemorates` predicate.
+- **lucos_locations** — OwnTracks (mosquitto+recorder+frontend). TLS reload inotify+SIGHUP #4.
+- **lucos_docker_mirror** — Pull-through cache docker.l42.eu on avalon. ADR-0001/0002. Incident 2026-04-17.
+- **lucos_docker_health** (lucos#45) — Go distroless, heartbeat healthcheck. Runs as root (socket=root-equiv).

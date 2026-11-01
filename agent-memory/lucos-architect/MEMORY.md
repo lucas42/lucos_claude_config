@@ -132,29 +132,10 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Monitoring refactor](project_monitoring_refactor.md) — monitoring#307 four-concern split; seam = state-tuple confinement below L317; ADR-0001 is interface-not-layout
 - [Kanka for Kaidoho](project_kanka_campaigns.md) — lucos#309 → lucos_campaigns #1-#6; ADR-0001 drafted; crit path #1→#2→#3; 3.15 properties findings
 - [lucos_mail linked creds](project_mail_linked_creds.md) — mail#86 revised 2026-10-18: all clients incl NAS via CLIENT_KEYS (`external_nas` pseudo-system); #85 fail-closed
-- [Photos face clustering](project_photos_face_clustering.md) — #618 single-linkage+junk; #620 view; #623 sampled numpy scoring, 0.7; confirmed≠human
+- [Photos face clustering](project_photos_face_clustering.md) — #618 gate+eps not min_samples; confirmed 92-98% tier 1; #622 labels design; 10-28 backup prunes 11-04
 
-## Per-project pointers (depth in project-details.md)
+## Per-project pointers
 
-- **lucos_photos** — FastAPI+worker+Postgres+Redis. ADR-0001 pgvector. Face→contact #104 needs contacts #529.
-- **lucos_contacts** — Django. JSON API #529. Relationship deletion #53 → ADR-0001/0002.
-- **lucos_arachne** — nginx+Typesense+Fuseki+Python ingestor. Webhook-driven. Fuseki `raw_arachne`(RW)+`arachne`(RO); inference in ingestor. Merge: search-index #539 done, item-page #567, sameAs #566 open.
-- **lucos_eolas** — Django. Canonical cross-domain metadata; write API shipped. ADR-0001 established `docs/adr/`.
-- **lucos_media_metadata_api** — Go+SQLite. v3 shipped; arrays-everywhere wire format. Album=`mo:Record`. arachne#326 latent bug.
-- **lucos_media_manager** (ceol.l42.eu) — Java long-polling. NOT media_metadata_manager.
-- **lucos_media_metadata_manager** — PHP front-end. Client-side Typesense via arachne (#51).
-- **lucos_media_weightings** — Python cron. Multiplier soft cap 100 (#39).
-- **lucos_media_seinn** — Node.js player. Playback sync #14.
-- **lucos_media_linuxplayer** — Node.js+mplayer on ARM. Stale-position on device switch.
-- **lucos_configy** — Rust API. Single-host-for-domain (#25) Option A.
-- **lucos_monitoring** — Erlang OTP. Flappiness #74 CLOSED; no open warning-tier issue — don't cite #74 for that.
-- **lucos_root** — Static+Apache. /_info 3-tier schema (lucos#35).
-- **lucos_repos** — Go+SQLite convention auditing. ADR-0003 dry-run sweep; ADR-0004 auto-close audit issues.
-- **lucas42/.github** — Reusable workflows. Dependabot SHA pinning #34; tag versioning #35; smoke gate #38.
-- **lucos_creds** — Go AES-GCM. CLIENT_KEYS automated from linked creds. Scoped perms #87.
-- **lucos_loganne** — Node.js, static webhook config. Auth migration #374 (per-consumer linked creds).
-- **lucos_time** — Node.js. `/current-items` #70; `commemorates` predicate.
-- **lucos_locations** — OwnTracks (mosquitto+recorder+frontend). TLS reload inotify+SIGHUP #4.
-- **lucos_docker_mirror** — Pull-through cache docker.l42.eu on avalon. ADR-0001/0002. Incident 2026-04-17.
-- **lucos_docker_health** (lucos#45) — Go distroless, heartbeat healthcheck. Runs as root (socket=root-equiv).
+Quick pointers for each lucos_* repo are in [project-details.md](project-details.md).
+
 - [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
