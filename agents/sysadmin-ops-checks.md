@@ -106,7 +106,11 @@ df -h                    # root filesystem — flag if above 80%
 free -h                  # memory
 uptime                   # load
 docker system df         # Docker images/containers/volumes/build cache — the main space consumer on this VM
+df -h /run               # tmpfs; flag above 50% (a full /run stops Docker starting containers while / looks fine)
+docker ps --filter health=unhealthy
 ```
+
+A container unhealthy for days with `Health check exceeded timeout` in its health log both is broken and leaks a pid file under `/run/containerd/` per timed-out check: stop and remove it (or restart it if it should run). Passing or exit-1 checks don't leak. See lucas42/lucos_agent_coding_sandbox#120.
 
 If root filesystem is above 80%, investigate with `du -h --max-depth=2 / --exclude=/proc --exclude=/sys --exclude=/dev --exclude=/run 2>/dev/null | sort -rh | head -20`. Key known consumers on this VM:
 - **Docker images/build cache**: the largest consumer; `docker image prune -a -f` removes all unused images; `docker builder prune -f` clears build cache
