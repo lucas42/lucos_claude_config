@@ -5,9 +5,9 @@ metadata:
   type: project
 ---
 
-2026-11-03: proposed on lucas42/lucos_monitoring#320 (awaiting lucas42's pick). Option A = read `ci/circleci:*` commit statuses on main HEAD via one GraphQL query/min (cost 1 pt), auth via dedicated GitHub App (Metadata+Commit statuses read). B = keep CircleCI token + jitter + 401 alert. C = webhooks (rejected).
+2026-11-03: proposed on lucas42/lucos_monitoring#320; lucas42 approved A in chat same day. Tickets: #324 (lucas42 creates App), #325 (impl, Blocked on #324, after #321), #326 (revoke CircleCI key, Blocked on #325). Interim: redeploy with CircleCI key. Option A = read `ci/circleci:*` commit statuses on main HEAD via one GraphQL query/min (cost 1 pt), auth via dedicated GitHub App (Metadata+Commit statuses read). B = keep CircleCI token + jitter + 401 alert. C = webhooks (rejected).
 
-Measured CircleCI limits (headers, not published): 300/s global (`x-ratelimit-limit`, reset 1), 50/s on `/pipeline/:id/workflow` route. Monitoring: ~316 req/60s cycle, but 56 in-step loops → ~52-request workflow bursts just over 50/s. Anonymous workflow endpoint returns 404 "Pipeline run not found."
+Measured CircleCI limits (headers, not published): 300/s global (`x-ratelimit-limit`, reset 1), 50/s on `/pipeline/:id/workflow` route. Monitoring: ~316 req/60s cycle. My 'in-step burst' claim was wrong — SRE: loops are in step only at startup (period = 60s + own work), spread within cycles. Anonymous workflow endpoint returns 404 "Pipeline run not found."
 
 **Why:** lucas42 refuses manual rotation; CircleCI PATs must expire ≤1yr and can only be created in the UI. GitHub App PEMs don't expire, installation tokens self-rotate.
 

@@ -133,7 +133,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [lucos_mail linked creds](project_mail_linked_creds.md) — mail#86 revised 2026-10-18: all clients incl NAS via CLIENT_KEYS (`external_nas` pseudo-system); #85 fail-closed
 - [Photos face clustering](project_photos_face_clustering.md) — #618 gate+eps not min_samples; confirmed 92-98% tier 1; #622 labels design; 10-28 backup prunes 11-04
 - [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
-- [Monitoring CI source](project_monitoring_ci_source.md) — monitoring#320: CircleCI PAT → GitHub statuses + read-only App; measured 50/s workflow route; awaiting pick
+- [Monitoring CI source](project_monitoring_ci_source.md) — monitoring#320: CircleCI PAT → GitHub statuses + read-only App; A approved → #324/#325/#326
 
 ## Per-project pointers
 
