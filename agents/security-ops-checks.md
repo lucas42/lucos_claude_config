@@ -156,9 +156,10 @@ Identify repos with supported languages (Python, JavaScript/TypeScript, Java) bu
 **CodeQL supported languages (exhaustive list):** C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift. Do NOT raise CodeQL coverage issues for any other language — PHP in particular is not supported. If a repo's primary language is unsupported, skip it silently.
 
 ```bash
-~/sandboxes/lucos_agent/gh-as-agent --app lucos-security \
-  "/users/lucas42/repos?per_page=100" --jq '[.[] | select(.archived == false and .fork == false) | .name]'
+~/sandboxes/lucos_agent/gh-as-agent --app lucos-security graphql --field query='query { repositoryOwner(login:"lucas42") { repositories(first:100, isArchived:false, isFork:false) { totalCount pageInfo{hasNextPage} nodes { name primaryLanguage{name} } } } }'
 ```
+
+This is the estate repo list for Checks 3 and 4. Don't swap in the REST `users/lucas42/repos` listing: it silently drops repos (see CLAUDE.md § "Null results and counts", "Estate sweeps"). Confirm `hasNextPage` is false and `nodes` length equals `totalCount`.
 
 For each active non-fork repo, check whether `.github/workflows/codeql-analysis.yml` (or equivalent) exists. Also check the primary language via the repo metadata (`language` field). Raise an issue on any repo that has Python, JavaScript, TypeScript, or Java as a primary language but lacks a CodeQL workflow — unless an issue already exists requesting it.
 
@@ -170,7 +171,7 @@ After completing, update `codeql-coverage` in `ops-checks.md` with today's date.
 
 Check `ops-checks.md` for `github-actions-audit` last_run date; skip if less than a month ago.
 
-**Scope: core lucos estate only.** Exclude forked repositories — these are forks of upstream open source libraries maintained externally and are not in scope. Filter using `select(.archived == false and .fork == false)` when fetching the repo list.
+**Scope: core lucos estate only.** Exclude forked repositories — these are forks of upstream open source libraries maintained externally and are not in scope. Use the repo list from Check 3.
 
 For each active non-fork lucas42 repo, fetch `.github/workflows/*.yml` and check for:
 
