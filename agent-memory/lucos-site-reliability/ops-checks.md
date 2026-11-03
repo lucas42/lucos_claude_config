@@ -16,7 +16,7 @@ router_default_ua: 2026-10-28 (avalon 59h since router StartedAt 10-26 07:19, 80
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-(none)
+- After 2026-11-04 05:00Z: lucos_backups `create-backups` (03:25Z run) and `prune-backups` (04:49Z) green, with salvare copies (and repository archives reaching xwing+salvare). Then fill the two TBDs in draft incident report PR lucas42/lucos#332, fold in teammate responses, re-verify ticket states, mark ready, drive the review to merge.
 
 ## Container Log Review History
 
