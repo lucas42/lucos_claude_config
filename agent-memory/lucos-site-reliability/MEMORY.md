@@ -24,7 +24,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [aurora access + rsync](reference_aurora_access_and_rsync.md) — ⛔ NOT via the container key; ask lucas42 (lucos#301) · [host-tracking "<host>: 'low'" = bad recreate_effort](pattern_backups_invalid_effort_crashes_host_tracking.md) — fix in configy.
 - [Backups needs NO rsync on hosts](pattern_backups_rsync_binary_missing_from_image.md) — copyTo=scp; incremental rsync runs in the image (#315 reverted #311).
 - [Hourly backups+docker_health avalon flap during a home-host outage = #374](pattern_backups_refresh_tracking_blocks_when_host_unreachable.md) — refresh-tracking blocks ~127s/host
-- [Triggering + verifying an ad-hoc create-backups run](pattern_verifying_a_create_backups_run.md) — ⚠️ no-ops <20h after success (force via run(last_success_file=…)); log FIFO; ~15min; 72h blind spot
+- [Triggering + verifying an ad-hoc create-backups run](pattern_verifying_a_create_backups_run.md) — ⚠️ no-ops <20h after success (force via run(last_success_file=…)); ⛔ /var/log/cron.log is a FIFO: reading it STEALS lines, use docker logs; ~15min; 72h blind spot
 - [localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 mismatch](pattern_backups_sshadd_gates_server_start.md) — test v4, localhost and [::1].
 
 ## Router / DNS / firewall
