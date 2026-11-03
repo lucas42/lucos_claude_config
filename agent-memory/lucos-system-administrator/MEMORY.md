@@ -12,7 +12,7 @@
 - **Verify timeline before stating root cause**. `feedback_verify_timeline_before_stating.md`.
 - **Verify-before-propagating** (5 instances: unverified-host generalising, plausibility-inferred facts, dropped hedges, wrapper-tag-as-upstream-version, generalised-absence-claim) — same root failure: asserting past the evidence. `feedback_verify_before_propagating.md`.
 - **Verify the dispatch premise before shipping a fix** — false triggers can make valid fixes ship for wrong reasons. `feedback_verify_dispatch_premise.md`.
-- **Estate-wide sweeps**: always `users/lucas42/repos?per_page=100`, never a partial sample — missed 3 repos in the 2026-04-21 batch.
+- **Estate-wide sweeps**: never a partial sample (missed 3 repos 2026-04-21); REST `users/lucas42/repos` also drops repos — reconcile vs GraphQL per CLAUDE.md "Null results and counts".
 - **GitHub API timestamps are UTC; VM is BST (UTC+1)**. `timezone-github-api.md`.
 - **xwing/salvare**: `accept_ra=2` (2026-04-20) — Docker `forwarding=1` silently disables RA. `xwing-ipv6-accept-ra.md`.
 - **Docker `memswap_limit` default** = 2× `mem_limit`; set explicitly to prevent swap. `docker-memswap-default.md`.
