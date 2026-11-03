@@ -49,6 +49,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [⚠️ Losing schedule_tracker_db forgets stopped jobs](pattern_schedule_tracker_db_loss_forgets_stopped_jobs.md) — NEVER wipe it · [history from loganne, not /api/status](feedback_monitoring_history_from_loganne_not_snapshots.md).
 - [No ack state; red means down](feedback_red_means_down_no_ack_state.md) · [`/suppress` = deploy window](pattern_monitoring_suppress_is_deploy_window_only.md) · [dependsOn only in deploy windows](pattern_dependson_deploy_window_only.md) · [two read sites](pattern_dependson_two_read_sites.md).
 - Flapping: [re-alerts once per deploy isn't flapping](pattern_monitoring_realert_per_deploy.md) · [a crash-loop flaps docker_health](pattern_docker_health_crashloop_flapping.md) · [cross-probe flap in a rollout = LEGIT 401](pattern_deploy_window_boundary_crossprobe_flap.md) · [don't accept flaps as "expected"](feedback_no_flap_tolerance.md).
+- [⚠️ monitoring circleci loops stay IN STEP → 429s every cycle](pattern_monitoring_circleci_loops_stay_in_step.md) — #322; 429 only visible in `debug`
 - [Estate circleci storm = CircleCI outage](pattern_circleci_unknownsgate_estate_storm.md) — a rerun fakes recovery.
 
 ## Scheduled jobs / services
