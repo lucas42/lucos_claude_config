@@ -1,6 +1,6 @@
 ---
 name: xwing/salvare IPv6 accept_ra fix
-description: Docker sets forwarding=1 which silently disables RA acceptance on xwing/salvare; fix and diagnosis pattern
+description: xwing/salvare IPv6 loss — check what the router advertises first; NM-managed since 2026-09-27 so accept_ra=0 is normal
 type: project
 ---
 
@@ -22,3 +22,7 @@ Both hosts now have `net.ipv6.conf.eth0.accept_ra = 2` in `/etc/sysctl.conf` (xw
 **Diagnostic: valid_lft ticking down at 1s/s** means the router is sending NO RAs at all (not even for the old prefix) — router restart needed, not just a wait.
 
 **SSH to salvare** (no A record, only AAAA): use `ssh -o ProxyJump=xwing.s.l42.eu -o "HostName <ipv6>" lucos-agent@salvare.s.l42.eu` when DNS is broken.
+
+## Update 2026-11-03: hosts are NetworkManager-managed — `accept_ra=0` is normal, not the fault
+
+Since the 2026-09-27 boot both hosts use NM (`ipv6.method: auto`), which processes RAs itself; kernel `accept_ra` reads 0 and `/etc/sysctl.conf`'s 2 is overridden. Steps 2-3 above no longer apply. First check what the router advertises: `docker run --rm --net=host --cap-drop=ALL --cap-add=NET_RAW alpine sh -c "apk add -q ndisc6; rdisc6 -1 eth0"` (no root needed; agent is in the docker group). A RA with router lifetime 0 and no prefix option = router has no IPv6 upstream (lucos#331). salvare's eth0 has had no carrier since boot; it runs on wlan0.
