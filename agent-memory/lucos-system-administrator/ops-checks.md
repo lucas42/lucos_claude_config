@@ -18,6 +18,8 @@ certificate_expiry: 2026-10-28
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
+- **Check on 2026-11-04 run**: lucos_agent `prune-images` scheduled run (03:02Z) should pass for xwing/salvare (failed 11-02/11-03 during outage; SRE's incident report lucas42/lucos#332 has a TBD waiting on it). Verify per-job via CircleCI API (workflow of the 11-04 scheduled pipeline) and tell SRE the result. Also confirm `lucos_backups` `host-tracking-failures` green.
+
 - **2026-11-03 run**: checks 1+6 only (2-5 due 11-04; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: only lucos_aithne env_var_passthrough (VERSION, main.go:174; tracked lucos_aithne#356; not fixed — not dispatched; `- VERSION` passthrough precedent in lucos_backups compose). No issues raised. Salvare now reachable directly again (IPv6 restored, lucos#331) — the "IPv6-only, use jump host" note still safe to follow.
 
 - **2026-11-01 photos pre-prenaming backup (lucos_photos#618)**: DONE — replicated to xwing, salvare (sha256-verified) and aurora (size only; no login as lucos-agent, listed via lucos_backups' Host code); reported on #618. Original volume backup prunes 11-04 04:49 UTC (expected).
