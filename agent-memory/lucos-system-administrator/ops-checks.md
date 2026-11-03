@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-11-01
+container_status: 2026-11-03
 resource_checks: 2026-10-28
 syslog_review: 2026-10-28
 software_updates: 2026-10-28
 sandbox_drift: 2026-10-28
-repos_dashboard: 2026-11-01
+repos_dashboard: 2026-11-03
 docker_image_staleness: 2026-10-28
 backup_verification: 2026-10-28
 certificate_expiry: 2026-10-28
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-11-03 run**: checks 1+6 only (2-5 due 11-04; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: only lucos_aithne env_var_passthrough (VERSION, main.go:174; tracked lucos_aithne#356; not fixed — not dispatched; `- VERSION` passthrough precedent in lucos_backups compose). No issues raised. Salvare now reachable directly again (IPv6 restored, lucos#331) — the "IPv6-only, use jump host" note still safe to follow.
 
 - **2026-11-01 photos pre-prenaming backup (lucos_photos#618)**: DONE — replicated to xwing, salvare (sha256-verified) and aurora (size only; no login as lucos-agent, listed via lucos_backups' Host code); reported on #618. Original volume backup prunes 11-04 04:49 UTC (expected).
 
