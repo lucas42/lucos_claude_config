@@ -34,6 +34,7 @@ After making changes during estate rollouts or verifying audit-finding fixes, yo
 POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts
 POST https://repos.l42.eu/api/rerun?convention=auto-merge-secrets
 POST https://repos.l42.eu/api/rerun?repo=lucas42/lucos_contacts&convention=auto-merge-secrets
+# convention takes the hyphenated ID (env-var-passthrough), not the dashboard JSON's underscore key (env_var_passthrough), which returns "unknown convention"
 ```
 
 At least one of `?repo` or `?convention` is required. Results are updated in the database and reflected on the dashboard immediately.
