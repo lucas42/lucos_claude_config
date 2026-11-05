@@ -2,13 +2,13 @@
 
 ## Monthly Check Last Run Dates
 
-ci_status: 2026-10-05
-info_endpoint_quality: 2026-10-05
-external_deps: 2026-10-05
+ci_status: 2026-11-05
+info_endpoint_quality: 2026-11-05
+external_deps: 2026-11-05
 
 ## Weekly Check Last Run Dates
 
-router_default_ua: 2026-10-28 (avalon 59h since router StartedAt 10-26 07:19, 808k lines; xwing 59h, 73k). Per-day rates unchanged: Wget→l42.eu ~16k/d, py-requests→media-api ~12k/d, lucos_repos Go→configy ~8.5k/d, node→staticmedia ~11k/d, Java-http-client→media-api ~77/d, jose→aithne 14/d, Apache-HttpClient→ceol 15 (scenes), okhttp→photos (android app). RESOLVED: Java/25.0.2→media-api /v3/collections from home NAT gone. NEW, not attributed, not posted: python-requests/2.33.0 from 172.16.5.1 → /favicon.ico on eolas/contacts/aithne + their login redirects, 106 lines ALL in one minute 10-26 17:36Z = one-off tool run (no estate Python references favicon on origin/main). Scanner-shaped python-httpx→ns1 /sse,/mcp 1 each (known). Nothing posted on lucos#251. Previous: 2026-10-20 (full 7d both hosts; avalon 2.60M, xwing 223k). RESOLVED: python-httpx→contacts gone (photos#572 sends UA). NEW: Java/25.0.2→media-api GET /v3/collections ×1907 ALL 401 from home NAT, ~10/day→~1000/day from 10-19 = off-estate dev lucos_media_manager (CollectionList/HttpURLConnection; a file:///home/… lookup in same UA ⇒ personal machine; DO NOT post the path); python-urllib3→loganne 2, python-httpx→creds / 3, python-requests→am/v2 tracks 3 (tiny, unattributed). Rest unchanged (Wget→l42.eu 114.8k, py-requests→media-api 87k, node→staticmedia 87k, firewall→configy 60k, lucos_repos Go rows). Posted lucos#251 comment 6304467781. Source filter tightened to 172.16/12 (was admitting 172.245/172.71 scanners). Previous 2026-10-14 (full 7d both hosts; avalon 2.48M lines, xwing 197k). Baseline rates unchanged. ATTRIBUTED: the "unattributed Go service" (configy /components,/scripts,/systems; every-vhost /_info; NEW loganne /producers 27 + schedule-tracker POST /v2/report-status 55) = lucos_repos (C4 shared http.Client, no UA anywhere in its Go). NEW: Python-urllib→aithne jwks 13 = PyJWKClient default UA in backups/contacts/eolas/photos/arachne. Scanner-shaped python-httpx→blog/ns1 /sse,/mcp and python-requests→avalon.s HEAD /_next: listed, not attributed (172.16.5.1 carries cross-host/IPv6 traffic; instruction updated). Unattributed: Go→contacts /people/N 6. Posted lucos#251 comment 6180703588. Previous 2026-10-09: 2026-10-09 (30.6h window: both routers restarted 10-08 15:19Z; per-day rates match baseline. NEW: Apache-HttpClient→ceol 14 = lucos_scenes clj-http, no UA, posted lucos#251. worlds/campaigns python-requests absent). Previous 2026-10-02 (baseline; avalon 7d / xwing ~5d). Review list, UA → destination: python-httpx→contacts /people/N 585k; Wget→l42.eu / 115k (home NAT, unattributed); python-requests→media-api /v3/tracks* 87k; node→staticmedia HEAD /time 79k (lucos_time); Go-http-client→configy /hosts,/public-ports 60k + /components,/scripts,/systems 196 + every vhost /_info 29; Java-http-client→media-api 1.3k; python-requests→media-metadata 715, worlds 1.4k, campaigns ~360; jose→aithne 441 (accepted); GuzzleHttp→aithne 80; Java→loganne 80; node→ceol/seinn 60 each; okhttp→photos 111. Full table: lucas42/lucos#251 (comment 2026-10-02).
+router_default_ua: 2026-11-05 (6.4d both hosts, routers up since 10-29 14:46; avalon 2.08M, xwing 166k). No new entries, rates within baseline. ATTRIBUTED (posted lucos#251 6646484805): py-requests→media-metadata /tracks/N + →media-api = lucos_media_weightings src/media_api.py (no UA); Java/25.0.4→loganne POST /events = lucos_media_manager Loganne.java:50; Go→contacts /people/N = lucos_aithne enrolment.go:77. Previous: 2026-10-28 (avalon 59h since router StartedAt 10-26 07:19, 808k lines; xwing 59h, 73k). Per-day rates unchanged: Wget→l42.eu ~16k/d, py-requests→media-api ~12k/d, lucos_repos Go→configy ~8.5k/d, node→staticmedia ~11k/d, Java-http-client→media-api ~77/d, jose→aithne 14/d, Apache-HttpClient→ceol 15 (scenes), okhttp→photos (android app). RESOLVED: Java/25.0.2→media-api /v3/collections from home NAT gone. NEW, not attributed, not posted: python-requests/2.33.0 from 172.16.5.1 → /favicon.ico on eolas/contacts/aithne + their login redirects, 106 lines ALL in one minute 10-26 17:36Z = one-off tool run (no estate Python references favicon on origin/main). Scanner-shaped python-httpx→ns1 /sse,/mcp 1 each (known). Nothing posted on lucos#251. Previous: 2026-10-20 (full 7d both hosts; avalon 2.60M, xwing 223k). RESOLVED: python-httpx→contacts gone (photos#572 sends UA). NEW: Java/25.0.2→media-api GET /v3/collections ×1907 ALL 401 from home NAT, ~10/day→~1000/day from 10-19 = off-estate dev lucos_media_manager (CollectionList/HttpURLConnection; a file:///home/… lookup in same UA ⇒ personal machine; DO NOT post the path); python-urllib3→loganne 2, python-httpx→creds / 3, python-requests→am/v2 tracks 3 (tiny, unattributed). Rest unchanged (Wget→l42.eu 114.8k, py-requests→media-api 87k, node→staticmedia 87k, firewall→configy 60k, lucos_repos Go rows). Posted lucos#251 comment 6304467781. Source filter tightened to 172.16/12 (was admitting 172.245/172.71 scanners). Previous 2026-10-14 (full 7d both hosts; avalon 2.48M lines, xwing 197k). Baseline rates unchanged. ATTRIBUTED: the "unattributed Go service" (configy /components,/scripts,/systems; every-vhost /_info; NEW loganne /producers 27 + schedule-tracker POST /v2/report-status 55) = lucos_repos (C4 shared http.Client, no UA anywhere in its Go). NEW: Python-urllib→aithne jwks 13 = PyJWKClient default UA in backups/contacts/eolas/photos/arachne. Scanner-shaped python-httpx→blog/ns1 /sse,/mcp and python-requests→avalon.s HEAD /_next: listed, not attributed (172.16.5.1 carries cross-host/IPv6 traffic; instruction updated). Unattributed: Go→contacts /people/N 6. Posted lucos#251 comment 6180703588. Previous 2026-10-09: 2026-10-09 (30.6h window: both routers restarted 10-08 15:19Z; per-day rates match baseline. NEW: Apache-HttpClient→ceol 14 = lucos_scenes clj-http, no UA, posted lucos#251. worlds/campaigns python-requests absent). Previous 2026-10-02 (baseline; avalon 7d / xwing ~5d). Review list, UA → destination: python-httpx→contacts /people/N 585k; Wget→l42.eu / 115k (home NAT, unattributed); python-requests→media-api /v3/tracks* 87k; node→staticmedia HEAD /time 79k (lucos_time); Go-http-client→configy /hosts,/public-ports 60k + /components,/scripts,/systems 196 + every vhost /_info 29; Java-http-client→media-api 1.3k; python-requests→media-metadata 715, worlds 1.4k, campaigns ~360; jose→aithne 441 (accepted); GuzzleHttp→aithne 80; Java→loganne 80; node→ceol/seinn 60 each; okhttp→photos 111. Full table: lucas42/lucos#251 (comment 2026-10-02).
 
 ## ⚠️ Upcoming planned maintenance (check on every run until past, then move to Notes)
 
@@ -31,7 +31,7 @@ lucos_dns_bind: 2026-10-20 (1.7d since StartedAt; v6 NOTIFY to dns2 refused → 
 lucos_loganne: 2026-10-28 (short window, 11h since StartedAt; starvation rule, was 32d; 16 lines clean)
 lucos_configy: 2026-10-13 (short window, 25h since StartedAt; 3rd+ deferral)
 lucos_contacts_app: 2026-10-17 (4.6d since StartedAt)
-lucos_contacts_db: 2026-10-11
+lucos_contacts_db: 2026-11-05 (9.7d; 11 lines clean)
 lucos_contacts_googlesync_import: 2026-11-01 (2.3d since StartedAt; Google 429/5xx retries + 6 tracebacks, known)
 lucos_contacts_web: 2026-11-01 (5.3d since StartedAt; nginx buffer warnings only)
 lucos_creds: 2026-10-18 (2.6d since StartedAt)
@@ -39,7 +39,7 @@ lucos_creds_configy_sync: 2026-11-03 (short window, 16h since StartedAt; starvat
 lucos_creds_ui: 2026-10-09 (short window, 14.5h since StartedAt; 53d unreviewed)
 lucos_dns_sync: 2026-11-01 (6.3d since StartedAt; 0 errors)
 lucos_eolas_app: 2026-10-17 (4.6d since StartedAt)
-lucos_eolas_db: 2026-10-11
+lucos_eolas_db: 2026-11-05 (9.7d; 5 'connection to client lost' broken pipes, sporadic, benign)
 lucos_eolas_web: 2026-10-14 (short window, 2.1d since StartedAt)
 lucos_locations_mosquitto: 2026-10-13 (short window, 25h since StartedAt)
 lucos_locations_otfrontend: 2026-10-17 (4.6d since StartedAt)
@@ -50,8 +50,8 @@ lucos_photos_api: 2026-10-13 (short window, 24h since StartedAt; 3rd+ deferral)
 lucos_arachne_ingestor: 2026-10-18 (2.6d since StartedAt)
 lucos_arachne_search: 2026-10-20 (short window, 16h since StartedAt; 21 lines, clean)
 lucos_arachne_triplestore: 2026-10-18 (2.6d since StartedAt)
-lucos_mail_docs: 2026-10-09
-lucos_photos_postgres: 2026-10-11 (9d since StartedAt)
+lucos_mail_docs: 2026-11-05 (9.7d since StartedAt; 4 scanner .htpasswd denials only)
+lucos_photos_postgres: 2026-11-05 (3.4d; checkpoints only; NB 57s backup pause → backups#434)
 lucos_photos_redis: 2026-10-14
 lucos_scenes: 2026-10-14
 lukeblaney_co_uk: 2026-10-13 (short window, 25h since StartedAt)
@@ -67,7 +67,7 @@ lucos_root_app: 2026-11-03 (8.7d since StartedAt; private/staticmedia ~1984 time
 lucos_router: 2026-10-20 (3d cap)
 semweb: 2026-11-03 (10.9d since StartedAt; scanner php 404s only)
 lucos_time: 2026-10-28 (2.4d since StartedAt; 8 lines, clean)
-lucos_aithne: 2026-10-05 (3.9d since StartedAt)
+lucos_aithne: 2026-11-05 (short window, 24h; 1 WARNING BOOTSTRAP_ADMIN_CONTACT_ID still set though passkey enrolled — prod creds hygiene, lucas42-only, not filed)
 lucos_arachne_mcp: 2026-10-28 (short window, 11h since StartedAt; starvation rule, was 40d; only 200s)
 lukeblaney_blog: 2026-10-17 (4.6d since StartedAt)
 lucos_docker_health_app: 2026-10-11 (short window, 2d since StartedAt)
@@ -81,6 +81,10 @@ lucos_firewall: 2026-10-20 (15d since StartedAt; steady-state poll lines only)
 lucos_campaigns_auth: 2026-11-03 (29d since StartedAt; 3 invalid_scope callbacks = SemrushBot following /oauth2/start, benign)
 lucos_campaigns_db: 2026-11-01 (new; 14d since StartedAt; io_uring EPERM fallback + memory.pressure warnings only)
 lucos_campaigns_search: 2026-10-23 (new; 4.1d since StartedAt; Meilisearch INFO only)
+xwing/lucos_media_import: 2026-11-05 (new; full window since 10-30; 1984 schedule-tracker DNS/unreachable errors all 11-02 01Z→11-03 10Z = broadband outage)
+xwing/lucos_static_media: 2026-11-05 (new; full window; clean)
+xwing/lucos_dns_secondary_bind: 2026-11-05 (new; full window; clean)
+xwing/ (NOT YET REVIEWED: lucos_dns_secondary_check, lucos_media_linuxplayer, lucos_private, lucos_docker_health_app, lucos_firewall, lucos_router; salvare never reviewed)
 lucos_campaigns_app: 2026-10-23 (laravel-*.log 10-16→10-22: INFO/WARN present, 0 ERROR)
 
 ## SSH Hostname Note
@@ -299,3 +303,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-11-03 ops run (~23:48Z): Check 1 54/56. lucos_backups create-backups/prune-backups red = mid-outage runs, salvare back 23:43 → clear on 03:25/04:49 runs. lucos_repos stale-dependabot-prs = backups#457 + contacts_googlesync_import#277 (python 3.16.0a1 pre-release; CI correctly fails: pipenv PermissionError / --deploy hash / backups' reject-pre-release step) → lucos#273 (Awaiting Decision); PRs need closing. Check 2 (Loganne 11-01 00:49→11-03 23:43): seinn media-manager 6 single-reading flaps 11-02 → monitoring#303 comment 6618469883 (recurring every run since 08-26); monitoring fetch-info blip after each restart = #298; broadband outage flapping = backups#374 (raised High). Check 3: range only 10-25→11-03 (9d, event cap). Uncovered >30min: 11-02 01:08→11-03 10:11 broadband outage (xwing 33h, salvare until 23:43) — report recommended; circleci blind 11-02 23:39→11-03 23:36 (internal, all follow-ups ticketed #320/#322/#324-6) skip; lucos_photos db-reachable 11-01 15:37→16:07 UNDIAGNOSED (postgres+api restarted 16:06, logs gone; overlapped 15:16 agent backup copy + 15:25 create-backups — correlation only). Many "UNRECOVERED" rows in script = monitoring restart drops alert state, no recovery events; Check 1 is truth. Weekly/monthly not due.
 
 - 2026-11-04 ~08:50Z pending verification DONE: prune-images 03:02 green on all 3 hosts (pipeline 122); create-backups 03:25→03:57 success (126 archives; copies to aurora/salvare/xwing, repos 98 each to avalon/salvare/xwing); prune-backups success 05:06 (1366 pruned); monitoring 56/56. Incident report lucas42/lucos#332 marked ready, sent to code-reviewer.
+- 2026-11-05 ops run (~00:20→00:50Z): ALL 8 due/run. Check 1 55/56 at start → 56/56 at end: lucos_repos stale-dependabot = backups#462 + googlesync_import#278 (py 3.16.0a1 AGAIN; code-reviewer closed 00:36Z). ⚠️ Dependabot REOPENS closed grouped PRs next morning ~07:08Z ⇒ daily red loop until lucos#273. ⚠️ NEW: py 3.16.0a1 RUNNING IN PROD in weightings (#314), arachne ingestor (#893), dns sync (#145) — no CI guard; sweep 64 repos/105 FROMs found only these 3. Posted lucos#273 6646370901. Check 2: new since last run = photos db-reachable 11-04 03:35→03:39 = create-backups pause of photos_postgres 57s (was 7.5s 10-11; archive 34MB→569MB with migration) + ~2min post-unpause contention (redis too); 2×499 on router; also explains 10-11 & likely 11-01 flaps → commented backups#434 6646362651 (Decision's fix (2) won't help; options listed). Check 3: range 10-25→11-05; no new >30min uncovered (11-02 report exists; UNRECOVERED rows = monitoring restart artifact). Check 4: 8 reviewed incl 3 xwing (first ever; instruction fixed to cover all hosts). Check 5: 0 red (11 no-CI repos). Check 6: 32/32 ok, dns/dns2 noHTTP. Check 7: 200/401/401/200. Check 8: see router_default_ua.

@@ -232,9 +232,9 @@ For each that does need a report, follow [`references/incident-reporting.md`](..
 SSH into production hosts and review logs for a rotating selection of containers. Track in `ops-checks.md` when each container was last reviewed so you cover them all over time.
 
 **Before selecting containers:**
-1. List all running containers on the production host **with their `StartedAt`**, and pick on both axes — `last_reviewed` *and* how much log history actually survives:
+1. List all running containers **on every active host in `lucos_configy` `config/hosts.yaml`** (avalon and xwing directly; salvare via `ssh -J xwing.s.l42.eu`) **with their `StartedAt`**, and pick on both axes — `last_reviewed` *and* how much log history actually survives. Track xwing/salvare containers as `host/name` so same-named containers (`lucos_router`, `lucos_firewall`) don't collide:
    ```bash
-   ssh avalon.s.l42.eu "docker ps --format '{{.Names}}' | while read c; do printf '%s %s\n' \$(docker inspect -f '{{.State.StartedAt}}' \$c) \$c; done | sort"
+   ssh <host>.s.l42.eu "docker ps --format '{{.Names}}' | while read c; do printf '%s %s\n' \$(docker inspect -f '{{.State.StartedAt}}' \$c) \$c; done | sort"
    ```
 2. Compare against tracking data in `ops-checks.md`
 3. Prioritise containers with the oldest `last_reviewed` date **whose `StartedAt` predates that date**. A container restarted since its last review has no logs covering the gap — `docker logs` starts at `StartedAt`, so reviewing it yields a clean-looking result that proves nothing ([[pattern_container_restart_log_buffer_artifact]]). Deploy bursts routinely restart most of the estate at once; on those days, deliberately skip the oldest containers in favour of ones that still have history, and say in your output which you deferred and why. Do not silently record a deferred container as reviewed.
