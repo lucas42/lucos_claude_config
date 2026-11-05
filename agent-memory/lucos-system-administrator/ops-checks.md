@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-11-03
-resource_checks: 2026-10-28
-syslog_review: 2026-10-28
-software_updates: 2026-10-28
-sandbox_drift: 2026-10-28
-repos_dashboard: 2026-11-03
+container_status: 2026-11-05
+resource_checks: 2026-11-05
+syslog_review: 2026-11-05
+software_updates: 2026-11-05
+sandbox_drift: 2026-11-05
+repos_dashboard: 2026-11-05
 docker_image_staleness: 2026-10-28
 backup_verification: 2026-10-28
 certificate_expiry: 2026-10-28
@@ -18,7 +18,9 @@ certificate_expiry: 2026-10-28
 
 ## Pending follow-ups (check on next run regardless of trigger)
 
-- **Check on 2026-11-04 run**: lucos_agent `prune-images` scheduled run (03:02Z) should pass for xwing/salvare (failed 11-02/11-03 during outage; SRE's incident report lucas42/lucos#332 has a TBD waiting on it). Verify per-job via CircleCI API (workflow of the 11-04 scheduled pipeline) and tell SRE the result. Also confirm `lucos_backups` `host-tracking-failures` green.
+- **2026-11-05 run**: checks 1-6 done (7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3. 11-04 prune-images follow-up DONE: 11-04 scheduled pipeline all 3 jobs success (11-03 had -2/-3 failed); lucos_backups /_info all 9 checks ok. Journals unreadable w/o sudo (known). apt: avalon tzdata only; xwing vim* `stable-security` 2:9.1.1230-2+deb13u1 (NEW, not raised: apt-daily-upgrade ran 11-04 06:18, next 11-05 06:50 — re-check next run; if still pending raise) + docker-ce 29.9.3/compose 5.7.0 + rpi-eeprom (first functional test of #100/#107 origin fix — confirm they clear next run); salvare none. Resources: avalon disk 26% load 1.3; xwing disk 40% load 1.2 mem avail 483Mi; salvare disk 71% (68->71 watch); local VM 56%. Local lucos_creds_ui was unhealthy (timeout, streak 11540) — restarted; /run 47M->1.3M. Drift none. Dashboard: zero failing (aithne env_var_passthrough fixed). No issues raised.
+
+- (done 11-05) **Check on 2026-11-04 run**: lucos_agent `prune-images` scheduled run (03:02Z) should pass for xwing/salvare (failed 11-02/11-03 during outage; SRE's incident report lucas42/lucos#332 has a TBD waiting on it). Verify per-job via CircleCI API (workflow of the 11-04 scheduled pipeline) and tell SRE the result. Also confirm `lucos_backups` `host-tracking-failures` green.
 
 - **2026-11-03 run**: checks 1+6 only (2-5 due 11-04; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard: only lucos_aithne env_var_passthrough (VERSION, main.go:174; tracked lucos_aithne#356; not fixed — not dispatched; `- VERSION` passthrough precedent in lucos_backups compose). No issues raised. Salvare now reachable directly again (IPv6 restored, lucos#331) — the "IPv6-only, use jump host" note still safe to follow.
 
