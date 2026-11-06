@@ -17,6 +17,8 @@ router_default_ua: 2026-11-05 (6.4d both hosts, routers up since 10-29 14:46; av
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
 - create-backups red since 11-05 15:57 (PAUSED_CAPTURE_TIMEOUT=60 vs photos_postgres capture 45–64s; contacts 65.9s on slow 11-05 03:25). Check 11-06 03:25Z run: `docker logs -t --since 2026-11-06T03:20:00Z lucos_backups | grep -E 'Paused for|Error backing|Backups failed'`. If photos failed again → push team-lead for the timeout bump on lucos_backups#463 (comment 6673301646). Clears when a run succeeds.
+- OWN lucos_backups#465 acceptance (fix PR #468: 60→180 / 120→240): at report time check DEPLOYED code, not merge time: `docker inspect -f '{{.Created}} {{.Config.Image}}' lucos_backups` + `docker exec lucos_backups grep -n 'PAUSED_.*= ' /usr/src/app/classes/volume.py`. Deployed before run AND every volume incl photos_postgres succeeded → comment on #465. Not deployed → carries to next run (a pass on old code does NOT count).
+- photos#632 sampler: scratchpad p632/sample.sh, run 03:22→04:10 on 03:25 run; compare api_pending (≥8 ⇒ executor saturated, A) vs post-unpause timeouts with high iopsi (B).
 
 ## Container Log Review History
 
