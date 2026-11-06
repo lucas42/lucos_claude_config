@@ -111,3 +111,5 @@ df -h                              # disk usage
 free -h                            # memory usage
 uptime                             # load average
 ```
+
+**Read container output with `docker logs`, never by opening `/var/log/cron.log`.** In `lucos_backups`, `lucos_creds` (configy_sync), `lucos_media_import` and `lucos_router` that path is a FIFO drained to the container's stdout, so a `cat`/`grep`/`tail` of it consumes lines that never reach `docker logs` and a `grep` never reaches EOF.
