@@ -134,7 +134,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Photos face clustering](project_photos_face_clustering.md) — #618 gate+eps not min_samples; confirmed 92-98% tier 1; #622 labels design; 10-28 backup prunes 11-04
 - [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
 - [Monitoring CI source](project_monitoring_ci_source.md) — monitoring#320: CircleCI PAT → GitHub statuses + read-only App; A approved → #324/#325/#326
-- [Backups two-pass capture](project_backups_two_pass_capture.md) — backups#463 Awaiting Decision; rsync seed + paused delta; `--modify-window=-1`; 3 follow-ups HELD
+- [Backups two-pass capture](project_backups_two_pass_capture.md) — backups#463 APPROVED → #466 impl, #467 ADR amendment (mine), photos#632
 
 ## Per-project pointers
 
