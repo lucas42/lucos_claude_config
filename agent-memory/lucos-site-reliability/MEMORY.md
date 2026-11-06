@@ -61,6 +61,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [avalon disk throttle: ionice no-op, docker --device-*-bps works](pattern_avalon_disk_io_throttle_cgroup.md) — ⚠️ capped job inflates host PSI; gauge OTHER cgroups' io.pressure
 - [Image-pull tail stalls avalon processes](pattern_image_pull_tail_stalls_avalon_processes.md) — photos 3.48GB pull; safepoint log; JDK connectTimeout excludes DNS; media_manager#302
 - [⚠️ avalon DNS=8.8.8.8 since the rebuild → ~1s stalls](pattern_avalon_dns_1s_stall_via_public_resolvers.md) — old host used OVH only; seinn#639 (revert) + monitoring#303
+- [photos /_info: DB stall strands to_thread workers → redis-reachable fails too](pattern_photos_info_executor_starvation.md) — 2/poll, 8-worker pool; #632
 - [uri-integrity flaps = requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md)
 
 ## CI / build / deploy
