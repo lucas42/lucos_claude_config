@@ -108,6 +108,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Sweep deadline ≠ refresh interval](reference_sweep_deadline_vs_interval.md) — starved list tail + its failure detection silently off (lucos_root#158)
 - [In-place write vs running script](reference_inplace_write_vs_running_script.md) — git checkout writes in place; a replaced running bash script mixes both versions and exits 0; disk==OLD discriminator
 - [JDK HttpClient timeout skips body reads (≤25)](reference_jdk_httpclient_body_timeout.md) — ofString hangs too; sendAsync+get(timeout); fixed in 27
+- [Paused-DB timeouts](reference_paused_db_timeouts.md) — only connect_timeout fires vs paused pg; to_thread strands threads → single-flight probes (photos#632)
 
 ## Project memories
 
