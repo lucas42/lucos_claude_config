@@ -16,7 +16,7 @@ router_default_ua: 2026-11-05 (6.4d both hosts, routers up since 10-29 14:46; av
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-(none)
+- create-backups red since 11-05 15:57 (PAUSED_CAPTURE_TIMEOUT=60 vs photos_postgres capture 45–64s; contacts 65.9s on slow 11-05 03:25). Check 11-06 03:25Z run: `docker logs -t --since 2026-11-06T03:20:00Z lucos_backups | grep -E 'Paused for|Error backing|Backups failed'`. If photos failed again → push team-lead for the timeout bump on lucos_backups#463 (comment 6673301646). Clears when a run succeeds.
 
 ## Container Log Review History
 
@@ -36,23 +36,23 @@ lucos_contacts_googlesync_import: 2026-11-01 (2.3d since StartedAt; Google 429/5
 lucos_contacts_web: 2026-11-01 (5.3d since StartedAt; nginx buffer warnings only)
 lucos_creds: 2026-10-18 (2.6d since StartedAt)
 lucos_creds_configy_sync: 2026-11-03 (short window, 16h since StartedAt; starvation rule; 34 lines clean)
-lucos_creds_ui: 2026-10-09 (short window, 14.5h since StartedAt; 53d unreviewed)
+lucos_creds_ui: 2026-11-06 (short window, 17h; 5 lines clean)
 lucos_dns_sync: 2026-11-01 (6.3d since StartedAt; 0 errors)
 lucos_eolas_app: 2026-10-17 (4.6d since StartedAt)
 lucos_eolas_db: 2026-11-05 (9.7d; 5 'connection to client lost' broken pipes, sporadic, benign)
 lucos_eolas_web: 2026-10-14 (short window, 2.1d since StartedAt)
 lucos_locations_mosquitto: 2026-10-13 (short window, 25h since StartedAt)
 lucos_locations_otfrontend: 2026-10-17 (4.6d since StartedAt)
-lucos_locations_otrecorder: 2026-10-09
+lucos_locations_otrecorder: 2026-11-06 (4.4d; 49.8k lines, 0 error lines)
 lucos_locations_oauth2_proxy: 2026-11-01 (full window; 3 OAuth2 state parse errors, invalid length, scanner-shaped)
-lucos_mail_smtp: 2026-10-14
+lucos_mail_smtp: 2026-11-06 (10.7d; 294 sent, 0 deferred/bounced; scanner SSL/rDNS noise)
 lucos_photos_api: 2026-10-13 (short window, 24h since StartedAt; 3rd+ deferral)
 lucos_arachne_ingestor: 2026-10-18 (2.6d since StartedAt)
 lucos_arachne_search: 2026-10-20 (short window, 16h since StartedAt; 21 lines, clean)
 lucos_arachne_triplestore: 2026-10-18 (2.6d since StartedAt)
 lucos_mail_docs: 2026-11-05 (9.7d since StartedAt; 4 scanner .htpasswd denials only)
 lucos_photos_postgres: 2026-11-05 (3.4d; checkpoints only; NB 57s backup pause → backups#434)
-lucos_photos_redis: 2026-10-14
+lucos_photos_redis: 2026-11-06 (7.6d; overcommit warning only)
 lucos_scenes: 2026-10-14
 lukeblaney_co_uk: 2026-10-13 (short window, 25h since StartedAt)
 lucos_media_manager: 2026-10-28 (1.5d since StartedAt; 20 LongPollControllerV3 "Broken pipe" ERRORs = client gone before write, benign; 0 HttpConnectTimeout)
@@ -73,7 +73,7 @@ lukeblaney_blog: 2026-10-17 (4.6d since StartedAt)
 lucos_docker_health_app: 2026-10-11 (short window, 2d since StartedAt)
 
 lucos_docker_mirror_web: 2026-10-13 (4.7d since StartedAt; 0 log lines at all)
-lucos_docker_mirror_registry: 2026-10-11 (short window, 2d since StartedAt)
+lucos_docker_mirror_registry: 2026-11-06 (7d; RepositoryRemover warning only)
 lucos_worlds_web: 2026-10-23 (laravel.log silent since 10-02; nginx access.log 0 5xx since 10-18; php-fpm children SIGKILLed in threes 2s apart 10-19 06:47 + 10-22 23:43, no mem limit, OOMKilled=false, cause unknown (no journal access), no user impact: WATCH)
 lucos_worlds_db: 2026-11-01 (full window; 4 unauthenticated aborted connections)
 lucos_docker_mirror_info: 2026-10-13 (4.7d since StartedAt)
@@ -304,3 +304,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 
 - 2026-11-04 ~08:50Z pending verification DONE: prune-images 03:02 green on all 3 hosts (pipeline 122); create-backups 03:25→03:57 success (126 archives; copies to aurora/salvare/xwing, repos 98 each to avalon/salvare/xwing); prune-backups success 05:06 (1366 pruned); monitoring 56/56. Incident report lucas42/lucos#332 marked ready, sent to code-reviewer.
 - 2026-11-05 ops run (~00:20→00:50Z): ALL 8 due/run. Check 1 55/56 at start → 56/56 at end: lucos_repos stale-dependabot = backups#462 + googlesync_import#278 (py 3.16.0a1 AGAIN; code-reviewer closed 00:36Z). ⚠️ Dependabot REOPENS closed grouped PRs next morning ~07:08Z ⇒ daily red loop until lucos#273. ⚠️ NEW: py 3.16.0a1 RUNNING IN PROD in weightings (#314), arachne ingestor (#893), dns sync (#145) — no CI guard; sweep 64 repos/105 FROMs found only these 3. Posted lucos#273 6646370901. Check 2: new since last run = photos db-reachable 11-04 03:35→03:39 = create-backups pause of photos_postgres 57s (was 7.5s 10-11; archive 34MB→569MB with migration) + ~2min post-unpause contention (redis too); 2×499 on router; also explains 10-11 & likely 11-01 flaps → commented backups#434 6646362651 (Decision's fix (2) won't help; options listed). Check 3: range 10-25→11-05; no new >30min uncovered (11-02 report exists; UNRECOVERED rows = monitoring restart artifact). Check 4: 8 reviewed incl 3 xwing (first ever; instruction fixed to cover all hosts). Check 5: 0 red (11 no-CI repos). Check 6: 32/32 ok, dns/dns2 noHTTP. Check 7: 200/401/401/200. Check 8: see router_default_ua.
+- 2026-11-06 ops run (~00:28→00:35Z): only every-run checks due (monthly+weekly done 11-05). Check 1 53/56 → 54/56: (a) backups create-backups red = PAUSED_CAPTURE_TIMEOUT 60s tripped (contacts 65.9s 11-05 03:25 slow night, all pauses 2–7×; photos 64.2s 15:25); all vols have 11-05 backup; commented lucos_backups#463 6673301646 proposing 60→180 + watchdog 120→240 (only consumers: volume.py:20/22/124/128); asked team-lead for High. (b) lucos_repos circleci: TestSweepHandler_PreventsConcurrentTriggers race (idle sweeper hits localhost:0, clears flag before 2nd request) → reran wf, green + deployed; FILED lucos_repos#539. (c) stale-dependabot: 3.16a1 pair reopened 07:06–07:11 as PREDICTED (#279/#464, since closed); remaining = lucos_photos#630 py3.14→3.15 /worker, onnxruntime has NO cp315 wheel in any release (PyPI checked) ⇒ red until upstream; reviewer left it open. Check 2 (Loganne 11-04→11-06, 254 events): photos db-reachable 03:42→03:49 (7min, AFTER unpause, during copies) + 15:38 = #463; campaigns auth-gate 07:14 1 reading (sidecar 401 late; campaigns_app php-fpm children SIGKILLed after exactly 12/24s, request_terminate_timeout=0 so cause unknown; 26 kills since 11-04 in 03/07/16h clusters — same shape as worlds WATCH; not filed); seinn media-manager single = monitoring#303. Check 3: none (backups ongoing). Check 4: 5 reviewed.
