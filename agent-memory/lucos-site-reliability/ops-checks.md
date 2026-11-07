@@ -16,7 +16,7 @@ router_default_ua: 2026-11-05 (6.4d both hosts, routers up since 10-29 14:46; av
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-(none)
+- **lucos_photos#632 (fix #644, deployed 1.1.62 02:17Z 11-07): verify on the 2026-11-07 15:25Z create-backups** (03:25 was a no-op: last_success 11-06 16:04:43, 20h threshold). Criterion: db-reachable fails ONLY inside the photos_postgres pause window; redis-reachable never fails. Method: start ON avalon ≥15:10 via nohup → ~/sre-632/: `timeout N docker events --filter container=lucos_photos_postgres --format '{{.Time}} {{.Action}}'` + 15s curl localhost:8036/_info sampler; capture `docker logs lucos_photos_api` before any restart. ⚠️ STOP with `kill <PID>` — `pkill -f sre-632` matches the ssh command itself and kills the session. Post result on #632; reopen/new ticket if it fails. If 15:25 is missed: the next real run is the first one after the marker turns 20h old (a container recreate wipes the marker → the next run is real).
 
 ## Container Log Review History
 
