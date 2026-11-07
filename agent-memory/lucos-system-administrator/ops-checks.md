@@ -5,12 +5,12 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-11-06
+container_status: 2026-11-07
 resource_checks: 2026-11-05
 syslog_review: 2026-11-05
 software_updates: 2026-11-05
 sandbox_drift: 2026-11-05
-repos_dashboard: 2026-11-06
+repos_dashboard: 2026-11-07
 docker_image_staleness: 2026-10-28
 backup_verification: 2026-10-28
 certificate_expiry: 2026-10-28
@@ -19,6 +19,8 @@ certificate_expiry: 2026-10-28
 ## Pending follow-ups (check on next run regardless of trigger)
 
 - **lucos_photos#634 follow-up (due 2026-11-06 ~07:15Z, i.e. the first 07:00Z run after the 01:10Z merge)**: PR #635 merged 2026-11-06 ~01:10Z (ignore `>= 3.15, < 3.16` on /worker docker). After the 11-06 07:00Z Dependabot run, list open Dependabot PRs on lucos_photos; confirm no /worker python 3.15 PR reappeared, then post the result on #634 (already auto-closed on merge). If one reappears: use the `update-types: semver-minor` fallback per #634 body, update lucos_photos#633. #630 closed.
+
+- **2026-11-07 run**: checks 1+6 only (2-5 due 11-12; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard zero failing (62 repos). lucos_photos#634 follow-up: no open Dependabot PRs on lucos_photos at all (so no /worker 3.15 PR reappeared); not yet posted on #634. apt/libapt re-check still due 11-12. No issues raised.
 
 - **2026-11-06 run**: checks 1+6 only (2-5 due 11-12; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3. Dashboard zero failing. 11-05 prune-images all 3 jobs success. apt: xwing's vim*/docker-ce/compose/rpi-eeprom from 11-05 CLEARED automatically (first functional proof of #100/#107 origin fix; sandbox closed items need no action). New security pkgs: apt/apt-utils/libapt-pkg (xwing stable-security 3.0.4; salvare oldstable-security 2.6.2) — not raised, expecting unattended-upgrades to apply (same pattern as vim); re-check on 11-12 run. No issues raised.
 
