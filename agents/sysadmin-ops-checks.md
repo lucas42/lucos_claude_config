@@ -32,6 +32,8 @@ If you find an existing issue that covers the same root cause, comment on that i
 
 When raising issues, include: which host(s) affected, what was observed, when it was first noticed, and what the risk is if left unaddressed.
 
+**Unsticking a stale Dependabot PR** (re-running its failed auto-merge workflow, closing it, etc.) on your own initiative: afterwards `POST https://repos.l42.eu/api/pr-sweep` (409 = already running) and confirm `stale-dependabot-prs` is ok in `https://repos.l42.eu/_info` — don't wait for the 6h schedule. See `references/lucos-repos-api.md`. If a teammate asked for the re-run, they close this loop.
+
 **Issue lifecycle — closing issues**: When you confirm during an ops check that a previously tracked issue has been resolved and the fix is verified (e.g. a previously unhealthy container is now healthy, a previously failing service is now working), post a closing comment summarising what was fixed and close the issue. Do not leave issues open after you have verified the fix is in place. This applies both to issues you raised yourself and to issues raised by other agents that you can confirm are resolved.
 
 ---
