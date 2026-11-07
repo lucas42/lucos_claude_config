@@ -48,7 +48,7 @@ A PR approved + green + marked-ready but **not merging**, with the `reusable / a
 
 ## Verification after infrastructure fixes
 
-After any remediation action, re-check the PR's CI status, `mergeable_state`, and auto-merge status. Report the result — do not assume success. If the fix didn't work, investigate further or re-escalate.
+After any remediation action, re-check the PR's CI status, `mergeable_state`, and auto-merge status. Report the result — do not assume success, and do not assume failure either: if a cheap, reversible remedy such as a workflow re-run has not been tried, try it (or request it) before calling it futile. If the fix didn't work, investigate further or re-escalate.
 
 ## Verify secondary-PR state before claiming anything about it
 
