@@ -29,7 +29,7 @@ lucos_backups: 2026-11-01 (2.3d since StartedAt; BrokenPipe = #374, moved-aside 
 lucos_repos_app: 2026-10-17 (short window, 2.8d since StartedAt; 2nd deferral)
 lucos_dns_bind: 2026-10-20 (1.7d since StartedAt; v6 NOTIFY to dns2 refused → filed lucos#329)
 lucos_loganne: 2026-10-28 (short window, 11h since StartedAt; starvation rule, was 32d; 16 lines clean)
-lucos_configy: 2026-10-13 (short window, 25h since StartedAt; 3rd+ deferral)
+lucos_configy: 2026-11-07 (short window, 17h since StartedAt; starvation rule; 2 lines clean)
 lucos_contacts_app: 2026-10-17 (4.6d since StartedAt)
 lucos_contacts_db: 2026-11-05 (9.7d; 11 lines clean)
 lucos_contacts_googlesync_import: 2026-11-01 (2.3d since StartedAt; Google 429/5xx retries + 6 tracebacks, known)
@@ -46,15 +46,15 @@ lucos_locations_otfrontend: 2026-10-17 (4.6d since StartedAt)
 lucos_locations_otrecorder: 2026-11-06 (4.4d; 49.8k lines, 0 error lines)
 lucos_locations_oauth2_proxy: 2026-11-01 (full window; 3 OAuth2 state parse errors, invalid length, scanner-shaped)
 lucos_mail_smtp: 2026-11-06 (10.7d; 294 sent, 0 deferred/bounced; scanner SSL/rDNS noise)
-lucos_photos_api: 2026-10-13 (short window, 24h since StartedAt; 3rd+ deferral)
+lucos_photos_api: 2026-11-07 (short window, 17h since StartedAt; starvation rule; 7970 lines, 0 error lines)
 lucos_arachne_ingestor: 2026-10-18 (2.6d since StartedAt)
 lucos_arachne_search: 2026-10-20 (short window, 16h since StartedAt; 21 lines, clean)
 lucos_arachne_triplestore: 2026-10-18 (2.6d since StartedAt)
 lucos_mail_docs: 2026-11-05 (9.7d since StartedAt; 4 scanner .htpasswd denials only)
 lucos_photos_postgres: 2026-11-05 (3.4d; checkpoints only; NB 57s backup pause → backups#434)
 lucos_photos_redis: 2026-11-06 (7.6d; overcommit warning only)
-lucos_scenes: 2026-10-14
-lukeblaney_co_uk: 2026-10-13 (short window, 25h since StartedAt)
+lucos_scenes: 2026-11-07 (15d since StartedAt; 93 lines, 0 errors)
+lukeblaney_co_uk: 2026-11-07 (5d since StartedAt; 8 apache authz/autoindex denials = scanner probes only)
 lucos_media_manager: 2026-10-28 (1.5d since StartedAt; 20 LongPollControllerV3 "Broken pipe" ERRORs = client gone before write, benign; 0 HttpConnectTimeout)
 lucos_media_metadata_api: 2026-10-17 (4.6d since StartedAt)
 lucos_monitoring: 2026-10-23 (4.6d since StartedAt; 32 {fetch,all} timeouts, all in 07:xx deploy bursts = monitoring#298)
@@ -70,11 +70,11 @@ lucos_time: 2026-10-28 (2.4d since StartedAt; 8 lines, clean)
 lucos_aithne: 2026-11-05 (short window, 24h; 1 WARNING BOOTSTRAP_ADMIN_CONTACT_ID still set though passkey enrolled — prod creds hygiene, lucas42-only, not filed)
 lucos_arachne_mcp: 2026-10-28 (short window, 11h since StartedAt; starvation rule, was 40d; only 200s)
 lukeblaney_blog: 2026-10-17 (4.6d since StartedAt)
-lucos_docker_health_app: 2026-10-11 (short window, 2d since StartedAt)
+lucos_docker_health_app: 2026-11-07 (logs since 10-29 survive restart; status=error reports = 10-29 09:05 docker.sock deadline ×3, backups unhealthy 11-02/03 outage (#374), backup-pause blips; benign)
 
 lucos_docker_mirror_web: 2026-10-13 (4.7d since StartedAt; 0 log lines at all)
 lucos_docker_mirror_registry: 2026-11-06 (7d; RepositoryRemover warning only)
-lucos_worlds_web: 2026-10-23 (laravel.log silent since 10-02; nginx access.log 0 5xx since 10-18; php-fpm children SIGKILLed in threes 2s apart 10-19 06:47 + 10-22 23:43, no mem limit, OOMKilled=false, cause unknown (no journal access), no user impact: WATCH)
+lucos_worlds_web: 2026-11-07 (laravel.log: 1 ERROR since 10-02 = 10-24 API 401 no token, benign; php-fpm SIGKILLs in threes continue 11-04 15:51, 11-06 17:05 — same shape as campaigns_app; still WATCH, no user impact)
 lucos_worlds_db: 2026-11-01 (full window; 4 unauthenticated aborted connections)
 lucos_docker_mirror_info: 2026-10-13 (4.7d since StartedAt)
 lucos_firewall: 2026-10-20 (15d since StartedAt; steady-state poll lines only)
@@ -84,7 +84,9 @@ lucos_campaigns_search: 2026-10-23 (new; 4.1d since StartedAt; Meilisearch INFO 
 xwing/lucos_media_import: 2026-11-05 (new; full window since 10-30; 1984 schedule-tracker DNS/unreachable errors all 11-02 01Z→11-03 10Z = broadband outage)
 xwing/lucos_static_media: 2026-11-05 (new; full window; clean)
 xwing/lucos_dns_secondary_bind: 2026-11-05 (new; full window; clean)
-xwing/ (NOT YET REVIEWED: lucos_dns_secondary_check, lucos_media_linuxplayer, lucos_private, lucos_docker_health_app, lucos_firewall, lucos_router; salvare never reviewed)
+xwing/lucos_private: 2026-11-07 (new; full window since 10-29; 97k lines, scanner .git/.env/.svn denials only)
+xwing/lucos_dns_secondary_check: 2026-11-07 (new; full window since 10-26: EVERY run exits 2, SCHEDULE_TRACKER_ENDPOINT unset → FILED lucos_dns_secondary#31; secondary in sync by hand)
+xwing/ (NOT YET REVIEWED: lucos_media_linuxplayer, lucos_docker_health_app, lucos_firewall, lucos_router; salvare never reviewed)
 lucos_campaigns_app: 2026-10-23 (laravel-*.log 10-16→10-22: INFO/WARN present, 0 ERROR)
 
 ## SSH Hostname Note
@@ -306,3 +308,4 @@ Always use `avalon.s.l42.eu` (not the alias `avalon`) for SSH. The SSH config us
 - 2026-11-05 ops run (~00:20→00:50Z): ALL 8 due/run. Check 1 55/56 at start → 56/56 at end: lucos_repos stale-dependabot = backups#462 + googlesync_import#278 (py 3.16.0a1 AGAIN; code-reviewer closed 00:36Z). ⚠️ Dependabot REOPENS closed grouped PRs next morning ~07:08Z ⇒ daily red loop until lucos#273. ⚠️ NEW: py 3.16.0a1 RUNNING IN PROD in weightings (#314), arachne ingestor (#893), dns sync (#145) — no CI guard; sweep 64 repos/105 FROMs found only these 3. Posted lucos#273 6646370901. Check 2: new since last run = photos db-reachable 11-04 03:35→03:39 = create-backups pause of photos_postgres 57s (was 7.5s 10-11; archive 34MB→569MB with migration) + ~2min post-unpause contention (redis too); 2×499 on router; also explains 10-11 & likely 11-01 flaps → commented backups#434 6646362651 (Decision's fix (2) won't help; options listed). Check 3: range 10-25→11-05; no new >30min uncovered (11-02 report exists; UNRECOVERED rows = monitoring restart artifact). Check 4: 8 reviewed incl 3 xwing (first ever; instruction fixed to cover all hosts). Check 5: 0 red (11 no-CI repos). Check 6: 32/32 ok, dns/dns2 noHTTP. Check 7: 200/401/401/200. Check 8: see router_default_ua.
 - 2026-11-06 ops run (~00:28→00:35Z): only every-run checks due (monthly+weekly done 11-05). Check 1 53/56 → 54/56: (a) backups create-backups red = PAUSED_CAPTURE_TIMEOUT 60s tripped (contacts 65.9s 11-05 03:25 slow night, all pauses 2–7×; photos 64.2s 15:25); all vols have 11-05 backup; commented lucos_backups#463 6673301646 proposing 60→180 + watchdog 120→240 (only consumers: volume.py:20/22/124/128); asked team-lead for High. (b) lucos_repos circleci: TestSweepHandler_PreventsConcurrentTriggers race (idle sweeper hits localhost:0, clears flag before 2nd request) → reran wf, green + deployed; FILED lucos_repos#539. (c) stale-dependabot: 3.16a1 pair reopened 07:06–07:11 as PREDICTED (#279/#464, since closed); remaining = lucos_photos#630 py3.14→3.15 /worker, onnxruntime has NO cp315 wheel in any release (PyPI checked) ⇒ red until upstream; reviewer left it open. Check 2 (Loganne 11-04→11-06, 254 events): photos db-reachable 03:42→03:49 (7min, AFTER unpause, during copies) + 15:38 = #463; campaigns auth-gate 07:14 1 reading (sidecar 401 late; campaigns_app php-fpm children SIGKILLed after exactly 12/24s, request_terminate_timeout=0 so cause unknown; 26 kills since 11-04 in 03/07/16h clusters — same shape as worlds WATCH; not filed); seinn media-manager single = monitoring#303. Check 3: none (backups ongoing). Check 4: 5 reviewed.
 - 2026-11-06 ~08:55Z RESOLVED: create-backups green 03:58 on 1.4.80 (180/240 live from 00:54); photos pause 61.4s would have failed old bound; 24 archives; #465 acceptance comment 6681008452. photos#632: A CONFIRMED (2 DB to_thread per /_info: check_db+get_metrics ⇒ 8-worker pool full after 4 polls, redis fails from poll 5; all timeouts inside pause); B not observed tonight, open (11-04/05 tails, logs gone). ⚠️ My sampler started late (03:27) and STALLED after 1 sample over a long-lived ssh stream (Broken pipe 03:46) → next time run it ON avalon to a local file, started ≥10min early.
+- 2026-11-07 ops run (~00:10→00:35Z): only every-run checks due. Check 1 55/56: lucos_repos stale-dependabot = contacts#840, googlesync_import#281, restful-queue#306, all `unstable status` arm race = .github#77 (Awaiting Decision) — 3 PRs on one morning; commented 6699646692; asked team-lead for High + code-reviewer merge. Check 2 (Loganne 11-04→11-06 23:07): backups `startup` 07:14 one poll after v1.4.81 deploy = backups#428 (Ready/Low; 11-02/03 instances were outage-lengthened ~7min; commented 6699646944); photos db-reachable 15:40 1 poll = #632 pattern (backup pause). 0 lucos_agent events. Check 3: range 10-25→11-06; new >30min = backups create-backups 11-05 15:57→11-06 03:58 (#463 fixed, no data loss) + repos stale-dependabot — skip both. Check 4: 7 reviewed; FOUND dns_secondary SOA check dead since ≥10-26 → lucos_dns_secondary#31 (needs lucas42 prod creds).

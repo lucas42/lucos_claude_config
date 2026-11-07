@@ -26,3 +26,5 @@ I proposed `automatic` → `considerable` on lucos_backups#345. **lucas42 reject
 - After any loss, there is **no self-heal for the broken jobs** — you'd have to reconcile expected jobs from another source (monitoring reads *from* schedule_tracker, not the reverse — see [[pattern_monitoring_coverage_http_vs_scheduled]] — so it can't backfill).
 
 Related: [[reference_schedule_tracker_detection_semantics]] (ADR-0004: red needs 2 consecutive fails), [[project_backups_db_consistency_walkback]].
+
+**Same blind spot, different cause: a job that NEVER reports is equally invisible.** 2026-11-07, lucas42/lucos_dns_secondary#31: `soa-serial-in-sync` exited 2 on every run (`set -u` + `SCHEDULE_TRACKER_ENDPOINT` missing from prod creds), so there was no tracker row, no monitoring check, and nothing went red. **How to apply:** when reviewing a push-to-schedule-tracker container, confirm its job actually appears in `schedule-tracker.l42.eu/jobs`. A green system with a *missing* check looks exactly like a healthy one.
