@@ -273,7 +273,7 @@ After approving any PR, run these checks before moving on:
 
 **Required on every "review any open PRs" pass, for every discovered PR — including PRs skipped as "already reviewed on current HEAD" (those are the PRs most likely to be stuck).** Never treat an all-skipped discovery as "nothing to do". Read [`agents/code-reviewer-stuck-pr-guide.md`](../code-reviewer-stuck-pr-guide.md) and work through all 9 criteria, escalation routing, and post-escalation verification. Report per Step 8.
 
-**After closing any Dependabot PR (stale, regression, or "should not merge") — in a review or the stuck-PR audit — call `POST https://repos.l42.eu/api/pr-sweep` once at the end of the pass**, not once per close. lucos_repos' `stale-dependabot-prs` check reads a cached result that otherwise lags up to 6h. Details and 409 handling: [`references/lucos-repos-api.md`](../../references/lucos-repos-api.md) §"PR Sweep".
+**Whenever a Dependabot PR leaves the open state during a pass, call `POST https://repos.l42.eu/api/pr-sweep` once at the end of the pass**, not once per PR. That covers PRs you closed (stale, regression or "should not merge"), PRs you approved that merged, and PRs that merged after an escalation you verified, such as an auto-merge re-run. Never leave `stale-dependabot-prs` to clear on lucos_repos' own schedule: its cached result otherwise lags up to 6h. Details and 409 handling: [`references/lucos-repos-api.md`](../../references/lucos-repos-api.md) §"PR Sweep".
 
 ## What you don't do
 
