@@ -107,5 +107,6 @@ Before escalating, **always try self-service fixes first**. Asking a human to in
 1. Note the PR as "escalated, pending verification" in your report.
 2. On your next PR review pass (or if the teammate messages you back), re-check the PR's state to confirm it has progressed.
 3. If the PR is still stuck after the teammate's action, re-escalate with the new information.
+4. If a Dependabot PR left the open state (merged after the escalation, or closed), call `POST https://repos.l42.eu/api/pr-sweep` once at the end of the pass. See `workflows/review-pr.md` § "Stuck PR audit".
 
 **`@dependabot` commands cannot be posted by GitHub Apps** — Dependabot responds "Sorry, only users with push access can use that command." This applies to both `@dependabot recreate` and `@dependabot rebase`. When a recreate or rebase is warranted, **close the PR directly** — Dependabot will open a fresh PR. Closing is equivalent to recreate and works without push-user access. (Confirmed: lucos_arachne #685, 2026-06-26.)
