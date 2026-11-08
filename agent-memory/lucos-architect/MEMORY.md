@@ -132,7 +132,7 @@ Index only — one short line per entry; detail lives in each linked topic file 
 - [Monitoring refactor](project_monitoring_refactor.md) — monitoring#307 four-concern split; seam = state-tuple confinement below L317; ADR-0001 is interface-not-layout
 - [Kanka for Kaidoho](project_kanka_campaigns.md) — lucos#309 → lucos_campaigns #1-#6; ADR-0001 drafted; crit path #1→#2→#3; 3.15 properties findings
 - [lucos_mail linked creds](project_mail_linked_creds.md) — mail#86 revised 2026-10-18: all clients incl NAS via CLIENT_KEYS (`external_nas` pseudo-system); #85 fail-closed
-- [Photos face clustering](project_photos_face_clustering.md) — #618 gate+eps not min_samples; confirmed 92-98% tier 1; #622 labels design; 10-28 backup prunes 11-04
+- [Photos face clustering](project_photos_face_clustering.md) — #618 Qs reframed P1-5/T1-6; #622 body done; #654 embedding side-table = #618 repair prereq
 - [creds self-deploy keys](project_creds_selfdeploy_keys.md) — lucos#291 → creds ADR-0007 PR #602; impl creds#600/#601, orb#208
 - [Monitoring CI source](project_monitoring_ci_source.md) — monitoring#320: CircleCI PAT → GitHub statuses + read-only App; A approved → #324/#325/#326
 - [Backups two-pass capture](project_backups_two_pass_capture.md) — backups#463 APPROVED → #466 impl, #467 ADR amendment (mine), photos#632
