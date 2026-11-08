@@ -59,7 +59,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [⚠️ locations `location-freshness` is untrustworthy](pattern_locations_silent_data_gap.md) — check `.rec` created_at · [/map 500 + /_info green = oauth2_proxy crash-loop](pattern_locations_oauth2proxy_sidecar_crashloop.md) — only lucas42 can fix.
 - [loganne rewrites 24MB events.json per event (≤1/s)](pattern_loganne_full_file_rewrite_amplification.md) — event streams = ~10MB/s disk writes
 - [avalon disk throttle: ionice no-op, docker --device-*-bps works](pattern_avalon_disk_io_throttle_cgroup.md) — ⚠️ capped job inflates host PSI; gauge OTHER cgroups' io.pressure
-- [Image-pull tail stalls avalon processes](pattern_image_pull_tail_stalls_avalon_processes.md) — photos ~1.7GB/release, cause #668 (no CI cache + ARG first); IO is in containerd.service; media_manager#302
+- [Image-pull tail stalls avalon processes](pattern_image_pull_tail_stalls_avalon_processes.md) — FIXED by photos#669 (pull 4min→30s); cold pull after a layer change; IO in containerd.service
 - [⚠️ avalon DNS=8.8.8.8 since the rebuild → ~1s stalls](pattern_avalon_dns_1s_stall_via_public_resolvers.md) — old host used OVH only; seinn#639 (revert) + monitoring#303
 - [photos /_info: DB stall strands to_thread workers → redis-reachable fails too](pattern_photos_info_executor_starvation.md) — 2/poll, 8-worker pool; #632
 - [uri-integrity flaps = requiresURI migrations](pattern_media_metadata_uri_integrity_requiresuri_migration.md)
