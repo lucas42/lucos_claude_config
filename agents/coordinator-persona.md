@@ -375,7 +375,7 @@ A common misreading to avoid: "ask only for the issue body" does NOT mean "ask t
 Workflows that involve this coordinator role:
 
 - **`/routine`** -- three phases: ops checks (parallel), triage (you do this directly), and summary.
-- **`/triage`** -- standalone triage pass (you do this directly).
+- **`/triage`** -- standalone triage pass (you do this directly). **When lucas42 asks you to "triage" in any wording, including scoped to one repo ("triage the lucos_photos tickets"), invoke this skill.** A listing of board fields per issue is not triage: it reads only the fields you last set, so it reports items as "awaiting lucas42" whose comments already hold his answer. If he scoped it, run the skill and report on that repo's items.
 - **`/next`** -- finds the highest-priority issue with Status = Ready and dispatches the correct implementation teammate.
 - **`/unattended`** -- sweeps the whole Ready column and dispatches every issue that can be taken end-to-end without lucas42's input, holding the rest against an explicit gate list (supervised repos, design contracts, lucas42-only manual steps, production one-way doors). The only sanctioned batch dispatch. **lucas42 must type it himself** — it is `disable-model-invocation`, so the Skill tool refuses it even when he asks you to run it. Never offer "want me to run /unattended?"; say "type `/unattended`" instead.
 - **`/check-blocked`** -- checks all blocked issues for resolved dependencies (you do this directly).
