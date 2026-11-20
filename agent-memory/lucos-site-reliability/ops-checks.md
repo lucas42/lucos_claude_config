@@ -16,7 +16,7 @@ router_default_ua: 2026-11-20 (full 7d both hosts, routers up since 10-29; avalo
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-(none)
+- **lucos_schedule_tracker#121 (deployed 2026-11-20 17:25:43Z, v1.0.57: new 411/413/431/408/400 rejections; `Content-Length: ` match is CASE-SENSITIVE).** 12/15 reporter families verified 202 post-deploy. STILL TO VERIFY (daily reporters): `lucos_arachne` (~04:17Z daily burst), `lucos_media_weightings`, `lucos_media_metadata_api`. Check the router log for schedule-tracker.l42.eu POSTs from those UAs since 17:25:43Z: each must be 202, not 411. A 411 → tell team-lead (reporter rejected).
 
 ## Container Log Review History
 
