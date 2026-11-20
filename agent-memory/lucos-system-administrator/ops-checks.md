@@ -5,18 +5,20 @@ Tracks when each check was last run. Format: `check_name: YYYY-MM-DD`
 A check is due if it has no entry here, or if the elapsed time since last_run meets or exceeds its frequency.
 
 ```
-container_status: 2026-11-17
-resource_checks: 2026-11-12
-syslog_review: 2026-11-12
-software_updates: 2026-11-12
-sandbox_drift: 2026-11-12
-repos_dashboard: 2026-11-17
+container_status: 2026-11-20
+resource_checks: 2026-11-20
+syslog_review: 2026-11-20
+software_updates: 2026-11-20
+sandbox_drift: 2026-11-20
+repos_dashboard: 2026-11-20
 docker_image_staleness: 2026-10-28
 backup_verification: 2026-10-28
 certificate_expiry: 2026-10-28
 ```
 
 ## Pending follow-ups (check on next run regardless of trigger)
+
+- **2026-11-20 run**: checks 1-6 done (7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3. Journals unreadable w/o sudo (known). apt: only routine (tzdata 2026f, xwing rpicam/libcamera); salvare parted CLEARED. Resources: avalon disk 28% load 1.8; xwing disk 46% mem avail 452Mi; **salvare disk 85% (80->85)** — photos_postgres daily tarballs ~0.93GB x19 + static one-off 12G; raised lucos_agent_coding_sandbox#121. Local VM 61%, /run 1%. Drift none. Dashboard zero failing (62 repos).
 
 - **2026-11-17 run**: checks 1+6 only (2-5 due 11-19, incl. salvare parted re-check + salvare disk 80% watch; 7-9 due ~11-25). Containers clean: avalon 61, xwing 9, salvare 3; none non-Up/unhealthy. Dashboard zero failing (62 repos). No issues raised.
 
