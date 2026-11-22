@@ -16,7 +16,7 @@ router_default_ua: 2026-11-20 (full 7d both hosts, routers up since 10-29; avalo
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-- **lucos_backups second deleter (found 2026-11-22, backups#365).** Unknown actor prunes xwing+aurora at ~04:49–04:51Z daily with our retention rule. Each run: (a) has lucas42/team-lead identified it? (b) did prune-backups go green on the next 04:49Z run (first chance 2026-11-23)? Check `docker logs -t lucos_backups` for `Prune failed` and xwing dir mtimes vs our run's end. If it is NOT something lucas42 deliberately runs → escalate as a security/data-risk finding (lucos-security via team-lead).
+- **lucos_backups second deleter = LIKELY lucas42's laptop dev copy (OrbStack restart ~2026-11-20 16:48Z; backups#365 7083026521).** My 'dev key is a placeholder' was WRONG (line-by-line parse of a 7-line key). Evidence: home-NAT UA lucos_backups → configy /hosts,/volumes from 11-20 17:03:00 (0 on 11-15..19); dev endpoints local. Each run: (a) has lucas42 confirmed via laptop `docker logs lucos_backups` / stopped it? (b) prune-backups green after it stops? (c) security verdict on the dev key being accepted by prod hosts (dev fingerprint SHA256:kLrueU4UVNsETy8o3rYNoqAD9J+bWjPZvf581pEELcc).
 
 ## Container Log Review History
 
