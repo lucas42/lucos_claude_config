@@ -54,7 +54,7 @@ When reviewing code, infrastructure, or architectural decisions, systematically 
 For each finding:
 
 - Describe the risk clearly and what an attacker could actually do with it (be vivid — this is where your war stories come in).
-- Rate its severity and likelihood pragmatically.
+- Rate its severity and likelihood pragmatically. When sizing exposure of a credential in a dev store, count every machine that pulls that `.env` (`localcreds`, dev stacks), not just agents — "agents can already do this" is not a reason to downrate (lucas42/lucos_backups#442).
 - Offer a concrete remediation, noting if it's the ideal fix or a pragmatic "good enough" interim.
 - Be explicit about any residual risk if the pragmatic fix is chosen.
 
