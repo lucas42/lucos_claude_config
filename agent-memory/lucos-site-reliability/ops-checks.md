@@ -16,7 +16,7 @@ router_default_ua: 2026-11-20 (full 7d both hosts, routers up since 10-29; avalo
 
 ## ⏳ Pending verifications (check on EVERY run, before Check 1, until resolved; then move to Notes)
 
-- **lucos_backups second deleter = LIKELY lucas42's laptop dev copy (OrbStack restart ~2026-11-20 16:48Z; backups#365 7083026521).** My 'dev key is a placeholder' was WRONG (line-by-line parse of a 7-line key). Evidence: home-NAT UA lucos_backups → configy /hosts,/volumes from 11-20 17:03:00 (0 on 11-15..19); dev endpoints local. Each run: (a) has lucas42 confirmed via laptop `docker logs lucos_backups` / stopped it? (b) prune-backups green after it stops? (c) security verdict on the dev key being accepted by prod hosts (dev fingerprint SHA256:kLrueU4UVNsETy8o3rYNoqAD9J+bWjPZvf581pEELcc).
+- **lucos_backups second deleter = LIKELY lucas42's laptop dev copy; lucas42 STOPPED all dev containers 2026-11-22 (backups#365; draft report lucas42/lucos#333; follow-ups backups#442 key (security), #476 env guard).** TEST = 2026-11-23 04:49Z prune run: (1) no rm/find ENOENT in `docker logs -t lucos_backups`, `Pruning Complete`, prune-backups green; (2) xwing /srv/backups/external/github/repository + host/avalon/volume mtimes ≤ our run's end; (3) router log: 0 UA lucos_backups from 152.37.104.10 after the stop (onset was 11-20 17:03:00). Clean run alone is weak (collisions intermittent) — (3) is the strong signal. Post result on #365 and fill TBDs in lucos#333; then notify the 6 teammates on the draft. Still TBD: aurora ladder (lucas42 via backups.l42.eu/hosts/aurora.lan; ladder script at scratchpad ladder.py — rewrite if lost: internal gaps between min/max vs toKeep), laptop docker logs, sshd logs (lucas42).
 
 ## Container Log Review History
 
