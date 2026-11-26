@@ -28,6 +28,7 @@ Index only; the detail is in each linked file. Verify ticket state before citing
 - [localhost:8027 reset but 127.0.0.1 ok = enable_ipv6 mismatch](pattern_backups_sshadd_gates_server_start.md) — test v4, localhost and [::1].
 
 ## Router / DNS / firewall
+- [⚠️ Router "upstream timed out" to 172.17.0.1 + host-local 200 = Docker DNAT wiped by lucos_firewall revert loop](pattern_firewall_rollback_wipes_docker_nat.md) — 35h outage 2026-11-25; fw#31
 - [New-service TLS failing = cert not issued yet](pattern_router_newdomain_cert_latency.md) — startup + daily 22:16 · [router has TWO cert-renewal paths](pattern_router_dual_cert_renewal_paths.md).
 - [All l42.eu SERVFAIL = apex zone failed on avalon](pattern_l42_dns_apex_zone_outage.md) — dig SOA @avalon · [⚠️ `*-v4.s.l42.eu` is a deploy route, not a host alias](pattern_s_l42_eu_v4_names_are_not_host_aliases.md) — ssh salvare-v4 → xwing.
 - [salvare is IPv6-only: "Could not resolve" = sandbox lacks global v6](reference_salvare_ipv6_only_reach_via_xwing.md) — use ssh -J xwing
