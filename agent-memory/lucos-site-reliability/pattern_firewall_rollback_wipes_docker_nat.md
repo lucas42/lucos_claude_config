@@ -9,7 +9,7 @@ Signature (2026-11-25 → 26, ~35h47m estate outage): TLS to avalon completes qu
 
 Mechanism: `docker exec lucos_firewall iptables-save -t nat | grep -c DNAT` = 0 against N published ports. lucos_firewall's `applyWithRollback` snapshots ALL tables and reverts with full (non-`--noflush`) restore, so it re-imposes a mid-dockerd-restart nat table forever. configy (its confirmation target) sits behind the router, so it can never confirm. The trigger was an unattended docker-ce upgrade restarting dockerd; the firewall's snapshot came 12s later on avalon (xwing: 2m42s later, NAT survived).
 
-**Why:** a rollback that restores state it doesn't own, plus a confirmation check behind the thing it breaks, gives a loop with no exit.
+**Why:** a rollback that restores state it doesn't own, acting on a confirmation probe that was ALREADY failing before the apply, gives a loop with no exit. Root gap: ADR-0007 Amendment 1 already mandates holding last-known-good (mode, ports) on a failed poll; lucos_firewall#9 built only the mode half. Lesson: when a fix looks like new design, check the ADR first; it may be a conformance gap.
 
 **How to apply:**
 - Fix order: (1) freeze the firewall (`DRY_RUN=true` one-off `docker compose -p lucos_firewall up -d --no-build --pull never`). DRY_RUN alone does NOT repair anything; dry-run never touches iptables. (2) `systemctl restart docker` (lucas42; no agent sudo) re-creates DNAT. (3) Revert via CircleCI redeploy.
